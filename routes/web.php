@@ -48,6 +48,18 @@ Route::get('/bonbon-bonanza', function () {
     return view('customer.bonbon-bonanza');
 })->middleware('auth')->name('bonbon-bonanza');
 
+Route::get('/lucky-joker-100', function () {
+    return view('customer.lucky-joker-100');
+})->middleware('auth')->name('lucky-joker-100');
+
+Route::get('/the-emirate', function () {
+    return view('customer.the-emirate');
+})->middleware('auth')->name('the-emirate');
+
+Route::get('/royal-emirates', function () {
+    return view('customer.royal-emirates');
+})->middleware('auth')->name('royal-emirates');
+
 
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
 Route::post('/dashboard/withdraw', [DashboardController::class, 'withdraw'])->middleware('auth')->name('dashboard.withdraw');

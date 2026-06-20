@@ -1335,22 +1335,23 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Update backend balance via AJAX
-  function syncBalanceWithBackend(amount, type) {
-    fetch("{{ route('dashboard.transfer') }}", {
-      method: "POST",
+  // ── SYNC BALANCE WITH Laravel Database ──
+  function syncBalance(newBalance) {
+    fetch('{{ route("dashboard.update-balance") }}', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       },
-      // Since transfer changes balance, we can simulate balance changes or make direct deposits/withdrawals.
-      // But let's check: does dashboard have deposit/withdraw endpoints?
-      // Yes, dashboard.deposit and dashboard.withdraw! Let's call them to keep the user's real balance updated.
-      body: JSON.stringify({
-        amount: amount,
-        action: type // 'win' or 'bet'
-      })
-    }).catch(err => console.error("Balance sync failed", err));
+      body: JSON.stringify({ balance: newBalance.toFixed(2) })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Balance synced to DB successfully:', newBalance);
+      }
+    })
+    .catch(err => console.error('Error syncing balance:', err));
   }
 
   // ---- Main spin ----
@@ -1365,17 +1366,7 @@ window.addEventListener('DOMContentLoaded', () => {
       state.balance=round2(state.balance-basisBet);
       
       // Deduct bet amount from backend database
-      fetch("{{ route('dashboard.withdraw') }}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-          withdraw_amount: basisBet,
-          withdraw_method: "BonBon Bonanza Bet"
-        })
-      }).catch(err => console.error(err));
+      syncBalance(state.balance);
     }
     else{basisBet=currentBet();}
     updateStatsUI();
@@ -1411,17 +1402,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Add win amount to backend database
     if (totalWin > 0) {
-      fetch("{{ route('dashboard.deposit') }}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-          deposit_amount: totalWin,
-          deposit_method: "BonBon Bonanza Win"
-        })
-      }).catch(err => console.error(err));
+      syncBalance(state.balance);
     }
 
     if(modeBefore==='bonus'){state.freeSpinsRemaining-=1;updateBonusBannerText();}

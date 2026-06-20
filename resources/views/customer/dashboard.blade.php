@@ -1116,20 +1116,20 @@
                 </div>
 
                 <!-- Game 48: Lucky Joker 100 -->
-                <div class="slot-card" data-category="exclusive popular" data-name="lucky joker 100 evoplay">
+                <div class="slot-card" data-category="exclusive popular" data-name="lucky joker 100 evoplay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
                     <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Lucky Joker 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="slot-card-image-wrapper" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                        <img src="{{ asset("assets/image/Lucky Joker 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Lucky Joker 100</span>
                         </div>
                     </div>
-                    <div class="slot-card-overlay">
+                    <div class="slot-card-overlay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
                         <button class="slot-play-btn" onclick="demoGameRedirect('Lucky Joker 100')"><i class="fas fa-play"></i></button>
                         <a href="#" onclick="demoGameRedirect('Lucky Joker 100'); return false;" class="slot-demo-link">Play Demo</a>
                     </div>
-                    <div class="slot-card-info">
+                    <div class="slot-card-info" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
                         <span class="slot-card-provider">Evoplay</span>
                         <div class="slot-card-title">Lucky Joker 100</div>
                     </div>
@@ -3025,8 +3025,14 @@
         window.demoGameRedirect = function(gameName) {
             showToast("Demo Mode for " + gameName + " is loading... 🎰");
             setTimeout(() => {
-                if (gameName === 'bonbonbonanza') {
+                if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
                     window.location.href = "{{ route('bonbon-bonanza') }}";
+                } else if (gameName === 'Lucky Joker 100') {
+                    window.location.href = "{{ route('lucky-joker-100') }}";
+                } else if (gameName === 'theemirate') {
+                    window.location.href = "{{ route('the-emirate') }}";
+                } else if (gameName === 'royal&emirates') {
+                    window.location.href = "{{ route('royal-emirates') }}";
                 } else {
                     window.location.href = "{{ route('play') }}";
                 }
