@@ -175,7 +175,47 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
-                <!-- Game 1: 1xaero -->
+                <!-- Game 1: Heads or Tails -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="heads or tails 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/HeadsorTails.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #caa24f 0%, #7a4e12 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Heads or Tails</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Heads or Tails')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Heads or Tails'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">Heads or Tails</div>
+                    </div>
+                </div>
+
+                <!-- Game 2: HelicopterX -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="helicopterx 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/HelicopterX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">HelicopterX</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">HelicopterX</div>
+                    </div>
+                </div>
+
+                <!-- Game 3: 1xaero -->
                 <div class="slot-card" data-category="exclusive quick bangladesh" data-name="1xaero 1xgames exclusive">
                     <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
                     <div class="slot-card-image-wrapper">
@@ -275,27 +315,27 @@
                     </div>
                 </div>
 
-                <!-- Game 6: Abyss of Glory -->
-                <div class="slot-card" data-category="exclusive popular" data-name="abyss of glory spinomenal">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                <!-- Game: Temple of Fortune (Custom) -->
+                <div class="slot-card" data-category="popular exclusive new" data-name="temple of fortune golden ways original">
+                    <span class="slot-badge slot-badge-promo" style="background: linear-gradient(135deg, #d9a443, #8a5e1f); color:#fff3cf;">NEW</span>
                     <div class="slot-card-image-wrapper">
                         <img src="{{ asset("assets/image/Abyss of Glory.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-award" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Abyss of Glory</span>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Temple of Fortune</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Abyss of Glory')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Abyss of Glory'); return false;" class="slot-demo-link">Play Demo</a>
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Temple of Fortune')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Temple of Fortune'); return false;" class="slot-demo-link">Play Demo</a>
                     </div>
                     <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">Abyss of Glory</div>
+                        <span class="slot-card-provider">Original · 243 Ways</span>
+                        <div class="slot-card-title">Temple of Fortune</div>
                     </div>
                 </div>
 
-                <!-- Game 7: Aero -->
+
                 <div class="slot-card" data-category="exclusive quick bangladesh" data-name="aero 1xgames exclusive">
                     <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
                     <div class="slot-card-image-wrapper">
@@ -955,25 +995,7 @@
                     </div>
                 </div>
 
-                <!-- Game 40: HelicopterX -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="helicopterx 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/HelicopterX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">HelicopterX</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">HelicopterX</div>
-                    </div>
-                </div>
+                <!-- Old HelicopterX card slot removed (moved to Game 2 position) -->
 
                 <!-- Game 41: Hot Slot 777 Hold the Jackpot -->
                 <div class="slot-card" data-category="exclusive popular" data-name="hot slot 777 hold the jackpot amusnet interactive">
@@ -1622,7 +1644,7 @@
                         <img src="{{ asset("assets/image/cashme.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">cashme</span>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Cash Me If You Can</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
@@ -1631,7 +1653,7 @@
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">cashme</div>
+                        <div class="slot-card-title">Cash Me If You Can</div>
                     </div>
                 </div>
 
@@ -1702,7 +1724,7 @@
                         <img src="{{ asset("assets/image/elveskirgoodr.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">elveskirgoodr</span>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Elves' Kingdom</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
@@ -1711,7 +1733,7 @@
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">elveskirgoodr</div>
+                        <div class="slot-card-title">Elves' Kingdom</div>
                     </div>
                 </div>
 
@@ -2262,7 +2284,7 @@
                         <img src="{{ asset("assets/image/western.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">western</span>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Heist</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
@@ -3033,6 +3055,16 @@
                     window.location.href = "{{ route('the-emirate') }}";
                 } else if (gameName === 'royal&emirates') {
                     window.location.href = "{{ route('royal-emirates') }}";
+                } else if (gameName === 'elveskirgoodr' || gameName === 'Elves\' Kingdom') {
+                    window.location.href = "{{ route('elves-kingdom') }}";
+                } else if (gameName === 'cashme' || gameName === 'Cash Me If You Can') {
+                    window.location.href = "{{ route('treasure-climb') }}";
+                } else if (gameName === 'western' || gameName === 'Western Heist') {
+                    window.location.href = "{{ route('western') }}";
+                } else if (gameName === 'temple-of-fortune' || gameName === 'Temple of Fortune') {
+                    window.location.href = "{{ route('temple-of-fortune') }}";
+                } else if (gameName === 'heads-or-tails' || gameName === 'Heads or Tails') {
+                    window.location.href = "{{ route('heads-or-tails') }}";
                 } else {
                     window.location.href = "{{ route('play') }}";
                 }

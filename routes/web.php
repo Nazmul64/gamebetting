@@ -60,6 +60,36 @@ Route::get('/royal-emirates', function () {
     return view('customer.royal-emirates');
 })->middleware('auth')->name('royal-emirates');
 
+Route::get('/elves-kingdom', function () {
+    return view('customer.elves-kingdom');
+})->middleware('auth')->name('elves-kingdom');
+
+Route::get('/treasure-climb', function () {
+    return view('customer.treasure-climb');
+})->middleware('auth')->name('treasure-climb');
+
+Route::get('/western', function () {
+    return view('customer.western');
+})->middleware('auth')->name('western');
+
+Route::get('/temple-of-fortune', function () {
+    return view('customer.temple-of-fortune');
+})->middleware('auth')->name('temple-of-fortune');
+
+Route::get('/heads-or-tails', function () {
+    return view('customer.heads-or-tails');
+})->middleware('auth')->name('heads-or-tails');
+
+Route::get('/heads-or-tails/fixed', function () {
+    return view('customer.heads-or-tails-game');
+})->middleware('auth')->name('heads-or-tails.fixed');
+
+Route::get('/heads-or-tails/doubling', function () {
+    return view('customer.heads-or-tails-doubling');
+})->middleware('auth')->name('heads-or-tails.doubling');
+
+
+
 
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
 Route::post('/dashboard/withdraw', [DashboardController::class, 'withdraw'])->middleware('auth')->name('dashboard.withdraw');
