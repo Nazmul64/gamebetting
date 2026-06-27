@@ -31,7 +31,7 @@
     gap: 8px;
     border-bottom: 2px solid #1a3a6e;
     position: fixed;
-    top: 0;
+    top: 70px;
     left: 0;
     z-index: 100;
   }
@@ -59,7 +59,7 @@
   .sidenav {
     position: fixed;
     left: 0;
-    top: 40px;
+    top: 110px;
     bottom: 40px;
     width: 48px;
     background: #0d1f3c;
@@ -558,6 +558,8 @@
 </style>
 </head>
 <body>
+
+@include('customer.header')
 
 <!-- TOP NAV -->
 <div class="topnav">

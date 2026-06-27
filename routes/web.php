@@ -76,6 +76,14 @@ Route::get('/temple-of-fortune', function () {
     return view('customer.temple-of-fortune');
 })->middleware('auth')->name('temple-of-fortune');
 
+Route::get('/gates-of-olympus', function () {
+    return view('customer.gates-of-olympus');
+})->middleware('auth')->name('gates-of-olympus');
+
+Route::get('/boxing-king', function () {
+    return view('customer.boxing-king');
+})->middleware('auth')->name('boxing-king');
+
 Route::get('/heads-or-tails', function () {
     return view('customer.heads-or-tails');
 })->middleware('auth')->name('heads-or-tails');

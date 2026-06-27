@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,427 +11,3803 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- Custom CSS files -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('game.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
-<body class="landing-body">
-    <!-- Background Floating Elements (Coin Silhouettes) -->
-    <div class="floating-coins-container">
-        <div class="floating-coin coin-btc"><i class="fa-brands fa-bitcoin"></i></div>
-        <div class="floating-coin coin-eth"><i class="fa-brands fa-ethereum"></i></div>
-        <div class="floating-coin coin-trophy"><i class="fas fa-trophy"></i></div>
-        <div class="floating-coin coin-btc-2"><i class="fa-brands fa-bitcoin"></i></div>
-    </div>
+<body class="landing-body theme-1xbet-active {{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 
-    <!-- Mobile Drawer Sidebar Menu -->
-    <div class="mobile-drawer" id="mobile-drawer">
-        <div class="drawer-header">
-            <div class="nav-logo">
-                <svg class="logo-image-main" viewBox="0 0 40 40" width="30" height="30" fill="none">
-                    <path d="M5 25 L35 15 L25 10 L15 15 Z" fill="#f06424" />
-                    <circle cx="20" cy="18" r="4" fill="#ffbe1a" />
-                </svg>
-                <span class="logo-text-accent">Aviator</span>
-            </div>
-            <button class="close-drawer-btn" id="close-drawer-btn" aria-label="Close menu">
-                <i class="fas fa-times"></i>
+    @include('customer.header')
+
+    <!-- Main Workspace with 1xBet Style Layout -->
+    <div class="lobby-wrapper">
+        
+        <!-- Left Sidebar Icons list -->
+        <aside class="lobby-sidebar">
+            <button class="sidebar-icon-btn active" onclick="toggleCabinet(false); return false;" title="Slots Lobby">
+                <i class="fas fa-gamepad"></i>
             </button>
-        </div>
-        <ul class="drawer-links">
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#how-to-play">How to Play</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#leaderboard">Leaderboard</a></li>
-            <li><a href="#faqs">FAQs</a></li>
-            <li><a href="#help">Help Center</a></li>
-            <li><a href="https://t.me/example_group" target="_blank">Telegram Group</a></li>
-        </ul>
-        <div class="drawer-actions" id="landing-drawer-actions">
-            @auth
-                <a href="{{ route('dashboard') }}" class="nav-btn-purple">Dashboard</a>
-                <a href="#" onclick="handleLogout(event)" class="nav-btn-purple transparent" style="border: 1px solid rgba(255,255,255,0.15);">Logout</a>
-            @else
-                <button onclick="openAuthModal('login')" class="nav-btn-purple transparent" style="border: 1px solid rgba(255,255,255,0.15);">Login</button>
-                <button onclick="openAuthModal('signup')" class="nav-btn-purple">Sign Up</button>
-            @endauth
-        </div>
-    </div>
-    <!-- Drawer Backdrop Overlay -->
-    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+            <button class="sidebar-icon-btn" onclick="toggleCabinet(true); switchDashboardTab('tab-bets', document.querySelectorAll('.dashboard-tab-trigger')[1]); return false;" title="My Bets">
+                <i class="fas fa-history"></i>
+            </button>
+            <button class="sidebar-icon-btn" onclick="toggleCabinet(true); switchDashboardTab('tab-transfer', document.querySelectorAll('.dashboard-tab-trigger')[4]); return false;" title="Transfer Balance">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+            <button class="sidebar-icon-btn" onclick="toggleCabinet(true); switchDashboardTab('tab-levels', document.querySelectorAll('.dashboard-tab-trigger')[3]); return false;" title="VIP Level Status">
+                <i class="fas fa-trophy"></i>
+            </button>
+            <button class="sidebar-icon-btn" onclick="toggleCabinet(true); switchDashboardTab('tab-referral', document.querySelectorAll('.dashboard-tab-trigger')[5]); return false;" title="Referral Affiliate">
+                <i class="fas fa-users"></i>
+            </button>
+            <button class="sidebar-icon-btn" onclick="toggleCabinet(true); switchDashboardTab('tab-profile', document.querySelectorAll('.dashboard-tab-trigger')[6]); return false;" title="Profile Settings">
+                <i class="fas fa-user-cog"></i>
+            </button>
+        </aside>
 
-    <div class="landing-wrapper">
-        <!-- Top Navbar -->
-        <nav class="landing-nav">
-            <div class="nav-logo">
-                <svg class="logo-image-main" viewBox="0 0 40 40" width="30" height="30" fill="none">
-                    <path d="M5 25 L35 15 L25 10 L15 15 Z" fill="#f06424" />
-                    <circle cx="20" cy="18" r="4" fill="#ffbe1a" />
-                </svg>
-                <span class="logo-text-accent">Aviator</span>
-            </div>
+        <!-- Main Lobby Content: Casino Slots (Visible by default) -->
+        <main class="lobby-main" id="casino-lobby-section">
             
-            <ul class="nav-links">
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#how-to-play">How to Play</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#leaderboard">Leaderboard</a></li>
-                <li><a href="#faqs">FAQs</a></li>
-                <li><a href="#help">Help Center</a></li>
-            </ul>
-            
-            <div class="nav-actions" id="landing-nav-actions">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="nav-btn-purple">Dashboard</a>
-                    <a href="#" onclick="handleLogout(event)" class="nav-btn-purple transparent" style="border: 1px solid rgba(255,255,255,0.15); margin-left: 6px;">Logout</a>
-                @else
-                    <button onclick="openAuthModal('login')" class="nav-btn-purple transparent" style="margin-right: 6px; border: 1px solid rgba(255,255,255,0.15);">Login</button>
-                    <button onclick="openAuthModal('signup')" class="nav-btn-purple">Sign Up</button>
-                @endauth
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
-            </div>
-        </nav>
+            <!-- Breadcrumbs and Search Row -->
+            <div class="lobby-top-row">
+                <div class="lobby-breadcrumbs">
+                    <a href="{{ route('home') }}">Home</a>
+                    <span>/</span>
+                    <a href="#" onclick="toggleCabinet(false); return false;">Slots</a>
+                    <span>/</span>
+                    <span class="active-crumb">Popular</span>
+                </div>
 
-        <!-- Hero Content Section -->
-        <main class="hero-section">
-            <!-- Left Info Column -->
-            <div class="hero-info-column">
-                <span class="win-badge">Bet & Win Today!</span>
-                <h1 class="hero-title">Sports Escrow<br>Bets Peer 2 Peer</h1>
-                <p class="hero-description">
-                    The fastest, easiest way to bet on sports. Play the multiplier curve, cash out at the optimal moment, and secure your payouts. 100% automated escrow systems.
-                </p>
-                <div class="hero-cta-group">
-                    <button class="play-now-btn" id="hero-play-btn">Play Crash Game</button>
-                    <a href="#how-to-play" class="try-demo-btn">Learn to Play</a>
+                <!-- Live Search filtration field -->
+                <div class="lobby-search-container">
+                    <i class="fas fa-search lobby-search-icon"></i>
+                    <input type="text" id="lobby-search-box" class="lobby-search-input" placeholder="Search slots or providers..." onkeyup="filterLobbyGames()">
                 </div>
             </div>
 
-            <!-- Right Graphic Column -->
-            <div class="hero-visual-column">
-                <!-- Stadium Background Glow Silhouette -->
-                <div class="stadium-silhouette">
-                    <div class="stadium-lights left-lights">
-                        <div class="light-dot"></div><div class="light-dot"></div><div class="light-dot"></div>
-                        <div class="light-dot"></div><div class="light-dot"></div><div class="light-dot"></div>
+            <!-- Promotion Slider Banner -->
+            <div class="lobby-banner-slider">
+                <!-- Slide 1: SpinoLeague -->
+                <div class="banner-slide slide-active" id="slide-0">
+                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop');"></div>
+                    <div class="banner-content">
+                        <span class="banner-date">05.03.2026 - 01.03.2027</span>
+                        <h2 class="banner-title">SPINOLEAGUE TOURNAMENT</h2>
+                        <p class="banner-prize">STAND BY THE CHAMPIONS | PRIZE POOL: <span>€12,000,000</span></p>
+                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
                     </div>
-                    <div class="stadium-lights right-lights">
-                        <div class="light-dot"></div><div class="light-dot"></div><div class="light-dot"></div>
-                        <div class="light-dot"></div><div class="light-dot"></div><div class="light-dot"></div>
-                    </div>
+                </div>
 
-                    <!-- Interactive Demo Canvas Panel -->
-                    <div class="landing-canvas-mockup">
-                        <span class="demo-badge"><i class="fas fa-circle-nodes pulse-icon-green"></i> LIVE SIMULATOR</span>
-                        <span class="demo-multiplier" id="demo-multiplier-text">1.00x</span>
-                        <canvas id="landing-demo-canvas"></canvas>
-                        
-                        <!-- Crash alert overlay -->
-                        <div class="demo-crash-alert hidden" id="demo-crash-alert">
-                            <div class="demo-crash-title">FLEW AWAY</div>
-                            <div class="demo-crash-multiplier" id="demo-crash-value">1.45x</div>
+                <!-- Slide 2: Playcognito -->
+                <div class="banner-slide" id="slide-1">
+                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');"></div>
+                    <div class="banner-content">
+                        <span class="banner-date">Exclusive Release</span>
+                        <h2 class="banner-title">NEW PROVIDER LAUNCH</h2>
+                        <p class="banner-prize">EXPERIENCE THE THRILL OF <span>PLAYCOGNITO</span> SLOTS</p>
+                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Golden Dragon -->
+                <div class="banner-slide" id="slide-2">
+                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop');"></div>
+                    <div class="banner-content">
+                        <span class="banner-date">Limited Time Only</span>
+                        <h2 class="banner-title">GOLDEN DRAGON CHALLENGE</h2>
+                        <p class="banner-prize">MULTIPLY YOUR WINNINGS UP TO <span>500,000 BDT</span></p>
+                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
+                    </div>
+                </div>
+
+                <!-- Arrows -->
+                <button class="slider-arrow arrow-left" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-arrow arrow-right" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
+
+                <!-- Dots navigation -->
+                <div class="slide-dots">
+                    <span class="slide-dot active" onclick="setSlide(0)"></span>
+                    <span class="slide-dot" onclick="setSlide(1)"></span>
+                    <span class="slide-dot" onclick="setSlide(2)"></span>
+                </div>
+            </div>
+
+            <!-- Categories Horizontal Filter Navbar -->
+            <div class="lobby-categories-navbar">
+                <button class="lobby-category-btn active" onclick="filterCategory('all', this)"><i class="fas fa-fire"></i> Popular</button>
+                <button class="lobby-category-btn" onclick="filterCategory('quick', this)"><i class="fas fa-bolt"></i> Quick Play</button>
+                <button class="lobby-category-btn" onclick="filterCategory('chicken', this)"><i class="fas fa-egg"></i> Chicken Profit</button>
+                <button class="lobby-category-btn" onclick="filterCategory('new', this)"><i class="fas fa-star-of-david"></i> New</button>
+                <button class="lobby-category-btn" onclick="filterCategory('bangladesh', this)"><i class="fas fa-flag"></i> Best Games In Bangladesh</button>
+                <button class="lobby-category-btn" onclick="filterCategory('exclusive', this)"><i class="fas fa-crown"></i> Exclusive</button>
+                <button class="lobby-category-btn" onclick="filterCategory('bonus', this)"><i class="fas fa-gift"></i> Bonus Wagering</button>
+                <button class="lobby-category-btn" onclick="filterCategory('all', this)"><i class="fas fa-th"></i> All</button>
+            </div>
+
+            <!-- Slots Grid Section -->
+            <div class="slots-grid" id="slots-grid-list">
+
+                <!-- Game: Gates of Olympus -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="gates of olympus pragmatic play">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/GatesofOlympus.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-bolt" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Gates of Olympus</span>
                         </div>
                     </div>
-
-                    <div class="mockup-logo-overlay">
-                        <span class="aviator-red-text">Aviator</span>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Gates of Olympus')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Gates of Olympus'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Gates of Olympus</div>
                     </div>
                 </div>
+
+                <!-- Game: Boxing King -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="boxing king jili">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/BoxingKing.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b81f2e 0%, #f5c542 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Boxing King</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Boxing King')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Boxing King'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili Games</span>
+                        <div class="slot-card-title">Boxing King</div>
+                    </div>
+                </div>
+
+                <!-- Game 1: Heads or Tails -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="heads or tails 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/HeadsorTails.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #caa24f 0%, #7a4e12 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Heads or Tails</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Heads or Tails')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Heads or Tails'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">Heads or Tails</div>
+                    </div>
+                </div>
+
+                <!-- Game 2: HelicopterX -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="helicopterx 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/HelicopterX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">HelicopterX</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">HelicopterX</div>
+                    </div>
+                </div>
+
+                <!-- Game 3: 1xaero -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="1xaero 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/1xaero.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">1xaero</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">1xaero</div>
+                    </div>
+                </div>
+
+                <!-- Game 2: 20 Extra Crown -->
+                <div class="slot-card" data-category="quick new" data-name="20 extra crown amusnet interactive">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/20 Extra Crown.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">20 Extra Crown</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('20 Extra Crown')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('20 Extra Crown'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">20 Extra Crown</div>
+                    </div>
+                </div>
+
+                <!-- Game 3: 3superacc -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="3superacc egt">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/3superacc.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">3superacc</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('3superacc')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('3superacc'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">3superacc</div>
+                    </div>
+                </div>
+
+                <!-- Game 4: 40 Shining Crown Bell Link -->
+                <div class="slot-card" data-category="new exclusive" data-name="40 shining crown bell link jili">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/40 Shining Crown Bell Link.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">40 Shining Crown Bell Link</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('40 Shining Crown Bell Link')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('40 Shining Crown Bell Link'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">40 Shining Crown Bell Link</div>
+                    </div>
+                </div>
+
+                <!-- Game 5: 9 Masks of Voodoo -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="9 masks of voodoo netent">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/9 Masks of Voodoo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">9 Masks of Voodoo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('9 Masks of Voodoo')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('9 Masks of Voodoo'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">9 Masks of Voodoo</div>
+                    </div>
+                </div>
+
+                <!-- Game: Temple of Fortune (Custom) -->
+                <div class="slot-card" data-category="popular exclusive new" data-name="temple of fortune golden ways original">
+                    <span class="slot-badge slot-badge-promo" style="background: linear-gradient(135deg, #d9a443, #8a5e1f); color:#fff3cf;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Abyss of Glory.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-award" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Temple of Fortune</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Temple of Fortune')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Temple of Fortune'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Original · 243 Ways</span>
+                        <div class="slot-card-title">Temple of Fortune</div>
+                    </div>
+                </div>
+
+
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="aero 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Aero.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Aero</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">Aero</div>
+                    </div>
+                </div>
+
+                <!-- Game 8: All Ways Hot Fruits -->
+                <div class="slot-card" data-category="popular chicken" data-name="all ways hot fruits playson">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/All Ways Hot Fruits.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">All Ways Hot Fruits</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('All Ways Hot Fruits')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('All Ways Hot Fruits'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">All Ways Hot Fruits</div>
+                    </div>
+                </div>
+
+                <!-- Game 9: Angry Birds -->
+                <div class="slot-card" data-category="quick new" data-name="angry birds evoplay">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Angry Birds.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Angry Birds</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Angry Birds')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Angry Birds'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">Angry Birds</div>
+                    </div>
+                </div>
+
+                <!-- Game 10: BaBayiagatales -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="babayiagatales betsoft">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/BaBayiagatales.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">BaBayiagatales</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('BaBayiagatales')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('BaBayiagatales'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">BaBayiagatales</div>
+                    </div>
+                </div>
+
+                <!-- Game 11: Bazaarhold&wun -->
+                <div class="slot-card" data-category="new exclusive" data-name="bazaarhold&wun smartsoft gaming">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Bazaarhold&wun.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Bazaarhold&wun</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Bazaarhold&wun')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Bazaarhold&wun'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">Bazaarhold&wun</div>
+                    </div>
+                </div>
+
+                <!-- Game 12: Best Gold Miner -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="best gold miner fazi">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Best Gold Miner.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Best Gold Miner</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Best Gold Miner')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Best Gold Miner'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Best Gold Miner</div>
+                    </div>
+                </div>
+
+                <!-- Game 13: Bonsai Spins -->
+                <div class="slot-card" data-category="exclusive popular" data-name="bonsai spins pg soft">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Bonsai Spins.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Bonsai Spins</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Bonsai Spins')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Bonsai Spins'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">Bonsai Spins</div>
+                    </div>
+                </div>
+
+                <!-- Game 14: Book of Sheba -->
+                <div class="slot-card" data-category="bonus quick" data-name="book of sheba pragmatic play">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Book of Sheba.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Book of Sheba</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Book of Sheba')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Book of Sheba'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Book of Sheba</div>
+                    </div>
+                </div>
+
+                <!-- Game 15: Buffalo Goes Wild -->
+                <div class="slot-card" data-category="popular chicken" data-name="buffalo goes wild amusnet interactive">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Buffalo Goes Wild.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Buffalo Goes Wild</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Buffalo Goes Wild')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Buffalo Goes Wild'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">Buffalo Goes Wild</div>
+                    </div>
+                </div>
+
+                <!-- Game 16: Burning Eye -->
+                <div class="slot-card" data-category="quick new" data-name="burning eye egt">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Burning Eye.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Eye</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Eye')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Burning Eye'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">Burning Eye</div>
+                    </div>
+                </div>
+
+                <!-- Game 17: Burning Hot Clover Chance -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="burning hot clover chance jili">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Burning Hot Clover Chance.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Hot Clover Chance</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Hot Clover Chance')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Burning Hot Clover Chance'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">Burning Hot Clover Chance</div>
+                    </div>
+                </div>
+
+                <!-- Game 18: Burning Slots 100 -->
+                <div class="slot-card" data-category="new exclusive" data-name="burning slots 100 netent">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Burning Slots 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Slots 100</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Slots 100')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Burning Slots 100'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">Burning Slots 100</div>
+                    </div>
+                </div>
+
+                <!-- Game 19: Cabaretroyialeholdandearyi -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="cabaretroyialeholdandearyi spinomenal">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Cabaretroyialeholdandearyi.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Cabaretroyialeholdandearyi</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Cabaretroyialeholdandearyi')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Cabaretroyialeholdandearyi'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">Cabaretroyialeholdandearyi</div>
+                    </div>
+                </div>
+
+                <!-- Game 20: Catch 'n Cash -->
+                <div class="slot-card" data-category="exclusive popular" data-name="catch 'n cash hacksaw gaming">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Catch 'n Cash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Catch 'n Cash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Catch \'n Cash')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Catch \'n Cash'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">Catch 'n Cash</div>
+                    </div>
+                </div>
+
+                <!-- Game 21: Chickenroad -->
+                <div class="slot-card" data-category="bonus quick" data-name="chickenroad playson">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Chickenroad.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Chickenroad</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Chickenroad')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Chickenroad'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">Chickenroad</div>
+                    </div>
+                </div>
+
+                <!-- Game 22: Clover Coin Combo -->
+                <div class="slot-card" data-category="popular chicken" data-name="clover coin combo evoplay">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Clover Coin Combo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Clover Coin Combo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Clover Coin Combo')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Clover Coin Combo'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">Clover Coin Combo</div>
+                    </div>
+                </div>
+
+                <!-- Game 23: CoinSpin Fever -->
+                <div class="slot-card" data-category="quick new" data-name="coinspin fever betsoft">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/CoinSpin Fever.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">CoinSpin Fever</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('CoinSpin Fever')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('CoinSpin Fever'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">CoinSpin Fever</div>
+                    </div>
+                </div>
+
+                <!-- Game 24: CrashX -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="crashx 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/CrashX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">CrashX</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">CrashX</div>
+                    </div>
+                </div>
+
+                <!-- Game 25: Crazy 777 2 -->
+                <div class="slot-card" data-category="new exclusive" data-name="crazy 777 2 fazi">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Crazy 777 2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Crazy 777 2</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Crazy 777 2')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Crazy 777 2'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Crazy 777 2</div>
+                    </div>
+                </div>
+
+                <!-- Game 26: Deigodsv -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="deigodsv pg soft">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Deigodsv.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Deigodsv</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Deigodsv')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Deigodsv'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">Deigodsv</div>
+                    </div>
+                </div>
+
+                <!-- Game 27: Demigods -->
+                <div class="slot-card" data-category="exclusive popular" data-name="demigods pragmatic play">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Demigods.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Demigods</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Demigods')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Demigods'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Demigods</div>
+                    </div>
+                </div>
+
+                <!-- Game 28: Dracosgold -->
+                <div class="slot-card" data-category="bonus quick" data-name="dracosgold amusnet interactive">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Dracosgold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Dracosgold</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Dracosgold')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Dracosgold'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">Dracosgold</div>
+                    </div>
+                </div>
+
+                <!-- Game 29: Dragonmagic -->
+                <div class="slot-card" data-category="popular chicken" data-name="dragonmagic egt">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Dragonmagic.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Dragonmagic</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Dragonmagic')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Dragonmagic'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">Dragonmagic</div>
+                    </div>
+                </div>
+
+                <!-- Game 30: Egg Hunter -->
+                <div class="slot-card" data-category="quick new" data-name="egg hunter jili">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Egg Hunter.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Egg Hunter</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Egg Hunter')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Egg Hunter'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">Egg Hunter</div>
+                    </div>
+                </div>
+
+                <!-- Game 31: Fairy Fortune Deluxe -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="fairy fortune deluxe netent">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Fairy Fortune Deluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fairy Fortune Deluxe</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Fairy Fortune Deluxe')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Fairy Fortune Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">Fairy Fortune Deluxe</div>
+                    </div>
+                </div>
+
+                <!-- Game 32: FalconCashHoldandWin -->
+                <div class="slot-card" data-category="new exclusive" data-name="falconcashholdandwin spinomenal">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/FalconCashHoldandWin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">FalconCashHoldandWin</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('FalconCashHoldandWin')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('FalconCashHoldandWin'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">FalconCashHoldandWin</div>
+                    </div>
+                </div>
+
+                <!-- Game 33: Firestorm 7 -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="firestorm 7 hacksaw gaming">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Firestorm 7.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Firestorm 7</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Firestorm 7')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Firestorm 7'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">Firestorm 7</div>
+                    </div>
+                </div>
+
+                <!-- Game 34: Football -->
+                <div class="slot-card" data-category="exclusive popular" data-name="football playson">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Football.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-futbol" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Football</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Football')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Football'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">Football</div>
+                    </div>
+                </div>
+
+                <!-- Game 35: Frog's Ball Lock 2 Spin -->
+                <div class="slot-card" data-category="bonus quick" data-name="frog's ball lock 2 spin evoplay">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Frog's Ball Lock 2 Spin™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-futbol" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Frog's Ball Lock 2 Spin</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Frog\'s Ball Lock 2 Spin')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Frog\'s Ball Lock 2 Spin'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">Frog's Ball Lock 2 Spin</div>
+                    </div>
+                </div>
+
+                <!-- Game 36: Fruit Scapes Pull Tabs -->
+                <div class="slot-card" data-category="popular chicken" data-name="fruit scapes pull tabs betsoft">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Fruit Scapes Pull Tabs.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fruit Scapes Pull Tabs</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Fruit Scapes Pull Tabs')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Fruit Scapes Pull Tabs'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">Fruit Scapes Pull Tabs</div>
+                    </div>
+                </div>
+
+                <!-- Game 37: GemBlitz Bonanza -->
+                <div class="slot-card" data-category="quick new" data-name="gemblitz bonanza smartsoft gaming">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/GemBlitz Bonanza.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">GemBlitz Bonanza</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('GemBlitz Bonanza')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('GemBlitz Bonanza'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">GemBlitz Bonanza</div>
+                    </div>
+                </div>
+
+                <!-- Game 38: Goldenmine -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="goldenmine fazi">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Goldenmine.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Goldenmine</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Goldenmine')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Goldenmine'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Goldenmine</div>
+                    </div>
+                </div>
+
+                <!-- Game 39: Gonzo's Quest -->
+                <div class="slot-card" data-category="new exclusive" data-name="gonzo's quest pg soft">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Gonzo's Quest™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Gonzo's Quest</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Gonzo\'s Quest')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Gonzo\'s Quest'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">Gonzo's Quest</div>
+                    </div>
+                </div>
+
+                <!-- Old HelicopterX card slot removed (moved to Game 2 position) -->
+
+                <!-- Game 41: Hot Slot 777 Hold the Jackpot -->
+                <div class="slot-card" data-category="exclusive popular" data-name="hot slot 777 hold the jackpot amusnet interactive">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Hot Slot™ 777 Hold the Jackpot™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Hot Slot 777 Hold the Jackpot</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Hot Slot 777 Hold the Jackpot')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Hot Slot 777 Hold the Jackpot'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">Hot Slot 777 Hold the Jackpot</div>
+                    </div>
+                </div>
+
+                <!-- Game 42: Indian Gold -->
+                <div class="slot-card" data-category="bonus quick" data-name="indian gold egt">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Indian Gold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Indian Gold</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Indian Gold')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Indian Gold'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">Indian Gold</div>
+                    </div>
+                </div>
+
+                <!-- Game 43: Joker Poker -->
+                <div class="slot-card" data-category="popular chicken" data-name="joker poker jili">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Joker Poker.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Joker Poker</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Joker Poker')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Joker Poker'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">Joker Poker</div>
+                    </div>
+                </div>
+
+                <!-- Game 44: Joker's Jewels Cash -->
+                <div class="slot-card" data-category="quick new" data-name="joker's jewels cash netent">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Joker's Jewels Cash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Joker's Jewels Cash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Joker\'s Jewels Cash')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Joker\'s Jewels Cash'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">Joker's Jewels Cash</div>
+                    </div>
+                </div>
+
+                <!-- Game 45: Juicywinsx10000 -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="juicywinsx10000 spinomenal">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Juicywinsx10000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Juicywinsx10000</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Juicywinsx10000')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Juicywinsx10000'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">Juicywinsx10000</div>
+                    </div>
+                </div>
+
+                <!-- Game 46: King Of Vikingso -->
+                <div class="slot-card" data-category="new exclusive" data-name="king of vikingso hacksaw gaming">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/King Of Vikingso.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-shield-halved" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">King Of Vikingso</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('King Of Vikingso')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('King Of Vikingso'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">King Of Vikingso</div>
+                    </div>
+                </div>
+
+                <!-- Game 47: Lucky Joker 10 -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="lucky joker 10 playson">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Lucky Joker 10.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Lucky Joker 10</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Lucky Joker 10')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Lucky Joker 10'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">Lucky Joker 10</div>
+                    </div>
+                </div>
+
+                <!-- Game 48: Lucky Joker 100 -->
+                <div class="slot-card" data-category="exclusive popular" data-name="lucky joker 100 evoplay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                        <img src="{{ asset("assets/image/Lucky Joker 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Lucky Joker 100</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Lucky Joker 100')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Lucky Joker 100'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">Lucky Joker 100</div>
+                    </div>
+                </div>
+
+                <!-- Game 49: Luxe 555 -->
+                <div class="slot-card" data-category="bonus quick" data-name="luxe 555 betsoft">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Luxe 555.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Luxe 555</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Luxe 555')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Luxe 555'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">Luxe 555</div>
+                    </div>
+                </div>
+
+                <!-- Game 50: Magic Of The Ring -->
+                <div class="slot-card" data-category="popular chicken" data-name="magic of the ring smartsoft gaming">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Magic Of The Ring.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Magic Of The Ring</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Magic Of The Ring')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Magic Of The Ring'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">Magic Of The Ring</div>
+                    </div>
+                </div>
+
+                <!-- Game 51: Mio and Neko Rock -->
+                <div class="slot-card" data-category="quick new" data-name="mio and neko rock fazi">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Mio and Neko Rock.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Mio and Neko Rock</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Mio and Neko Rock')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Mio and Neko Rock'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Mio and Neko Rock</div>
+                    </div>
+                </div>
+
+                <!-- Game 52: Mystic Spin -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="mystic spin pg soft">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Mystic Spin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Mystic Spin</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Mystic Spin')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Mystic Spin'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">Mystic Spin</div>
+                    </div>
+                </div>
+
+                <!-- Game 53: Ocean Legacy -->
+                <div class="slot-card" data-category="new exclusive" data-name="ocean legacy pragmatic play">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Ocean Legacy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Ocean Legacy</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Ocean Legacy')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Ocean Legacy'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Ocean Legacy</div>
+                    </div>
+                </div>
+
+                <!-- Game 54: Oliver's Bar Deluxe -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="oliver's bar deluxe amusnet interactive">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Oliver's Bar Deluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Oliver's Bar Deluxe</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Oliver\'s Bar Deluxe')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Oliver\'s Bar Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">Oliver's Bar Deluxe</div>
+                    </div>
+                </div>
+
+                <!-- Game 55: Olympus Rivals -->
+                <div class="slot-card" data-category="exclusive popular" data-name="olympus rivals egt">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Olympus Rivals.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Olympus Rivals</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Olympus Rivals')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Olympus Rivals'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">Olympus Rivals</div>
+                    </div>
+                </div>
+
+                <!-- Game 56: Primate King -->
+                <div class="slot-card" data-category="bonus quick" data-name="primate king jili">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Primate King.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Primate King</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Primate King')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Primate King'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">Primate King</div>
+                    </div>
+                </div>
+
+                <!-- Game 57: Pure Ecstasy -->
+                <div class="slot-card" data-category="popular chicken" data-name="pure ecstasy netent">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Pure Ecstasy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Pure Ecstasy</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Pure Ecstasy')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Pure Ecstasy'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">Pure Ecstasy</div>
+                    </div>
+                </div>
+
+                <!-- Game 58: Roulette Royal -->
+                <div class="slot-card" data-category="quick new" data-name="roulette royal spinomenal">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Roulette Royal.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-circle-dot" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Roulette Royal</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Roulette Royal')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Roulette Royal'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">Roulette Royal</div>
+                    </div>
+                </div>
+
+                <!-- Game 59: Royaltyofolympus -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="royaltyofolympus hacksaw gaming">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Royaltyofolympus.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Royaltyofolympus</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Royaltyofolympus')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Royaltyofolympus'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">Royaltyofolympus</div>
+                    </div>
+                </div>
+
+                <!-- Game 60: SBonanza2500 -->
+                <div class="slot-card" data-category="new exclusive" data-name="sbonanza2500 playson">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/SBonanza2500.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">SBonanza2500</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('SBonanza2500')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('SBonanza2500'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">SBonanza2500</div>
+                    </div>
+                </div>
+
+                <!-- Game 61: Simply the Best -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="simply the best evoplay">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Simply the Best.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Simply the Best</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Simply the Best')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Simply the Best'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">Simply the Best</div>
+                    </div>
+                </div>
+
+                <!-- Game 62: Sugar Monster -->
+                <div class="slot-card" data-category="exclusive popular" data-name="sugar monster betsoft">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Sugar Monster.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-ghost" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Sugar Monster</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Sugar Monster')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Sugar Monster'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">Sugar Monster</div>
+                    </div>
+                </div>
+
+                <!-- Game 63: SugrRush1000 -->
+                <div class="slot-card" data-category="bonus quick" data-name="sugrrush1000 smartsoft gaming">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/SugrRush1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">SugrRush1000</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('SugrRush1000')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('SugrRush1000'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">SugrRush1000</div>
+                    </div>
+                </div>
+
+                <!-- Game 64: Sumo -->
+                <div class="slot-card" data-category="popular chicken" data-name="sumo fazi">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Sumo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-child-combatant" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Sumo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Sumo')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Sumo'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Sumo</div>
+                    </div>
+                </div>
+
+                <!-- Game 65: Tlesofcamelotmoonlitquest -->
+                <div class="slot-card" data-category="quick new" data-name="tlesofcamelotmoonlitquest pg soft">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Tlesofcamelotmoonlitquest.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Tlesofcamelotmoonlitquest</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Tlesofcamelotmoonlitquest')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Tlesofcamelotmoonlitquest'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">Tlesofcamelotmoonlitquest</div>
+                    </div>
+                </div>
+
+                <!-- Game 66: Wild West -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="wild west pragmatic play">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Wild West.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Wild West</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Wild West')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Wild West'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Wild West</div>
+                    </div>
+                </div>
+
+                <!-- Game 67: Wood Luck -->
+                <div class="slot-card" data-category="new exclusive" data-name="wood luck amusnet interactive">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Wood Luck.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Wood Luck</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Wood Luck')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Wood Luck'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">Wood Luck</div>
+                    </div>
+                </div>
+
+                <!-- Game 68: Zeus Lightning Megaways -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="zeus lightning megaways egt">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/Zeus Lightning Megaways.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Zeus Lightning Megaways</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Zeus Lightning Megaways')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Zeus Lightning Megaways'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">Zeus Lightning Megaways</div>
+                    </div>
+                </div>
+
+                <!-- Game 69: bigbass -->
+                <div class="slot-card" data-category="exclusive popular" data-name="bigbass jili">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/bigbass.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">bigbass</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="window.location.href='{{ route('big-bass-splash') }}'"><i class="fas fa-play"></i></button>
+                        <a href="{{ route('big-bass-splash') }}?demo=1" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">bigbass</div>
+                    </div>
+                </div>
+
+                <!-- Game 70: bonusmainadelixe -->
+                <div class="slot-card" data-category="bonus quick" data-name="bonusmainadelixe netent">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/bonusmainadelixe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">bonusmainadelixe</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('bonusmainadelixe')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('bonusmainadelixe'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">bonusmainadelixe</div>
+                    </div>
+                </div>
+
+                <!-- Game 71: brainrotmaina -->
+                <div class="slot-card" data-category="popular chicken" data-name="brainrotmaina spinomenal">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/brainrotmaina.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">brainrotmaina</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('brainrotmaina')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('brainrotmaina'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">brainrotmaina</div>
+                    </div>
+                </div>
+
+                <!-- Game 72: caishengold -->
+                <div class="slot-card" data-category="quick new" data-name="caishengold hacksaw gaming">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/caishengold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">caishengold</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('caishengold')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('caishengold'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">caishengold</div>
+                    </div>
+                </div>
+
+                <!-- Game 73: cashme -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="cashme playson">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/cashme.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Cash Me If You Can</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('cashme')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('cashme'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">Cash Me If You Can</div>
+                    </div>
+                </div>
+
+                <!-- Game 74: coinodysseyi -->
+                <div class="slot-card" data-category="new exclusive" data-name="coinodysseyi evoplay">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/coinodysseyi.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">coinodysseyi</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('coinodysseyi')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('coinodysseyi'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">coinodysseyi</div>
+                    </div>
+                </div>
+
+                <!-- Game 75: crash -->
+                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="crash 1xgames exclusive">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/crash.png") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">crash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">crash</div>
+                    </div>
+                </div>
+
+                <!-- Game 76: elementalfusion -->
+                <div class="slot-card" data-category="exclusive popular" data-name="elementalfusion smartsoft gaming">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/elementalfusion.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">elementalfusion</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('elementalfusion')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('elementalfusion'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">elementalfusion</div>
+                    </div>
+                </div>
+
+                <!-- Game 77: elveskirgoodr -->
+                <div class="slot-card" data-category="bonus quick" data-name="elveskirgoodr fazi">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/elveskirgoodr.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Elves' Kingdom</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('elveskirgoodr')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('elveskirgoodr'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">Elves' Kingdom</div>
+                    </div>
+                </div>
+
+                <!-- Game 78: fortunegems2 -->
+                <div class="slot-card" data-category="popular chicken" data-name="fortunegems2 pg soft">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/fortunegems2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">fortunegems2</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('fortunegems2')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('fortunegems2'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">fortunegems2</div>
+                    </div>
+                </div>
+
+                <!-- Game 79: fortunenumbers -->
+                <div class="slot-card" data-category="quick new" data-name="fortunenumbers pragmatic play">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/fortunenumbers.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">fortunenumbers</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('fortunenumbers')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('fortunenumbers'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">fortunenumbers</div>
+                    </div>
+                </div>
+
+                <!-- Game 80: gatesofmerlyn -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="gatesofmerlyn amusnet interactive">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/gatesofmerlyn.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">gatesofmerlyn</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('gatesofmerlyn')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('gatesofmerlyn'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">gatesofmerlyn</div>
+                    </div>
+                </div>
+
+                <!-- Game 81: godslovegoldhold&win -->
+                <div class="slot-card" data-category="new exclusive" data-name="godslovegoldhold&win egt">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/godslovegoldhold&win.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">godslovegoldhold&win</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('godslovegoldhold&win')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('godslovegoldhold&win'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">godslovegoldhold&win</div>
+                    </div>
+                </div>
+
+                <!-- Game 82: gueens&diamonds -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="gueens&diamonds jili">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/gueens&diamonds.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">gueens&diamonds</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('gueens&diamonds')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('gueens&diamonds'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">gueens&diamonds</div>
+                    </div>
+                </div>
+
+                <!-- Game 83: holdandearn -->
+                <div class="slot-card" data-category="exclusive popular" data-name="holdandearn netent">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/holdandearn.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">holdandearn</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('holdandearn')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('holdandearn'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">holdandearn</div>
+                    </div>
+                </div>
+
+                <!-- Game 84: holdandspin -->
+                <div class="slot-card" data-category="bonus quick" data-name="holdandspin spinomenal">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/holdandspin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">holdandspin</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('holdandspin')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('holdandspin'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">holdandspin</div>
+                    </div>
+                </div>
+
+                <!-- Game 85: hotfruitsonfire -->
+                <div class="slot-card" data-category="popular chicken" data-name="hotfruitsonfire hacksaw gaming">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/hotfruitsonfire.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">hotfruitsonfire</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('hotfruitsonfire')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('hotfruitsonfire'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">hotfruitsonfire</div>
+                    </div>
+                </div>
+
+                <!-- Game 86: lepharaoh -->
+                <div class="slot-card" data-category="quick new" data-name="lepharaoh playson">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/lepharaoh.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">lepharaoh</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('lepharaoh')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('lepharaoh'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">lepharaoh</div>
+                    </div>
+                </div>
+
+                <!-- Game 87: luckyace -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="luckyace evoplay">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/luckyace.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-dice" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">luckyace</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('luckyace')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('luckyace'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">luckyace</div>
+                    </div>
+                </div>
+
+                <!-- Game 88: majesticclaws -->
+                <div class="slot-card" data-category="new exclusive" data-name="majesticclaws betsoft">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/majesticclaws.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">majesticclaws</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('majesticclaws')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('majesticclaws'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">majesticclaws</div>
+                    </div>
+                </div>
+
+                <!-- Game 89: majesticwildbuffalo -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="majesticwildbuffalo smartsoft gaming">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/majesticwildbuffalo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">majesticwildbuffalo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('majesticwildbuffalo')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('majesticwildbuffalo'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">majesticwildbuffalo</div>
+                    </div>
+                </div>
+
+                <!-- Game 90: megablock -->
+                <div class="slot-card" data-category="exclusive popular" data-name="megablock fazi">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/megablock.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">megablock</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('megablock')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('megablock'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">megablock</div>
+                    </div>
+                </div>
+
+                <!-- Game 91: moenycoming -->
+                <div class="slot-card" data-category="bonus quick" data-name="moenycoming pg soft">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/moenycoming.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">moenycoming</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('moenycoming')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('moenycoming'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">moenycoming</div>
+                    </div>
+                </div>
+
+                <!-- Game 92: multihot5 -->
+                <div class="slot-card" data-category="popular chicken" data-name="multihot5 pragmatic play">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/multihot5.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">multihot5</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('multihot5')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('multihot5'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">multihot5</div>
+                    </div>
+                </div>
+
+                <!-- Game 93: phoenik -->
+                <div class="slot-card" data-category="quick new" data-name="phoenik amusnet interactive">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/phoenik.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">phoenik</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('phoenik')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('phoenik'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">phoenik</div>
+                    </div>
+                </div>
+
+                <!-- Game 94: piggycash -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="piggycash egt">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/piggycash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">piggycash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('piggycash')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('piggycash'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">EGT</span>
+                        <div class="slot-card-title">piggycash</div>
+                    </div>
+                </div>
+
+                <!-- Game 95: royal&emirates -->
+                <div class="slot-card" data-category="new exclusive" data-name="royal&emirates jili">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/royal&emirates.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">royal&emirates</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('royal&emirates')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('royal&emirates'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili</span>
+                        <div class="slot-card-title">royal&emirates</div>
+                    </div>
+                </div>
+
+                <!-- Game 96: seetboonaza1000 -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="seetboonaza1000 netent">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/seetboonaza1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">seetboonaza1000</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('seetboonaza1000')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('seetboonaza1000'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">NetEnt</span>
+                        <div class="slot-card-title">seetboonaza1000</div>
+                    </div>
+                </div>
+
+                <!-- Game 97: shakib75cricketlegacy -->
+                <div class="slot-card" data-category="exclusive popular" data-name="shakib75cricketlegacy spinomenal">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/shakib75cricketlegacy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">shakib75cricketlegacy</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('shakib75cricketlegacy')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('shakib75cricketlegacy'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Spinomenal</span>
+                        <div class="slot-card-title">shakib75cricketlegacy</div>
+                    </div>
+                </div>
+
+                <!-- Game 98: starlightprincess1000 -->
+                <div class="slot-card" data-category="bonus quick" data-name="starlightprincess1000 hacksaw gaming">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/starlightprincess1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-person-dress" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">starlightprincess1000</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('starlightprincess1000')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('starlightprincess1000'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hacksaw Gaming</span>
+                        <div class="slot-card-title">starlightprincess1000</div>
+                    </div>
+                </div>
+
+                <!-- Game 99: stormforged -->
+                <div class="slot-card" data-category="popular chicken" data-name="stormforged playson">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/stormforged.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">stormforged</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('stormforged')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('stormforged'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Playson</span>
+                        <div class="slot-card-title">stormforged</div>
+                    </div>
+                </div>
+
+                <!-- Game 100: sunshinerichwebp -->
+                <div class="slot-card" data-category="quick new" data-name="sunshinerichwebp evoplay">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/sunshinerichwebp.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sunshinerichwebp</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('sunshinerichwebp')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('sunshinerichwebp'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Evoplay</span>
+                        <div class="slot-card-title">sunshinerichwebp</div>
+                    </div>
+                </div>
+
+                <!-- Game 101: sweetbonazaxmas -->
+                <div class="slot-card" data-category="chicken bangladesh" data-name="sweetbonazaxmas betsoft">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/sweetbonazaxmas.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sweetbonazaxmas</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('sweetbonazaxmas')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('sweetbonazaxmas'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Betsoft</span>
+                        <div class="slot-card-title">sweetbonazaxmas</div>
+                    </div>
+                </div>
+
+                <!-- Game 102: sweetdreambonaaz -->
+                <div class="slot-card" data-category="new exclusive" data-name="sweetdreambonaaz smartsoft gaming">
+                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/sweetdreambonaaz.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sweetdreambonaaz</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('sweetdreambonaaz')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('sweetdreambonaaz'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Smartsoft Gaming</span>
+                        <div class="slot-card-title">sweetdreambonaaz</div>
+                    </div>
+                </div>
+
+                <!-- Game 103: theemirate -->
+                <div class="slot-card" data-category="bangladesh bonus" data-name="theemirate fazi">
+                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/theemirate.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">theemirate</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('theemirate')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('theemirate'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Fazi</span>
+                        <div class="slot-card-title">theemirate</div>
+                    </div>
+                </div>
+
+                <!-- Game 104: veryhot5 -->
+                <div class="slot-card" data-category="exclusive popular" data-name="veryhot5 pg soft">
+                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/veryhot5.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">veryhot5</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('veryhot5')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('veryhot5'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PG Soft</span>
+                        <div class="slot-card-title">veryhot5</div>
+                    </div>
+                </div>
+
+                <!-- Game 105: western -->
+                <div class="slot-card" data-category="bonus quick" data-name="western pragmatic play">
+                    
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/western.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Heist</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('western')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('western'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">western</div>
+                    </div>
+                </div>
+
+                <!-- Game 106: wildtrailscasino -->
+                <div class="slot-card" data-category="popular chicken" data-name="wildtrailscasino amusnet interactive">
+                    <span class="slot-badge slot-badge-promo">PROMO</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/wildtrailscasino.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">wildtrailscasino</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('wildtrailscasino')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('wildtrailscasino'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amusnet Interactive</span>
+                        <div class="slot-card-title">wildtrailscasino</div>
+                    </div>
+                </div>
+
+                <!-- Game: BonBon Bonanza (New) -->
+                <div class="slot-card" onclick="demoGameRedirect('bonbonbonanza')" data-category="new popular bonus" data-name="bonbon bonanza pragmatic play">
+                    <span class="slot-badge slot-badge-drops" style="background: linear-gradient(135deg,#e91e8c,#f06292); color:#fff;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/BonBon Bonanza.webp') }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #880e4f 0%, #e91e8c 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-candy-cane" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">BonBon Bonanza</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay" onclick="event.stopPropagation();">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('bonbonbonanza')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('bonbonbonanza'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">BonBon Bonanza</div>
+                    </div>
+                </div>
+
             </div>
+
         </main>
 
-        <!-- Live Winners Ticker Bar -->
-        <section class="live-winners-ticker">
-            <div class="ticker-header"><i class="fas fa-circle-nodes pulse-icon-green"></i> LIVE BIG WINNERS</div>
-            <div class="ticker-content-wrapper">
-                <div class="ticker-scroll-track">
-                    <span class="ticker-item"><span class="text-gold">User: *****35</span> | Bet: 500 BDT | Cashed: <span class="badge-success-light">12.04x</span> | Won: <span class="text-green">6,020 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****88</span> | Bet: 2000 BDT | Cashed: <span class="badge-success-light">4.33x</span> | Won: <span class="text-green">8,660 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****19</span> | Bet: 300 BDT | Cashed: <span class="badge-success-light">18.50x</span> | Won: <span class="text-green">5,550 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****73</span> | Bet: 1000 BDT | Cashed: <span class="badge-success-light">2.15x</span> | Won: <span class="text-green">2,150 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****44</span> | Bet: 800 BDT | Cashed: <span class="badge-success-light">9.50x</span> | Won: <span class="text-green">7,600 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****35</span> | Bet: 500 BDT | Cashed: <span class="badge-success-light">12.04x</span> | Won: <span class="text-green">6,020 BDT</span></span>
-                    <span class="ticker-item"><span class="text-gold">User: *****88</span> | Bet: 2000 BDT | Cashed: <span class="badge-success-light">4.33x</span> | Won: <span class="text-green">8,660 BDT</span></span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section: How to Play -->
-        <section class="landing-section" id="how-to-play">
-            <h2 class="section-heading">How to Play Crash</h2>
-            <p class="section-subheading">Three simple steps to start winning real BDT multipliers instantly.</p>
+        <!-- Main Dashboard Account Cabinet (Hidden by default, shown when user clicks Cabinet) -->
+        @auth
+        <main class="lobby-main" id="user-cabinet-section" style="display: none;">
             
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-num">1</div>
-                    <div class="step-card-icon"><i class="fas fa-coins"></i></div>
-                    <h3 class="step-card-title">Place Your Bets</h3>
-                    <p class="step-card-desc">Enter your bet size and click the orange "PLACE BET" button. You can place two independent bets at the same time for double winning tactics.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">2</div>
-                    <div class="step-card-icon"><i class="fas fa-plane-departure"></i></div>
-                    <h3 class="step-card-title">Watch Jet Takeoff</h3>
-                    <p class="step-card-desc">The golden supersonic fighter jet starts flying. Watch the curve rise, multiplier ticking up exponentially from 1.00x.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">3</div>
-                    <div class="step-card-icon"><i class="fas fa-hand-holding-dollar"></i></div>
-                    <h3 class="step-card-title">Cash Out & Win BDT</h3>
-                    <p class="step-card-desc">Click the green "CASH OUT" button before the jet crashes to win. Your payouts equal your bet multiplied by the cashout odds!</p>
-                </div>
-            </div>
-        </section>
+            <!-- Back to Lobby button -->
+            <button class="cabinet-back-btn" onclick="toggleCabinet(false)">
+                <i class="fas fa-chevron-left"></i> Back to Casino Slots Lobby
+            </button>
 
-        <!-- Section: Live Leaderboard Tab panel -->
-        <section class="landing-section" id="leaderboard">
-            <h2 class="section-heading">Live Betting Statistics</h2>
-            <p class="section-subheading">Track live active bets, history crash points, and massive daily payouts.</p>
-            
-            <div class="leaderboard-tabs-container">
-                <div class="tabs-header">
-                    <button class="tab-btn active" id="btn-tab-live-bets">
-                        <i class="fas fa-gamepad"></i> Live Bets
+            <!-- Original Laravel Dashboard Tabs Bar -->
+            <div class="dashboard-container" style="max-width:100%; margin:0; padding:0;">
+                
+                <!-- Action Alerts Banner -->
+                <div id="dashboard-global-alert" class="dashboard-alert-banner" style="display: none;"></div>
+
+                <!-- 7 Tabs Navigation Menu -->
+                <div class="dashboard-tabs-bar">
+                    <button class="dashboard-tab-trigger active" onclick="switchDashboardTab('tab-overview', this)">
+                        <i class="fas fa-chart-line"></i> Dashboard
                     </button>
-                    <button class="tab-btn" id="btn-tab-crash-history">
-                        <i class="fas fa-history"></i> Crash History
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-bets', this)">
+                        <i class="fas fa-history"></i> My Bets
                     </button>
-                    <button class="tab-btn" id="btn-tab-top-wins">
-                        <i class="fas fa-trophy"></i> Monthly Top Wins
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-transactions', this)">
+                        <i class="fas fa-list-check"></i> Transactions
+                    </button>
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-levels', this)">
+                        <i class="fas fa-crown"></i> Levels Manage
+                    </button>
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-transfer', this)">
+                        <i class="fas fa-paper-plane"></i> Amount Transfer
+                    </button>
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-referral', this)">
+                        <i class="fas fa-users-viewfinder"></i> Referral
+                    </button>
+                    <button class="dashboard-tab-trigger" onclick="switchDashboardTab('tab-profile', this)">
+                        <i class="fas fa-user-gear"></i> Profile
                     </button>
                 </div>
 
-                <!-- Tab Panel 1: Live Bets -->
-                <div class="tab-panel active" id="tab-live-bets">
-                    <div class="leaderboard-table-wrapper">
-                        <table class="leaderboard-table">
+                <!-- ============================================== -->
+                <!-- TAB 1: OVERVIEW                                -->
+                <!-- ============================================== -->
+                <div id="tab-overview" class="dashboard-tab-content active">
+                    <div class="dashboard-grid">
+                        
+                        <!-- Left Sidebar Cards Column -->
+                        <aside class="dashboard-left-column">
+                            <!-- Profile Card -->
+                            <div class="dashboard-panel-card profile-widget">
+                                <div class="profile-avatar-container">
+                                    <div class="profile-avatar">
+                                        <i class="fas fa-user-ninja"></i>
+                                    </div>
+                                    <span class="vip-badge">PILOT LEVEL 1</span>
+                                </div>
+                                <h2 class="profile-name" id="overview-profile-name">{{ auth()->user()->name }}</h2>
+                                <span class="profile-uid">ID: {{ 50000 + auth()->user()->id }}</span>
+                            </div>
+
+                            <!-- Balance Card -->
+                            <div class="dashboard-panel-card wallet-widget">
+                                <div class="wallet-balance-row">
+                                    <div class="wallet-balance-label">Available Wallet Balance</div>
+                                    <div class="wallet-balance-value">
+                                        <span class="balance-symbol">{{ auth()->user()->currency === 'BDT' ? '৳' : (auth()->user()->currency === 'INR' ? '₹' : '$') }}</span>
+                                        <span class="widget-balance-val">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
+                                    </div>
+                                </div>
+                                <div class="wallet-actions">
+                                    <button onclick="openModal('deposit-modal')" class="btn-wallet btn-wallet-deposit">
+                                        <i class="fas fa-circle-down"></i> Deposit
+                                    </button>
+                                    <button onclick="openModal('withdraw-modal')" class="btn-wallet btn-wallet-withdraw">
+                                        <i class="fas fa-circle-up"></i> Withdraw
+                                    </button>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <!-- Right Contents Column -->
+                        <main class="dashboard-right-column">
+                            <!-- Stats Grid -->
+                            <div class="dashboard-stats-grid">
+                                <div class="dashboard-stat-card">
+                                    <div class="stat-card-icon stat-icon-blue">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="stat-card-info">
+                                        <span class="stat-card-value" id="stats-total-matches">148</span>
+                                        <span class="stat-card-label">Total Match</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="dashboard-stat-card">
+                                    <div class="stat-card-icon stat-icon-gold">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div class="stat-card-info">
+                                        <span class="stat-card-value" id="stats-win-ratio">68.4%</span>
+                                        <span class="stat-card-label">Win Ratio</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="dashboard-stat-card">
+                                    <div class="stat-card-icon stat-icon-green">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="stat-card-info">
+                                        <span class="stat-card-value" id="stats-achievements">12</span>
+                                        <span class="stat-card-label">Achievements</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Glowing Play Game CTA Banner -->
+                            <div class="play-game-banner">
+                                <div class="play-game-info">
+                                    <h3 class="play-game-title"><i class="fas fa-plane-departure text-orange"></i> Aviator <span>Crash Flight</span></h3>
+                                    <p class="play-game-desc">Experience our 100% Provably Fair multiplayer betting model. Play the multiplier curve, cash out before takeoff crashes, and double your winnings instantly!</p>
+                                </div>
+                                <div class="play-game-cta">
+                                    <a href="{{ route('play') }}" class="btn-play-pulse">
+                                        PLAY NOW <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Recent Transactions Table -->
+                            <div class="dashboard-panel-card">
+                                <h3 class="dashboard-panel-title"><i class="fas fa-list-check"></i> Recent Wallet Activities</h3>
+                                <div class="dashboard-table-box">
+                                    <div class="dashboard-table-wrapper">
+                                        <table class="dashboard-table" id="table-recent-transactions">
+                                            <thead>
+                                                <tr>
+                                                    <th>DATE & TIME</th>
+                                                    <th>ACTIVITY TYPE</th>
+                                                    <th>PAYMENT GATEWAY</th>
+                                                    <th>TRANS AMOUNT</th>
+                                                    <th>STATUS</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody-recent-transactions">
+                                                <!-- Will populate dynamically -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="recent-transactions-empty" class="empty-table-placeholder" style="display: none;">
+                                        <i class="fas fa-file-circle-exclamation"></i>
+                                        <p>No transaction history found.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                        
+                    </div>
+                </div>
+
+
+        <!-- ============================================== -->
+        <!-- TAB 2: MY BETS                                 -->
+        <!-- ============================================== -->
+        <div id="tab-bets" class="dashboard-tab-content">
+            <div class="dashboard-panel-card">
+                <h3 class="dashboard-panel-title"><i class="fas fa-history"></i> Personal Bets History</h3>
+                <div class="dashboard-table-box">
+                    <div class="dashboard-table-wrapper">
+                        <table class="dashboard-table">
                             <thead>
                                 <tr>
-                                    <th>USER</th>
-                                    <th>BET AMOUNT</th>
-                                    <th>CASHOUT</th>
-                                    <th>WINNINGS</th>
+                                    <th>DATE</th>
+                                    <th>TIME</th>
+                                    <th>ROUND ID</th>
+                                    <th>STAKE AMOUNT</th>
+                                    <th>CASHOUT MULTIPLIER</th>
+                                    <th>PAYOUT WINNINGS</th>
+                                    <th>CRASH POINT</th>
                                 </tr>
                             </thead>
-                            <tbody id="landing-live-bets-tbody">
-                                <!-- Populated dynamically by script -->
+                            <tbody id="tbody-personal-bets">
+                                <!-- Populated dynamically from local storage / simulated -->
                             </tbody>
                         </table>
                     </div>
+                    <div id="personal-bets-empty" class="empty-table-placeholder" style="display: none;">
+                        <i class="fas fa-dice"></i>
+                        <p>You haven't placed any bets yet. Load the game to start flying!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: TRANSACTIONS                            -->
+        <!-- ============================================== -->
+        <div id="tab-transactions" class="dashboard-tab-content">
+            <div class="dashboard-panel-card">
+                <h3 class="dashboard-panel-title"><i class="fas fa-list-check"></i> All Transaction Logs</h3>
+                <div class="dashboard-table-box">
+                    <div class="dashboard-table-wrapper">
+                        <table class="dashboard-table" id="table-all-transactions">
+                            <thead>
+                                <tr>
+                                    <th>DATE & TIME</th>
+                                    <th>ACTIVITY TYPE</th>
+                                    <th>PAYMENT GATEWAY</th>
+                                    <th>TRANS AMOUNT</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-all-transactions">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="all-transactions-empty" class="empty-table-placeholder" style="display: none;">
+                        <i class="fas fa-receipt"></i>
+                        <p>No transactions registered for this account.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: LEVELS MANAGE                            -->
+        <!-- ============================================== -->
+        <div id="tab-levels" class="dashboard-tab-content">
+            <div class="dashboard-panel-card">
+                <h3 class="dashboard-panel-title"><i class="fas fa-crown"></i> VIP Level Status</h3>
+                
+                <!-- Progress display -->
+                <div class="levels-progress-box">
+                    <div class="levels-header-row">
+                        <span class="levels-title">Current Level Progression: <strong>Bronze Pilot</strong></span>
+                        <span class="levels-percent">48% Complete</span>
+                    </div>
+                    <div class="levels-progress-bar-bg">
+                        <div class="levels-progress-bar-fill" style="width: 48%;"></div>
+                    </div>
+                    <span class="levels-footer-text">Bet 5,200.00 {{ auth()->user()->currency }} more to unlock Silver VIP status.</span>
                 </div>
 
-                <!-- Tab Panel 2: Crash History -->
-                <div class="tab-panel" id="tab-crash-history">
-                    <div class="history-grid-landing">
-                        <span class="badge-odd badge-high">35.40x</span>
-                        <span class="badge-odd badge-medium">4.50x</span>
-                        <span class="badge-odd badge-low">1.12x</span>
-                        <span class="badge-odd badge-medium">2.84x</span>
-                        <span class="badge-odd badge-high">12.04x</span>
-                        <span class="badge-odd badge-low">1.03x</span>
-                        <span class="badge-odd badge-medium">5.12x</span>
-                        <span class="badge-odd badge-medium">1.85x</span>
-                        <span class="badge-odd badge-low">1.25x</span>
-                        <span class="badge-odd badge-high">94.30x</span>
-                        <span class="badge-odd badge-medium">3.22x</span>
-                        <span class="badge-odd badge-low">1.01x</span>
-                        <span class="badge-odd badge-medium">2.15x</span>
-                        <span class="badge-odd badge-medium">8.50x</span>
-                        <span class="badge-odd badge-low">1.44x</span>
+                <!-- Levels Grid -->
+                <div class="levels-list-grid">
+                    <div class="level-card-node current unlocked">
+                        <div class="level-node-icon"><i class="fas fa-user-astronaut"></i></div>
+                        <span class="level-node-name">Bronze Pilot</span>
+                        <span class="level-node-req">Default Tier</span>
+                    </div>
+                    
+                    <div class="level-card-node">
+                        <div class="level-node-icon"><i class="fas fa-paper-plane"></i></div>
+                        <span class="level-node-name">Silver VIP</span>
+                        <span class="level-node-req">10,000 Volume</span>
+                    </div>
+                    
+                    <div class="level-card-node">
+                        <div class="level-node-icon"><i class="fas fa-plane"></i></div>
+                        <span class="level-node-name">Gold Pilot</span>
+                        <span class="level-node-req">50,000 Volume</span>
+                    </div>
+                    
+                    <div class="level-card-node">
+                        <div class="level-node-icon"><i class="fas fa-rocket"></i></div>
+                        <span class="level-node-name">Platinum VIP</span>
+                        <span class="level-node-req">250,000 Volume</span>
+                    </div>
+                    
+                    <div class="level-card-node">
+                        <div class="level-node-icon"><i class="fas fa-crown"></i></div>
+                        <span class="level-node-name">Diamond Legend</span>
+                        <span class="level-node-req">1,000,000 Volume</span>
                     </div>
                 </div>
 
-                <!-- Tab Panel 3: Monthly Top Wins -->
-                <div class="tab-panel" id="tab-top-wins">
-                    <div class="leaderboard-table-wrapper">
-                        <table class="leaderboard-table">
+                <!-- Perks Section -->
+                <div class="level-perks-box">
+                    <h4 class="level-perks-title">Your Current Bronze Pilot Benefits:</h4>
+                    <ul class="level-perks-list">
+                        <li class="level-perk-item"><i class="fas fa-check-circle"></i> Standard withdrawal limits up to 50,000 {{ auth()->user()->currency }}/day</li>
+                        <li class="level-perk-item"><i class="fas fa-check-circle"></i> Access to all P2P multi-currency sports modules</li>
+                        <li class="level-perk-item"><i class="fas fa-check-circle"></i> 100% Provably Fair cryptographic verification</li>
+                        <li class="level-perk-item"><i class="fas fa-check-circle"></i> 24/7 Live Agent chat support access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 5: AMOUNT TRANSFER                         -->
+        <!-- ============================================== -->
+        <div id="tab-transfer" class="dashboard-tab-content">
+            <div class="dashboard-panel-card dashboard-form-container">
+                <h3 class="dashboard-panel-title"><i class="fas fa-paper-plane"></i> Peer-to-Peer Wallet Transfer</h3>
+                
+                <div class="gateway-instructions-box" style="margin-bottom: 24px;">
+                    <i class="fas fa-info-circle text-orange"></i> Transfer wallet balances instantly to any registered user email or mobile. Transaction is completed securely inside the escrow wallet ledger. <strong>Zero Network Fees apply!</strong>
+                </div>
+
+                <form id="p2p-transfer-form" onsubmit="handleP2PTransfer(event)">
+                    <div class="dashboard-form-group">
+                        <label class="dashboard-form-label">Recipient Identifier (Email or Phone)</label>
+                        <input type="text" id="transfer-recipient" class="dashboard-form-input" placeholder="e.g. user@example.com or 01700000000" required autocomplete="off">
+                    </div>
+                    
+                    <div class="dashboard-form-group">
+                        <label class="dashboard-form-label">Transfer Amount ({{ auth()->user()->currency }})</label>
+                        <input type="number" id="transfer-amount" class="dashboard-form-input" min="10" step="any" placeholder="Enter amount to transfer" required>
+                    </div>
+                    
+                    <div class="dashboard-form-group">
+                        <label class="dashboard-form-label">Secure Transaction Password</label>
+                        <input type="password" id="transfer-password" class="dashboard-form-input" placeholder="Confirm your account password" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit-purple" id="btn-transfer-submit">
+                        <i class="fas fa-circle-check"></i> CONFIRM ESCROW TRANSFER
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 6: REFERRAL                                -->
+        <!-- ============================================== -->
+        <div id="tab-referral" class="dashboard-tab-content">
+            <div class="dashboard-panel-card">
+                <h3 class="dashboard-panel-title"><i class="fas fa-users-viewfinder"></i> Affiliate Program</h3>
+                
+                <div class="referral-top-row">
+                    <!-- Referral Link Card -->
+                    <div class="referral-link-box">
+                        <span class="referral-link-title">Your Affiliate Link</span>
+                        <div class="referral-link-input-wrapper">
+                            <input type="text" id="affiliate-link-val" class="referral-link-input" readonly value="{{ route('home') }}?ref={{ 50000 + auth()->user()->id }}">
+                            <button onclick="copyAffiliateLink()" class="btn-referral-copy">
+                                <i class="fas fa-copy"></i> COPY
+                            </button>
+                        </div>
+                    </div>
+                    
+                     <!-- Stats widgets -->
+                     <div class="referral-stats-mini-grid">
+                         <div class="referral-stat-mini-card">
+                             <span class="referral-stat-mini-val" id="affiliate-count-widget">0</span>
+                             <span class="referral-stat-mini-label">Total Referrals</span>
+                         </div>
+                         <div class="referral-stat-mini-card">
+                             <span class="referral-stat-mini-val" id="affiliate-earnings-widget">৳ 0.00</span>
+                             <span class="referral-stat-mini-label">Referral Earnings</span>
+                         </div>
+                     </div>
+                </div>
+
+                <!-- Referrals Table -->
+                <h4 class="levels-title" style="margin-bottom: 12px; font-size: 13px;"><i class="fas fa-people-group"></i> Referred User Accounts</h4>
+                <div class="dashboard-table-box">
+                    <div class="dashboard-table-wrapper">
+                        <table class="dashboard-table">
                             <thead>
                                 <tr>
-                                    <th>USER</th>
-                                    <th>BET AMOUNT</th>
-                                    <th>MULTIPLIER</th>
-                                    <th>WINNINGS</th>
+                                    <th>USERNAME</th>
+                                    <th>JOIN DATE</th>
+                                    <th>LEVEL STATUS</th>
+                                    <th>AFFILIATE COMMISSION</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><span class="text-gold">********77</span></td>
-                                    <td>1,200 BDT</td>
-                                    <td><span class="badge-success-light">240.50x</span></td>
-                                    <td><span class="text-green">288,600.00 BDT</span></td>
+                                    <td>Anisur Rahman</td>
+                                    <td>12 Jun 2026</td>
+                                    <td><span class="status-badge status-completed">Silver VIP</span></td>
+                                    <td>৳ 1,200.00</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="text-gold">********15</span></td>
-                                    <td>3,000 BDT</td>
-                                    <td><span class="badge-success-light">84.10x</span></td>
-                                    <td><span class="text-green">252,300.00 BDT</span></td>
+                                    <td>Tanvir Ahmed</td>
+                                    <td>10 Jun 2026</td>
+                                    <td><span class="status-badge status-completed">Bronze Pilot</span></td>
+                                    <td>৳ 850.00</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="text-gold">********93</span></td>
-                                    <td>800 BDT</td>
-                                    <td><span class="badge-success-light">180.20x</span></td>
-                                    <td><span class="text-green">144,160.00 BDT</span></td>
+                                    <td>Jahid Hasan</td>
+                                    <td>08 Jun 2026</td>
+                                    <td><span class="status-badge status-completed">Bronze Pilot</span></td>
+                                    <td>৳ 400.00</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="text-gold">********42</span></td>
-                                    <td>2,500 BDT</td>
-                                    <td><span class="badge-success-light">52.33x</span></td>
-                                    <td><span class="text-green">130,825.00 BDT</span></td>
+                                    <td>Rakibul Islam</td>
+                                    <td>05 Jun 2026</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td>৳ 0.00</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- Section: Fairness -->
-        <section class="landing-section" id="fairness">
-            <h2 class="section-heading"><i class="fas fa-shield-halved text-orange"></i> Provably Fair Gaming</h2>
-            <p class="section-subheading">Verify multiplier outcomes and seeds cryptographically.</p>
-            
-            <div class="fairness-card">
-                <div class="fairness-card-left">
-                    <h3 class="fairness-title">SHA-256 Predetermined Multipliers</h3>
-                    <p class="fairness-desc">
-                        Our crash multipliers are determined using a transparent, provably fair cryptographic algorithm before takeoff. This makes it mathematically impossible for the platform to adjust flight outcomes mid-game.
-                    </p>
-                    <div class="verify-inputs">
-                        <div class="verify-input-group">
-                            <span class="verify-label">Next Round SHA-256 Server Hash:</span>
-                            <code class="verify-code">a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2</code>
+        <!-- ============================================== -->
+        <!-- TAB 7: PROFILE                                 -->
+        <!-- ============================================== -->
+        <div id="tab-profile" class="dashboard-tab-content">
+            <div class="dashboard-grid">
+                <!-- Profile Edit -->
+                <div class="dashboard-panel-card">
+                    <h3 class="dashboard-panel-title"><i class="fas fa-id-card"></i> Edit Profile Information</h3>
+                    <form id="profile-edit-form" onsubmit="handleProfileEdit(event)">
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">Full Name</label>
+                            <input type="text" id="profile-name" class="dashboard-form-input" value="{{ auth()->user()->name }}" required>
                         </div>
-                    </div>
-                </div>
-                <div class="fairness-card-right">
-                    <div class="shield-graphic-container">
-                        <i class="fas fa-lock shield-lock-icon"></i>
-                        <span class="shield-badge">VERIFIED CRYPTO SHIELD</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+                        
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">Email Address (Locked)</label>
+                            <input type="email" class="dashboard-form-input" value="{{ auth()->user()->email }}" disabled>
+                        </div>
+                        
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">Mobile Number (Locked)</label>
+                            <input type="text" class="dashboard-form-input" value="{{ auth()->user()->mobile }}" disabled>
+                        </div>
+                        
+                        <div class="dashboard-form-row">
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label">Gender</label>
+                                <select id="profile-gender" class="dashboard-form-select">
+                                    <option value="Male" {{ auth()->user()->gender === 'Male' ? 'selected' : '' }}>Male</option>
+                                    <option value="Female" {{ auth()->user()->gender === 'Female' ? 'selected' : '' }}>Female</option>
+                                    <option value="Other" {{ auth()->user()->gender === 'Other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label">Country</label>
+                                <input type="text" id="profile-country" class="dashboard-form-input" value="{{ auth()->user()->country }}" required>
+                            </div>
+                        </div>
 
-        <!-- Section: Features (Why Choose Us) -->
-        <section class="landing-section" id="features">
-            <h2 class="section-heading">Why Choose Aviator Escrow?</h2>
-            <p class="section-subheading">Enjoy state-of-the-art cryptographic fairness, instant transactions, and active gameplay.</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h3 class="feature-title">Provably Fair System</h3>
-                    <p class="feature-desc">Every flight multiplier outcome is cryptographically verified on-chain, ensuring 100% transparent and unbiased results.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
-                    <h3 class="feature-title">Instant Cashouts (BDT)</h3>
-                    <p class="feature-desc">Cash out your winnings instantly to mobile wallet systems like bKash, Nagad, and Rocket with zero delays.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
-                    <h3 class="feature-title">Double Betting Boards</h3>
-                    <p class="feature-desc">Place two independent bets on the same round. Run one on manual cashout and configure the other on auto-play.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-volume-high"></i></div>
-                    <h3 class="feature-title">Web Audio Soundscapes</h3>
-                    <p class="feature-desc">Immerse yourself with rich synthesized soundscapes that speed up with the jet and rumble deeply during crashes.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section: FAQs (Accordion) -->
-        <section class="landing-section" id="faqs">
-            <h2 class="section-heading">Frequently Asked Questions</h2>
-            <p class="section-subheading">Get answers to the most common queries about the Aviator game mechanics.</p>
-            
-            <div class="faqs-container">
-                <details class="faq-item" open>
-                    <summary class="faq-question">What is Sports Escrow Bets Peer 2 Peer?</summary>
-                    <div class="faq-answer">
-                        It is a multiplayer peer-to-peer gaming model where players bet on an increasing curve multiplier represented by a flying jet. Winnings are distributed instantly and securely from the escrow pool upon user cashout.
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">How does the Crash Game multiplier work?</summary>
-                    <div class="faq-answer">
-                        The multiplier starts growing exponentially from 1.00x upwards. The target crash point is predetermined at the start of each round by an unbiased RNG. If you press "CASH OUT" before the jet crashes, you win your bet amount multiplied by the current odds.
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">How can I place bets and cash out automatically?</summary>
-                    <div class="faq-answer">
-                        You can check the "ENABLE AUTOPLAY" button in the betting boards to automatically place the same bet for the next round. You can also specify target cashout odds so that the system secures your winnings automatically.
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">Are deposits and withdrawals secure?</summary>
-                    <div class="faq-answer">
-                        Yes, all deposits and withdrawals are processed through secured, end-to-end encrypted gateways. We integrate with leading mobile financial systems in Bangladesh (bKash, Nagad) to ensure safety.
-                    </div>
-                </details>
-            </div>
-        </section>
-
-        <!-- Section: Help Center / Support Links -->
-        <section class="landing-section" id="help">
-            <h2 class="section-heading">Help Center & Support</h2>
-            <p class="section-subheading">We are online 24/7. Get in touch with our support crew if you need any assistance.</p>
-            
-            <div class="help-grid">
-                <div class="help-card">
-                    <div class="help-card-icon text-orange"><i class="fa-brands fa-telegram"></i></div>
-                    <h3 class="help-card-title">Telegram Channel</h3>
-                    <p class="help-card-desc">Join our official community group for updates, promo codes, and live player discussions.</p>
-                    <a href="https://t.me/example_group" class="help-card-link" target="_blank">JOIN TELEGRAM <i class="fas fa-arrow-right"></i></a>
-                </div>
-                
-                <div class="help-card">
-                    <div class="help-card-icon text-green"><i class="fas fa-headset"></i></div>
-                    <h3 class="help-card-title">24/7 Email Support</h3>
-                    <p class="help-card-desc">Send us a ticket detailing your query and our support team will reply within 15 minutes.</p>
-                    <a href="mailto:support@example.com" class="help-card-link">SEND EMAIL <i class="fas fa-arrow-right"></i></a>
+                        <button type="submit" class="btn-submit-purple" id="btn-profile-submit">
+                            <i class="fas fa-save"></i> SAVE PROFILE CHANGES
+                        </button>
+                    </form>
                 </div>
 
-                <div class="help-card">
-                    <div class="help-card-icon text-gold"><i class="fas fa-book-open"></i></div>
-                    <h3 class="help-card-title">User Guide & Rules</h3>
-                    <p class="help-card-desc">Read our detailed gameplay guides, mathematical curves explanation, and terms of service.</p>
-                    <a href="#faqs" class="help-card-link">VIEW GUIDE <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </section>
+                <!-- Password Change -->
+                <div class="dashboard-panel-card">
+                    <h3 class="dashboard-panel-title"><i class="fas fa-key"></i> Change Security Password</h3>
+                    <form id="password-change-form" onsubmit="handlePasswordChange(event)">
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">Current Password</label>
+                            <input type="password" id="pass-current" class="dashboard-form-input" placeholder="Enter current password" required>
+                        </div>
+                        
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">New Password</label>
+                            <input type="password" id="pass-new" class="dashboard-form-input" placeholder="Enter new password (min 6 characters)" required>
+                        </div>
+                        
+                        <div class="dashboard-form-group">
+                            <label class="dashboard-form-label">Confirm New Password</label>
+                            <input type="password" id="pass-confirm" class="dashboard-form-input" placeholder="Repeat new password" required>
+                        </div>
 
-        <!-- Footer -->
-        <footer class="landing-footer">
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <span class="logo-text-accent">Aviator</span>
-                    <p class="footer-brand-desc">Escrow sports betting made easy and provably fair.</p>
-                </div>
-                <div class="footer-partners">
-                    <span class="partners-title">ACCEPTED WALLETS</span>
-                    <div class="partner-logos">
-                        <span class="partner-badge"><i class="fas fa-mobile-screen"></i> bKash</span>
-                        <span class="partner-badge"><i class="fas fa-mobile-screen"></i> Nagad</span>
-                        <span class="partner-badge"><i class="fas fa-mobile-screen"></i> Rocket</span>
-                    </div>
+                        <button type="submit" class="btn-submit-purple" id="btn-password-submit">
+                            <i class="fas fa-lock"></i> UPDATE PASSWORD
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <span class="footer-copyright">&copy; 2026 Aviator P2P Sports. All rights reserved.</span>
-                <div class="footer-links">
-                    <a href="#">Terms & Conditions</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Responsible Gaming (18+)</a>
-                </div>
-            </div>
-        </footer>
+        </div>
+
     </div>
+    @endauth
+
+    <!-- ============================================== -->
+    <!-- MODAL: DEPOSIT GATEWAY                         -->
+    <!-- ============================================== -->
+    @auth
+    <div id="deposit-modal" class="dashboard-modal-overlay">
+        <div class="dashboard-modal-box" style="max-width:600px; width:100%;">
+            <button class="dashboard-modal-close" onclick="closeModal('deposit-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="dashboard-modal-title"><i class="fas fa-circle-down text-green"></i> Deposit Wallet Balance</h3>
+            
+            <form id="deposit-form" onsubmit="handleDepositSubmit(event)" enctype="multipart/form-data">
+                <label class="dashboard-form-label">Select Deposit Payment Gateway</label>
+                <div class="payment-gateways-grid" id="deposit-gateways-list" style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+                    <!-- Dynamically populated logos grid -->
+                </div>
+
+                <input type="hidden" id="deposit-gateway-id">
+
+                <!-- Gateway instructions container -->
+                <div id="deposit-gateway-instructions" style="margin-bottom:20px; display:none;">
+                    <label class="dashboard-form-label"><i class="fas fa-circle-info text-orange"></i> Payment Instructions</label>
+                    <div class="gateway-instructions-box" id="deposit-instructions-box" style="display:flex; flex-direction:column; gap:10px; background:rgba(255,255,255,0.03); padding:16px; border-radius:10px;">
+                        <!-- Instructions with copy buttons -->
+                    </div>
+                </div>
+
+                <div class="dashboard-form-group">
+                    <label class="dashboard-form-label">Deposit Amount ({{ auth()->user()->currency }})</label>
+                    <input type="number" id="deposit-amount" class="dashboard-form-input" placeholder="Enter deposit amount" min="10" step="any" required>
+                </div>
+                
+                <div class="dashboard-form-group" style="margin-top:12px;">
+                    <label class="dashboard-form-label">Sender Number / Account <span class="text-orange">*</span></label>
+                    <input type="text" name="sender_number" id="deposit-sender-number" class="dashboard-form-input" placeholder="Enter your sender account number" required autocomplete="off">
+                </div>
+
+                <div class="dashboard-form-group" style="margin-top:12px;">
+                    <label class="dashboard-form-label">Transaction ID <span class="text-orange">*</span></label>
+                    <input type="text" name="transaction_id" id="deposit-transaction-id" class="dashboard-form-input" placeholder="Enter transaction ID" required autocomplete="off">
+                </div>
+
+                <div class="dashboard-form-group" style="margin-top:12px;">
+                    <label class="dashboard-form-label">Payment Screenshot <span class="text-orange">*</span></label>
+                    <input type="file" name="screenshot" id="deposit-screenshot" class="dashboard-form-input" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="btn-submit-purple" id="btn-deposit-submit" style="background: var(--color-green); box-shadow: 0 4px 15px rgba(46, 189, 89, 0.4); margin-top:16px;">
+                    <i class="fas fa-circle-check"></i> SUBMIT DEPOSIT REQUEST
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: WITHDRAW GATEWAY                        -->
+    <!-- ============================================== -->
+    <div id="withdraw-modal" class="dashboard-modal-overlay">
+        <div class="dashboard-modal-box" style="max-width:600px; width:100%;">
+            <button class="dashboard-modal-close" onclick="closeModal('withdraw-modal')"><i class="fas fa-times"></i></button>
+            <h3 class="dashboard-modal-title"><i class="fas fa-circle-up text-red"></i> Withdraw Wallet Balance</h3>
+            
+            <form id="withdraw-form" onsubmit="handleWithdrawSubmit(event)">
+                <div class="dashboard-form-group" style="margin-bottom: 20px;">
+                    <label class="dashboard-form-label">Select Withdrawal Payment Method</label>
+                    <select id="withdraw-gateway-select" class="dashboard-form-select" onchange="selectClientWithdrawGateway(this.value)" style="width:100%; cursor:pointer;" required>
+                        <option value="">Choose Method...</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="withdraw-gateway-id">
+
+                <!-- Gateway instructions container for withdrawal if any -->
+                <div id="withdraw-gateway-instructions" style="margin-bottom:20px; display:none;">
+                    <label class="dashboard-form-label"><i class="fas fa-circle-info text-orange"></i> Payment Instructions</label>
+                    <div class="gateway-instructions-box" id="withdraw-instructions-box" style="display:flex; flex-direction:column; gap:10px; background:rgba(255,255,255,0.03); padding:16px; border-radius:10px;">
+                        <!-- Instructions with copy buttons -->
+                    </div>
+                </div>
+
+                <div class="dashboard-form-group">
+                    <label class="dashboard-form-label">Withdrawal Amount ({{ auth()->user()->currency }})</label>
+                    <input type="number" id="withdraw-amount" class="dashboard-form-input" placeholder="Enter withdrawal amount" min="50" step="any" required>
+                </div>
+                
+                <div class="dashboard-form-group" style="margin-top: 12px;">
+                    <label class="dashboard-form-label">Your Wallet Mobile/Account Number</label>
+                    <input type="text" id="withdraw-account" class="dashboard-form-input" placeholder="e.g. 017xxxxxxxx or TBhd7ih..." required>
+                </div>
+
+                <div class="dashboard-form-group" style="margin-top: 12px;">
+                    <label class="dashboard-form-label">Note/Description (Optional)</label>
+                    <input type="text" id="withdraw-note" class="dashboard-form-input" placeholder="Enter note or payment description">
+                </div>
+
+                <button type="submit" class="btn-submit-purple" id="btn-withdraw-submit" style="background: var(--color-red); box-shadow: 0 4px 15px rgba(235, 64, 52, 0.4); margin-top:16px;">
+                    <i class="fas fa-circle-check"></i> CONFIRM WITHDRAWAL
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @endauth
+
+    <!-- Success Copy Toast Alert -->
+    <div id="dashboard-toast-box" class="dashboard-toast">
+        <i class="fas fa-circle-check"></i>
+        <span id="toast-message-val">Success!</span>
+    </div>
+
+    <!-- Hidden Form for CSRF-safe Logout -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <!-- Interactive JS controllers -->
+    <script>
+        // Global variables from PHP state
+        const USER_CURRENCY = "{{ auth()->check() ? auth()->user()->currency : 'BDT' }}";
+        const USER_SYMBOL = USER_CURRENCY === 'BDT' ? '৳' : (USER_CURRENCY === 'INR' ? '₹' : '$');
+
+        function escHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        let transactions = [];
+        
+        // ==========================================================================
+        // 1XBET CASINO LOBBY JS CONTROLS
+        // ==========================================================================
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let slideInterval;
+
+        function showSlide(index) {
+            currentSlide = (index + totalSlides) % totalSlides;
+            
+            // Update active slides
+            document.querySelectorAll('.banner-slide').forEach((slide, idx) => {
+                if (idx === currentSlide) {
+                    slide.classList.add('slide-active');
+                } else {
+                    slide.classList.remove('slide-active');
+                }
+            });
+
+            // Update active dots
+            document.querySelectorAll('.slide-dot').forEach((dot, idx) => {
+                if (idx === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        window.moveSlide = function(direction) {
+            showSlide(currentSlide + direction);
+            resetSlideInterval();
+        }
+
+        window.setSlide = function(index) {
+            showSlide(index);
+            resetSlideInterval();
+        }
+
+        function startSlideInterval() {
+            slideInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 6000); // 6 seconds slide auto-rotate
+        }
+
+        function resetSlideInterval() {
+            clearInterval(slideInterval);
+            startSlideInterval();
+        }
+
+        // Search filtering for slot game cards
+        window.filterLobbyGames = function() {
+            const query = document.getElementById('lobby-search-box').value.toLowerCase();
+            const cards = document.querySelectorAll('#slots-grid-list .slot-card');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Category filter buttons
+        window.filterCategory = function(category, btn) {
+            // Update active styling
+            document.querySelectorAll('.lobby-category-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+
+            const cards = document.querySelectorAll('#slots-grid-list .slot-card');
+            
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cats = card.getAttribute('data-category').split(' ');
+                    if (cats.includes(category)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+            
+            showToast("Filtered category: " + btn.textContent.trim() + " 🎰");
+        }
+
+        // Drone / Aviator game redirect launcher
+        const IS_LOGGED_IN = {{ auth()->check() ? "true" : "false" }};
+        window.launchDroneGame = function(e) {
+            if (!IS_LOGGED_IN) {
+                openAuthModal("login");
+                return;
+            }
+            if (e) e.preventDefault();
+            showToast("Launching 1xAERO (Crash Flight)... ✈️");
+            setTimeout(() => {
+                window.location.href = "{{ route('play') }}";
+            }, 800);
+        }
+
+        // Demo redirect alert for slots
+        window.demoGameRedirect = function(gameName) {
+            if (!IS_LOGGED_IN) {
+                openAuthModal("login");
+                return;
+            }
+            showToast("Demo Mode for " + gameName + " is loading... 🎰");
+            setTimeout(() => {
+                if (gameName === 'Gates of Olympus') {
+                    window.location.href = "{{ route('gates-of-olympus') }}";
+                } else if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
+                    window.location.href = "{{ route('bonbon-bonanza') }}";
+                } else if (gameName === 'Lucky Joker 100') {
+                    window.location.href = "{{ route('lucky-joker-100') }}";
+                } else if (gameName === 'theemirate') {
+                    window.location.href = "{{ route('the-emirate') }}";
+                } else if (gameName === 'royal&emirates') {
+                    window.location.href = "{{ route('royal-emirates') }}";
+                } else if (gameName === 'Gates of Olympus') {
+                    window.location.href = "{{ route('gates-of-olympus') }}";
+                } else if (gameName === 'Boxing King') {
+                    window.location.href = "{{ route('boxing-king') }}";
+                } else if (gameName === 'elveskirgoodr' || gameName === 'Elves\' Kingdom') {
+                    window.location.href = "{{ route('elves-kingdom') }}";
+                } else if (gameName === 'cashme' || gameName === 'Cash Me If You Can') {
+                    window.location.href = "{{ route('treasure-climb') }}";
+                } else if (gameName === 'western' || gameName === 'Western Heist') {
+                    window.location.href = "{{ route('western') }}";
+                } else if (gameName === 'temple-of-fortune' || gameName === 'Temple of Fortune') {
+                    window.location.href = "{{ route('temple-of-fortune') }}";
+                } else if (gameName === 'heads-or-tails' || gameName === 'Heads or Tails') {
+                    window.location.href = "{{ route('heads-or-tails') }}";
+                } else {
+                    window.location.href = "{{ route('play') }}";
+                }
+            }, 1000);
+        }
+
+        // User Cabinet toggle panel (Lobby vs Dashboard Cabinet)
+        window.toggleCabinet = function(show) {
+            if (!IS_LOGGED_IN && show) {
+                openAuthModal("login");
+                return;
+            }
+            const lobbySec = document.getElementById('casino-lobby-section');
+            const cabinetSec = document.getElementById('user-cabinet-section');
+            const navCasino = document.querySelector('.dashboard-header-nav .active');
+            const navCabinet = document.querySelector('.nav-btn-cabinet');
+
+            if (show) {
+                lobbySec.style.display = 'none';
+                cabinetSec.style.display = 'block';
+                if (navCasino) navCasino.classList.remove('active');
+                if (navCabinet) navCabinet.style.borderColor = '#007bff';
+                
+                // Fetch dynamic logs to keep cabinet fresh
+                loadUserTransactions();
+                loadUserReferrals();
+            } else {
+                lobbySec.style.display = 'block';
+                cabinetSec.style.display = 'none';
+                if (navCabinet) navCabinet.style.borderColor = '#1d3354';
+                // Highlight Casino tab as active
+                document.querySelectorAll('.dashboard-header-nav a').forEach(a => {
+                    if (a.textContent.includes('CASINO')) {
+                        a.classList.add('active');
+                    } else {
+                        a.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        let betsHistory = JSON.parse(localStorage.getItem('crash_clone_history') || '[]');
+        if (betsHistory.length === 0) {
+            betsHistory = [
+                { date: '14 Jun 2026', time: '11:45 AM', round: '839281', bet: '100.00', multiplier: '2.50x', win: '250.00', crash: '4.33x' },
+                { date: '14 Jun 2026', time: '11:42 AM', round: '839280', bet: '200.00', multiplier: '1.20x', win: '240.00', crash: '1.25x' },
+                { date: '14 Jun 2026', time: '11:39 AM', round: '839279', bet: '50.00', multiplier: '0.00x', win: '0.00', crash: '1.03x' }
+            ];
+            localStorage.setItem('crash_clone_history', JSON.stringify(betsHistory));
+        }
+
+        // Bind items on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            if (IS_LOGGED_IN) {
+                loadUserTransactions();
+                renderBetsHistory();
+            }
+            startSlideInterval();
+        });
+
+        // CSRF Logouts
+        function handleLogout(e) {
+            if (e) e.preventDefault();
+            document.getElementById('logout-form').submit();
+        }
+
+        // Tab Switcher Controller
+        function switchDashboardTab(tabId, triggerBtn) {
+            // Unactive all tabs
+            document.querySelectorAll('.dashboard-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.dashboard-tab-trigger').forEach(trigger => {
+                trigger.classList.remove('active');
+            });
+
+            // Active selected tab
+            document.getElementById(tabId).classList.add('active');
+            triggerBtn.classList.add('active');
+            
+            // Re-render bets if tab-bets is loaded to capture recent play sessions
+            if (tabId === 'tab-bets') {
+                betsHistory = JSON.parse(localStorage.getItem('crash_clone_history') || '[]');
+                renderBetsHistory();
+            }
+        }
+
+        // Modals Controls
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+            if (modalId === 'deposit-modal') {
+                loadGatewaysForClient('deposit');
+            } else if (modalId === 'withdraw-modal') {
+                loadGatewaysForClient('withdraw');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        // Deposit gateway selection indicators
+        function selectDepositGateway(btn) {
+            document.querySelectorAll('#deposit-modal .payment-gateway-btn').forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+            const gatewayName = btn.getAttribute('data-gateway');
+            document.getElementById('deposit-gateway').value = gatewayName;
+            
+            // Update gateway instructions dynamically
+            const phoneStr = gatewayName === 'Rocket' ? '+880 1712 345678-9' : '+880 1712 345678';
+            document.getElementById('gateway-inst-title').innerHTML = `<strong>${gatewayName}</strong> Personal Wallet detail:`;
+            document.querySelector('.gateway-instructions-box').innerHTML = `
+                Send Money / Cashout ${USER_CURRENCY} to: <strong>${phoneStr}</strong>.<br>
+                After completing the transfer, input the transaction ID and amount below.
+            `;
+        }
+
+        // Withdraw gateway selection indicators
+        // Copy Affiliate Links
+        function copyAffiliateLink() {
+            const copyText = document.getElementById("affiliate-link-val");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(copyText.value);
+            showToast("Affiliate Link Copied to Clipboard! 📋");
+        }
+
+        // Copy dynamic instructions text
+        function copyTextToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast("Copied to Clipboard! 📋");
+        }
+
+        // Show Toast Utility
+        function showToast(message) {
+            const toast = document.getElementById("dashboard-toast-box");
+            document.getElementById("toast-message-val").innerText = message;
+            toast.classList.add("show");
+            
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Load gateways dynamically from backend
+        let activeClientGateways = [];
+        function loadGatewaysForClient(method) {
+            if (method === 'withdraw') {
+                const selectEl = document.getElementById('withdraw-gateway-select');
+                selectEl.innerHTML = '<option value="">Loading methods...</option>';
+                document.getElementById('withdraw-gateway-instructions').style.display = 'none';
+                document.getElementById('withdraw-gateway-id').value = '';
+
+                fetch('{{ route('dashboard.gateways') }}', {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        activeClientGateways = data.gateways;
+                        const filtered = activeClientGateways.filter(g => g.methods === 'both' || g.methods === 'withdraw');
+                        
+                        if (filtered.length === 0) {
+                            selectEl.innerHTML = '<option value="">No active withdrawal methods found</option>';
+                            return;
+                        }
+
+                        selectEl.innerHTML = '<option value="">Choose Method...</option>' + 
+                            filtered.map(g => `<option value="${g.id}">${escHtml(g.name)}</option>`).join('');
+                    }
+                })
+                .catch(() => {
+                    selectEl.innerHTML = '<option value="">Failed to load methods</option>';
+                });
+                return;
+            }
+
+            const grid = document.getElementById('deposit-gateways-list');
+            grid.innerHTML = '<div style="font-size:12px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading payment gateways...</div>';
+            document.getElementById('deposit-gateway-instructions').style.display = 'none';
+            document.getElementById('deposit-dynamic-fields').innerHTML = '';
+
+            fetch('{{ route('dashboard.gateways') }}', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    activeClientGateways = data.gateways;
+                    const filtered = activeClientGateways.filter(g => g.methods === 'both' || g.methods === 'deposit');
+                    
+                    if (filtered.length === 0) {
+                        grid.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No active gateways found.</div>';
+                        return;
+                    }
+
+                    grid.innerHTML = filtered.map(g => `
+                        <div class="payment-gateway-btn" data-id="${g.id}" onclick="selectClientGateway('deposit', ${g.id}, this)" style="border:2px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px; cursor:pointer; background:rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center; width:90px; height:60px; transition:all 0.2s;">
+                            ${g.logo ? `<img src="${g.logo}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-weight:700; font-size:12px; color:#fff;">${g.name}</span>`}
+                        </div>
+                    `).join('');
+                }
+            })
+            .catch(() => {
+                grid.innerHTML = '<div style="font-size:12px; color:var(--color-red);">Failed to load payment gateways.</div>';
+            });
+        }
+
+        // Select client gateway logo (for deposit)
+        function selectClientGateway(method, id, btn) {
+            document.querySelectorAll(`#${method}-gateways-list .payment-gateway-btn`).forEach(b => {
+                b.style.border = '2px solid rgba(255,255,255,0.08)';
+                b.style.background = 'rgba(255,255,255,0.02)';
+            });
+            btn.style.border = '2px solid var(--color-purple)';
+            btn.style.background = 'rgba(124, 58, 237, 0.08)';
+
+            document.getElementById(method + '-gateway-id').value = id;
+
+            const gateway = activeClientGateways.find(g => g.id == id);
+            if (!gateway) return;
+
+            const instructionsContainer = document.getElementById(method + '-gateway-instructions');
+            const instructionsBox = document.getElementById(method + '-instructions-box');
+            
+            const settings = gateway.settings || [];
+            if (settings.length > 0) {
+                instructionsBox.innerHTML = settings.map(s => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); gap:12px;">
+                        <span style="font-size:12.5px; color:var(--text-secondary); text-align:left;">
+                            ${escHtml(s.label)}: <strong style="color:#fff; font-family:'Roboto Mono',monospace;">${escHtml(s.value)}</strong>
+                        </span>
+                        <button type="button" onclick="copyTextToClipboard('${escHtml(s.value)}')" style="background:var(--color-purple); color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                `).join('');
+                instructionsContainer.style.display = 'block';
+            } else {
+                instructionsContainer.style.display = 'none';
+            }
+
+        }
+
+        // Select client withdraw gateway (from dropdown)
+        function selectClientWithdrawGateway(id) {
+            document.getElementById('withdraw-gateway-id').value = id;
+            if (!id) {
+                document.getElementById('withdraw-gateway-instructions').style.display = 'none';
+                return;
+            }
+
+            const gateway = activeClientGateways.find(g => g.id == id);
+            if (!gateway) return;
+
+            const instructionsContainer = document.getElementById('withdraw-gateway-instructions');
+            const instructionsBox = document.getElementById('withdraw-instructions-box');
+            
+            const settings = gateway.settings || [];
+            if (settings.length > 0) {
+                instructionsBox.innerHTML = settings.map(s => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); gap:12px;">
+                        <span style="font-size:12.5px; color:var(--text-secondary); text-align:left;">
+                            ${escHtml(s.label)}: <strong style="color:#fff; font-family:'Roboto Mono',monospace;">${escHtml(s.value)}</strong>
+                        </span>
+                        <button type="button" onclick="copyTextToClipboard('${escHtml(s.value)}')" style="background:var(--color-purple); color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                `).join('');
+                instructionsContainer.style.display = 'block';
+            } else {
+                instructionsContainer.style.display = 'none';
+            }
+        }
+
+        // Render Tables Helper Functions
+        function renderTransactions() {
+            const tbodyRecent = document.getElementById('tbody-recent-transactions');
+            const tbodyAll = document.getElementById('tbody-all-transactions');
+            const emptyRecent = document.getElementById('recent-transactions-empty');
+            const emptyAll = document.getElementById('all-transactions-empty');
+
+            if (!transactions || transactions.length === 0) {
+                if(tbodyRecent) tbodyRecent.innerHTML = '';
+                if(tbodyAll) tbodyAll.innerHTML = '';
+                if(emptyRecent) emptyRecent.style.display = 'block';
+                if(emptyAll) emptyAll.style.display = 'block';
+                return;
+            }
+
+            if(emptyRecent) emptyRecent.style.display = 'none';
+            if(emptyAll) emptyAll.style.display = 'none';
+
+            let allHtml = '';
+            transactions.forEach(t => {
+                const typeClass = t.type.includes('Deposit') ? 'type-text-deposit' : (t.type.includes('Withdraw') ? 'type-text-withdraw' : 'type-text-transfer');
+                const statClass = t.status === 'Completed' ? 'status-completed' : (t.status === 'Pending' ? 'status-pending' : 'status-failed');
+                
+                allHtml += `
+                    <tr>
+                        <td>${t.datetime}</td>
+                        <td class="${typeClass}">${t.type}</td>
+                        <td>${t.gateway}</td>
+                        <td class="text-gold">${USER_SYMBOL} ${parseFloat(t.amount).toFixed(2)}</td>
+                        <td><span class="status-badge ${statClass}">${t.status}</span></td>
+                    </tr>
+                `;
+            });
+            if(tbodyAll) tbodyAll.innerHTML = allHtml;
+
+            let recentHtml = '';
+            const recentTrans = transactions.slice(0, 4);
+            recentTrans.forEach(t => {
+                const typeClass = t.type.includes('Deposit') ? 'type-text-deposit' : (t.type.includes('Withdraw') ? 'type-text-withdraw' : 'type-text-transfer');
+                const statClass = t.status === 'Completed' ? 'status-completed' : (t.status === 'Pending' ? 'status-pending' : 'status-failed');
+                
+                recentHtml += `
+                    <tr>
+                        <td>${t.datetime}</td>
+                        <td class="${typeClass}">${t.type}</td>
+                        <td>${t.gateway}</td>
+                        <td class="text-gold">${USER_SYMBOL} ${parseFloat(t.amount).toFixed(2)}</td>
+                        <td><span class="status-badge ${statClass}">${t.status}</span></td>
+                    </tr>
+                `;
+            });
+            if(tbodyRecent) tbodyRecent.innerHTML = recentHtml;
+        }
+
+        function loadUserTransactions() {
+            fetch('{{ route('dashboard.transactions') }}', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    transactions = data.transactions;
+                    renderTransactions();
+                }
+            })
+            .catch(() => {});
+        }
+
+        function loadUserReferrals() {
+            fetch('{{ route('dashboard.referrals') }}', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // Update Referral earnings widget
+                    document.getElementById('affiliate-earnings-widget').innerText = USER_SYMBOL + ' ' + parseFloat(data.total_earnings).toLocaleString('en-US', {minimumFractionDigits: 2});
+                    document.getElementById('affiliate-count-widget').innerText = data.referrals.length;
+
+                    // Render referred accounts table
+                    const tbody = document.querySelector('#tab-referral table tbody');
+                    
+                    if (data.referrals.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-table-placeholder" style="display:block;"><i class="fas fa-users-slash"></i><p>No referrals found yet. Share your link to start earning!</p></div></td></tr>`;
+                        return;
+                    }
+
+                    tbody.innerHTML = data.referrals.map(u => `
+                        <tr>
+                            <td>
+                                <div><strong style="color:#fff;">${escHtml(u.name)}</strong></div>
+                                <div style="font-size:11px; color:var(--text-muted);">${escHtml(u.email)} / ${escHtml(u.mobile)}</div>
+                            </td>
+                            <td>${u.joined_date}</td>
+                            <td><span class="status-badge status-completed" style="background:rgba(124,58,237,0.15); color:#a78bfa; border:1px solid rgba(124,58,237,0.2);">${u.level}</span></td>
+                            <td class="text-gold">${USER_SYMBOL} ${parseFloat(u.commission).toFixed(2)}</td>
+                        </tr>
+                    `).join('');
+                }
+            })
+            .catch(() => {});
+        }
+
+        function renderBetsHistory() {
+            const tbody = document.getElementById('tbody-personal-bets');
+            const empty = document.getElementById('personal-bets-empty');
+            if (!tbody || !empty) return;
+
+            if (betsHistory.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            let html = '';
+            betsHistory.forEach(b => {
+                const isLoss = parseFloat(b.win) === 0;
+                const winStyle = isLoss ? 'color: var(--color-red);' : 'color: var(--color-green); font-weight: 700;';
+                
+                html += `
+                    <tr>
+                        <td>${b.date}</td>
+                        <td>${b.time}</td>
+                        <td>#${b.round}</td>
+                        <td>${USER_SYMBOL} ${parseFloat(b.bet).toFixed(2)}</td>
+                        <td>${b.multiplier}</td>
+                        <td style="${winStyle}">${USER_SYMBOL} ${parseFloat(b.win).toFixed(2)}</td>
+                        <td class="text-gold">${b.crash}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Format dates into readable string
+        function getFormattedDateTime() {
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const now = new Date();
+            const day = now.getDate().toString().padStart(2, '0');
+            const monthStr = months[now.getMonth()];
+            const year = now.getFullYear();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // hour 0 should be 12
+            const hoursStr = hours.toString().padStart(2, '0');
+            return `${day} ${monthStr} ${year}, ${hoursStr}:${minutes} ${ampm}`;
+        }
+
+        // Update balances elements
+        function updateBalancesUI(newBalance) {
+            document.querySelectorAll('.header-balance-value').forEach(el => {
+                el.innerText = newBalance;
+            });
+            document.querySelectorAll('.widget-balance-val').forEach(el => {
+                el.innerText = newBalance;
+            });
+            // Also update local storage if client-side game uses it
+            localStorage.setItem('crash_clone_balance', newBalance);
+        }
+
+        // ==============================================
+        // AJAX Operations handlers                      
+        // ==============================================
+        
+        // Form Deposit submit
+        function handleDepositSubmit(e) {
+            e.preventDefault();
+            const gatewayId = document.getElementById('deposit-gateway-id').value;
+            if (!gatewayId) {
+                alert("Please select a payment gateway logo.");
+                return;
+            }
+
+            const amount = document.getElementById('deposit-amount').value;
+            const btn = document.getElementById('btn-deposit-submit');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Request...';
+
+            const formData = new FormData(e.target);
+            formData.append('gateway_id', gatewayId);
+            formData.append('amount', amount);
+
+            fetch('{{ route('dashboard.deposit') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> SUBMIT DEPOSIT REQUEST';
+                
+                if (res.status === 200 && res.body.success) {
+                    closeModal('deposit-modal');
+                    updateBalancesUI(res.body.balance);
+                    showToast(res.body.message);
+                    
+                    // Clear inputs
+                    document.getElementById('deposit-form').reset();
+                    document.getElementById('deposit-gateway-id').value = '';
+
+                    loadUserTransactions();
+                } else {
+                    const errors = res.body.errors || ['Deposit failed. Please try again.'];
+                    alert(errors.join('\n'));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> SUBMIT DEPOSIT REQUEST';
+                alert('Network connection error. Please try again later.');
+            });
+        }
+
+        // Form Withdraw submit
+        function handleWithdrawSubmit(e) {
+            e.preventDefault();
+            const gatewayId = document.getElementById('withdraw-gateway-id').value;
+            if (!gatewayId) {
+                alert("Please select a payment gateway logo.");
+                return;
+            }
+
+            const amount = document.getElementById('withdraw-amount').value;
+            const account = document.getElementById('withdraw-account').value;
+            const note = document.getElementById('withdraw-note').value;
+            const btn = document.getElementById('btn-withdraw-submit');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Securing Funds...';
+
+            fetch('{{ route('dashboard.withdraw') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ gateway_id: gatewayId, amount: amount, account_number: account, note: note })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> CONFIRM WITHDRAWAL';
+                
+                if (res.status === 200 && res.body.success) {
+                    closeModal('withdraw-modal');
+                    updateBalancesUI(res.body.balance);
+                    showToast(res.body.message);
+                    
+                    // Clear inputs
+                    document.getElementById('withdraw-amount').value = '';
+                    document.getElementById('withdraw-account').value = '';
+                    document.getElementById('withdraw-note').value = '';
+                    document.getElementById('withdraw-gateway-id').value = '';
+
+                    loadUserTransactions();
+                } else {
+                    const errors = res.body.errors || ['Withdrawal failed.'];
+                    alert(errors.join('\n'));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> CONFIRM WITHDRAWAL';
+                alert('Network connection error.');
+            });
+        }
+
+        // Form P2P transfer submit
+        function handleP2PTransfer(e) {
+            e.preventDefault();
+            const recipient = document.getElementById('transfer-recipient').value;
+            const amount = document.getElementById('transfer-amount').value;
+            const password = document.getElementById('transfer-password').value;
+            const btn = document.getElementById('btn-transfer-submit');
+            const alertBox = document.getElementById('dashboard-global-alert');
+            
+            alertBox.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing Escrow...';
+
+            fetch('{{ route('dashboard.transfer') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ recipient: recipient, amount: amount, password: password })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> CONFIRM ESCROW TRANSFER';
+                
+                if (res.status === 200 && res.body.success) {
+                    updateBalancesUI(res.body.balance);
+                    showToast(res.body.message);
+                    
+                    // Display success banner
+                    alertBox.className = 'dashboard-alert-banner alert-success';
+                    alertBox.innerHTML = `<i class="fas fa-circle-check"></i> ${res.body.message}`;
+                    alertBox.style.display = 'flex';
+                    
+                    // Clear inputs
+                    document.getElementById('transfer-recipient').value = '';
+                    document.getElementById('transfer-amount').value = '';
+                    document.getElementById('transfer-password').value = '';
+
+                    loadUserTransactions();
+                } else {
+                    const errors = res.body.errors || ['Transfer failed.'];
+                    alertBox.className = 'dashboard-alert-banner alert-error';
+                    alertBox.innerHTML = `<i class="fas fa-circle-exclamation"></i> ${errors.join('<br>')}`;
+                    alertBox.style.display = 'flex';
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-circle-check"></i> CONFIRM ESCROW TRANSFER';
+                alert('Transfer error occurred.');
+            });
+        }
+
+        // Form Profile edit submit
+        function handleProfileEdit(e) {
+            e.preventDefault();
+            const name = document.getElementById('profile-name').value;
+            const gender = document.getElementById('profile-gender').value;
+            const country = document.getElementById('profile-country').value;
+            const btn = document.getElementById('btn-profile-submit');
+            const alertBox = document.getElementById('dashboard-global-alert');
+            
+            alertBox.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch('{{ route('dashboard.update-profile') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ name: name, gender: gender, country: country })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> SAVE PROFILE CHANGES';
+                
+                if (res.status === 200 && res.body.success) {
+                    showToast(res.body.message);
+                    
+                    // Update frontend displays
+                    document.getElementById('overview-profile-name').innerText = name;
+                    
+                    // Display success banner
+                    alertBox.className = 'dashboard-alert-banner alert-success';
+                    alertBox.innerHTML = `<i class="fas fa-circle-check"></i> ${res.body.message}`;
+                    alertBox.style.display = 'flex';
+                } else {
+                    const errors = res.body.errors || ['Profile update failed.'];
+                    alertBox.className = 'dashboard-alert-banner alert-error';
+                    alertBox.innerHTML = `<i class="fas fa-circle-exclamation"></i> ${errors.join('<br>')}`;
+                    alertBox.style.display = 'flex';
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> SAVE PROFILE CHANGES';
+                alert('Connection error saving profile details.');
+            });
+        }
+
+        // Form Password change submit
+        function handlePasswordChange(e) {
+            e.preventDefault();
+            const name = document.getElementById('profile-name').value;
+            const gender = document.getElementById('profile-gender').value;
+            const country = document.getElementById('profile-country').value;
+            const oldPass = document.getElementById('pass-current').value;
+            const newPass = document.getElementById('pass-new').value;
+            const newPassConf = document.getElementById('pass-confirm').value;
+            const btn = document.getElementById('btn-password-submit');
+            const alertBox = document.getElementById('dashboard-global-alert');
+            
+            alertBox.style.display = 'none';
+            
+            if (newPass !== newPassConf) {
+                alertBox.className = 'dashboard-alert-banner alert-error';
+                alertBox.innerHTML = `<i class="fas fa-circle-exclamation"></i> Password confirmation does not match.`;
+                alertBox.style.display = 'flex';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Securing password...';
+
+            fetch('{{ route('dashboard.update-profile') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    name: name, 
+                    gender: gender, 
+                    country: country, 
+                    old_password: oldPass, 
+                    new_password: newPass, 
+                    new_password_confirmation: newPassConf 
+                })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> UPDATE PASSWORD';
+                
+                if (res.status === 200 && res.body.success) {
+                    showToast('Security Password updated successfully!');
+                    
+                    // Display success banner
+                    alertBox.className = 'dashboard-alert-banner alert-success';
+                    alertBox.innerHTML = `<i class="fas fa-circle-check"></i> Security Password updated successfully!`;
+                    alertBox.style.display = 'flex';
+                    
+                    // Clear passwords inputs
+                    document.getElementById('pass-current').value = '';
+                    document.getElementById('pass-new').value = '';
+                    document.getElementById('pass-confirm').value = '';
+                } else {
+                    const errors = res.body.errors || ['Password update failed.'];
+                    alertBox.className = 'dashboard-alert-banner alert-error';
+                    alertBox.innerHTML = `<i class="fas fa-circle-exclamation"></i> ${errors.join('<br>')}`;
+                    alertBox.style.display = 'flex';
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> UPDATE PASSWORD';
+                alert('Connection error saving new password.');
+            });
+        }
+    </script>
 
     <!-- Auth Modal Container -->
     <div class="auth-modal-overlay hidden" id="auth-modal-overlay">
@@ -566,7 +3942,7 @@
         </div>
     </div>
 
-    <!-- Floating Live Chat Support Widget -->
+    <!-- Floating Live Support Chat Widget -->
     <div class="live-chat-widget" id="live-chat-widget">
         <!-- Chat Trigger Floating Button -->
         <button class="chat-trigger-btn" id="chat-trigger-btn" aria-label="Open support chat">
@@ -597,15 +3973,15 @@
             <div class="chat-box-body" id="chat-box-body">
                 <div class="chat-msg msg-agent">
                     <div class="msg-bubble">
-                        Hello! 👋 Welcome to Aviator P2P Sports Support. How can we help you today?
+                        Hello! 👋 Welcome back, {{ auth()->check() ? auth()->user()->name : 'Guest' }}! How can we assist you with your dashboard, wallets, or bets today?
                     </div>
                     <span class="msg-time">Just now</span>
                 </div>
                 <div class="chat-quick-options">
                     <span class="quick-option-title">Suggested Questions:</span>
-                    <button class="quick-msg-btn" onclick="sendQuickMessage('How do I deposit BDT?')">How do I deposit BDT?</button>
-                    <button class="quick-msg-btn" onclick="sendQuickMessage('Is the multiplier fair?')">Is the multiplier fair?</button>
-                    <button class="quick-msg-btn" onclick="sendQuickMessage('How does P2P escrow work?')">How does P2P escrow work?</button>
+                    <button class="quick-msg-btn" onclick="sendQuickMessage('How do I withdraw BDT?')">How do I withdraw BDT?</button>
+                    <button class="quick-msg-btn" onclick="sendQuickMessage('Is P2P transfer safe?')">Is P2P transfer safe?</button>
+                    <button class="quick-msg-btn" onclick="sendQuickMessage('How do I level up?')">How do I level up?</button>
                 </div>
             </div>
 
@@ -619,354 +3995,277 @@
         </div>
     </div>
 
-    <!-- Hidden Form for CSRF-safe Logout -->
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    <!-- Script for chat controller -->
+    <script>
+    (function() {
+        const triggerBtn = document.getElementById('chat-trigger-btn');
+        const closeBtn = document.getElementById('chat-box-close');
+        const boxContainer = document.getElementById('chat-box-container');
+        const chatForm = document.getElementById('chat-send-form');
+        const inputField = document.getElementById('chat-input-field');
+        const chatBody = document.getElementById('chat-box-body');
+
+        const isAuth = {{ auth()->check() ? "true" : "false" }};
+        let pollInterval = null;
+
+        function toggleChat() {
+            boxContainer.classList.toggle('hidden');
+            scrollChatToBottom();
+            if (isAuth && !boxContainer.classList.contains('hidden')) {
+                loadSupportMessages();
+                // Start polling when chat is open
+                if (!pollInterval) {
+                    pollInterval = setInterval(loadSupportMessages, 3000);
+                }
+            } else {
+                if (pollInterval) {
+                    clearInterval(pollInterval);
+                    pollInterval = null;
+                }
+            }
+        }
+
+        if (triggerBtn) triggerBtn.addEventListener('click', toggleChat);
+        if (closeBtn) closeBtn.addEventListener('click', toggleChat);
+
+        function scrollChatToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function loadSupportMessages() {
+            fetch('{{ route('support.messages') }}', {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    renderSupportMessages(data.messages);
+                }
+            })
+            .catch(err => console.error("Error loading support messages:", err));
+        }
+
+        function renderSupportMessages(messages) {
+            let html = `
+                <div class="chat-msg msg-agent">
+                    <div class="msg-bubble">
+                        Hello! 👋 Welcome back, {{ auth()->check() ? auth()->user()->name : 'Guest' }}! How can we assist you with your dashboard, wallets, or bets today?
+                    </div>
+                    <span class="msg-time">Just now</span>
+                </div>
+            `;
+
+            messages.forEach(msg => {
+                const senderClass = msg.sender === 'user' ? 'user' : 'agent';
+                html += `
+                    <div class="chat-msg msg-${senderClass}">
+                        <div class="msg-bubble">${escHtml(msg.message)}</div>
+                        <span class="msg-time">${msg.time}</span>
+                    </div>
+                `;
+            });
+
+            if (messages.length === 0) {
+                html += `
+                    <div class="chat-quick-options">
+                        <span class="quick-option-title">Suggested Questions:</span>
+                        <button class="quick-msg-btn" onclick="sendQuickMessage('How do I withdraw BDT?')">How do I withdraw BDT?</button>
+                        <button class="quick-msg-btn" onclick="sendQuickMessage('Is P2P transfer safe?')">Is P2P transfer safe?</button>
+                        <button class="quick-msg-btn" onclick="sendQuickMessage('How do I level up?')">How do I level up?</button>
+                    </div>
+                `;
+            }
+
+            const currentCount = chatBody.querySelectorAll('.chat-msg').length;
+            const newCount = messages.length + 1;
+
+            if (currentCount !== newCount) {
+                chatBody.innerHTML = html;
+                scrollChatToBottom();
+            }
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        window.sendQuickMessage = function(text) {
+            if (isAuth) {
+                sendDatabaseMessage(text);
+            } else {
+                appendMessage(text, 'user');
+                const typing = showTypingIndicator();
+                
+                setTimeout(() => {
+                    typing.remove();
+                    let reply = `Thank you for reaching out. An agent will be with you shortly. Your transaction history and balances are processed securely.`;
+                    if (text.includes('withdraw')) {
+                        reply = `To withdraw, click 'Withdraw' in your balance widget. Input your personal mobile number (bKash/Nagad/Rocket) and submit. It takes 1-5 minutes to complete with zero commission.`;
+                    } else if (text.includes('safe')) {
+                        reply = `Yes, P2P Escrow transfers are 100% safe. Funds are shifted directly inside the server database and secured using your account password verification.`;
+                    } else if (text.includes('level')) {
+                        reply = `You level up automatically based on your total betting volume. Check the 'Levels Manage' tab above to see your progression, required volume, and unlocked benefits.`;
+                    }
+                    appendMessage(reply, 'agent');
+                }, 1000);
+            }
+        };
+
+        window.handleChatSubmit = function(e) {
+            e.preventDefault();
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            inputField.value = '';
+
+            if (isAuth) {
+                sendDatabaseMessage(text);
+            } else {
+                appendMessage(text, 'user');
+                const typing = showTypingIndicator();
+
+                setTimeout(() => {
+                    typing.remove();
+                    appendMessage("Thank you for your message! Our support team is online 24/7. An agent will respond to your query right here in a moment.", 'agent');
+                }, 1200);
+            }
+        };
+
+        function sendDatabaseMessage(text) {
+            fetch('{{ route('support.messages.send') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ message: text })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    loadSupportMessages();
+                }
+            })
+            .catch(err => console.error("Error sending message:", err));
+        }
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg msg-${sender}`;
+            msgDiv.innerHTML = `
+                <div class="msg-bubble">${escHtml(text)}</div>
+                <span class="msg-time">Just now</span>
+            `;
+            const options = chatBody.querySelector('.chat-quick-options');
+            if (options && sender === 'user') {
+                chatBody.insertBefore(msgDiv, options);
+            } else {
+                chatBody.appendChild(msgDiv);
+            }
+            scrollChatToBottom();
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatBody.appendChild(indicator);
+            scrollChatToBottom();
+            return indicator;
+        }
+
+        if (isAuth && !boxContainer.classList.contains('hidden')) {
+            loadSupportMessages();
+            pollInterval = setInterval(loadSupportMessages, 3000);
+        }
+    })();
+    </script>
+
+    <!-- Hidden CSRF-safe logout form -->
+    <form id="customer-logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
         @csrf
     </form>
 
-    <!-- Script block for mini simulator and mobile drawer operations -->
     <script>
-    // 1. Mobile Menu Drawer Controller
-    (function() {
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const closeBtn = document.getElementById('close-drawer-btn');
-        const drawer = document.getElementById('mobile-drawer');
-        const backdrop = document.getElementById('drawer-backdrop');
-        const drawerLinks = document.querySelectorAll('.drawer-links a');
-
-        function openMenu() {
-            drawer.classList.add('open');
-            backdrop.classList.add('open');
-            document.body.style.overflow = 'hidden';
+        // Customer logout — clears session properly via Laravel POST route
+        function handleLogout(e) {
+            e.preventDefault();
+            // Clear any local state
+            localStorage.removeItem('crash_is_logged_in');
+            localStorage.removeItem('crash_username');
+            localStorage.removeItem('crash_clone_balance');
+            // Submit the CSRF-safe logout form
+            document.getElementById('customer-logout-form').submit();
         }
 
-        function closeMenu() {
-            drawer.classList.remove('open');
-            backdrop.classList.remove('open');
-            document.body.style.overflow = '';
+        function updateCustomerThemeUI(theme) {
+            const btnIcon = document.getElementById('theme-icon');
+            if (!btnIcon) return;
+            if (theme === 'light') {
+                btnIcon.className = 'fas fa-moon';
+            } else {
+                btnIcon.className = 'fas fa-sun';
+            }
         }
 
-        if (menuBtn) menuBtn.addEventListener('click', openMenu);
-        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-        if (backdrop) backdrop.addEventListener('click', closeMenu);
+        function toggleCustomerTheme() {
+            const isLight = document.documentElement.classList.contains('light-theme');
+            let newTheme = 'dark';
+            if (isLight) {
+                document.documentElement.classList.remove('light-theme');
+                document.body.classList.remove('light-theme');
+                newTheme = 'dark';
+            } else {
+                document.documentElement.classList.add('light-theme');
+                document.body.classList.add('light-theme');
+                newTheme = 'light';
+            }
+            updateCustomerThemeUI(newTheme);
 
-        drawerLinks.forEach(link => {
-            link.addEventListener('click', closeMenu);
+            fetch('{{ route('dashboard.update-theme') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ theme: newTheme })
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = '{{ auth()->check() ? (auth()->user()->theme ?: 'dark') : 'dark' }}';
+            updateCustomerThemeUI(currentTheme);
+            
+            // Auto open modal or tab from URL query params
+            const urlParams = new URLSearchParams(window.location.search);
+            const modal = urlParams.get('modal');
+            if (modal === 'deposit') {
+                openModal('deposit-modal');
+            } else if (modal === 'withdraw') {
+                openModal('withdraw-modal');
+            }
+            const tab = urlParams.get('tab');
+            if (tab === 'cabinet') {
+                toggleCabinet(true);
+            }
         });
-    })();
+    
 
-    // 2. Tab switcher for Payouts widget
-    (function() {
-        const liveBetsBtn = document.getElementById('btn-tab-live-bets');
-        const crashHistBtn = document.getElementById('btn-tab-crash-history');
-        const topWinsBtn = document.getElementById('btn-tab-top-wins');
-
-        const liveBetsTab = document.getElementById('tab-live-bets');
-        const crashHistTab = document.getElementById('tab-crash-history');
-        const topWinsTab = document.getElementById('tab-top-wins');
-
-        const buttons = [liveBetsBtn, crashHistBtn, topWinsBtn];
-        const panels = [liveBetsTab, crashHistTab, topWinsTab];
-
-        function switchTab(activeIndex) {
-            buttons.forEach((btn, idx) => {
-                if (idx === activeIndex) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            panels.forEach((pnl, idx) => {
-                if (idx === activeIndex) {
-                    pnl.classList.add('active');
-                } else {
-                    pnl.classList.remove('active');
-                }
-            });
-        }
-
-        if (liveBetsBtn) liveBetsBtn.addEventListener('click', () => switchTab(0));
-        if (crashHistBtn) crashHistBtn.addEventListener('click', () => switchTab(1));
-        if (topWinsBtn) topWinsBtn.addEventListener('click', () => switchTab(2));
-    })();
-
-    // 3. Mini Flight Simulation Canvas Widget (Hero section)
-    (function() {
-        const canvas = document.getElementById('landing-demo-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const multText = document.getElementById('demo-multiplier-text');
-        const alertBox = document.getElementById('demo-crash-alert');
-        const alertVal = document.getElementById('demo-crash-value');
-
-        let w, h;
-        function resizeDemo() {
-            if (!canvas.parentElement) return;
-            w = canvas.width = canvas.parentElement.clientWidth;
-            h = canvas.height = canvas.parentElement.clientHeight || 200;
-        }
-        resizeDemo();
-        setTimeout(resizeDemo, 100);
-        window.addEventListener('resize', resizeDemo);
-
-        let state = 'COUNTDOWN';
-        let timer = 3.0;
-        let startTime = 0;
-        let flightTime = 0;
-        let multiplier = 1.00;
-        let crashPoint = 2.45;
-        let trailPoints = [];
-        let explosionParticles = [];
-
-        class DemoParticle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 4 + 1.5;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed - 0.5;
-                this.life = 1.0;
-                this.decay = Math.random() * 0.03 + 0.015;
-                this.size = Math.random() * 8 + 3;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= this.decay;
-                this.size *= 0.95;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.life;
-                ctx.fillStyle = Math.random() < 0.6 ? '#f06424' : '#ffbe1a';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function loop() {
-            ctx.clearRect(0, 0, w, h);
-
-            ctx.strokeStyle = 'rgba(36, 52, 92, 0.2)';
-            ctx.lineWidth = 1;
-            const spacing = 40;
-            for (let x = 0; x < w; x += spacing) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-            }
-            for (let y = 0; y < h; y += spacing) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-            }
-
-            if (state === 'COUNTDOWN') {
-                multText.textContent = `Starts in ${Math.ceil(timer)}s`;
-                multText.style.color = '#ffbe1a';
-                alertBox.classList.add('hidden');
-                drawMiniPlane(30, h - 25, -20 * Math.PI / 180);
-
-                timer -= 1/60;
-                if (timer <= 0) {
-                    state = 'FLIGHT';
-                    startTime = Date.now();
-                    crashPoint = 1.1 + Math.random() * 4.5;
-                    if (Math.random() < 0.15) crashPoint = 1.00;
-                    trailPoints = [];
-                }
-            } 
-            else if (state === 'FLIGHT') {
-                flightTime = (Date.now() - startTime) / 1000;
-                multiplier = Math.exp(0.25 * flightTime);
-                multText.textContent = multiplier.toFixed(2) + 'x';
-                multText.style.color = '#ffffff';
-
-                const startX = 0;
-                const startY = h;
-                const xStep = flightTime * 50;
-                const yStep = Math.pow(flightTime, 1.4) * 16;
-                let targetX = startX + xStep;
-                let targetY = startY - yStep;
-
-                if (targetX > w * 0.75) targetX = w * 0.75;
-                if (targetY < h * 0.25) targetY = h * 0.25;
-
-                trailPoints.push({ x: targetX, y: targetY });
-
-                if (trailPoints.length > 1) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(startX, startY);
-                    trailPoints.forEach(pt => ctx.lineTo(pt.x, pt.y));
-                    ctx.lineTo(targetX, startY);
-                    ctx.closePath();
-                    const fillGrad = ctx.createLinearGradient(0, targetY, 0, startY);
-                    fillGrad.addColorStop(0, 'rgba(240, 100, 36, 0.35)');
-                    fillGrad.addColorStop(1, 'rgba(240, 100, 36, 0)');
-                    ctx.fillStyle = fillGrad;
-                    ctx.fill();
-
-                    ctx.beginPath();
-                    ctx.moveTo(startX, startY);
-                    trailPoints.forEach(pt => ctx.lineTo(pt.x, pt.y));
-                    ctx.strokeStyle = '#ffbe1a';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                    ctx.restore();
-                }
-
-                drawMiniPlane(targetX, targetY, -20 * Math.PI / 180);
-
-                if (multiplier >= crashPoint) {
-                    state = 'CRASHED';
-                    timer = 2.0;
-                    explosionParticles = [];
-                    for (let i = 0; i < 30; i++) {
-                        explosionParticles.push(new DemoParticle(targetX, targetY));
-                    }
-                }
-            } 
-            else if (state === 'CRASHED') {
-                multText.textContent = 'FLEW AWAY';
-                multText.style.color = '#eb4034';
-                alertBox.classList.remove('hidden');
-                alertVal.textContent = crashPoint.toFixed(2) + 'x';
-
-                if (trailPoints.length > 1) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, h);
-                    trailPoints.forEach(pt => ctx.lineTo(pt.x, pt.y));
-                    ctx.strokeStyle = 'rgba(235, 64, 52, 0.3)';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                }
-
-                explosionParticles.forEach(p => {
-                    p.update();
-                    p.draw();
-                });
-
-                timer -= 1/60;
-                if (timer <= 0) {
-                    state = 'COUNTDOWN';
-                    timer = 3.0;
-                }
-            }
-
-            requestAnimationFrame(loop);
-        }
-
-        function drawMiniPlane(x, y, rotation) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation);
-            ctx.scale(1.2, 1.2);
-
-            const goldGrad = ctx.createLinearGradient(-15, 0, 15, 0);
-            goldGrad.addColorStop(0, '#e5a910');
-            goldGrad.addColorStop(0.5, '#ffd13b');
-            goldGrad.addColorStop(1, '#ffffff');
-
-            ctx.fillStyle = goldGrad;
-            ctx.beginPath();
-            ctx.moveTo(15, -1);
-            ctx.quadraticCurveTo(8, -4, -8, -3);
-            ctx.lineTo(-12, 2);
-            ctx.quadraticCurveTo(4, 3, 15, -1);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = '#f06424';
-            ctx.beginPath();
-            ctx.moveTo(-7, -2);
-            ctx.lineTo(-14, -10);
-            ctx.lineTo(-11, -10);
-            ctx.lineTo(-3, -2);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = 'rgba(168, 225, 255, 0.7)';
-            ctx.beginPath();
-            ctx.moveTo(2, -2);
-            ctx.quadraticCurveTo(8, -2, 10, -1);
-            ctx.quadraticCurveTo(6, 1, 1, 1);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.restore();
-        }
-
-        loop();
-    })();
-
-    // 4. Live Bets Simulated Tracker for Landing Page tab
-    (function() {
-        const tbody = document.getElementById('landing-live-bets-tbody');
-        if (!tbody) return;
-
-        const mockNames = ['********12', '********48', '********99', '********23', '********75', '********31', '********56', '********88'];
-        let users = [];
-
-        function initLiveBets() {
-            tbody.innerHTML = '';
-            users = [];
-            mockNames.forEach((name, i) => {
-                const bet = Math.floor(Math.random() * 40 + 2) * 50;
-                const target = 1.05 + Math.random() * 5.0;
-                users.push({
-                    name,
-                    bet,
-                    target,
-                    status: 'flying',
-                    multiplier: 1.00
-                });
-
-                const tr = document.createElement('tr');
-                tr.id = `landing-user-tr-${i}`;
-                tr.innerHTML = `
-                    <td>${name}</td>
-                    <td>${bet.toFixed(2)} BDT</td>
-                    <td class="td-odds">-</td>
-                    <td class="td-win">-</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        let currMult = 1.00;
-
-        function updateLiveStats() {
-            if (currMult === 1.00) {
-                initLiveBets();
-            }
-
-            currMult += 0.05 + (currMult * 0.015);
-            if (currMult > 7.00) {
-                currMult = 1.00;
-                return;
-            }
-
-            users.forEach((u, i) => {
-                const tr = document.getElementById(`landing-user-tr-${i}`);
-                if (!tr) return;
-
-                if (u.status === 'flying') {
-                    if (currMult >= u.target) {
-                        u.status = 'cashed';
-                        const win = u.bet * u.target;
-                        tr.classList.add('win-row-active');
-                        tr.querySelector('.td-odds').innerHTML = `<span class="badge-success-light">x${u.target.toFixed(2)}</span>`;
-                        tr.querySelector('.td-win').innerHTML = `<span class="text-green">${win.toFixed(2)} BDT</span>`;
-                    }
-                }
-            });
-        }
-
-        setInterval(updateLiveStats, 200);
-    })();
-
-    // 5. Authentication and Modal Controller
+        // ==============================================
+        // Guest Authentication Forms & Country List Logic
+        // ==============================================
+        // 5. Authentication and Modal Controller
     (function() {
         const overlay = document.getElementById('auth-modal-overlay');
         const closeBtn = document.getElementById('auth-close-btn');
@@ -1113,203 +4412,7 @@
         }
     })();
 
-    // 6. Floating Live Support Chat Controller
-    (function() {
-        const triggerBtn = document.getElementById('chat-trigger-btn');
-        const closeBtn = document.getElementById('chat-box-close');
-        const boxContainer = document.getElementById('chat-box-container');
-        const chatForm = document.getElementById('chat-send-form');
-        const inputField = document.getElementById('chat-input-field');
-        const chatBody = document.getElementById('chat-box-body');
-
-        const isAuth = @json(auth()->check());
-        let pollInterval = null;
-
-        function toggleChat() {
-            boxContainer.classList.toggle('hidden');
-            scrollChatToBottom();
-            if (isAuth && !boxContainer.classList.contains('hidden')) {
-                loadSupportMessages();
-                // Start polling when chat is open
-                if (!pollInterval) {
-                    pollInterval = setInterval(loadSupportMessages, 1500);
-                }
-            } else {
-                if (pollInterval) {
-                    clearInterval(pollInterval);
-                    pollInterval = null;
-                }
-            }
-        }
-
-        if (triggerBtn) triggerBtn.addEventListener('click', toggleChat);
-        if (closeBtn) closeBtn.addEventListener('click', toggleChat);
-
-        function scrollChatToBottom() {
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function loadSupportMessages(force = false) {
-            fetch('{{ route('support.messages') }}', {
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    renderSupportMessages(data.messages, force);
-                }
-            })
-            .catch(err => console.error("Error loading support messages:", err));
-        }
-
-        function renderSupportMessages(messages, force = false) {
-            let html = `
-                <div class="chat-msg msg-agent">
-                    <div class="msg-bubble">
-                        Hello! 👋 Welcome to Aviator P2P Sports Support. How can we help you today?
-                    </div>
-                    <span class="msg-time">Just now</span>
-                </div>
-            `;
-
-            messages.forEach(msg => {
-                const senderClass = msg.sender === 'user' ? 'user' : 'agent';
-                html += `
-                    <div class="chat-msg msg-${senderClass}">
-                        <div class="msg-bubble">${escHtml(msg.message)}</div>
-                        <span class="msg-time">${msg.time}</span>
-                    </div>
-                `;
-            });
-
-            if (messages.length === 0) {
-                html += `
-                    <div class="chat-quick-options">
-                        <span class="quick-option-title">Suggested Questions:</span>
-                        <button class="quick-msg-btn" onclick="sendQuickMessage('How do I deposit BDT?')">How do I deposit BDT?</button>
-                        <button class="quick-msg-btn" onclick="sendQuickMessage('Is the multiplier fair?')">Is the multiplier fair?</button>
-                        <button class="quick-msg-btn" onclick="sendQuickMessage('How does P2P escrow work?')">How does P2P escrow work?</button>
-                    </div>
-                `;
-            }
-
-            const currentCount = chatBody.querySelectorAll('.chat-msg').length;
-            const newCount = messages.length + 1;
-
-            if (force || currentCount !== newCount) {
-                chatBody.innerHTML = html;
-                scrollChatToBottom();
-            }
-        }
-
-        function escHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;")
-                      .replace(/</g, "&lt;")
-                      .replace(/>/g, "&gt;")
-                      .replace(/"/g, "&quot;")
-                      .replace(/'/g, "&#039;");
-        }
-
-        window.sendQuickMessage = function(text) {
-            if (isAuth) {
-                appendMessage(text, 'user');
-                sendDatabaseMessage(text);
-            } else {
-                appendMessage(text, 'user');
-                const typing = showTypingIndicator();
-                
-                setTimeout(() => {
-                    typing.remove();
-                    let reply = "Thank you for reaching out. A support agent will be with you shortly. If you have questions about deposits, they are processed instantly via bKash/Nagad.";
-                    if (text.includes('deposit')) {
-                        reply = "To deposit funds, click 'DEPOSIT' on your game dashboard page. Transfer BDT instantly using bKash, Nagad, or Rocket. The money will credit your account instantly with zero fees!";
-                    } else if (text.includes('fair')) {
-                        reply = "Our game is 100% Provably Fair. Multipliers are predetermined before takeoff using SHA-256 hash algorithms, so results cannot be manipulated by anyone.";
-                    } else if (text.includes('escrow')) {
-                        reply = "The escrow system locks user stakes safely at the beginning of each round. When you click CASH OUT, funds are automatically distributed directly from escrow to your balance.";
-                    }
-                    appendMessage(reply, 'agent');
-                }, 1000);
-            }
-        };
-
-        window.handleChatSubmit = function(e) {
-            e.preventDefault();
-            const text = inputField.value.trim();
-            if (!text) return;
-
-            inputField.value = '';
-
-            if (isAuth) {
-                appendMessage(text, 'user');
-                sendDatabaseMessage(text);
-            } else {
-                appendMessage(text, 'user');
-                const typing = showTypingIndicator();
-
-                setTimeout(() => {
-                    typing.remove();
-                    appendMessage("Thank you for your message! Our support team is online 24/7 and will reply to your query here shortly. For immediate assistance with balance, check the help cards below.", 'agent');
-                }, 1200);
-            }
-        };
-
-        function sendDatabaseMessage(text) {
-            fetch('{{ route('support.messages.send') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ message: text })
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    loadSupportMessages(true);
-                }
-            })
-            .catch(err => console.error("Error sending message:", err));
-        }
-
-        function appendMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `chat-msg msg-${sender}`;
-            msgDiv.innerHTML = `
-                <div class="msg-bubble">${escHtml(text)}</div>
-                <span class="msg-time">Just now</span>
-            `;
-            const options = chatBody.querySelector('.chat-quick-options');
-            if (options && sender === 'user') {
-                chatBody.insertBefore(msgDiv, options);
-            } else {
-                chatBody.appendChild(msgDiv);
-            }
-            scrollChatToBottom();
-        }
-
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'typing-indicator';
-            indicator.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            chatBody.appendChild(indicator);
-            scrollChatToBottom();
-            return indicator;
-        }
-
-        if (isAuth && !boxContainer.classList.contains('hidden')) {
-            loadSupportMessages();
-            pollInterval = setInterval(loadSupportMessages, 1500);
-        }
-    })();
-
-    // 7. Populate Country & Currency lists for Registration Flow
+        // 7. Populate Country & Currency lists for Registration Flow
     (function() {
         const countryData = [
             { name: "Afghanistan", currency: "AFN", symbol: "؋" },
@@ -1536,6 +4639,6 @@
             };
         }
     })();
-</script>
+    </script>
 </body>
 </html>

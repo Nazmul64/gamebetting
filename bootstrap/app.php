@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         // Apply block check to all web requests
         $middleware->appendToGroup('web', \App\Http\Middleware\CheckBlocked::class);
+        
+        // Redirect guest users to home page
+        $middleware->redirectGuestsTo('/');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

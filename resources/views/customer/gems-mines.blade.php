@@ -535,32 +535,7 @@
 </head>
 <body>
 
-<!-- 1xBet Style Header Nav Bar -->
-<nav class="dashboard-header-nav" style="background: #0c1a30; border-bottom: 1.5px solid #1d3354; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-family: 'Exo 2', sans-serif; width:100%; z-index:99;">
-    <div class="dashboard-nav-logo" style="display: flex; align-items: center; gap: 8px;">
-        <span class="logo-text" style="font-style: italic; font-weight: 900; font-size: 24px; letter-spacing: -0.5px; color: #1a76d2; text-shadow: 0 0 10px rgba(26, 118, 210, 0.3);">
-            <span style="color: #ffffff;">1X</span>BET
-        </span>
-    </div>
-    
-    <ul class="dashboard-nav-links" style="display: flex; list-style: none; gap: 20px; font-size: 13px; font-weight: 700; margin: 0; padding: 0;">
-        <li><a href="{{ route('dashboard') }}" style="color: #8ca3c7; text-decoration: none;">🏠 DASHBOARD</a></li>
-        <li><a href="{{ route('play') }}" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-plane-departure" style="font-size:12px; margin-right:4px;"></i> 1XGAMES</a></li>
-        <li><a href="{{ route('big-bass-splash') }}" style="color: #38ef7d; text-decoration: none;"><i class="fas fa-fish" style="font-size:12px; margin-right:4px;"></i> Big Bass Splash</a></li>
-        <li><span style="color: #ffffff; border-bottom: 3px solid #007bff; padding-bottom: 6px; cursor: default;"><i class="fas fa-gem" style="font-size:12px; margin-right:4px; color: #ffbe1a;"></i> Gems & Mines</span></li>
-    </ul>
-    
-    <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 12px;">
-        <div class="balance-container" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 14px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-            <span class="balance-label" style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">BALANCE:</span>
-            <span class="balance-value header-balance-value" id="header-user-balance" style="color: #ffbe1a; font-family: 'Roboto Mono', monospace; font-size: 15px;">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
-            <span class="balance-currency" style="color: #ffffff; font-size: 11px;">{{ auth()->user()->currency }}</span>
-        </div>
-        <button onclick="window.location.href='{{ route('dashboard') }}'" style="background: #007bff; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);">
-             ✕ EXIT
-        </button>
-    </div>
-</nav>
+@include('customer.header')
 
 <!-- MAIN GAME WORKSPACE (Centered layout) -->
 <div class="game-container-wrapper">

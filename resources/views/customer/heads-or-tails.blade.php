@@ -338,7 +338,10 @@
 
   /* ── NEW GAME OVERLAY ── */
   #gameOverlay {
-    position: fixed; inset: 0; z-index: 100;
+    position: fixed;
+    top: 70px;
+    left: 0; right: 0; bottom: 0;
+    z-index: 100;
     display: none;
     background: #1a3a5c;
     font-family: 'Cinzel', serif;
@@ -872,6 +875,8 @@
 </style>
 </head>
 <body>
+
+@include('customer.header')
 
 <video id="bgVideo" autoplay muted loop playsinline>
   <source src="{{ asset('assets/image/headsortals/ইমেজটা_যেরকম_আছে_সেম_টু_সেম_এক.mp4') }}" type="video/mp4">

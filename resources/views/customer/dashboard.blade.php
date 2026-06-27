@@ -17,56 +17,7 @@
 </head>
 <body class="landing-body theme-1xbet-active {{ auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 
-    <!-- 1xBet Styled Header Navigation Bar -->
-    <nav class="dashboard-header-nav" style="background: #0c1a30; border-bottom: 1.5px solid #1d3354; height: 70px;">
-        <div class="dashboard-nav-logo" style="display: flex; align-items: center; gap: 8px;">
-            <span class="logo-text" style="font-style: italic; font-weight: 900; font-size: 24px; letter-spacing: -0.5px; color: #1a76d2; text-shadow: 0 0 10px rgba(26, 118, 210, 0.3);">
-                <span style="color: #ffffff;">1X</span>BET
-            </span>
-        </div>
-        
-        <ul class="dashboard-nav-links" style="display: flex; list-style: none; gap: 20px; font-size: 13px; font-weight: 700; margin: 0; padding: 0;">
-            <li><a href="{{ route('home') }}" style="color: #8ca3c7; text-decoration: none;">TOP-EVENTS</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LEAGUE OF WINS</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">T20 BLAST</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">CRICKET</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">SPORTS</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LIVE</a></li>
-            <li><a href="#" onclick="launchDroneGame(event)" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-plane-departure" style="font-size:12px; margin-right:4px;"></i> 1XGAMES</a></li>
-            <li><a href="#" onclick="toggleCabinet(false); return false;" class="active" style="color: #ffffff; text-decoration: none; border-bottom: 3px solid #007bff; padding-bottom: 6px;">CASINO</a></li>
-            <li><a href="{{ route('gems-mines') }}" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-gem" style="font-size:12px; margin-right:4px;"></i> Gems & Mines</a></li>
-            <li><a href="{{ route('big-bass-splash') }}" style="color: #38ef7d; text-decoration: none;"><i class="fas fa-fish" style="font-size:12px; margin-right:4px;"></i> Big Bass Splash</a></li>
-            <li><a href="#" style="color: #8ca3c7; text-decoration: none;">MORE <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 2px;"></i></a></li>
-        </ul>
-        
-        <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 12px;">
-            <!-- Header Balance Display -->
-            <div class="balance-container" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 14px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-                <span class="balance-label" style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">BALANCE:</span>
-                <span class="balance-value header-balance-value" style="color: #ffbe1a; font-family: 'Roboto Mono', monospace; font-size: 15px;">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
-                <span class="balance-currency" style="color: #ffffff; font-size: 11px;">{{ auth()->user()->currency }}</span>
-            </div>
-
-            <!-- Header Action Buttons -->
-            <button onclick="openModal('deposit-modal')" class="nav-btn-deposit" style="background: #2ebd59; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(46, 189, 89, 0.2);">
-                <i class="fas fa-plus-circle"></i> DEPOSIT
-            </button>
-            <button onclick="openModal('withdraw-modal')" class="nav-btn-withdraw" style="background: #007bff; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);">
-                <i class="fas fa-arrow-alt-circle-up"></i> WITHDRAW
-            </button>
-
-            <!-- Cabinet & Logout Actions -->
-            <div style="position: relative; display: inline-block;">
-                <button onclick="toggleCabinet(true)" class="nav-btn-cabinet" style="background: #15253e; color: #ffffff; border: 1.5px solid #1d3354; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                    <i class="fas fa-user-circle" style="font-size:14px; color:#8ca3c7;"></i> CABINET
-                </button>
-            </div>
-
-            <a href="#" onclick="handleLogout(event)" class="nav-btn-logout" style="width: 38px; height: 38px; border-radius: 6px; background: rgba(235, 64, 52, 0.1); border: 1px solid rgba(235, 64, 52, 0.3); color: #ff5447; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; transition: all 0.2s;" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </a>
-        </div>
-    </nav>
+    @include('customer.header')
 
     <!-- Main Workspace with 1xBet Style Layout -->
     <div class="lobby-wrapper">
@@ -174,6 +125,46 @@
 
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
+
+                <!-- Game: Gates of Olympus -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="gates of olympus pragmatic play">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/GatesofOlympus.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-bolt" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Gates of Olympus</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Gates of Olympus')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Gates of Olympus'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Gates of Olympus</div>
+                    </div>
+                </div>
+
+                <!-- Game: Boxing King -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="boxing king jili">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/BoxingKing.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b81f2e 0%, #f5c542 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Boxing King</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Boxing King')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Boxing King'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili Games</span>
+                        <div class="slot-card-title">Boxing King</div>
+                    </div>
+                </div>
 
                 <!-- Game 1: Heads or Tails -->
                 <div class="slot-card" data-category="exclusive quick bangladesh" data-name="heads or tails 1xgames exclusive">
@@ -3047,7 +3038,11 @@
         window.demoGameRedirect = function(gameName) {
             showToast("Demo Mode for " + gameName + " is loading... 🎰");
             setTimeout(() => {
-                if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
+                if (gameName === 'Gates of Olympus') {
+                    window.location.href = "{{ route('gates-of-olympus') }}";
+                } else if (gameName === 'Boxing King') {
+                    window.location.href = "{{ route('boxing-king') }}";
+                } else if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
                     window.location.href = "{{ route('bonbon-bonanza') }}";
                 } else if (gameName === 'Lucky Joker 100') {
                     window.location.href = "{{ route('lucky-joker-100') }}";
@@ -4095,6 +4090,19 @@
         document.addEventListener('DOMContentLoaded', () => {
             const currentTheme = '{{ auth()->user()->theme ?: 'dark' }}';
             updateCustomerThemeUI(currentTheme);
+            
+            // Auto open modal or tab from URL query params
+            const urlParams = new URLSearchParams(window.location.search);
+            const modal = urlParams.get('modal');
+            if (modal === 'deposit') {
+                openModal('deposit-modal');
+            } else if (modal === 'withdraw') {
+                openModal('withdraw-modal');
+            }
+            const tab = urlParams.get('tab');
+            if (tab === 'cabinet') {
+                toggleCabinet(true);
+            }
         });
     </script>
 </body>
