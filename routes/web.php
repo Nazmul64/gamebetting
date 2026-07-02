@@ -76,6 +76,10 @@ Route::get('/temple-of-fortune', function () {
     return view('customer.temple-of-fortune');
 })->middleware('auth')->name('temple-of-fortune');
 
+Route::get('/super-ace-deluxe', function () {
+    return view('customer.super-ace-deluxe');
+})->middleware('auth')->name('super-ace-deluxe');
+
 Route::get('/gates-of-olympus', function () {
     return view('customer.gates-of-olympus');
 })->middleware('auth')->name('gates-of-olympus');
@@ -83,6 +87,10 @@ Route::get('/gates-of-olympus', function () {
 Route::get('/boxing-king', function () {
     return view('customer.boxing-king');
 })->middleware('auth')->name('boxing-king');
+
+Route::get('/fortune-gems-2', function () {
+    return view('customer.fortune-gems-2');
+})->middleware('auth')->name('fortune-gems-2');
 
 Route::get('/heads-or-tails', function () {
     return view('customer.heads-or-tails');

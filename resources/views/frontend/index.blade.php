@@ -126,6 +126,46 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
+                <!-- Game: Fortune Gems 2 -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="fortune gems 2 jili">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/fortunegems2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #d9a443 0%, #8a5e1f 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gem" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fortune Gems 2</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Fortune Gems 2')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Fortune Gems 2'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili Games</span>
+                        <div class="slot-card-title">Fortune Gems 2</div>
+                    </div>
+                </div>
+
+                <!-- Game: Super Ace Deluxe -->
+                <div class="slot-card" data-category="bangladesh popular new" data-name="super ace deluxe jili">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset("assets/image/SuperAceDeluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #16a085 0%, #2c3e50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Super Ace Deluxe</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <button class="slot-play-btn" onclick="demoGameRedirect('Super Ace Deluxe')"><i class="fas fa-play"></i></button>
+                        <a href="#" onclick="demoGameRedirect('Super Ace Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Jili Games</span>
+                        <div class="slot-card-title">Super Ace Deluxe</div>
+                    </div>
+                </div>
+
                 <!-- Game: Gates of Olympus -->
                 <div class="slot-card" data-category="bangladesh popular new" data-name="gates of olympus pragmatic play">
                     <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
@@ -3052,7 +3092,11 @@
             }
             showToast("Demo Mode for " + gameName + " is loading... 🎰");
             setTimeout(() => {
-                if (gameName === 'Gates of Olympus') {
+                if (gameName === 'Fortune Gems 2') {
+                    window.location.href = "{{ route('fortune-gems-2') }}";
+                } else if (gameName === 'Super Ace Deluxe') {
+                    window.location.href = "{{ route('super-ace-deluxe') }}";
+                } else if (gameName === 'Gates of Olympus') {
                     window.location.href = "{{ route('gates-of-olympus') }}";
                 } else if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
                     window.location.href = "{{ route('bonbon-bonanza') }}";
