@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* ============================================================
-   1XBET LAYOUT PANELS
+   Bettingsite LAYOUT PANELS
    ============================================================ */
 *{ box-sizing:border-box; margin:0; padding:0; font-family:'Outfit','Trebuchet MS',sans-serif; }
 
@@ -555,7 +555,7 @@ body {
 
   <div class="table-felt"></div>
 
-  <!-- TOP NAV (1XBET STYLE) -->
+  <!-- TOP NAV (Bettingsite STYLE) -->
   <div class="topnav">
     <div class="breadcrumb">
       <a href="{{ route('dashboard') }}">Home</a>
@@ -579,7 +579,7 @@ body {
     </div>
   </div>
 
-  <!-- SIDE NAV (1XBET STYLE) -->
+  <!-- SIDE NAV (Bettingsite STYLE) -->
   <div class="sidenav">
     <button class="icon-btn" onclick="window.location.href='{{ route('dashboard') }}'" title="Slots Lobby">
       <i class="fas fa-gamepad"></i>
@@ -736,7 +736,7 @@ body {
     </div>
   </div>
 
-  <!-- BOTTOM BAR (1XBET STYLE) -->
+  <!-- BOTTOM BAR (Bettingsite STYLE) -->
   <div class="bottombar">
     <div class="left-tabs">
       <div class="tab" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fas fa-history" style="margin-right:4px;"></i> Recent Games</div>

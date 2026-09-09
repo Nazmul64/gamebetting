@@ -10,8 +10,15 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Landing Top Navigation Custom Styling inside Dashboard */
@@ -85,11 +92,13 @@
     gap: 4px;
     margin-bottom: 24px;
     overflow-x: auto;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .dashboard-tabs-bar::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+    display: none;
+    /* Safari and Chrome */
 }
 
 .dashboard-tab-trigger {
@@ -133,8 +142,15 @@
 }
 
 @keyframes tabFadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Dashboard Grid Layout (2-Column) */
@@ -222,7 +238,7 @@
     border-radius: 10px;
     border: 1.5px solid var(--bg-panel);
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .profile-name {
@@ -405,7 +421,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(240,100,36,0.1) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(240, 100, 36, 0.1) 0%, transparent 60%);
     pointer-events: none;
 }
 
@@ -468,8 +484,13 @@
 }
 
 @keyframes bounceRight {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(4px); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(4px);
+    }
 }
 
 /* Tables Styling */
@@ -665,8 +686,15 @@
 }
 
 @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .alert-success {
@@ -711,7 +739,7 @@
 .levels-progress-bar-bg {
     width: 100%;
     height: 10px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: 8px;
@@ -721,7 +749,8 @@
     height: 100%;
     background: linear-gradient(90deg, var(--color-purple) 0%, var(--color-gold) 100%);
     border-radius: 5px;
-    width: 0%; /* Dynamic */
+    width: 0%;
+    /* Dynamic */
     transition: width 1s ease-in-out;
 }
 
@@ -775,8 +804,13 @@
 }
 
 @keyframes pulseGlow {
-    0% { filter: drop-shadow(0 0 2px rgba(255, 190, 26, 0.3)); }
-    100% { filter: drop-shadow(0 0 10px rgba(255, 190, 26, 0.8)); }
+    0% {
+        filter: drop-shadow(0 0 2px rgba(255, 190, 26, 0.3));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 10px rgba(255, 190, 26, 0.8));
+    }
 }
 
 .level-node-name {
@@ -812,8 +846,8 @@
 }
 
 .level-perk-item {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 10px 14px;
     border-radius: 6px;
     font-size: 12px;
@@ -929,7 +963,7 @@
     color: #ffffff;
     padding: 16px 24px;
     border-radius: 6px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -980,7 +1014,7 @@
     max-width: 500px;
     border-radius: 12px;
     padding: 28px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
     position: relative;
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
@@ -1069,10 +1103,12 @@
     border-color: #d12053;
     background: rgba(209, 32, 83, 0.1);
 }
+
 .payment-gateway-btn.selected[data-gateway="Nagad"] {
     border-color: #f06424;
     background: rgba(240, 100, 36, 0.1);
 }
+
 .payment-gateway-btn.selected[data-gateway="Rocket"] {
     border-color: #8c66ff;
     background: rgba(140, 102, 255, 0.1);
@@ -1097,6 +1133,7 @@
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
+
     .referral-top-row {
         grid-template-columns: 1fr;
     }
@@ -1106,45 +1143,49 @@
     .dashboard-stats-grid {
         grid-template-columns: 1fr;
     }
+
     .dashboard-form-row {
         grid-template-columns: 1fr;
     }
+
     .play-game-banner {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
+
     .play-game-info {
         max-width: 100%;
     }
+
     .levels-list-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
 /* ==========================================================================
-   1XBET CASINO LOBBY THEME AND CSS LAYOUT
+   Bettingsite CASINO LOBBY THEME AND CSS LAYOUT
    ========================================================================== */
 
 :root {
-    --theme-1xbet-bg: #0a111e;
-    --theme-1xbet-header: #0f213b;
-    --theme-1xbet-sidebar: #0a111e;
-    --theme-1xbet-border: #1d3354;
-    --theme-1xbet-card-bg: #15253e;
-    --theme-1xbet-text: #ffffff;
-    --theme-1xbet-text-muted: #8ca3c7;
-    --theme-1xbet-accent-blue: #007bff;
-    --theme-1xbet-accent-green: #2ebd59;
-    --theme-1xbet-accent-orange: #f06424;
-    --theme-1xbet-card-hover: #1e3354;
-    --theme-1xbet-banner-bg: #0b182b;
+    --theme-Bettingsite-bg: #0a111e;
+    --theme-Bettingsite-header: #0f213b;
+    --theme-Bettingsite-sidebar: #0a111e;
+    --theme-Bettingsite-border: #1d3354;
+    --theme-Bettingsite-card-bg: #15253e;
+    --theme-Bettingsite-text: #ffffff;
+    --theme-Bettingsite-text-muted: #8ca3c7;
+    --theme-Bettingsite-accent-blue: #007bff;
+    --theme-Bettingsite-accent-green: #2ebd59;
+    --theme-Bettingsite-accent-orange: #f06424;
+    --theme-Bettingsite-card-hover: #1e3354;
+    --theme-Bettingsite-banner-bg: #0b182b;
 }
 
-/* Base resets & theme overrides for 1xBet style */
-body.landing-body.theme-1xbet-active {
-    background-color: var(--theme-1xbet-bg) !important;
-    color: var(--theme-1xbet-text) !important;
+/* Base resets & theme overrides for Bettingsite style */
+body.landing-body.theme-Bettingsite-active {
+    background-color: var(--theme-Bettingsite-bg) !important;
+    color: var(--theme-Bettingsite-text) !important;
     font-family: 'Outfit', sans-serif;
 }
 
@@ -1157,8 +1198,8 @@ body.landing-body.theme-1xbet-active {
 /* Sidebar Icons List */
 .lobby-sidebar {
     width: 60px;
-    background-color: var(--theme-1xbet-sidebar);
-    border-right: 1px solid var(--theme-1xbet-border);
+    background-color: var(--theme-Bettingsite-sidebar);
+    border-right: 1px solid var(--theme-Bettingsite-border);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1173,7 +1214,7 @@ body.landing-body.theme-1xbet-active {
     border-radius: 8px;
     background: transparent;
     border: none;
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     font-size: 18px;
     cursor: pointer;
     display: flex;
@@ -1185,15 +1226,15 @@ body.landing-body.theme-1xbet-active {
 .sidebar-icon-btn:hover,
 .sidebar-icon-btn.active {
     color: #ffffff;
-    background-color: rgba(255,255,255,0.05);
-    border-left: 3px solid var(--theme-1xbet-accent-blue);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--theme-Bettingsite-accent-blue);
     border-radius: 0 8px 8px 0;
 }
 
 /* Main Content Area */
 .lobby-main {
     flex: 1;
-    background-color: var(--theme-1xbet-bg);
+    background-color: var(--theme-Bettingsite-bg);
     padding: 20px 30px;
     overflow-x: hidden;
 }
@@ -1211,11 +1252,11 @@ body.landing-body.theme-1xbet-active {
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
 }
 
 .lobby-breadcrumbs a {
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     text-decoration: none;
     transition: color 0.2s ease;
 }
@@ -1242,7 +1283,7 @@ body.landing-body.theme-1xbet-active {
     width: 100%;
     height: 38px;
     background: #15253e;
-    border: 1px solid var(--theme-1xbet-border);
+    border: 1px solid var(--theme-Bettingsite-border);
     border-radius: 6px;
     padding: 0 16px 0 40px;
     color: #ffffff;
@@ -1252,7 +1293,7 @@ body.landing-body.theme-1xbet-active {
 }
 
 .lobby-search-input:focus {
-    border-color: var(--theme-1xbet-accent-blue);
+    border-color: var(--theme-Bettingsite-accent-blue);
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
 }
 
@@ -1261,7 +1302,7 @@ body.landing-body.theme-1xbet-active {
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     font-size: 14px;
 }
 
@@ -1272,7 +1313,7 @@ body.landing-body.theme-1xbet-active {
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 25px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
 .banner-slide {
@@ -1327,7 +1368,7 @@ body.landing-body.theme-1xbet-active {
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 12px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .banner-prize {
@@ -1342,7 +1383,7 @@ body.landing-body.theme-1xbet-active {
 }
 
 .banner-play-btn {
-    background: var(--theme-1xbet-accent-green);
+    background: var(--theme-Bettingsite-accent-green);
     color: #ffffff;
     border: none;
     padding: 12px 30px;
@@ -1367,7 +1408,7 @@ body.landing-body.theme-1xbet-active {
     height: 40px;
     border-radius: 50%;
     background: rgba(13, 22, 44, 0.6);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #ffffff;
     font-size: 14px;
     cursor: pointer;
@@ -1421,7 +1462,7 @@ body.landing-body.theme-1xbet-active {
     display: flex;
     align-items: center;
     background: #111e32;
-    border: 1px solid var(--theme-1xbet-border);
+    border: 1px solid var(--theme-Bettingsite-border);
     border-radius: 8px;
     padding: 0 10px;
     margin-bottom: 25px;
@@ -1436,7 +1477,7 @@ body.landing-body.theme-1xbet-active {
 .lobby-category-btn {
     background: transparent;
     border: none;
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     padding: 16px 20px;
     font-size: 13px;
     font-weight: 700;
@@ -1468,7 +1509,7 @@ body.landing-body.theme-1xbet-active {
     left: 0;
     width: 100%;
     height: 3px;
-    background: var(--theme-1xbet-accent-blue);
+    background: var(--theme-Bettingsite-accent-blue);
 }
 
 /* Slots Game Cards Grid */
@@ -1479,8 +1520,8 @@ body.landing-body.theme-1xbet-active {
 }
 
 .slot-card {
-    background: var(--theme-1xbet-card-bg);
-    border: 1px solid var(--theme-1xbet-border);
+    background: var(--theme-Bettingsite-card-bg);
+    border: 1px solid var(--theme-Bettingsite-border);
     border-radius: 8px;
     overflow: hidden;
     position: relative;
@@ -1491,7 +1532,8 @@ body.landing-body.theme-1xbet-active {
 .slot-card-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 65%; /* Horizontal rectangular format */
+    padding-top: 65%;
+    /* Horizontal rectangular format */
     overflow: hidden;
     background-color: #0b1424;
 }
@@ -1535,7 +1577,7 @@ body.landing-body.theme-1xbet-active {
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    background: var(--theme-1xbet-accent-orange);
+    background: var(--theme-Bettingsite-accent-orange);
     color: #ffffff;
     border: none;
     font-size: 16px;
@@ -1543,7 +1585,8 @@ body.landing-body.theme-1xbet-active {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-left: 3px; /* visual center for play icon */
+    padding-left: 3px;
+    /* visual center for play icon */
     box-shadow: 0 0 15px rgba(240, 100, 36, 0.5);
     transform: scale(0.8);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -1560,7 +1603,7 @@ body.landing-body.theme-1xbet-active {
 
 .slot-demo-link {
     font-size: 11px;
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     text-decoration: underline;
     margin-top: 10px;
     font-weight: 600;
@@ -1573,12 +1616,12 @@ body.landing-body.theme-1xbet-active {
 .slot-card-info {
     padding: 10px 12px;
     background: #0f1c30;
-    border-top: 1px solid var(--theme-1xbet-border);
+    border-top: 1px solid var(--theme-Bettingsite-border);
 }
 
 .slot-card-provider {
     font-size: 9px;
-    color: var(--theme-1xbet-text-muted);
+    color: var(--theme-Bettingsite-text-muted);
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -1609,7 +1652,7 @@ body.landing-body.theme-1xbet-active {
 }
 
 .slot-badge-promo {
-    background: var(--theme-1xbet-accent-blue);
+    background: var(--theme-Bettingsite-accent-blue);
     color: #ffffff;
 }
 
@@ -1621,7 +1664,7 @@ body.landing-body.theme-1xbet-active {
 
 /* 1xAERO Exclusive styling */
 .slot-card-aero {
-    border: 1.5px solid var(--theme-1xbet-accent-orange);
+    border: 1.5px solid var(--theme-Bettingsite-accent-orange);
     box-shadow: 0 0 10px rgba(240, 100, 36, 0.15);
 }
 
@@ -1630,7 +1673,7 @@ body.landing-body.theme-1xbet-active {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: var(--theme-1xbet-accent-orange);
+    background: var(--theme-Bettingsite-accent-orange);
     color: #ffffff;
     font-size: 8px;
     font-weight: 900;
@@ -1649,8 +1692,8 @@ body.landing-body.theme-1xbet-active {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--theme-1xbet-card-bg);
-    border: 1px solid var(--theme-1xbet-border);
+    background: var(--theme-Bettingsite-card-bg);
+    border: 1px solid var(--theme-Bettingsite-border);
     color: #ffffff;
     padding: 8px 16px;
     border-radius: 6px;
@@ -1661,7 +1704,7 @@ body.landing-body.theme-1xbet-active {
 }
 
 .cabinet-back-btn:hover {
-    background: var(--theme-1xbet-border);
+    background: var(--theme-Bettingsite-border);
     transform: translateX(-3px);
 }
 
@@ -1669,12 +1712,12 @@ body.landing-body.theme-1xbet-active {
 #deposit-modal .dashboard-modal-box,
 #withdraw-modal .dashboard-modal-box {
     background: #0d1a2d !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
 #deposit-modal .dashboard-modal-title,
 #withdraw-modal .dashboard-modal-title {
-    border-bottom: 1px solid var(--theme-1xbet-border);
+    border-bottom: 1px solid var(--theme-Bettingsite-border);
     padding-bottom: 12px;
 }
 
@@ -1682,56 +1725,372 @@ body.landing-body.theme-1xbet-active {
 #withdraw-modal .dashboard-form-input,
 #withdraw-modal .dashboard-form-select {
     background: #08101c !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
 #deposit-modal .payment-gateway-btn {
     background: #112038 !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
 #deposit-modal .payment-gateway-btn.selected {
-    border-color: var(--theme-1xbet-accent-blue) !important;
+    border-color: var(--theme-Bettingsite-accent-blue) !important;
     background: rgba(0, 123, 255, 0.1) !important;
 }
 
 #deposit-modal .gateway-instructions-box,
 #withdraw-modal .gateway-instructions-box {
     background: #08101c !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
 /* Profile / Bets panels matching styles */
-.theme-1xbet-active .dashboard-panel-card {
+.theme-Bettingsite-active .dashboard-panel-card {
     background: #112036 !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
-.theme-1xbet-active .dashboard-stat-card {
+.theme-Bettingsite-active .dashboard-stat-card {
     background: #112036 !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
-.theme-1xbet-active .dashboard-table th {
+.theme-Bettingsite-active .dashboard-table th {
     background-color: #0b1626 !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
-.theme-1xbet-active .dashboard-table td {
+.theme-Bettingsite-active .dashboard-table td {
     border-color: rgba(29, 51, 84, 0.4) !important;
 }
 
-.theme-1xbet-active .dashboard-table-wrapper {
-    border-color: var(--theme-1xbet-border) !important;
+.theme-Bettingsite-active .dashboard-table-wrapper {
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
-.theme-1xbet-active .dashboard-tabs-bar {
+.theme-Bettingsite-active .dashboard-tabs-bar {
     background: #112036 !important;
-    border-color: var(--theme-1xbet-border) !important;
+    border-color: var(--theme-Bettingsite-border) !important;
 }
 
-.theme-1xbet-active .dashboard-tab-trigger.active {
-    background: var(--theme-1xbet-accent-blue) !important;
+.theme-Bettingsite-active .dashboard-tab-trigger.active {
+    background: var(--theme-Bettingsite-accent-blue) !important;
     box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4) !important;
 }
 
+/* ==========================================================
+   RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS (Bettingsite Style)
+   ========================================================== */
+
+/* Tablets and below (<= 992px) */
+@media (max-width: 992px) {
+    .lobby-main {
+        padding: 16px 20px;
+    }
+
+    .lobby-banner-slider {
+        height: 220px;
+        margin-bottom: 20px;
+    }
+
+    .banner-title {
+        font-size: 24px;
+    }
+
+    .slots-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+    }
+}
+
+/* Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+    .lobby-wrapper {
+        flex-direction: column;
+        min-height: calc(100vh - 56px);
+    }
+
+    /* Transform Sidebar into a rock-solid Fixed Bottom Navigation Bar */
+    .lobby-sidebar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        height: 56px !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        background-color: #0a1526 !important;
+        border-top: 1.5px solid var(--theme-Bettingsite-border) !important;
+        border-right: none !important;
+        padding: 0 4px !important;
+        gap: 0 !important;
+        z-index: 99999 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8) !important;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+
+    .sidebar-icon-btn {
+        flex: 1;
+        height: 100%;
+        width: auto;
+        border-radius: 0;
+        font-size: 19px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-left: none;
+        border-top: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-icon-btn.active,
+    .sidebar-icon-btn:active {
+        background-color: rgba(0, 123, 255, 0.12);
+        border-top: 3px solid var(--theme-Bettingsite-accent-blue);
+        color: #ffffff;
+    }
+
+    /* Main Content takes full width with bottom bar clearance */
+    .lobby-main {
+        padding: 12px 10px 85px 10px !important;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Top Row Breadcrumbs & Search */
+    .lobby-top-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .lobby-search-container {
+        width: 100%;
+    }
+
+    .lobby-search-input {
+        height: 36px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .lobby-breadcrumbs {
+        font-size: 11px;
+    }
+
+    /* Banner Slider Mobile */
+    .lobby-banner-slider {
+        height: 155px !important;
+        margin-bottom: 16px !important;
+        border-radius: 8px !important;
+    }
+
+    .banner-slide {
+        padding: 0 16px !important;
+    }
+
+    .banner-content {
+        max-width: 80% !important;
+    }
+
+    .banner-date {
+        font-size: 8.5px !important;
+        letter-spacing: 0.8px !important;
+        margin-bottom: 2px !important;
+        display: block !important;
+    }
+
+    .banner-title {
+        font-size: 15px !important;
+        margin-bottom: 3px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+    }
+
+    .banner-prize {
+        font-size: 10px !important;
+        margin-bottom: 8px !important;
+        line-height: 1.2 !important;
+    }
+
+    .banner-play-btn {
+        padding: 5px 14px !important;
+        font-size: 10px !important;
+        border-radius: 4px !important;
+    }
+
+    .slider-arrow {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .slider-arrow.arrow-left {
+        left: 8px;
+    }
+
+    .slider-arrow.arrow-right {
+        right: 8px;
+    }
+
+    .slide-dots {
+        bottom: 8px;
+    }
+
+    .slide-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .slide-dot.active {
+        width: 14px;
+    }
+
+    /* Categories Horizontal Bar */
+    .lobby-categories-navbar {
+        padding: 0 4px;
+        margin-bottom: 14px;
+        border-radius: 6px;
+    }
+
+    .lobby-category-btn {
+        padding: 10px 14px;
+        font-size: 11.5px;
+        gap: 6px;
+    }
+
+    .lobby-category-btn i {
+        font-size: 12px;
+    }
+
+    /* Slots Grid: EXACTLY 2 COLUMNS ON MOBILE */
+    .slots-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .slot-card {
+        border-radius: 8px;
+    }
+
+    .slot-card-image-wrapper {
+        padding-top: 66%;
+    }
+
+    .slot-card-info {
+        padding: 8px 10px;
+    }
+
+    .slot-card-provider {
+        font-size: 8px;
+        margin-bottom: 2px;
+    }
+
+    .slot-card-title {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .slot-badge {
+        top: 6px;
+        left: 6px;
+        font-size: 7.5px;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .slot-card-aero::before {
+        top: 6px;
+        right: 6px;
+        font-size: 7px;
+        padding: 2px 4px;
+    }
+
+    .slot-play-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
+
+    .slot-demo-link {
+        font-size: 10px;
+        margin-top: 6px;
+    }
+
+    /* Live chat floating position above bottom bar */
+    .live-chat-widget {
+        bottom: 68px !important;
+        right: 14px !important;
+        z-index: 99998;
+    }
+
+    /* Cabinet / User section mobile styling */
+    .dashboard-tabs-bar {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    .dashboard-tabs-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dashboard-tab-trigger {
+        padding: 10px 14px;
+        font-size: 11px;
+    }
+
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .dashboard-form-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .dashboard-form-col {
+        width: 100% !important;
+    }
+}
+
+/* Extra Small Mobile Devices (<= 360px) */
+@media (max-width: 360px) {
+    .lobby-main {
+        padding: 8px 6px 70px 6px;
+    }
+
+    .slots-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    .slot-card-info {
+        padding: 6px 6px;
+    }
+
+    .slot-card-title {
+        font-size: 10px;
+    }
+
+    .slot-card-provider {
+        font-size: 7.5px;
+    }
+
+    .lobby-banner-slider {
+        height: 140px;
+    }
+
+    .banner-title {
+        font-size: 14px;
+    }
+
+    .banner-prize {
+        font-size: 10px;
+    }
+}

@@ -869,11 +869,6 @@
                     <i class="fas fa-comments"></i> Support Chat <span class="badge-unread-total" id="admin-chat-unread-badge" style="display:none; background:var(--accent-red); color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;">0</span>
                 </button>
 
-                <div class="nav-section-label" style="margin-top:8px;">Game</div>
-                <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)">
-                    <i class="fas fa-gamepad"></i> Game Settings
-                </button>
-
                 <div class="nav-section-label" style="margin-top:8px;">Tools</div>
                 <button class="sidebar-nav-link" id="nav-gateways" onclick="switchTab('gateways', this)">
                     <i class="fas fa-circle-down"></i> Deposit Gateways Setup
@@ -921,6 +916,48 @@
                         <i class="fas fa-bolt"></i>
                         <span>Force Crash Game</span>
                     </button>
+                </div>
+
+                <!-- 🎰 DEDICATED CASINO & SLOT GAMES MODULE (100+ GAMES ENGINE) -->
+                <div style="margin-top:16px; padding: 0 4px;">
+                    <div style="background: rgba(14, 28, 51, 0.7); border: 1.5px solid #1d3354; border-radius: 12px; padding: 10px; margin-bottom: 10px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; cursor:pointer;" onclick="toggleGamesSubmenu()">
+                            <div style="font-size:11px; font-weight:800; color:#cbd5e1; text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-cubes" style="color:var(--accent-gold);"></i> Game Modules
+                            </div>
+                            <span style="background:rgba(245, 197, 66, 0.15); color:var(--accent-gold); font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; border:1px solid rgba(245,197,66,0.3);">100+ READY</span>
+                        </div>
+                        
+                        <div id="games-module-submenu" style="display:flex; flex-direction:column; gap:4px;">
+                            <!-- Active Game 1: Olympus Gold -->
+                            <button class="sidebar-nav-link" id="nav-olympus" onclick="switchTab('olympus', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 197, 66, 0.08); border: 1px solid rgba(245, 197, 66, 0.25);">
+                                <i class="fas fa-bolt" style="color:var(--accent-gold); font-size:12px;"></i>
+                                <span>Olympus Gold™</span>
+                                <span style="font-size:9px; background:#22c55e; color:#fff; padding:1px 5px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                            </button>
+
+                            <!-- Aviator Crash Settings -->
+                            <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px;">
+                                <i class="fas fa-plane-departure" style="color:#38ef7d; font-size:12px;"></i>
+                                <span>Aviator Crash</span>
+                                <span style="font-size:9px; background:#38ef7d; color:#000; padding:1px 5px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                            </button>
+
+                            <!-- Upcoming Modules Slots -->
+                            <button class="sidebar-nav-link" onclick="alert('Fortune Gems 2 engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
+                                <i class="fas fa-gem" style="color:#60a5fa; font-size:11px;"></i>
+                                <span>Fortune Gems 2</span>
+                            </button>
+                            <button class="sidebar-nav-link" onclick="alert('Boxing King engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
+                                <i class="fas fa-crown" style="color:#f43f5e; font-size:11px;"></i>
+                                <span>Boxing King</span>
+                            </button>
+                            <button class="sidebar-nav-link" onclick="alert('BonBon Bonanza engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
+                                <i class="fas fa-candy-cane" style="color:#e879f9; font-size:11px;"></i>
+                                <span>BonBon Bonanza</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </nav>
 
@@ -1594,6 +1631,223 @@
                     </div>
                 </div>
 
+                <!-- ==================== TAB: OLYMPUS SLOT CONTROL ==================== -->
+                <div class="tab-pane" id="tab-olympus">
+                    <div class="page-header">
+                        <h2>Olympus Slot Game Management</h2>
+                        <p>Configure Demo limits, Real money mode, RTP, Paytables, Multipliers, Free Spins, and review player spin history and audit logs.</p>
+                    </div>
+
+                    <!-- Row 1: Config Form -->
+                    <div class="panel" style="margin-bottom: 24px;">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-sliders" style="color:var(--accent-gold);"></i> Game & Feature Configuration</div>
+                            <span class="badge" id="olympus-config-status-badge" style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: rgba(34, 197, 94, 0.2); color: #4ade80;">Active</span>
+                        </div>
+                        <div class="panel-body">
+                            <form id="olympus-settings-form" onsubmit="saveOlympusConfig(event)">
+                                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                                    
+                                    <!-- Card: Game Status & Modes -->
+                                    <div style="background:rgba(255,255,255,0.02); padding:18px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                        <h4 style="font-size:12px; font-weight:700; color:var(--accent-gold); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-power-off"></i> Status & Modes</h4>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Game Status</label>
+                                            <select class="form-input" id="olympus-game-status" required>
+                                                <option value="active">Active (Available for all players)</option>
+                                                <option value="maintenance">Maintenance (Temporarily Closed)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Demo Mode Status</label>
+                                            <select class="form-input" id="olympus-demo-enabled" required>
+                                                <option value="1">Enabled (Players can play free demo)</option>
+                                                <option value="0">Disabled</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Real Money Mode Status</label>
+                                            <select class="form-input" id="olympus-real-enabled" required>
+                                                <option value="1">Enabled (Real balance betting active)</option>
+                                                <option value="0">Disabled</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Login/Register Popup</label>
+                                            <select class="form-input" id="olympus-login-popup-enabled" required>
+                                                <option value="1">Enabled (Show auth popup on demo limit)</option>
+                                                <option value="0">Disabled</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card: Demo Play Limit & Virtual Balance -->
+                                    <div style="background:rgba(255,255,255,0.02); padding:18px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                        <h4 style="font-size:12px; font-weight:700; color:var(--accent-blue); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-gamepad"></i> Demo Free Play Limit</h4>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Demo Free Play Limit (Spins)</label>
+                                            <select class="form-input" id="olympus-demo-play-limit" required>
+                                                <option value="1">1 Spin / Session (Default)</option>
+                                                <option value="2">2 Spins</option>
+                                                <option value="3">3 Spins</option>
+                                                <option value="5">5 Spins</option>
+                                                <option value="10">10 Spins</option>
+                                                <option value="0">Unlimited Demo Spins</option>
+                                            </select>
+                                            <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;">When this limit is reached, user receives the auth popup to login/register.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Starting Demo Virtual Balance</label>
+                                            <input type="number" class="form-input" id="olympus-demo-starting-balance" step="100" min="10" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Volatility Level</label>
+                                            <select class="form-input" id="olympus-volatility" required>
+                                                <option value="high">High (⚡⚡⚡⚡⚡)</option>
+                                                <option value="medium">Medium (⚡⚡⚡)</option>
+                                                <option value="low">Low (⚡)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card: Betting & Multipliers -->
+                                    <div style="background:rgba(255,255,255,0.02); padding:18px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                        <h4 style="font-size:12px; font-weight:700; color:var(--accent-green); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px;"><i class="fas fa-coins"></i> Betting & Multiplier Rules</h4>
+                                        
+                                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Minimum Bet</label>
+                                                <input type="number" class="form-input" id="olympus-min-bet" step="0.5" min="0.1" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Maximum Bet</label>
+                                                <input type="number" class="form-input" id="olympus-max-bet" step="10" min="1" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Default Bet</label>
+                                                <input type="number" class="form-input" id="olympus-default-bet" step="0.5" min="0.1" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">RTP Percentage (%)</label>
+                                                <input type="number" class="form-input" id="olympus-rtp-percentage" step="0.1" min="50" max="100" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Buy Free Spins Cost (X)</label>
+                                                <input type="number" class="form-input" id="olympus-buy-spins-mult" step="1" min="10" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Double Chance Ante (%)</label>
+                                                <input type="number" class="form-input" id="olympus-double-chance-pct" step="1" min="0" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Required Scatters</label>
+                                                <input type="number" class="form-input" id="olympus-req-scatters" min="3" max="6" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Free Spins Count</label>
+                                                <input type="number" class="form-input" id="olympus-free-spins-count" min="1" max="50" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                                    <button type="submit" class="btn-primary" id="btn-save-olympus-config" style="width:auto; padding:12px 30px; display:inline-flex; align-items:center; gap:8px;">
+                                        <i class="fas fa-floppy-disk"></i> Save Olympus Configuration
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Live Player Spin History -->
+                    <div class="panel" style="margin-bottom: 24px;">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Live Olympus Spins & Round History</div>
+                            <div style="display:flex; gap:10px;">
+                                <select id="olympus-rounds-filter-mode" onchange="loadOlympusRounds(1, this.value)" class="form-input" style="padding:4px 10px; font-size:12px; height:32px; width:130px;">
+                                    <option value="">All Modes</option>
+                                    <option value="real">Real Money</option>
+                                    <option value="demo">Demo Spins</option>
+                                </select>
+                                <button onclick="loadOlympusRounds(1, document.getElementById('olympus-rounds-filter-mode').value)" class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; height:32px; display:inline-flex; align-items:center; gap:5px;">
+                                    <i class="fas fa-rotate"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ROUND ID</th>
+                                        <th>MODE</th>
+                                        <th>PLAYER</th>
+                                        <th>BET AMOUNT</th>
+                                        <th>TOTAL DEDUCTED</th>
+                                        <th>TOTAL MULTIPLIER</th>
+                                        <th>FINAL WIN</th>
+                                        <th>PROFIT / LOSS</th>
+                                        <th>TIME</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="olympus-rounds-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="9"><i class="fas fa-spinner fa-spin"></i> Loading round history...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="olympus-rounds-pagination" style="padding:14px; display:flex; justify-content:flex-end; gap:8px;"></div>
+                    </div>
+
+                    <!-- Row 3: Admin Configuration Audit Logs -->
+                    <div class="panel">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-shield"></i> Olympus Configuration Audit Trail</div>
+                            <button onclick="loadOlympusAuditLogs()" class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; height:32px; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fas fa-rotate"></i> Refresh Logs
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ADMIN</th>
+                                        <th>SETTING KEY</th>
+                                        <th>OLD VALUE</th>
+                                        <th>NEW VALUE</th>
+                                        <th>IP ADDRESS</th>
+                                        <th>TIMESTAMP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="olympus-audit-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="6"><i class="fas fa-spinner fa-spin"></i> Loading audit logs...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>
@@ -1948,11 +2202,19 @@
                 'withdraw-gateways': 'Withdrawal Payment Methods <span>/ Withdrawal Gateway Setup</span>',
                 settings: 'Platform Settings <span>/ Configuration</span>',
                 support: 'Support Live Chat <span>/ Customer Chats</span>',
+                olympus: 'Olympus Slot Game <span>/ Management & Engine Controls</span>',
             };
             document.getElementById('topbar-page-title').innerHTML = titles[tabId] || tabId;
 
             // Stop live monitor first (will be started if active)
             stopLiveMonitor();
+
+            // Load olympus settings when olympus tab is opened
+            if (tabId === 'olympus') {
+                loadOlympusSettings();
+                loadOlympusRounds();
+                loadOlympusAuditLogs();
+            }
 
             // Load users table when tab is opened
             if (tabId === 'users' && allUsers.length === 0) {
@@ -4021,6 +4283,209 @@
                 btn.style.opacity = '1';
                 showAdminToast('Connection error. Try again.', 'error');
             });
+        }
+
+        // =========================================================
+        // OLYMPUS SLOT GAME MANAGEMENT JS
+        // =========================================================
+        let currentOlympusConfig = null;
+
+        function loadOlympusSettings() {
+            fetch('{{ route("admin.olympus.settings.get") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.config) {
+                    currentOlympusConfig = data.config;
+                    const c = data.config;
+
+                    // Status badge
+                    const badge = document.getElementById('olympus-config-status-badge');
+                    if (badge) {
+                        badge.textContent = c.game_status.toUpperCase();
+                        badge.style.background = c.game_status === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+                        badge.style.color = c.game_status === 'active' ? '#4ade80' : '#f87171';
+                    }
+
+                    // Form Fields
+                    document.getElementById('olympus-game-status').value = c.game_status || 'active';
+                    document.getElementById('olympus-demo-enabled').value = c.demo_enabled ? '1' : '0';
+                    document.getElementById('olympus-real-enabled').value = c.real_enabled ? '1' : '0';
+                    document.getElementById('olympus-login-popup-enabled').value = c.login_popup_enabled ? '1' : '0';
+
+                    document.getElementById('olympus-demo-play-limit').value = c.demo_play_limit !== undefined ? c.demo_play_limit : 1;
+                    document.getElementById('olympus-demo-starting-balance').value = c.demo_starting_balance || 10000;
+                    document.getElementById('olympus-volatility').value = c.volatility || 'high';
+
+                    document.getElementById('olympus-min-bet').value = c.min_bet || 1.00;
+                    document.getElementById('olympus-max-bet').value = c.max_bet || 5000.00;
+                    document.getElementById('olympus-default-bet').value = c.default_bet || 2.00;
+                    document.getElementById('olympus-rtp-percentage').value = c.rtp_percentage || 96.50;
+
+                    document.getElementById('olympus-buy-spins-mult').value = c.buy_free_spins_multiplier || 100;
+                    document.getElementById('olympus-double-chance-pct').value = c.double_chance_ante_pct || 25;
+
+                    document.getElementById('olympus-req-scatters').value = c.required_scatters_for_free_spins || 4;
+                    document.getElementById('olympus-free-spins-count').value = c.free_spins_count || 10;
+                }
+            })
+            .catch(err => console.error('Failed to load Olympus settings:', err));
+        }
+
+        function saveOlympusConfig(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-olympus-config');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                game_status: document.getElementById('olympus-game-status').value,
+                demo_enabled: document.getElementById('olympus-demo-enabled').value === '1',
+                real_enabled: document.getElementById('olympus-real-enabled').value === '1',
+                login_popup_enabled: document.getElementById('olympus-login-popup-enabled').value === '1',
+                demo_play_limit: parseInt(document.getElementById('olympus-demo-play-limit').value),
+                demo_starting_balance: parseFloat(document.getElementById('olympus-demo-starting-balance').value),
+                volatility: document.getElementById('olympus-volatility').value,
+                min_bet: parseFloat(document.getElementById('olympus-min-bet').value),
+                max_bet: parseFloat(document.getElementById('olympus-max-bet').value),
+                default_bet: parseFloat(document.getElementById('olympus-default-bet').value),
+                rtp_percentage: parseFloat(document.getElementById('olympus-rtp-percentage').value),
+                buy_free_spins_multiplier: parseFloat(document.getElementById('olympus-buy-spins-mult').value),
+                double_chance_ante_pct: parseFloat(document.getElementById('olympus-double-chance-pct').value),
+                required_scatters_for_free_spins: parseInt(document.getElementById('olympus-req-scatters').value),
+                free_spins_count: parseInt(document.getElementById('olympus-free-spins-count').value),
+                max_multiplier: currentOlympusConfig ? currentOlympusConfig.max_multiplier : 500,
+            };
+
+            fetch('{{ route("admin.olympus.settings.save") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Olympus Configuration';
+
+                if (data.success) {
+                    showAdminToast('✅ Olympus Slot Configuration saved successfully!', 'success');
+                    loadOlympusSettings();
+                    loadOlympusAuditLogs();
+                } else {
+                    const err = (data.errors && data.errors.join(', ')) || data.message || 'Validation error.';
+                    showAdminToast('Error: ' + err, 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Olympus Configuration';
+                showAdminToast('Failed to save configuration.', 'error');
+            });
+        }
+
+        function loadOlympusRounds(page = 1, mode = '') {
+            const tbody = document.getElementById('olympus-rounds-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><i class="fas fa-spinner fa-spin"></i> Loading spins...</td></tr>';
+
+            let url = '{{ route("admin.olympus.rounds") }}?page=' + page;
+            if (mode) url += '&mode=' + encodeURIComponent(mode);
+
+            fetch(url, {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.rounds && data.rounds.data) {
+                    const rounds = data.rounds.data;
+                    if (rounds.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-muted);">No spin rounds recorded yet.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = rounds.map(r => {
+                        const isDemo = r.mode === 'demo';
+                        const isWin = r.final_win > 0;
+                        const netProfit = r.final_win - r.total_deducted;
+                        const profitClass = netProfit >= 0 ? 'text-green' : 'text-red';
+                        const profitSign = netProfit > 0 ? '+' : '';
+
+                        return `
+                            <tr>
+                                <td style="font-family:'Roboto Mono',monospace; font-size:12px; color:var(--text-primary); font-weight:700;">${r.round_id}</td>
+                                <td>
+                                    <span style="font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase; background:${isDemo ? 'rgba(148, 163, 184, 0.15)' : 'rgba(56, 239, 125, 0.15)'}; color:${isDemo ? '#94a3b8' : '#38ef7d'}; border:1px solid ${isDemo ? 'rgba(148,163,184,0.3)' : 'rgba(56,239,125,0.3)'};">
+                                        ${r.mode}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="font-weight:600; font-size:12.5px; color:#fff;">${r.user ? r.user.name : (isDemo ? 'Guest (Demo)' : 'User #' + r.user_id)}</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">${r.user ? r.user.email : ''}</div>
+                                </td>
+                                <td style="font-family:'Roboto Mono',monospace; font-weight:700;">${parseFloat(r.bet_amount).toFixed(2)}</td>
+                                <td style="font-family:'Roboto Mono',monospace; font-weight:700; color:var(--text-secondary);">${parseFloat(r.total_deducted).toFixed(2)}</td>
+                                <td>
+                                    ${r.total_multiplier > 0 ? `<span style="background:rgba(255,190,26,0.15); color:#ffbe1a; padding:2px 6px; border-radius:4px; font-weight:800; font-size:11px;">${r.total_multiplier}X</span>` : '<span style="color:var(--text-muted);">-</span>'}
+                                </td>
+                                <td style="font-family:'Roboto Mono',monospace; font-weight:700; color:${isWin ? '#4ade80' : 'var(--text-muted)'};">
+                                    ${parseFloat(r.final_win).toFixed(2)}
+                                </td>
+                                <td style="font-family:'Roboto Mono',monospace; font-weight:700; color:${netProfit >= 0 ? '#4ade80' : '#f87171'};">
+                                    ${profitSign}${netProfit.toFixed(2)}
+                                </td>
+                                <td style="font-size:11px; color:var(--text-muted);">
+                                    ${new Date(r.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => console.error('Failed to load Olympus rounds:', err));
+        }
+
+        function loadOlympusAuditLogs() {
+            const tbody = document.getElementById('olympus-audit-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fas fa-spinner fa-spin"></i> Loading audit logs...</td></tr>';
+
+            fetch('{{ route("admin.olympus.audit-logs") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.logs) {
+                    const logs = data.logs;
+                    if (logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">No configuration changes recorded yet.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = logs.map(l => `
+                        <tr>
+                            <td style="font-weight:600; color:#fff;">${l.admin ? l.admin.name : 'System Admin'}</td>
+                            <td style="font-family:'Roboto Mono',monospace; font-size:11.5px; color:var(--accent-blue);">${l.setting_key}</td>
+                            <td style="font-size:11.5px; color:#f87171; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.old_value || 'null'}</td>
+                            <td style="font-size:11.5px; color:#4ade80; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.new_value || 'null'}</td>
+                            <td style="font-size:11px; color:var(--text-muted);">${l.ip_address || '-'}</td>
+                            <td style="font-size:11px; color:var(--text-muted);">${new Date(l.created_at).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            })
+            .catch(err => console.error('Failed to load Olympus audit logs:', err));
+        }
+
+        function toggleGamesSubmenu() {
+            const submenu = document.getElementById('games-module-submenu');
+            if (submenu) {
+                submenu.style.display = (submenu.style.display === 'none') ? 'flex' : 'none';
+            }
         }
     </script>
 </body>

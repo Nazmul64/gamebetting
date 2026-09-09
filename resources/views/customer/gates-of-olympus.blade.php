@@ -820,9 +820,13 @@
     <div class="d-flex align-items-center gap-2">
       <div class="game-icon display-font">Ω</div>
       <strong class="display-font">Olympus Gold™</strong>
-      <div class="form-check form-switch ms-3 d-flex align-items-center gap-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="realMoneyToggle">
-        <label class="form-check-label real-money-label" for="realMoneyToggle">PLAY FOR REAL MONEY (demo toggle only)</label>
+      <div class="d-flex align-items-center ms-3 gap-2" style="background: rgba(0,0,0,0.35); padding: 3px 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+        <button type="button" id="modeBtnDemo" onclick="window.switchGameMode(true)" class="btn btn-sm" style="font-weight: 800; font-size: 11px; padding: 4px 12px; border-radius: 6px; border: none; background: #f59e0b; color: #000; transition: all 0.2s;">
+          <i class="fas fa-gamepad"></i> DEMO
+        </button>
+        <button type="button" id="modeBtnReal" onclick="window.switchGameMode(false)" class="btn btn-sm" style="font-weight: 700; font-size: 11px; padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #cbd5e1; transition: all 0.2s;">
+          <i class="fas fa-coins"></i> REAL MONEY
+        </button>
       </div>
     </div>
     <div class="d-flex gap-2">
@@ -930,6 +934,82 @@
 
 </div>
 
+<!-- ==================== DEMO PLAY LIMIT / AUTH MODAL ==================== -->
+<div class="modal fade" id="olympusDemoLimitModal" tabindex="-1" aria-hidden="true" style="backdrop-filter: blur(8px); background: rgba(5, 8, 20, 0.75);">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+    <div class="modal-content" style="background: linear-gradient(145deg, #101935, #0a0f24); border: 2px solid #f5c542; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 25px rgba(245, 197, 66, 0.3); color: #fff; overflow: hidden;">
+      <div class="modal-header border-0 pb-0 pt-4 px-4 text-center d-flex flex-column align-items-center position-relative">
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle, #f5c542, #c8901a); display: flex; align-items: center; justify-content: center; font-size: 28px; color: #000; box-shadow: 0 0 20px rgba(245, 197, 66, 0.6); margin-bottom: 12px;">
+          ⚡
+        </div>
+        <h4 class="display-font text-warning mb-1" style="font-weight: 800; letter-spacing: 0.5px; font-size: 20px;">DEMO LIMIT REACHED</h4>
+        <p style="color: #94a3b8; font-size: 13px; margin-bottom: 0;">Unlock the full power of Olympus Gold™</p>
+      </div>
+      <div class="modal-body px-4 py-3 text-center">
+        <p style="font-size: 13.5px; color: #cbd5e1; line-height: 1.6;">
+          Your free demo play session has finished. Create an account or sign in to experience unlimited real-money spins and withdraw cash prizes!
+        </p>
+        <div style="background: rgba(255,255,255,0.04); border: 1px dashed rgba(245,197,66,0.3); border-radius: 10px; padding: 12px; margin: 16px 0;">
+          <div style="font-size: 11px; text-transform: uppercase; color: #f5c542; font-weight: 700; letter-spacing: 0.5px;">Member Benefits</div>
+          <div style="font-size: 12.5px; color: #e2e8f0; margin-top: 4px;">⚡ Instant Withdrawals &nbsp;|&nbsp; 🎁 Welcome Bonus &nbsp;|&nbsp; 🏆 Real Winnings</div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 pt-0 d-flex flex-column gap-2">
+        <a href="{{ route('login') }}" class="btn w-100" style="background: linear-gradient(135deg, #f5c542, #c8901a); color: #000; font-weight: 800; font-family: 'Cinzel', serif; padding: 12px; border-radius: 10px; box-shadow: 0 4px 15px rgba(245,197,66,0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          LOGIN TO PLAY
+        </a>
+        <a href="{{ route('register') }}" class="btn w-100" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(245,197,66,0.4); color: #f5c542; font-weight: 700; font-family: 'Inter', sans-serif; padding: 10px; border-radius: 10px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+          CREATE NEW ACCOUNT
+        </a>
+        <button type="button" class="btn btn-link text-muted btn-sm" data-bs-dismiss="modal" style="font-size: 11.5px; text-decoration: none; margin-top: 2px;">
+          Continue browsing
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INSUFFICIENT BALANCE MODAL ==================== -->
+<div class="modal fade" id="olympusInsufficientBalanceModal" tabindex="-1" aria-hidden="true" style="backdrop-filter: blur(8px); background: rgba(5, 8, 20, 0.75);">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+    <div class="modal-content" style="background: linear-gradient(145deg, #181028, #0d0818); border: 2px solid #ef4444; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 25px rgba(239, 68, 68, 0.3); color: #fff;">
+      <div class="modal-header border-0 pb-0 pt-4 px-4 text-center d-flex flex-column align-items-center position-relative">
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); margin-bottom: 12px;">
+          ✕
+        </div>
+        <h4 class="display-font text-danger mb-1" style="font-weight: 800; font-size: 19px;">INSUFFICIENT BALANCE</h4>
+        <p style="color: #94a3b8; font-size: 12.5px; margin-bottom: 0;">Top up your wallet to continue playing</p>
+      </div>
+      <div class="modal-body px-4 py-3 text-center">
+        <p style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">
+          Your current wallet balance is lower than the active bet amount. Please make a deposit to spin for real money.
+        </p>
+        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; display: flex; justify-content: space-around; margin: 14px 0;">
+          <div>
+            <div style="font-size: 10.5px; color: #94a3b8; text-transform: uppercase;">Your Balance</div>
+            <div id="insufficient-current-bal" style="font-size: 15px; font-weight: 800; color: #f87171; font-family: 'Roboto Mono', monospace;">0.00</div>
+          </div>
+          <div style="border-right: 1px solid rgba(255,255,255,0.1);"></div>
+          <div>
+            <div style="font-size: 10.5px; color: #94a3b8; text-transform: uppercase;">Required Bet</div>
+            <div id="insufficient-required-bet" style="font-size: 15px; font-weight: 800; color: #facc15; font-family: 'Roboto Mono', monospace;">0.00</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 pt-0 d-flex flex-column gap-2">
+        <button type="button" onclick="closeInsufficientAndOpenDeposit()" class="btn w-100" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; font-weight: 800; font-family: 'Cinzel', serif; padding: 11px; border-radius: 10px; box-shadow: 0 4px 15px rgba(34,197,94,0.4); border:none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fas fa-plus-circle"></i> DEPOSIT NOW
+        </button>
+        <button type="button" onclick="switchToDemoModeFromModal()" class="btn w-100" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #e2e8f0; font-weight: 600; font-size: 13px; padding: 9px; border-radius: 10px;">
+          Switch to Free Demo Mode
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script>
 (function(){
@@ -940,15 +1020,17 @@
   const balanceEl = document.getElementById('bcCredit') || document.getElementById('balanceValue');
   const betEl = document.getElementById('bcBet') || document.getElementById('betValue');
   const realMoneyToggle = document.getElementById('realMoneyToggle');
-
-  // Dummy or real placeholders
   const lastWinEl = document.getElementById('lastWinValue') || { set textContent(v) {} };
   const balanceLabelEl = document.getElementById('balanceLabel') || { set textContent(v) {} };
 
   // ==========================================
-  // LARAVEL DATABASE & STATE INTEGRATION
+  // DYNAMIC SERVER STATE & CONFIGURATION
   // ==========================================
-  const userCurrency = "{{ auth()->user()->currency }}";
+  const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const SERVER_CONFIG = @json($config ?? null);
+  const AUTH_USER = @json($user ?? null);
+
+  const userCurrency = (AUTH_USER && AUTH_USER.currency) ? AUTH_USER.currency : 'BDT';
   const currencySymbolMap = {
     'EUR': '€',
     'USD': '$',
@@ -958,35 +1040,41 @@
   };
   const currencySymbol = currencySymbolMap[userCurrency] || (userCurrency + ' ');
 
-  let realBalance = parseFloat("{{ auth()->user()->balance }}");
-  let isDemoMode = new URLSearchParams(window.location.search).get('demo') === '1' || (realBalance < 1.0);
-  let demoBalance = 1000.00;
+  let realBalance = AUTH_USER ? parseFloat(AUTH_USER.balance) : 0.00;
+  let demoBalance = parseFloat("{{ $demoBalance ?? 10000.00 }}");
+  let demoSpinsCount = parseInt("{{ $demoSpinsCount ?? 0 }}");
+  let demoPlayLimit = SERVER_CONFIG ? parseInt(SERVER_CONFIG.demo_play_limit) : 1;
+
+  // Decide initial mode: default to Demo mode if guest or low balance
+  let isDemoMode = !AUTH_USER || (realBalance < (SERVER_CONFIG ? parseFloat(SERVER_CONFIG.min_bet) : 1.0));
   let balance = isDemoMode ? demoBalance : realBalance;
 
-  let bet = 2.00;
-  let spinning = false;
+  let bet = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.default_bet) : 2.00;
+  let minBet = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.min_bet) : 1.00;
+  let maxBet = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.max_bet) : 5000.00;
+  let buySpinsMultiplier = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.buy_free_spins_multiplier) : 100.0;
+  let doubleChancePct = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.double_chance_ante_pct) : 25.0;
 
-  function updateModeUI() {
-    if (isDemoMode) {
-      if (realMoneyToggle) realMoneyToggle.checked = false;
-      balanceLabelEl.textContent = 'demo balance';
-      balance = demoBalance;
-    } else {
-      if (realBalance < 1.0) {
-        alert("Your real balance is too low! Switching to Demo Mode.");
-        isDemoMode = true;
-        if (realMoneyToggle) realMoneyToggle.checked = false;
-        balanceLabelEl.textContent = 'demo balance';
-        balance = demoBalance;
-      } else {
-        if (realMoneyToggle) realMoneyToggle.checked = true;
-        balanceLabelEl.textContent = 'real balance';
-        balance = realBalance;
+  let spinning = false;
+  let doubleChanceActive = false;
+  let buyFeaturePending = false;
+  let autoplayActive = false;
+
+  window.switchGameMode = function(demo) {
+    if (spinning) return;
+    if (!demo) {
+      if (!AUTH_USER) {
+        openDemoLimitModal();
+        return;
+      }
+      if (realBalance < bet) {
+        openInsufficientBalanceModal(realBalance, bet);
+        return;
       }
     }
-    if (balanceEl) balanceEl.textContent = currencySymbol + formatMoney(balance);
-    syncHeaderBalance();
-  }
+    isDemoMode = demo;
+    updateModeUI();
+  };
 
   function syncHeaderBalance() {
     const headerBalance = document.querySelector('.header-balance-value');
@@ -995,38 +1083,92 @@
     }
   }
 
-  function syncBalance(newBalance) {
-    if (isDemoMode) return;
-    fetch('{{ route("dashboard.update-balance") }}', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({ balance: newBalance.toFixed(2) })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        console.log('Balance synced to DB successfully:', newBalance);
-        realBalance = newBalance;
-        syncHeaderBalance();
+  function updateModeUI() {
+    const btnDemo = document.getElementById('modeBtnDemo');
+    const btnReal = document.getElementById('modeBtnReal');
+
+    if (isDemoMode) {
+      if (btnDemo) {
+        btnDemo.style.background = '#f59e0b';
+        btnDemo.style.color = '#000';
       }
-    })
-    .catch(err => console.error('Error syncing balance:', err));
+      if (btnReal) {
+        btnReal.style.background = 'transparent';
+        btnReal.style.color = '#cbd5e1';
+      }
+      balanceLabelEl.textContent = 'DEMO BALANCE';
+      balance = demoBalance;
+    } else {
+      if (!AUTH_USER) {
+        openDemoLimitModal();
+        isDemoMode = true;
+        updateModeUI();
+        return;
+      } else if (realBalance < bet) {
+        isDemoMode = true;
+        updateModeUI();
+        openInsufficientBalanceModal(realBalance, bet);
+        return;
+      } else {
+        if (btnReal) {
+          btnReal.style.background = '#22c55e';
+          btnReal.style.color = '#fff';
+        }
+        if (btnDemo) {
+          btnDemo.style.background = 'transparent';
+          btnDemo.style.color = '#cbd5e1';
+        }
+        balanceLabelEl.textContent = 'REAL BALANCE';
+        balance = realBalance;
+      }
+    }
+    if (balanceEl) balanceEl.textContent = (isDemoMode ? 'DEMO ' : currencySymbol) + formatMoney(balance);
+    updateDCUI();
+    syncHeaderBalance();
   }
 
-  if (realMoneyToggle) {
-    realMoneyToggle.addEventListener('change', function() {
-      if (spinning) {
-        realMoneyToggle.checked = !realMoneyToggle.checked;
-        return;
-      }
-      isDemoMode = !realMoneyToggle.checked;
-      updateModeUI();
-    });
+  // ---- Modals Helper Functions ----
+  function openDemoLimitModal() {
+    const modalEl = document.getElementById('olympusDemoLimitModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    }
   }
+
+  function openInsufficientBalanceModal(currentBal, requiredAmount) {
+    const curEl = document.getElementById('insufficient-current-bal');
+    const reqEl = document.getElementById('insufficient-required-bet');
+    if (curEl) curEl.textContent = currencySymbol + formatMoney(currentBal);
+    if (reqEl) reqEl.textContent = currencySymbol + formatMoney(requiredAmount);
+
+    const modalEl = document.getElementById('olympusInsufficientBalanceModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    }
+  }
+
+  window.switchToDemoModeFromModal = function() {
+    const modalEl = document.getElementById('olympusInsufficientBalanceModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+    }
+    isDemoMode = true;
+    updateModeUI();
+  };
+
+  window.closeInsufficientAndOpenDeposit = function() {
+    const modalEl = document.getElementById('olympusInsufficientBalanceModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+    }
+    if (typeof openGlobalModal === 'function') {
+      openGlobalModal('deposit-modal');
+    }
+  };
 
   // ---- Audio Synthesizers using Web Audio API ----
   let spinAudioCtx = null;
@@ -1047,16 +1189,16 @@
       initAudio();
       const now = spinAudioCtx.currentTime;
 
-      // Deep rumble (sawtooth synth)
+      // Deep rumble
       const osc1 = spinAudioCtx.createOscillator();
       const gain1 = spinAudioCtx.createGain();
       osc1.type = 'sawtooth';
-      osc1.frequency.setValueAtTime(55, now); // Low A
+      osc1.frequency.setValueAtTime(55, now);
       osc1.frequency.linearRampToValueAtTime(35, now + 2.5);
       gain1.gain.setValueAtTime(0.20, now);
       gain1.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
 
-      // Scary thunder crackles
+      // Thunder crackles
       const osc2 = spinAudioCtx.createOscillator();
       const gain2 = spinAudioCtx.createGain();
       osc2.type = 'triangle';
@@ -1085,7 +1227,6 @@
 
       spinOsc.type = 'sine';
       spinOsc.frequency.setValueAtTime(150, now);
-      // Sweeping frequency
       spinOsc.frequency.linearRampToValueAtTime(450, now + 0.5);
       spinOsc.frequency.linearRampToValueAtTime(150, now + 1.0);
       spinOsc.frequency.linearRampToValueAtTime(450, now + 1.5);
@@ -1128,11 +1269,11 @@
     try {
       initAudio();
       const now = spinAudioCtx.currentTime;
-      const chord = [261.63, 329.63, 392.00, 523.25]; // C major chord notes
+      const chord = [261.63, 329.63, 392.00, 523.25];
       chord.forEach((f, i) => {
         const osc = spinAudioCtx.createOscillator();
         const gain = spinAudioCtx.createGain();
-        osc.type = 'sawtooth'; // Sawtooth sounds more dramatic for win
+        osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(f, now + i * 0.08);
         gain.gain.setValueAtTime(0.05, now + i * 0.08);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.5);
@@ -1143,7 +1284,6 @@
     } catch(e) {}
   }
 
-  // Trigger scary epic load sound on first click anywhere on screen
   window.addEventListener('click', () => {
     if (!window.introSoundPlayed) {
       playEpicIntroSound();
@@ -1155,22 +1295,15 @@
   const MULTIS = [
     {label:'2X', value:2, tone:'tone-orange'},
     {label:'5X', value:5, tone:'tone-purple'},
-    {label:'5X', value:5, tone:'tone-pink'},
+    {label:'10X', value:10, tone:'tone-pink'},
     {label:'25X', value:25, tone:'tone-blue'},
     {label:'100X', value:100, tone:'tone-red'}
   ];
 
-
-
-  // ---- symbol generation ----
-  let doubleChanceActive = false;
-  let guaranteeScatters = false;
-
   function randomSymbol(){
     const r = Math.random();
-    const scatterChance = doubleChanceActive ? 0.16 : 0.08;
-    if (r < scatterChance) return {type:'scatter'};
-    if (r < scatterChance + 0.15) return {type:'multi', data: MULTIS[Math.floor(Math.random()*MULTIS.length)]};
+    if (r < 0.08) return {type:'scatter', data: 10};
+    if (r < 0.20) return {type:'multi', data: MULTIS[Math.floor(Math.random()*MULTIS.length)]};
     return {type:'shape', data: SHAPES[Math.floor(Math.random()*SHAPES.length)]};
   }
 
@@ -1181,14 +1314,15 @@
     }
     if (sym.type === 'multi'){
       let imgNum = 11;
-      if (sym.data.tone === 'tone-purple' || sym.data.tone === 'tone-pink') imgNum = 12;
-      else if (sym.data.tone === 'tone-blue') imgNum = 13;
-      else if (sym.data.tone === 'tone-red') imgNum = 14;
+      const tone = sym.data.tone || '';
+      if (tone === 'tone-purple' || tone === 'tone-pink') imgNum = 12;
+      else if (tone === 'tone-blue') imgNum = 13;
+      else if (tone === 'tone-red') imgNum = 14;
 
       return `<div class="symbol ${animClass}">
                 <div class="multi-badge-wrap">
                   <img src="{{ asset('assets/image/GatesofOlympus') }}/${imgNum}.png" class="multi-img">
-                  <span class="multi-val-text">${sym.data.label}</span>
+                  <span class="multi-val-text">${sym.data.label || (sym.data.value + 'X')}</span>
                 </div>
               </div>`;
     }
@@ -1216,51 +1350,47 @@
     }
   }
 
-  function formatMoney(n){ return n.toFixed(2); }
-
-  // Check and Sync user balance on start
-  try {
-     fetch('{{ route("game.active-settings") }}')
-     .then(res => res.json())
-     .then(data => {
-         if (data && data.balance !== undefined) {
-             balance = parseFloat(data.balance);
-             if (balanceEl) balanceEl.textContent = currencySymbol + formatMoney(balance);
-         }
-     });
-  } catch(e) {}
+  function formatMoney(n){ return (typeof n === 'number' ? n : parseFloat(n || 0)).toFixed(2); }
 
   function showWinToast(amount){
     winToast.textContent = `+${currencySymbol}${formatMoney(amount)} WIN`;
     winToast.classList.add('show');
-    setTimeout(()=> winToast.classList.remove('show'), 1400);
+    setTimeout(()=> winToast.classList.remove('show'), 1600);
   }
 
-  function highlightMultis(){
-    document.querySelectorAll('.multi-badge').forEach(el => el.classList.add('symbol-win'));
-  }
-
-  // ---- spin / tumble mechanic ----
+  // ==========================================
+  // SERVER DYNAMIC SPIN & TUMBLE ENGINE
+  // ==========================================
   function spin(){
     if (spinning) return;
-    const activeBet = doubleChanceActive ? (bet * 1.25) : bet;
+
+    let activeBet = bet;
+    if (buyFeaturePending) {
+      activeBet = bet * buySpinsMultiplier;
+    } else if (doubleChanceActive) {
+      activeBet = bet * (1 + (doubleChancePct / 100));
+    }
+
     if (balance < activeBet){
-      showWinToast(0);
-      alert("Insufficient balance to place bet!");
       autoplayActive = false;
       const apBtn = document.getElementById('bcAutoplay');
-      if (apBtn) {
-        apBtn.style.background = '';
-        apBtn.style.borderColor = '';
+      if (apBtn) { apBtn.style.background = ''; apBtn.style.borderColor = ''; }
+
+      if (!isDemoMode) {
+        openInsufficientBalanceModal(balance, activeBet);
+      } else {
+        alert("Demo balance too low. Resetting demo balance.");
+        demoBalance = SERVER_CONFIG ? parseFloat(SERVER_CONFIG.demo_starting_balance) : 10000.0;
+        balance = demoBalance;
+        updateModeUI();
       }
+      buyFeaturePending = false;
       return;
     }
 
     playSpinSound();
-
     spinning = true;
-    
-    // Update message
+
     const msg = document.getElementById('bcMessage');
     if (msg) msg.textContent = 'SPINNING...';
 
@@ -1278,196 +1408,148 @@
       }
     }
 
+    // Anticipatory balance reduction in UI
     balance -= activeBet;
-    if (isDemoMode) {
-      demoBalance = balance;
-    } else {
-      realBalance = balance;
-      syncBalance(realBalance);
-    }
-    if (balanceEl) balanceEl.textContent = currencySymbol + formatMoney(balance);
+    if (balanceEl) balanceEl.textContent = (isDemoMode ? 'DEMO ' : currencySymbol) + formatMoney(balance);
     if (spinBtn) {
       spinBtn.classList.add('spinning');
       spinBtn.disabled = true;
     }
 
-    let finished = 0;
-    const finalSymbolsByCol = [];
-
-    for (let c = 0; c < COLS; c++){
-      const colEl = cellsColumnWrapper(c);
-      colEl.classList.add('reel-col-tumbling');
-
-      const flickerInterval = setInterval(() => {
+    // Start reel tumbling animations across all 6 columns
+    const flickerIntervals = [];
+    for (let c = 0; c < COLS; c++) {
+      cells[c].forEach(cell => cell.classList.add('reel-col-tumbling'));
+      flickerIntervals[c] = setInterval(() => {
         for (let r = 0; r < ROWS; r++){
           cells[c][r].innerHTML = symbolMarkup(randomSymbol(), false);
         }
       }, 70);
-
-      const stopDelay = 500 + c * 220;
-      setTimeout(() => {
-        clearInterval(flickerInterval);
-        colEl.classList.remove('reel-col-tumbling');
-        const finalSymbols = [];
-        for (let r = 0; r < ROWS; r++) {
-          if (guaranteeScatters && c < 4 && r === 2) {
-            finalSymbols.push({type:'scatter'});
-          } else {
-            finalSymbols.push(randomSymbol());
-          }
-        }
-        setColumnSymbols(c, finalSymbols, true);
-        finalSymbolsByCol[c] = finalSymbols;
-        
-        playReelStopSound(c); // Sound on column stop
-
-        finished++;
-        if (finished === COLS){
-          stopSpinSound(); // Stop spin loop audio
-          settleRound(finalSymbolsByCol);
-        }
-      }, stopDelay);
     }
-  }
 
-  function cellsColumnWrapper(c){
-    // group of cells sharing a column index, treated as one unit for the tumble overlay
-    return {
-      classList: {
-        add: () => cells[c].forEach(cell => cell.classList.add('reel-col-tumbling')),
-        remove: () => cells[c].forEach(cell => cell.classList.remove('reel-col-tumbling'))
-      }
+    // Send Spin Request to Server API
+    const idempotencyKey = 'spin_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    const payload = {
+      bet_amount: bet,
+      mode: isDemoMode ? 'demo' : 'real',
+      is_double_chance: doubleChanceActive,
+      is_buy_feature: buyFeaturePending,
+      idempotency_key: idempotencyKey
     };
+
+    buyFeaturePending = false; // reset buy feature trigger
+
+    fetch('{{ route("olympus.spin") }}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': CSRF_TOKEN
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) {
+        // Stop tumbling
+        for (let c = 0; c < COLS; c++) {
+          clearInterval(flickerIntervals[c]);
+          cells[c].forEach(cell => cell.classList.remove('reel-col-tumbling'));
+        }
+        stopSpinSound();
+        spinning = false;
+        if (spinBtn) { spinBtn.classList.remove('spinning'); spinBtn.disabled = false; }
+
+        if (data.auth_required || data.limit_reached_now) {
+          openDemoLimitModal();
+        } else if (data.insufficient_balance) {
+          openInsufficientBalanceModal(data.current_balance || realBalance, data.required_amount || activeBet);
+        } else {
+          alert(data.message || "Unable to spin. Please try again.");
+        }
+        return;
+      }
+
+      // Process server result
+      const serverGrid = data.grid; // 6 cols x 5 rows
+      let finished = 0;
+
+      for (let c = 0; c < COLS; c++) {
+        const stopDelay = 500 + c * 220;
+
+        setTimeout(() => {
+          clearInterval(flickerIntervals[c]);
+          cells[c].forEach(cell => cell.classList.remove('reel-col-tumbling'));
+
+          const colSymbols = serverGrid[c];
+          setColumnSymbols(c, colSymbols, true);
+          playReelStopSound(c);
+
+          finished++;
+          if (finished === COLS) {
+            stopSpinSound();
+            settleServerRound(data);
+          }
+        }, stopDelay);
+      }
+    })
+    .catch(err => {
+      console.error('Spin API Error:', err);
+      for (let c = 0; c < COLS; c++) {
+        clearInterval(flickerIntervals[c]);
+        cells[c].forEach(cell => cell.classList.remove('reel-col-tumbling'));
+      }
+      stopSpinSound();
+      spinning = false;
+      if (spinBtn) { spinBtn.classList.remove('spinning'); spinBtn.disabled = false; }
+    });
   }
 
-  function settleRound(finalSymbolsByCol){
-    guaranteeScatters = false; // Reset scatter guarantee
-
-    // Flatten the grid symbols to easily analyze
-    const flatSymbols = [];
-    for (let c = 0; c < COLS; c++) {
-      for (let r = 0; r < ROWS; r++) {
-        flatSymbols.push({
-          col: c,
-          row: r,
-          sym: finalSymbolsByCol[c][r]
-        });
-      }
-    }
-
-    // Count occurrences of shapes and scatters
-    const counts = {};
-    flatSymbols.forEach(item => {
-      if (item.sym.type === 'shape') {
-        const shapeId = item.sym.data;
-        if (!counts[shapeId]) counts[shapeId] = [];
-        counts[shapeId].push(item);
-      } else if (item.sym.type === 'scatter') {
-        if (!counts['scatter']) counts['scatter'] = [];
-        counts['scatter'].push(item);
-      }
-    });
-
-    let totalWinMultiplier = 0;
-    const winningItems = [];
-
-    // Check for regular shape wins (8 or more matching)
-    for (const shapeId in counts) {
-      if (shapeId !== 'scatter') {
-        const matches = counts[shapeId];
-        if (matches.length >= 8) {
-          // It's a win! Calculate multiplier based on match count and symbol tier
-          let shapeMultiplier = 0.2; 
-          const idNum = parseInt(shapeId);
-          if (idNum <= 3) {
-            // Low tier
-            if (matches.length >= 12) shapeMultiplier = 2.0;
-            else if (matches.length >= 10) shapeMultiplier = 1.0;
-            else shapeMultiplier = 0.50;
-          } else if (idNum <= 6) {
-            // Mid tier
-            if (matches.length >= 12) shapeMultiplier = 5.0;
-            else if (matches.length >= 10) shapeMultiplier = 2.0;
-            else shapeMultiplier = 1.0;
-          } else {
-            // High tier
-            if (matches.length >= 12) shapeMultiplier = 15.0;
-            else if (matches.length >= 10) shapeMultiplier = 8.0;
-            else shapeMultiplier = 3.0;
-          }
-
-          totalWinMultiplier += shapeMultiplier;
-          matches.forEach(m => winningItems.push(m));
-        }
-      }
-    }
-
-    // Check for scatter wins (4 or more scatters)
-    if (counts['scatter'] && counts['scatter'].length >= 4) {
-      const scatters = counts['scatter'];
-      let scatterMultiplier = 3.0;
-      if (scatters.length === 5) scatterMultiplier = 15.0;
-      else if (scatters.length >= 6) scatterMultiplier = 100.0;
-
-      totalWinMultiplier += scatterMultiplier;
-      scatters.forEach(m => winningItems.push(m));
-    }
-
-    // Count multipliers on the grid
-    let gridMultiplier = 0;
-    let multiplierSymbols = [];
-    for (let c = 0; c < COLS; c++) {
-      for (let r = 0; r < ROWS; r++) {
-        const sym = finalSymbolsByCol[c][r];
-        if (sym.type === 'multi') {
-          gridMultiplier += sym.data.value;
-          multiplierSymbols.push({ col: c, row: r });
-        }
-      }
-    }
-
-    let finalWinAmount = 0;
+  function settleServerRound(data) {
+    const finalWin = parseFloat(data.final_win || 0);
+    const balanceAfter = parseFloat(data.balance);
     const msg = document.getElementById('bcMessage');
 
-    if (winningItems.length > 0) {
-      let winBase = bet * totalWinMultiplier;
-      if (gridMultiplier > 0) {
-        finalWinAmount = winBase * gridMultiplier;
-        // Highlight multiplier balls
-        multiplierSymbols.forEach(m => {
+    // Update state balance
+    if (isDemoMode) {
+      demoBalance = balanceAfter;
+      balance = demoBalance;
+    } else {
+      realBalance = balanceAfter;
+      balance = realBalance;
+      syncHeaderBalance();
+    }
+    if (balanceEl) balanceEl.textContent = (isDemoMode ? 'DEMO ' : currencySymbol) + formatMoney(balance);
+
+    if (finalWin > 0) {
+      lastWinEl.textContent = currencySymbol + formatMoney(finalWin);
+      if (msg) msg.textContent = `WIN: ${currencySymbol}${formatMoney(finalWin)}`;
+
+      // Highlight winning shape and scatter cells
+      if (data.winning_cells && data.winning_cells.length > 0) {
+        data.winning_cells.forEach(coord => {
+          const cellEl = cells[coord.col][coord.row];
+          cellEl.classList.add('cell-win');
+          if (!cellEl.querySelector('.flames-container')) {
+            const flames = document.createElement('div');
+            flames.className = 'flames-container';
+            flames.innerHTML = '<div class="flame"></div><div class="flame"></div><div class="flame"></div>';
+            cellEl.appendChild(flames);
+          }
+        });
+      }
+
+      // Highlight Multiplier symbols
+      if (data.multiplier_cells && data.multiplier_cells.length > 0) {
+        data.multiplier_cells.forEach(m => {
           const cellEl = cells[m.col][m.row];
           const symbolEl = cellEl.querySelector('.symbol');
           if (symbolEl) symbolEl.classList.add('symbol-win');
         });
-      } else {
-        finalWinAmount = winBase;
       }
-
-      balance += finalWinAmount;
-      if (isDemoMode) {
-        demoBalance = balance;
-      } else {
-        realBalance = balance;
-        syncBalance(realBalance);
-      }
-      if (balanceEl) balanceEl.textContent = currencySymbol + formatMoney(balance);
-      lastWinEl.textContent = currencySymbol + formatMoney(finalWinAmount);
-      if (msg) msg.textContent = `WIN: ${currencySymbol}${formatMoney(finalWinAmount)}`;
-      
-      // Highlight the winning items with fire burn animation and border flames
-      winningItems.forEach(item => {
-        const cellEl = cells[item.col][item.row];
-        cellEl.classList.add('cell-win');
-        if (!cellEl.querySelector('.flames-container')) {
-          const flames = document.createElement('div');
-          flames.className = 'flames-container';
-          flames.innerHTML = '<div class="flame"></div><div class="flame"></div><div class="flame"></div>';
-          cellEl.appendChild(flames);
-        }
-      });
 
       playWinSound();
-      showWinToast(finalWinAmount);
+      showWinToast(finalWin);
     } else {
       lastWinEl.textContent = currencySymbol + '0.00';
       if (msg) msg.textContent = 'PLACE YOUR BETS!';
@@ -1479,7 +1561,16 @@
       spinBtn.disabled = false;
     }
 
-    // Auto-spin again if autoplay is active
+    // Check if demo limit reached on this spin
+    if (isDemoMode && data.limit_reached_now) {
+      setTimeout(() => {
+        openDemoLimitModal();
+      }, 1200);
+      autoplayActive = false;
+      return;
+    }
+
+    // Autoplay continuation
     if (autoplayActive) {
       setTimeout(() => {
         if (autoplayActive && !spinning) {
@@ -1499,17 +1590,18 @@
   const dcBetVal = document.getElementById('dcBetVal');
 
   function updateDCUI() {
-    const displayedBet = doubleChanceActive ? (bet * 1.25) : bet;
+    const displayedBet = doubleChanceActive ? (bet * (1 + (doubleChancePct / 100))) : bet;
     const bcBet = document.getElementById('bcBet');
+    const prefix = isDemoMode ? 'DEMO ' : currencySymbol;
     if (bcBet) {
       bcBet.textContent = formatMoney(displayedBet);
     }
     if (dcBetVal) {
-      dcBetVal.textContent = currencySymbol + formatMoney(bet * 1.25);
+      dcBetVal.textContent = prefix + formatMoney(bet * (1 + (doubleChancePct / 100)));
     }
     const fsPrice = document.getElementById('freeSpinsPrice');
     if (fsPrice) {
-      fsPrice.textContent = currencySymbol + formatMoney(bet * 100);
+      fsPrice.textContent = prefix + formatMoney(bet * buySpinsMultiplier);
     }
   }
 
@@ -1540,14 +1632,14 @@
   if (betPlusBtn) {
     betPlusBtn.addEventListener('click', () => {
       if (spinning) return;
-      bet = Math.min(100, bet + 0.5);
+      bet = Math.min(maxBet, bet + (bet < 10 ? 1.0 : (bet < 50 ? 5.0 : 20.0)));
       updateDCUI();
     });
   }
   if (betMinusBtn) {
     betMinusBtn.addEventListener('click', () => {
       if (spinning) return;
-      bet = Math.max(0.5, bet - 0.5);
+      bet = Math.max(minBet, bet - (bet <= 10 ? 1.0 : (bet <= 50 ? 5.0 : 20.0)));
       updateDCUI();
     });
   }
@@ -1557,22 +1649,17 @@
   if (buyFreeSpinsCard) {
     buyFreeSpinsCard.addEventListener('click', () => {
       if (spinning) return;
-      const fsCost = bet * 100;
+      const fsCost = bet * buySpinsMultiplier;
       if (balance < fsCost) {
-        alert("Insufficient balance to buy Free Spins!");
+        if (!isDemoMode) {
+          openInsufficientBalanceModal(balance, fsCost);
+        } else {
+          alert("Insufficient demo balance to buy Free Spins!");
+        }
         return;
       }
-      if (confirm(`Buy Free Spins for ${currencySymbol}${formatMoney(fsCost)}?`)) {
-        balance -= fsCost;
-        if (isDemoMode) {
-          demoBalance = balance;
-        } else {
-          realBalance = balance;
-          syncBalance(realBalance);
-        }
-        if (balanceEl) balanceEl.textContent = currencySymbol + formatMoney(balance);
-        
-        guaranteeScatters = true;
+      if (confirm(`Buy Free Spins feature for ${currencySymbol}${formatMoney(fsCost)}?`)) {
+        buyFeaturePending = true;
         spin();
       }
     });
@@ -1580,8 +1667,6 @@
 
   // ---- Autoplay Button ----
   const autoplayBtn = document.getElementById('bcAutoplay');
-  let autoplayActive = false;
-
   if (autoplayBtn) {
     autoplayBtn.addEventListener('click', () => {
       if (spinning) {
@@ -1602,30 +1687,25 @@
     });
   }
 
-  // Initialize DC UI values on load
+  // Initialize UI values on load
   updateDCUI();
+  updateModeUI();
 
-  // ---- chrome buttons (cosmetic, like the lobby preview controls) ----
-  document.getElementById('reloadBtn').addEventListener('click', () => location.reload());
-  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+  // ---- Chrome buttons ----
+  const reloadBtn = document.getElementById('reloadBtn');
+  if (reloadBtn) reloadBtn.addEventListener('click', () => location.reload());
+
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  if (fullscreenBtn) fullscreenBtn.addEventListener('click', () => {
     const shell = document.querySelector('.game-shell');
     if (!document.fullscreenElement) shell.requestFullscreen?.();
     else document.exitFullscreen?.();
   });
-  document.getElementById('favBtn').addEventListener('click', (e) => {
+
+  const favBtn = document.getElementById('favBtn');
+  if (favBtn) favBtn.addEventListener('click', (e) => {
     e.target.classList.toggle('text-warning');
     e.target.style.color = e.target.classList.contains('text-warning') ? '#f5c542' : '';
-  });
-  // Prevent developer tools / contextmenu
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-      (e.ctrlKey && e.key === 'U')
-    ) {
-      e.preventDefault();
-    }
   });
 })();
 </script>

@@ -30,7 +30,7 @@ body{background:#0c1626;overflow-x:hidden;}
   pointer-events:none;z-index:0;
 }
 
-/* ===== 1XBET LAYOUT PANELS ===== */
+/* ===== Bettingsite LAYOUT PANELS ===== */
 .topnav {
   width: 100%;
   background: #0f223f;
@@ -558,7 +558,7 @@ body{background:#0c1626;overflow-x:hidden;}
 <!-- PARTICLES -->
 <div id="particles"></div>
 
-<!-- TOP NAV (1XBET STYLE) -->
+<!-- TOP NAV (Bettingsite STYLE) -->
 <div class="topnav">
   <div class="breadcrumb">
     <a href="{{ route('dashboard') }}">Home</a>
@@ -582,7 +582,7 @@ body{background:#0c1626;overflow-x:hidden;}
   </div>
 </div>
 
-<!-- SIDE NAV (1XBET STYLE) -->
+<!-- SIDE NAV (Bettingsite STYLE) -->
 <div class="sidenav">
   <button class="icon-btn" onclick="window.location.href='{{ route('dashboard') }}'" title="Slots Lobby">
     <i class="fas fa-gamepad"></i>
@@ -1812,9 +1812,6 @@ initBg();
 document.getElementById('winCurrencySymbol').textContent = currencySymbol;
 chgBet(0);
 updateModeUI();
-
-// Disable right click on the game frame to prevent inspection of symbol images
-document.getElementById('gameFrame').addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>

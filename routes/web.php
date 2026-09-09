@@ -80,9 +80,10 @@ Route::get('/super-ace-deluxe', function () {
     return view('customer.super-ace-deluxe');
 })->middleware('auth')->name('super-ace-deluxe');
 
-Route::get('/gates-of-olympus', function () {
-    return view('customer.gates-of-olympus');
-})->middleware('auth')->name('gates-of-olympus');
+Route::get('/gates-of-olympus', [App\Http\Controllers\OlympusGameController::class, 'index'])->name('gates-of-olympus');
+Route::get('/api/olympus/config', [App\Http\Controllers\OlympusGameController::class, 'getConfig'])->name('olympus.config');
+Route::post('/api/olympus/spin', [App\Http\Controllers\OlympusGameController::class, 'spin'])->name('olympus.spin');
+Route::get('/api/olympus/history', [App\Http\Controllers\OlympusGameController::class, 'history'])->name('olympus.history');
 
 Route::get('/boxing-king', function () {
     return view('customer.boxing-king');
@@ -170,6 +171,12 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 
     // Live Game Status monitor
     Route::get('/game-status', [AdminController::class, 'getGameStatus'])->name('game-status');
+
+    // Olympus Slot Game Management
+    Route::get('/olympus/settings', [AdminController::class, 'getOlympusSettings'])->name('olympus.settings.get');
+    Route::post('/olympus/settings', [AdminController::class, 'saveOlympusSettings'])->name('olympus.settings.save');
+    Route::get('/olympus/rounds', [AdminController::class, 'getOlympusRounds'])->name('olympus.rounds');
+    Route::get('/olympus/audit-logs', [AdminController::class, 'getOlympusAuditLogs'])->name('olympus.audit-logs');
 });
 
 // Game engine: fetch next crash point (auth required - players only)

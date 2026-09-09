@@ -1,5 +1,5 @@
 /**
- * 1xBet Crash Clone - JavaScript Core Game Engine
+ * Bettingsite Crash Clone - JavaScript Core Game Engine
  * Features:
  * - Canvas flight rendering (grid scroll, backdrop parallax scrolling, vintage yellow plane, trail, explosion particles)
  * - Trajectory filling: Translucent orange gradient shape under the flight curve.

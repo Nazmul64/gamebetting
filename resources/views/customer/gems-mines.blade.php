@@ -40,7 +40,7 @@
       radial-gradient(ellipse 40% 40% at 80% 80%, #050d20 0%, transparent 60%);
   }
 
-  /* 1xBet Style Header Nav */
+  /* Bettingsite Style Header Nav */
   .dashboard-header-nav a {
     transition: color 0.2s;
   }

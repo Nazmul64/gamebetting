@@ -15,11 +15,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>
-<body class="landing-body theme-1xbet-active {{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
+<body class="landing-body theme-Bettingsite-active {{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 
     @include('customer.header')
 
-    <!-- Main Workspace with 1xBet Style Layout -->
+    <!-- Main Workspace with Bettingsite Style Layout -->
     <div class="lobby-wrapper">
         
         <!-- Left Sidebar Icons list -->
@@ -2980,7 +2980,7 @@
         let transactions = [];
         
         // ==========================================================================
-        // 1XBET CASINO LOBBY JS CONTROLS
+        // Bettingsite CASINO LOBBY JS CONTROLS
         // ==========================================================================
         let currentSlide = 0;
         const totalSlides = 3;

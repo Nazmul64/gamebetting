@@ -1111,4 +1111,148 @@ class AdminController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Get active Olympus slot configuration.
+     */
+    public function getOlympusSettings(): \Illuminate\Http\JsonResponse
+    {
+        $config = \App\Models\OlympusConfig::getActiveConfig();
+        return response()->json([
+            'success' => true,
+            'config'  => $config,
+        ]);
+    }
+
+    /**
+     * Save Olympus slot configuration and write audit logs.
+     */
+    public function saveOlympusSettings(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'game_status'                      => 'required|in:active,maintenance',
+            'demo_enabled'                     => 'required|boolean',
+            'real_enabled'                     => 'required|boolean',
+            'demo_play_limit'                 => 'required|integer|min:0|max:100',
+            'demo_starting_balance'           => 'required|numeric|min:10',
+            'login_popup_enabled'             => 'required|boolean',
+            'min_bet'                         => 'required|numeric|min:0.1',
+            'max_bet'                         => 'required|numeric|min:1',
+            'default_bet'                     => 'required|numeric|min:0.1',
+            'buy_free_spins_multiplier'       => 'required|numeric|min:1',
+            'double_chance_ante_pct'          => 'required|numeric|min:0',
+            'rtp_percentage'                  => 'required|numeric|min:50|max:100',
+            'volatility'                      => 'required|in:low,medium,high',
+            'required_scatters_for_free_spins'=> 'required|integer|min:3|max:6',
+            'free_spins_count'                => 'required|integer|min:1|max:50',
+            'max_multiplier'                  => 'required|integer|min:10|max:5000',
+            'paytable_json'                   => 'nullable|array',
+            'multipliers_json'                => 'nullable|array',
+            'bet_options_json'                => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()->all()
+            ], 422);
+        }
+
+        $config = \App\Models\OlympusConfig::getActiveConfig();
+        $adminId = Auth::id();
+        $ip = $request->ip();
+
+        $data = $request->only([
+            'game_status',
+            'demo_enabled',
+            'real_enabled',
+            'demo_play_limit',
+            'demo_starting_balance',
+            'login_popup_enabled',
+            'min_bet',
+            'max_bet',
+            'default_bet',
+            'buy_free_spins_multiplier',
+            'double_chance_ante_pct',
+            'rtp_percentage',
+            'volatility',
+            'required_scatters_for_free_spins',
+            'free_spins_count',
+            'max_multiplier',
+        ]);
+
+        if ($request->has('paytable_json')) {
+            $data['paytable_json'] = $request->paytable_json;
+        }
+        if ($request->has('multipliers_json')) {
+            $data['multipliers_json'] = $request->multipliers_json;
+        }
+        if ($request->has('bet_options_json')) {
+            $data['bet_options_json'] = $request->bet_options_json;
+        }
+
+        // Track and log changes in AuditLog
+        foreach ($data as $key => $newValue) {
+            $oldValue = $config->{$key};
+            $oldSerialized = is_array($oldValue) ? json_encode($oldValue) : (string) $oldValue;
+            $newSerialized = is_array($newValue) ? json_encode($newValue) : (string) $newValue;
+
+            if ($oldSerialized !== $newSerialized) {
+                \App\Models\OlympusAuditLog::create([
+                    'admin_id'    => $adminId,
+                    'setting_key' => $key,
+                    'old_value'   => $oldSerialized,
+                    'new_value'   => $newSerialized,
+                    'ip_address'  => $ip,
+                ]);
+            }
+        }
+
+        $config->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Olympus Slot Game configuration updated successfully.',
+            'config'  => $config->fresh(),
+        ]);
+    }
+
+    /**
+     * Get paginated Olympus player rounds for admin review.
+     */
+    public function getOlympusRounds(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $query = \App\Models\OlympusRound::with('user:id,name,email');
+
+        if ($request->filled('mode')) {
+            $query->where('mode', $request->mode);
+        }
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        $rounds = $query->orderByDesc('id')->paginate(20);
+
+        return response()->json([
+            'success' => true,
+            'rounds'  => $rounds,
+        ]);
+    }
+
+    /**
+     * Get Olympus admin audit logs.
+     */
+    public function getOlympusAuditLogs(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $logs = \App\Models\OlympusAuditLog::with('admin:id,name,email')
+            ->orderByDesc('id')
+            ->limit(50)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'logs'    => $logs,
+        ]);
+    }
 }

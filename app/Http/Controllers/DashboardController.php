@@ -27,11 +27,11 @@ class DashboardController extends Controller
     public function deposit(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'gateway_id' => 'required|integer',
-            'amount' => 'required|numeric|min:10',
-            'sender_number' => 'required|string|min:10|max:20',
-            'transaction_id' => 'required|string|min:6|max:50',
-            'screenshot' => 'required|file|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'gateway_id'     => 'required|integer',
+            'amount'         => 'required|numeric|min:10',
+            'sender_number'  => 'nullable|string|max:100',
+            'transaction_id' => 'required|string|min:4|max:100',
+            'screenshot'     => 'nullable|file|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
         if ($validator->fails()) {

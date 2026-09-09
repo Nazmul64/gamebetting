@@ -35,7 +35,7 @@
     position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;
   }
 
-  /* ---------- 1XBET FULL PAGE SHELL ---------- */
+  /* ---------- Bettingsite FULL PAGE SHELL ---------- */
   #gameWrapper{
     width:100%;
     min-height:100vh;
@@ -391,7 +391,7 @@
     .jp-amt{font-size:.78rem;}
   }
 
-  /* Fixed Footer bar styling matching 1xbet dashboard theme */
+  /* Fixed Footer bar styling matching Bettingsite dashboard theme */
   .footerbar {
     width: 100%;
     background: #0f223f;
@@ -455,7 +455,7 @@
 <canvas id="bgCanvas"></canvas>
 
 <div id="gameWrapper">
-  <!-- TOP NAV (1XBET STYLE) -->
+  <!-- TOP NAV (Bettingsite STYLE) -->
   <div class="topnav">
     <div class="breadcrumb">
       <a href="{{ route('dashboard') }}"><i class="fa-solid fa-house"></i> Home</a>
@@ -479,7 +479,7 @@
     </div>
   </div>
 
-  <!-- SIDE NAV (1XBET STYLE) -->
+  <!-- SIDE NAV (Bettingsite STYLE) -->
   <div class="sidenav">
     <button class="icon-btn" onclick="window.location.href='{{ route('dashboard') }}'" title="Slots Lobby">
       <i class="fas fa-gamepad"></i>
@@ -1629,9 +1629,6 @@ function toggleFullScreen() {
       document.exitFullscreen();
   }
 }
-
-// Disable context menu (right click) on the game container to prevent symbol image inspection
-document.getElementById('frame').addEventListener('contextmenu', e => e.preventDefault());
 
 })();
 </script>

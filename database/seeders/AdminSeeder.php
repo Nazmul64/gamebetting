@@ -10,12 +10,12 @@ class AdminSeeder extends Seeder
 {
     /**
      * Create the admin user if it doesn't already exist.
-     * Email: admin@gmaill.com
-     * Password: admin@gmaill.com (same as email — change this in production!)
+     * Email: admin@gmail.com
+     * Password: admin@gmail.com (same as email — change this in production!)
      */
     public function run(): void
     {
-        $adminEmail = 'admin@gmaill.com';
+        $adminEmail = 'admin@gmail.com';
 
         // Only create if not already exists
         if (!User::where('email', $adminEmail)->exists()) {

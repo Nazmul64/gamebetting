@@ -1571,11 +1571,6 @@ class MoneyBackdrop{
   let engine = new ClimbEngine(state.risk);
   renderer.setEngine(engine);
 
-  // Disable context menu on canvases to avoid inspector popups
-  [els.ladderCanvas, els.fxCanvas].forEach(canvas => {
-    canvas.addEventListener('contextmenu', e => e.preventDefault());
-  });
-
   // Sound Toggle configuration
   soundCtrl.toggle(!state.sound);
 

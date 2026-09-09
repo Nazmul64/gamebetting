@@ -1793,26 +1793,6 @@ class MoneyBackdrop{
     }
   });
 
-  // Anti-inspect protection
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    // Disable F12
-    if (e.keyCode === 123) {
-      e.preventDefault();
-      return false;
-    }
-    // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
-    if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-      e.preventDefault();
-      return false;
-    }
-    // Disable Ctrl+U
-    if (e.ctrlKey && e.keyCode === 85) {
-      e.preventDefault();
-      return false;
-    }
-  });
-
   // Force play and unmute background video on user interaction
   const bgVid = document.getElementById('bgVideo');
   if (bgVid) {
