@@ -56,6 +56,13 @@ Route::prefix('games/lucky-joker-100')->group(function () {
     Route::post('/spin', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'spin'])->name('joker.spin');
 });
 
+// Fortune Gems 2 Casino Slot Game Routes
+Route::get('/fortune-gems-2', [App\Http\Controllers\FortuneGems\FortuneGemsGameController::class, 'index'])->name('fortune-gems-2');
+Route::prefix('games/fortune-gems-2')->group(function () {
+    Route::get('/', [App\Http\Controllers\FortuneGems\FortuneGemsGameController::class, 'index'])->name('fortunegems.index');
+    Route::post('/spin', [App\Http\Controllers\FortuneGems\FortuneGemsGameController::class, 'spin'])->name('fortunegems.spin');
+});
+
 Route::get('/the-emirate', function () {
     return view('customer.the-emirate');
 })->middleware('auth')->name('the-emirate');
@@ -225,6 +232,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/lucky-joker', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'index'])->name('joker.index');
     Route::post('/modules/lucky-joker/settings', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'updateSettings'])->name('joker.settings');
     Route::post('/modules/lucky-joker/upload-audio', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'uploadAudio'])->name('joker.audio');
+
+    // Fortune Gems 2 Casino Game Management Module
+    Route::get('/modules/fortune-gems-2', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'index'])->name('gems.index');
+    Route::post('/modules/fortune-gems-2/settings', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'updateSettings'])->name('gems.settings');
+    Route::post('/modules/fortune-gems-2/upload-audio', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'uploadAudio'])->name('gems.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)

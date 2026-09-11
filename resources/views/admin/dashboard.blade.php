@@ -1403,11 +1403,12 @@
                             <span style="font-size:9px; background:#00f2fe; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
-                        <!-- Upcoming Modules Slots -->
-                        <button class="sidebar-nav-link" onclick="showAdminToast('Fortune Gems 2 engine module will load here.', 'info')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.7;">
-                            <i class="fas fa-gem" style="color:#60a5fa; font-size:12px;"></i>
-                            <span>Fortune Gems 2</span>
-                        </button>
+                        <!-- Active Game: Fortune Gems 2 -->
+                        <a href="{{ route('admin.gems.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-gem" style="color:#f59e0b; font-size:13px;"></i>
+                            <span>Fortune Gems 2™</span>
+                            <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
                         <!-- Active Game 3: Boxing King -->
                         <button class="sidebar-nav-link" id="nav-boxing-king" onclick="switchTab('boxing-king', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
                             <i class="fas fa-crown" style="color:#ef4444; font-size:13px;"></i>

@@ -35,5 +35,6 @@ class DatabaseSeeder extends Seeder
         $this->call(WesternVaultSeeder::class);
         $this->call(HeadsTailsSettingSeeder::class);
         $this->call(LuckyJokerSeeder::class);
+        $this->call(FortuneGemsSeeder::class);
     }
 }
