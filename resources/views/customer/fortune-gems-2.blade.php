@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>Fortune Gems 2 - JILI Slot</title>
+<title>Fortune Gems 2 — JILI Slot</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;color:#fff;}
@@ -69,13 +69,13 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
   align-items:center;
   justify-content:center;
   min-height:calc(100vh - 62px);
-  padding:24px 12px;
+  padding:20px 12px;
   overflow:hidden;
   background:url('/assets/image/fortune_gems_bg.jpg') center/cover no-repeat;
 }
 .game-bg{
   position:absolute;inset:0;
-  background:rgba(0,0,0,0.35);
+  background:rgba(0,0,0,0.38);
   z-index:0;
 }
 
@@ -98,6 +98,7 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
   background:#7a5228;
   border:3px solid #4a2e0e;
   border-bottom:3px solid #3a1e06;
+  position:relative;
 }
 .marquee-track{
   flex:1;overflow:hidden;
@@ -127,6 +128,32 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
   font-family:'Cinzel',serif;font-size:13px;font-weight:900;
   color:#ffd700;text-align:center;line-height:1.2;
   letter-spacing:0.05em;
+}
+
+/* -- MODE BADGE ON CABINET -- */
+.mode-badge-indicator {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid #60a5fa;
+  color: #93c5fd;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+.mode-badge-indicator.real-active {
+  border-color: #f59e0b;
+  color: #fef08a;
+  background: rgba(30, 20, 10, 0.88);
 }
 
 /* -- MAIN STAGE -- */
@@ -512,12 +539,12 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
 
 /* -- IN-GAME HEADER BAR -- */
 .ingame-header{
-  height:38px;
+  height:44px;
   background:#1e2638;
   border-bottom:1px solid rgba(255,255,255,0.07);
   display:flex;align-items:center;
   padding:0 12px;
-  gap:10px;
+  gap:12px;
   flex-shrink:0;
 }
 .ingame-header .game-fav{
@@ -527,40 +554,56 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
 .ingame-header .game-fav:hover{color:#ff6b6b;}
 .ingame-header .game-name{
   font-family:'Poppins',sans-serif;font-weight:700;
-  font-size:12.5px;color:#fff;margin-right:4px;
+  font-size:13px;color:#fff;margin-right:2px;
 }
 .ingame-header .game-provider{
   font-size:11px;color:rgba(255,255,255,0.4);
   border-left:1px solid rgba(255,255,255,0.15);padding-left:8px;
 }
 .ingame-header .spacer{flex:1;}
-.real-money-toggle{
-  display:flex;align-items:center;gap:7px;
-  font-family:'Poppins',sans-serif;font-size:11px;
-  color:rgba(255,255,255,0.6);font-weight:600;
+
+/* -- 1XBET DUAL MODE SELECTOR BUTTONS -- */
+.mode-toggle-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(10, 15, 29, 0.85);
+  border: 1.5px solid rgba(255, 215, 0, 0.35);
+  border-radius: 24px;
+  padding: 3px;
+  gap: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
-.real-money-toggle .switch-track{
-  width:34px;height:18px;border-radius:9px;
-  background:linear-gradient(90deg,#2a7aff,#1a5acc);
-  cursor:pointer;position:relative;
-  transition:background 0.2s;
-  border:1.5px solid #2a7aff;
+.mode-pill-btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #94a3b8;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }
-.real-money-toggle .switch-track.demo-on{
-  background:rgba(255,255,255,0.15);
-  border-color:rgba(255,255,255,0.2);
+.mode-pill-btn:hover {
+  color: #fff;
 }
-.real-money-toggle .switch-dot{
-  width:12px;height:12px;border-radius:50%;
-  background:#fff;position:absolute;
-  top:2px;left:2px;
-  transform:translateX(16px);
-  transition:transform 0.2s;
-  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+.mode-pill-btn.active-real {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #1a0e02;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
 }
-.real-money-toggle .switch-track.demo-on .switch-dot{
-  transform:translateX(0px);
+.mode-pill-btn.active-demo {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }
+
 .ingame-actions{
   display:flex;align-items:center;gap:4px;
 }
@@ -651,12 +694,11 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
   .shell-body{height:100vh;height:100dvh;overflow:hidden;}
   .game-wrapper{padding:0;align-items:stretch;}
   .cabinet{max-width:100%;width:100%;border-radius:0;border-width:0;box-shadow:none;display:flex;flex-direction:column;height:100%;}
-  .ingame-header{height:32px;padding:0 8px;gap:6px;flex-shrink:0;}
+  .ingame-header{height:36px;padding:0 8px;gap:6px;flex-shrink:0;}
   .ingame-header .game-provider{display:none;}
   .ingame-header .game-name{font-size:11px;}
   .ingame-header .game-fav{font-size:13px;}
-  .real-money-toggle .switch-track{width:28px;height:16px;}
-  .real-money-toggle{font-size:10px;gap:5px;}
+  .mode-pill-btn{font-size:10px;padding:3px 8px;}
   .top-arch{height:32px;flex-shrink:0;}
   .marquee-inner{font-size:11px;}
   .special-wheel-badge{width:84px;font-size:10px;letter-spacing:0;}
@@ -738,15 +780,39 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
     </div>
 </div>
 
-<!-- Deposit Required Popup Modal -->
+<!-- Insufficient Balance Prompt Modal -->
+<div id="insufficient-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9998; display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+    <div style="background:linear-gradient(180deg,#1e1b18,#120e0a); border:2px solid #f59e0b; border-radius:18px; padding:28px 24px; width:90%; max-width:400px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(245,158,11,0.3);">
+        <div style="width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,#f59e0b,#d97706); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:24px; color:#1a0e02; box-shadow:0 0 20px rgba(245,158,11,0.5);">
+            <i class="fas fa-wallet"></i>
+        </div>
+        <h3 style="font-family:'Cinzel Decorative',serif; font-size:19px; color:#fbbf24; margin-bottom:8px; font-weight:900;">INSUFFICIENT BALANCE</h3>
+        <p style="font-size:13px; color:#cbd5e1; line-height:1.6; margin-bottom:20px;">
+            আপনার রিয়েল ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই। আপনি কি <strong>৩টি ফ্রি ডেমো স্পিন</strong> দিয়ে গেমটি পরীক্ষা করতে চান?
+        </p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button onclick="activateDemoFromPrompt()" style="width:100%; padding:12px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:13.5px; border-radius:10px; cursor:pointer; box-shadow:0 4px 15px rgba(59,130,246,0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i class="fas fa-gamepad"></i> ৩টি ফ্রি ডেমো স্পিন খেলুন (PLAY DEMO)
+            </button>
+            <a href="{{ route('dashboard') }}" style="display:block; padding:11px; background:linear-gradient(135deg,#f59e0b,#b45309); color:#1a0e02; text-decoration:none; font-family:'Poppins',sans-serif; font-weight:800; font-size:13.5px; border-radius:10px; box-shadow:0 4px 15px rgba(245,158,11,0.4);">
+                <i class="fas fa-plus-circle"></i> ডিপোজিট করুন (DEPOSIT NOW)
+            </a>
+            <button onclick="document.getElementById('insufficient-modal').style.display='none'" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#94a3b8; padding:7px; border-radius:8px; font-size:12px; cursor:pointer; margin-top:2px;">
+                বাতিল করুন (Cancel)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit Required Popup Modal (After 3 Demo Spins) -->
 <div id="deposit-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9998; display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
-    <div style="background:linear-gradient(180deg,#1e1b18,#120e0a); border:2px solid #f59e0b; border-radius:18px; padding:28px 24px; width:90%; max-width:380px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(245,158,11,0.3);">
+    <div style="background:linear-gradient(180deg,#1e1b18,#120e0a); border:2px solid #f59e0b; border-radius:18px; padding:28px 24px; width:90%; max-width:390px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(245,158,11,0.3);">
         <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#f59e0b,#d97706); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:26px; color:#1a0e02; box-shadow:0 0 20px rgba(245,158,11,0.5);">
             <i class="fas fa-lock"></i>
         </div>
         <h3 style="font-family:'Cinzel Decorative',serif; font-size:20px; color:#fbbf24; margin-bottom:8px; font-weight:900;">DEMO LIMIT REACHED</h3>
         <p style="font-size:13px; color:#cbd5e1; line-height:1.6; margin-bottom:20px;">
-            আপনার ফ্রি ডেমো স্পিন শেষ হয়েছে! আসল টাকা দিয়ে আনলিমিটেড জিততে এবং লাকি হুইল জ্যাকপট পেতে এখনই ডিপোজিট করুন।
+            আপনার ৩টি ফ্রি ডেমো স্পিন শেষ হয়েছে! আসল টাকা দিয়ে আনলিমিটেড জিততে এবং লাকি হুইল জ্যাকপট পেতে এখনই ডিপোজিট করুন।
         </p>
         <div style="display:flex; flex-direction:column; gap:10px;">
             <a href="{{ route('dashboard') }}" style="display:block; padding:12px; background:linear-gradient(135deg,#f59e0b,#b45309); color:#1a0e02; text-decoration:none; font-family:'Cinzel',serif; font-weight:800; font-size:14px; border-radius:10px; box-shadow:0 4px 15px rgba(245,158,11,0.4);">
@@ -801,12 +867,14 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
 
       <div class="spacer"></div>
 
-      {{-- Real Money Toggle --}}
-      <div class="real-money-toggle" id="realMoneyWrap">
-        <div class="switch-track" id="rmTrack">
-          <div class="switch-dot"></div>
-        </div>
-        <span id="rmLabel">PLAY FOR REAL MONEY</span>
+      {{-- 1xBet Style Dual Mode Pill Switcher --}}
+      <div class="mode-toggle-pill">
+        <button id="btnPlayDemo" class="mode-pill-btn" onclick="setGameMode('demo')">
+          <i class="fas fa-gamepad" style="color:#60a5fa;"></i> <span>DEMO (3 FREE)</span>
+        </button>
+        <button id="btnPlayReal" class="mode-pill-btn active-real" onclick="setGameMode('real')">
+          <i class="fas fa-coins"></i> <span>REAL MONEY</span>
+        </button>
       </div>
 
       {{-- Action Icons --}}
@@ -827,13 +895,19 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
 
         {{-- TOP MARQUEE ARCH --}}
         <div class="top-arch">
+          <!-- Active Mode Badge Indicator -->
+          <div id="modeStatusBadge" class="mode-badge-indicator real-active">
+            <i class="fas fa-circle-dot" style="font-size:9px;"></i>
+            <span id="modeStatusText">REAL MONEY MODE</span>
+          </div>
+
           <div class="marquee-track">
             <span class="marquee-inner">
               Bonus Wheel triggered when you land WHEEL symbol on 4th Reel! &nbsp;*&nbsp;
               Top multiplier 15X & Lucky Wheel up to 1000X Jackpot! &nbsp;*&nbsp;
               Garuda Wild substitutes for all gems! &nbsp;*&nbsp;
               Match 3 Garuda Wilds for 50X payout! &nbsp;*&nbsp;
-              Real Money & Instant Cashouts.
+              Instant Payouts & Real Money Mode.
             </span>
           </div>
           <div class="special-wheel-badge">SPECIAL<br>WHEEL</div>
@@ -879,8 +953,8 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
             <i class="fas fa-cog"></i>
           </div>
           <div class="cb-stat">
-            <div class="cb-label" id="balanceLabel">Balance</div>
-            <div class="cb-value" id="balanceVal">1,000.00</div>
+            <div class="cb-label" id="balanceLabel">BALANCE Tk</div>
+            <div class="cb-value" id="balanceVal">0.00</div>
           </div>
           <div class="cb-bet" id="betTrigger">
             <div class="cb-bet-coin"><i class="fas fa-coins"></i></div>
@@ -1026,18 +1100,22 @@ function getSymbolObj(nameOrId) {
 
 /* -- STATE & WALLET -- */
 const ROWS = 3, COLS = 3;
+const DEMO_LIMIT = parseInt("{{ $settings->demo_spin_limit ?? 3 }}") || 3;
 let realBalance = parseFloat("{{ auth()->check() ? auth()->user()->balance : 0 }}") || 0;
-let isDemoMode  = false; // Default real money mode priority
+
+// Auto-activate demo if user has 0 balance or URL has ?demo=1
+const urlParams = new URLSearchParams(window.location.search);
+let isDemoMode = urlParams.get('demo') === '1' || realBalance < 10;
 let demoSpinsDone = 0;
-let demoBalance = 1000.00;
-let balance     = isDemoMode ? demoBalance : realBalance;
-let bet         = 10.00;
-let spinning    = false;
-let autoplay    = false;
-let turbo       = false;
-let soundOn     = true;
-let winAmt      = 0.00;
-let grid        = [
+let demoBalance = parseFloat("{{ $settings->demo_default_balance ?? 1000.00 }}") || 1000.00;
+let balance = isDemoMode ? demoBalance : realBalance;
+let bet = 10.00;
+let spinning = false;
+let autoplay = false;
+let turbo = false;
+let soundOn = true;
+let winAmt = 0.00;
+let grid = [
   [SYMBOLS_LIST[1], SYMBOLS_LIST[4], SYMBOLS_LIST[7]],
   [SYMBOLS_LIST[0], SYMBOLS_LIST[1], SYMBOLS_LIST[2]],
   [SYMBOLS_LIST[3], SYMBOLS_LIST[5], SYMBOLS_LIST[6]]
@@ -1045,63 +1123,87 @@ let grid        = [
 
 /* -- DOM REFS -- */
 const $ = id => document.getElementById(id);
-const balanceVal    = $('balanceVal');
-const balanceLabel  = $('balanceLabel');
-const winValEl      = $('winVal');
-const betValEl      = $('betVal');
-const spinBtn       = $('spinBtn');
-const autoToggle    = $('autoToggle');
-const turboToggle   = $('turboToggle');
-const settingsBtn   = $('settingsBtn');
-const ptOverlay     = $('ptOverlay');
-const ptClose       = $('ptClose');
-const ptRows        = $('ptRows');
-const winBanner     = $('winBanner');
-const winTxt        = $('winTxt');
-const ribbon        = $('ribbon');
-const betPopup      = $('betPopup');
-const betTrigger    = $('betTrigger');
-const betItems      = document.querySelectorAll('.bet-item');
-const rmTrack       = $('rmTrack');
-const rmLabel       = $('rmLabel');
-const depositModal  = $('deposit-popup-modal');
+const balanceVal       = $('balanceVal');
+const balanceLabel     = $('balanceLabel');
+const winValEl         = $('winVal');
+const betValEl         = $('betVal');
+const spinBtn          = $('spinBtn');
+const autoToggle       = $('autoToggle');
+const turboToggle      = $('turboToggle');
+const settingsBtn      = $('settingsBtn');
+const ptOverlay        = $('ptOverlay');
+const ptClose          = $('ptClose');
+const ptRows           = $('ptRows');
+const winBanner        = $('winBanner');
+const winTxt           = $('winTxt');
+const ribbon           = $('ribbon');
+const betPopup         = $('betPopup');
+const betTrigger       = $('betTrigger');
+const betItems         = document.querySelectorAll('.bet-item');
+const btnPlayDemo      = $('btnPlayDemo');
+const btnPlayReal      = $('btnPlayReal');
+const modeStatusBadge  = $('modeStatusBadge');
+const modeStatusText   = $('modeStatusText');
+const depositModal     = $('deposit-popup-modal');
+const insufficientModal= $('insufficient-modal');
 
 function fmt(n){ return parseFloat(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
+function updateModeUI() {
+  if (isDemoMode) {
+    btnPlayDemo.className = 'mode-pill-btn active-demo';
+    btnPlayReal.className = 'mode-pill-btn';
+    modeStatusBadge.className = 'mode-badge-indicator';
+    const remaining = Math.max(0, DEMO_LIMIT - demoSpinsDone);
+    modeStatusText.textContent = `🎮 DEMO: ${remaining}/${DEMO_LIMIT} FREE SPINS`;
+    balanceLabel.textContent = "DEMO Tk";
+  } else {
+    btnPlayReal.className = 'mode-pill-btn active-real';
+    btnPlayDemo.className = 'mode-pill-btn';
+    modeStatusBadge.className = 'mode-badge-indicator real-active';
+    modeStatusText.textContent = "💰 REAL MONEY";
+    balanceLabel.textContent = "BALANCE Tk";
+  }
+}
+
 function refreshStats(){
+  balance = isDemoMode ? demoBalance : realBalance;
   balanceVal.textContent = fmt(balance);
-  balanceLabel.textContent = isDemoMode ? "DEMO Tk" : "BALANCE Tk";
-  betValEl.textContent   = bet;
-  winValEl.textContent   = fmt(winAmt);
+  betValEl.textContent = bet;
+  winValEl.textContent = fmt(winAmt);
+  updateModeUI();
 }
 refreshStats();
+
+window.setGameMode = function(mode) {
+  if (spinning || autoplay) return;
+  if (mode === 'demo') {
+    isDemoMode = true;
+    balance = demoBalance;
+    flashRibbon(`🎮 Demo Mode Activated (${DEMO_LIMIT - demoSpinsDone} Free Spins Left)`);
+  } else {
+    isDemoMode = false;
+    balance = realBalance;
+    flashRibbon('💰 Real Money Mode Activated');
+    if (realBalance < bet && insufficientModal) {
+      setTimeout(() => { insufficientModal.style.display = 'flex'; }, 400);
+    }
+  }
+  refreshStats();
+};
+
+window.activateDemoFromPrompt = function() {
+  if (insufficientModal) insufficientModal.style.display = 'none';
+  setGameMode('demo');
+  setTimeout(doSpin, 300);
+};
 
 function flashRibbon(text){
   ribbon.textContent = text;
   ribbon.classList.add('show');
   clearTimeout(flashRibbon._t);
-  flashRibbon._t = setTimeout(() => ribbon.classList.remove('show'), 2200);
-}
-
-/* -- REAL / DEMO TOGGLE -- */
-if(rmTrack){
-  rmTrack.onclick = function(){
-    if(spinning || autoplay) return;
-    isDemoMode = !isDemoMode;
-    if(isDemoMode){
-      rmTrack.classList.add('demo-on');
-      rmLabel.textContent = "DEMO ACTIVE";
-      balance = demoBalance;
-      flashRibbon('Demo Mode Activated (3 Spins Limit)');
-    } else {
-      rmTrack.classList.remove('demo-on');
-      rmLabel.textContent = "PLAY FOR REAL MONEY";
-      balance = realBalance;
-      flashRibbon('Real Money Mode Activated');
-    }
-    refreshStats();
-  };
+  flashRibbon._t = setTimeout(() => ribbon.classList.remove('show'), 2400);
 }
 
 /* -- PAYTABLE BUILD -- */
@@ -1528,17 +1630,26 @@ async function spinFortuneWheelBonus(targetMultiplier) {
 async function doSpin(){
   if(spinning) return;
 
-  // 1. ডেমো লিমিট গার্ড (৩ স্পিনের পর স্ক্রিন লক)
-  if (isDemoMode && demoSpinsDone >= 3) {
+  // 1. ডেমো লিমিট গার্ড (৩ স্পিনের পর স্ক্রিন লক ও ডিপোজিট পপ-আপ)
+  if (isDemoMode && demoSpinsDone >= DEMO_LIMIT) {
     if (depositModal) depositModal.style.display = 'flex';
     return;
   }
 
   // 2. ব্যালেন্স ভ্যালিডেশন
-  if(balance < bet){
-    flashRibbon('Insufficient Balance! Please Deposit.');
-    if (depositModal) depositModal.style.display = 'flex';
+  if (!isDemoMode && realBalance < bet) {
+    if (insufficientModal) {
+      insufficientModal.style.display = 'flex';
+    } else {
+      flashRibbon('Insufficient Balance! Please Deposit.');
+    }
     return;
+  }
+
+  if (isDemoMode && demoBalance < bet) {
+    demoBalance = 1000.00;
+    balance = demoBalance;
+    refreshStats();
   }
 
   spinning = true;
@@ -1546,7 +1657,12 @@ async function doSpin(){
   resetWheelFrame();
   winAmt = 0.00;
 
-  balance -= bet;
+  // বাজি ডেবিট অ্যানিমেশন
+  if (isDemoMode) {
+    demoBalance -= bet;
+  } else {
+    realBalance -= bet;
+  }
   refreshStats();
   beep(220, 0.06, 'sawtooth', 0.05);
 
@@ -1576,7 +1692,8 @@ async function doSpin(){
 
     if (data.error) {
       alert(data.error);
-      balance += bet;
+      if (isDemoMode) demoBalance += bet;
+      else realBalance += bet;
       refreshStats();
       spinning = false;
       spinBtn.classList.remove('spinning');
@@ -1649,7 +1766,7 @@ async function doSpin(){
 
     if (data.triggered_wheel) {
       multActiveFrame.classList.add('lit');
-      flashRibbon('LUCKY WHEEL BONUS TRIGGERED!');
+      flashRibbon('🎰 LUCKY WHEEL BONUS TRIGGERED!');
       
       if (data.audio && data.audio.wheel && soundOn) {
         audioWheel.src = data.audio.wheel;
@@ -1679,40 +1796,47 @@ async function doSpin(){
       winAmt = parseFloat(data.win_amount);
       winTxt.textContent = '+' + fmt(winAmt) + (data.multiplier > 1 ? ' (' + data.multiplier + 'X)' : '');
       winBanner.classList.add('show');
-      flashRibbon(data.triggered_wheel ? `LUCKY WHEEL WIN Tk ${fmt(winAmt)}!` : `WIN Tk ${fmt(winAmt)} (${data.multiplier}X)!`);
+      flashRibbon(data.triggered_wheel ? `🔥 LUCKY WHEEL WIN Tk ${fmt(winAmt)}!` : `⭐ WIN Tk ${fmt(winAmt)} (${data.multiplier}X)!`);
       setTimeout(() => winBanner.classList.remove('show'), 2000);
     } else {
-      flashRibbon('Try again!');
+      flashRibbon(isDemoMode ? `Trial spin complete! (${DEMO_LIMIT - (demoSpinsDone + 1)} left)` : 'Try again!');
     }
 
     if (isDemoMode) {
       demoSpinsDone++;
-      demoBalance = demoBalance - bet + data.win_amount;
-      balance = demoBalance;
+      demoBalance = demoBalance + data.win_amount;
+      refreshStats();
+
+      // Check if this was the last demo spin
+      if (demoSpinsDone >= DEMO_LIMIT) {
+        setTimeout(() => {
+          if (depositModal) depositModal.style.display = 'flex';
+        }, 1800);
+      }
     } else {
       if (data.new_balance !== null && data.new_balance !== undefined) {
         realBalance = parseFloat(data.new_balance);
-        balance = realBalance;
+        refreshStats();
       }
     }
-    refreshStats();
 
   } catch(err) {
     console.error('Spin execution error:', err);
     flashRibbon('Connection error. Please retry.');
-    balance += bet;
+    if (isDemoMode) demoBalance += bet;
+    else realBalance += bet;
     refreshStats();
   } finally {
     spinBtn.classList.remove('spinning');
     spinning = false;
 
     if(autoplay){
-      if(balance >= bet && (!isDemoMode || demoSpinsDone < 3)) {
+      if(balance >= bet && (!isDemoMode || demoSpinsDone < DEMO_LIMIT)) {
         setTimeout(doSpin, 700);
       } else {
         autoplay = false;
         autoToggle.classList.remove('active');
-        if (isDemoMode && demoSpinsDone >= 3 && depositModal) {
+        if (isDemoMode && demoSpinsDone >= DEMO_LIMIT && depositModal) {
           depositModal.style.display = 'flex';
         }
       }
