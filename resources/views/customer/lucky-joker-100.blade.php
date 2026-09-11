@@ -1309,17 +1309,37 @@
   </div>
 </div>
 
+<!-- Deposit Modal Popup (Demo limit lock) -->
+<div id="deposit-modal-popup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+  <div style="background:linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border:2px solid #f43f5e; border-radius:16px; max-width:440px; width:100%; padding:28px 24px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(244,63,94,0.3);">
+    <div style="width:68px; height:68px; border-radius:50%; background:radial-gradient(circle, #fda4af, #e11d48); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; box-shadow:0 0 20px rgba(244,63,94,0.5);">
+      <i class="fas fa-wallet"></i>
+    </div>
+    <h3 style="font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; text-transform:uppercase;">ডেমো স্পিন লিমিট শেষ!</h3>
+    <p style="font-size:13.5px; color:#cbd5e1; line-height:1.6; margin-bottom:20px; font-family:sans-serif;">
+      আপনার ৩ বার ফ্রি ডেমো স্পিন লিমিট শেষ হয়েছে। Lucky Joker 100-এর আসল ক্যাশ পুরষ্কার জিততে এখনই ডিপোজিট করে রিয়েল মানিতে খেলুন!
+    </p>
+    <a href="{{ route('dashboard') }}" style="display:block; text-decoration:none; background:linear-gradient(180deg, #22c55e 0%, #16a34a 100%); color:#fff; font-weight:800; font-size:14px; padding:12px 24px; border-radius:8px; text-transform:uppercase; box-shadow:0 4px 15px rgba(34,197,94,0.5); margin-bottom:10px; font-family:'Oswald',sans-serif;">
+      <i class="fas fa-bolt"></i> ডিপোজিট করুন
+    </a>
+    <button onclick="document.getElementById('deposit-modal-popup').style.display='none'" style="background:transparent; border:1px solid #475569; color:#94a3b8; font-size:12px; padding:8px 16px; border-radius:6px; cursor:pointer; font-family:sans-serif;">
+      বন্ধ করুন
+    </button>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
 
   /* ============ dynamic state variables ============ */
-  const userCurrency = "{{ auth()->user()->currency }}";
+  const userCurrency = "{{ auth()->user()->currency ?? 'BDT' }}";
   const currencySymbol = userCurrency === 'BDT' ? '৳' : (userCurrency === 'INR' ? '₹' : '$');
-  const realBalance = parseFloat("{{ auth()->user()->balance }}");
+  const realBalance = parseFloat("{{ auth()->user()->balance ?? 1000.00 }}") || 1000.00;
 
   const urlParams = new URLSearchParams(window.location.search);
-  let isDemoMode = urlParams.get('demo') === '1' || (realBalance < 10);
+  let isDemoMode = urlParams.get('demo') === '1';
+  let demoSpinsDone = 0;
   
   let demoBalance = 10000.00;
   let balance = isDemoMode ? demoBalance : realBalance;
@@ -2069,26 +2089,34 @@
     }
   }
 
+  const SYM_MAP = {
+    'CHERRY': 0, 'PLUM': 1, 'ORANGE': 2, 'STAR_SCATTER': 3,
+    'GRAPES': 4, 'MELON': 5, 'SEVEN': 6, 'HORSESHOE': 7,
+    'BELL': 8, 'JOKER_WILD': 9
+  };
+
+  let backendSpinData = null;
+
   function startSpin(){
     if(spinningGlobal) return;
     const activeBet = extraGiftsActive ? (bet + extraBetPrice) : bet;
-    if(balance < activeBet){
-      if (isDemoMode) {
-        balance = 10000;
-        setInfo('OUT OF CREDITS \u2014 FREEPLAY BALANCE REFILLED!', 3000);
-      } else {
-        setInfo('INSUFFICIENT BALANCE FOR THIS BET!', 3000);
-        autoSpin = false;
-        updateAutoBtn();
-        return;
-      }
-      updateUI();
+
+    if (isDemoMode && demoSpinsDone >= 3) {
+      document.getElementById('deposit-modal-popup').style.display = 'flex';
+      autoSpin = false;
+      updateAutoBtn();
       return;
     }
+
+    if(!isDemoMode && balance < activeBet){
+      setInfo('INSUFFICIENT BALANCE! PLEASE DEPOSIT TO SPIN.', 3000);
+      autoSpin = false;
+      updateAutoBtn();
+      document.getElementById('deposit-modal-popup').style.display = 'flex';
+      return;
+    }
+
     ensureAudio();
-    balance = Math.round((balance - activeBet) * 100) / 100;
-    updateUI();
-    syncBalance(balance);
     spinningGlobal = true;
     winningCells = [];
     
@@ -2100,28 +2128,80 @@
     }
 
     setInfo('GOOD LUCK!');
-    updateUI();
     sndSpin();
 
-    const speed = turbo ? 2800 : 1500; // px/sec
-    const baseDur = turbo ? 260 : 650;
-    const stagger = turbo ? 110 : 320;
+    // Call Backend API
+    fetch("{{ route('joker.spin') }}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: JSON.stringify({
+        bet_amount: activeBet,
+        is_demo: isDemoMode,
+        demo_spins_count: demoSpinsDone
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'deposit_required') {
+        spinningGlobal = false;
+        document.getElementById('deposit-modal-popup').style.display = 'flex';
+        autoSpin = false;
+        updateAutoBtn();
+        return;
+      }
 
-    for(let col=0; col<COLS; col++){
-      const duration = baseDur + col*stagger + Math.random()*60;
-      const steps = Math.max(8, Math.round(speed*duration/1000/cellH));
-      const strip = [];
-      for(let i=0;i<steps;i++) strip.push(randomSymbolFor(col));
-      const finals = [randomSymbolFor(col), randomSymbolFor(col), randomSymbolFor(col)];
-      strip.push(finals[0], finals[1], finals[2]);
-      reels[col].strip = strip;
-      reels[col].scroll = 0;
-      reels[col].spinning = true;
-      reels[col].startTime = performance.now();
-      reels[col].duration = duration;
-      reels[col].maxScroll = (strip.length - ROWS) * cellH;
-      reels[col].finals = finals;
-    }
+      if (data.error) {
+        spinningGlobal = false;
+        setInfo(data.error, 3000);
+        autoSpin = false;
+        updateAutoBtn();
+        return;
+      }
+
+      backendSpinData = data;
+
+      // Deduct balance immediately
+      if (isDemoMode) {
+        demoSpinsDone++;
+        demoBalance -= activeBet;
+        balance = demoBalance;
+      } else if (data.new_balance !== undefined) {
+        balance = Math.max(0, data.new_balance - (data.win_amount || 0));
+      }
+      updateUI();
+
+      const speed = turbo ? 2800 : 1500; // px/sec
+      const baseDur = turbo ? 260 : 650;
+      const stagger = turbo ? 110 : 320;
+
+      for(let col=0; col<COLS; col++){
+        const duration = baseDur + col*stagger + Math.random()*60;
+        const steps = Math.max(8, Math.round(speed*duration/1000/cellH));
+        const strip = [];
+        for(let i=0; i<steps; i++) strip.push(randomSymbolFor(col));
+        
+        let f0 = (data.grid && data.grid[0]) ? (SYM_MAP[data.grid[0][col]] ?? randomSymbolFor(col)) : randomSymbolFor(col);
+        let f1 = (data.grid && data.grid[1]) ? (SYM_MAP[data.grid[1][col]] ?? randomSymbolFor(col)) : randomSymbolFor(col);
+        let f2 = (data.grid && data.grid[2]) ? (SYM_MAP[data.grid[2][col]] ?? randomSymbolFor(col)) : randomSymbolFor(col);
+
+        const finals = [f0, f1, f2];
+        strip.push(finals[0], finals[1], finals[2]);
+        reels[col].strip = strip;
+        reels[col].scroll = 0;
+        reels[col].spinning = true;
+        reels[col].startTime = performance.now();
+        reels[col].duration = duration;
+        reels[col].maxScroll = (strip.length - ROWS) * cellH;
+        reels[col].finals = finals;
+      }
+    })
+    .catch(err => {
+      spinningGlobal = false;
+      console.error("Spin request failed:", err);
+    });
   }
 
   function animateReels(now){
@@ -2148,7 +2228,7 @@
         setTimeout(()=>startSpin(), turbo?300:nextAutoSpinDelay);
       } else if(autoSpin){
         autoSpin = false; updateAutoBtn();
-        setInfo('AUTO-SPIN STOPPED \u2014 NOT ENOUGH CREDITS', 3000);
+        setInfo('AUTO-SPIN STOPPED — NOT ENOUGH CREDITS', 3000);
       }
     }
     requestAnimationFrame(animateReels);
@@ -2158,101 +2238,60 @@
     let totalWin = 0;
     winningCells = [];
     const winLines = [];
-    const usedLineNumbers = new Set();
     const activeBet = extraGiftsActive ? (bet + extraBetPrice) : bet;
 
-    // 1. Identify columns with Wild
-    const columnsWithWild = [];
-    for(let col=1; col<=3; col++){
-      if(reels[col].finals.includes(WILD)){
-        columnsWithWild.push(col);
-      }
-    }
-
-    // Helper function to evaluate wins on a board representation
-    function checkWins(boardState) {
-      let tempWin = 0;
-      let tempCells = [];
-      let tempLines = [];
+    if (backendSpinData) {
+      totalWin = parseFloat(backendSpinData.win_amount || 0);
       
-      for(let row=0; row<ROWS; row++){
-        const base = boardState[0][row];
-        let count = 1;
-        const cells = [[0,row]];
-        for(let col=1; col<COLS; col++){
-          const sym = boardState[col][row];
-          if(sym === base || sym === WILD){ 
-            count++; 
-            cells.push([col,row]); 
-          } else {
-            break; 
+      // Expanding wild check
+      if (backendSpinData.has_expanding_wild && backendSpinData.wild_columns) {
+        backendSpinData.wild_columns.forEach(col => {
+          if (col >= 0 && col < COLS) {
+            reels[col].wildExpanded = true;
+            reels[col].wildRow = 0;
+            reels[col].finals = [WILD, WILD, WILD];
           }
-        }
-        if(count >= 3){
-          const mult = SYMBOLS[base].pay[Math.min(count,5)] || SYMBOLS[base].pay[5];
-          const amt = Math.round((activeBet/100) * mult * 100) / 100;
-          tempWin += amt;
-          tempCells.push(...cells);
-          tempLines.push({ row, amt, symbol: SYMBOLS[base].name, count });
-        }
+        });
       }
-      return { tempWin, tempCells, tempLines };
-    }
 
-    // First evaluation: check if there are wins with original layout
-    const originalBoard = reels.map(r => [...r.finals]);
-    let result = checkWins(originalBoard);
-
-    // Identify which Wilds contributed to any winning combination
-    const expandingCols = new Set();
-    if (result.tempWin > 0) {
-      for (const [col, row] of result.tempCells) {
-        if (columnsWithWild.includes(col) && originalBoard[col][row] === WILD) {
-          expandingCols.add(col);
+      if (totalWin > 0) {
+        if (backendSpinData.winning_lines && backendSpinData.winning_lines.length > 0) {
+          backendSpinData.winning_lines.forEach(wl => {
+            winLines.push({
+              line: wl.line || Math.floor(Math.random()*100)+1,
+              amt: totalWin,
+              symbol: wl.symbol || 'Cherries',
+              count: wl.count || 4
+            });
+          });
+        } else {
+          winLines.push({ line: Math.floor(Math.random()*100)+1, amt: totalWin, symbol: 'Seven', count: 4 });
         }
+
+        if (isDemoMode) {
+          demoBalance += totalWin;
+          balance = demoBalance;
+        } else if (backendSpinData.new_balance !== undefined) {
+          balance = parseFloat(backendSpinData.new_balance);
+        }
+
+        glowPulseUntil = performance.now() + (winLines.length*1000 + 3600);
+        nextAutoSpinDelay = winLines.length*1000 + 1500;
+        spawnWinParticles(46);
+        sndWin();
+        playWinSequence(winLines, totalWin);
+        syncBalance(balance);
+      } else {
+        if (isDemoMode) {
+          balance = demoBalance;
+        } else if (backendSpinData.new_balance !== undefined) {
+          balance = parseFloat(backendSpinData.new_balance);
+        }
+        setInfo(DEFAULT_INFO, 0);
+        glowPulseUntil = 0;
+        nextAutoSpinDelay = 850;
       }
-    }
-
-    // Expand Wilds if they contributed to a win, then re-evaluate wins
-    if (expandingCols.size > 0) {
-      const expandedBoard = originalBoard.map((colFinals, colIndex) => {
-        if (expandingCols.has(colIndex)) {
-          return [WILD, WILD, WILD]; // Expand Wild vertically across all rows
-        }
-        return colFinals;
-      });
-      
-      result = checkWins(expandedBoard);
-      
-      // Set the expansion flags and record the original row for animation
-      expandingCols.forEach(col => {
-        reels[col].wildExpanded = true;
-        reels[col].wildRow = originalBoard[col].indexOf(WILD);
-      });
-    }
-
-    if(result.tempWin > 0){
-      totalWin = result.tempWin;
-      winningCells = result.tempCells;
-      
-      result.tempLines.forEach(wl => {
-        let lineNum;
-        do{ lineNum = 1 + Math.floor(Math.random()*100); } while(usedLineNumbers.has(lineNum));
-        usedLineNumbers.add(lineNum);
-        winLines.push({ line: lineNum, amt: wl.amt, symbol: wl.symbol, count: wl.count });
-      });
-
-      balance = Math.round((balance + totalWin) * 100) / 100;
-      glowPulseUntil = performance.now() + (winLines.length*1000 + 3600);
-      nextAutoSpinDelay = winLines.length*1000 + 1500;
-      spawnWinParticles(46);
-      sndWin();
-      playWinSequence(winLines, totalWin);
-      syncBalance(balance);
-    } else {
-      setInfo(DEFAULT_INFO, 0);
-      glowPulseUntil = 0;
-      nextAutoSpinDelay = 850;
+      return;
     }
   }
 

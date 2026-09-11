@@ -48,9 +48,13 @@ Route::get('/bonbon-bonanza', function () {
     return view('customer.bonbon-bonanza');
 })->middleware('auth')->name('bonbon-bonanza');
 
-Route::get('/lucky-joker-100', function () {
-    return view('customer.lucky-joker-100');
-})->middleware('auth')->name('lucky-joker-100');
+// Lucky Joker 100 Casino Slot Game Routes
+Route::get('/lucky-joker-100', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'index'])->name('lucky-joker-100');
+Route::prefix('games/lucky-joker-100')->group(function () {
+    Route::get('/', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'index'])->name('joker.index');
+    Route::get('/state', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'getState'])->name('joker.state');
+    Route::post('/spin', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'spin'])->name('joker.spin');
+});
 
 Route::get('/the-emirate', function () {
     return view('customer.the-emirate');
@@ -216,6 +220,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/heads-or-tails', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'index'])->name('headstails.index');
     Route::post('/modules/heads-or-tails/settings', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'updateSettings'])->name('headstails.settings');
     Route::post('/modules/heads-or-tails/upload-audio', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'uploadAudio'])->name('headstails.audio');
+
+    // Lucky Joker 100 Casino Game Management Module
+    Route::get('/modules/lucky-joker', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'index'])->name('joker.index');
+    Route::post('/modules/lucky-joker/settings', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'updateSettings'])->name('joker.settings');
+    Route::post('/modules/lucky-joker/upload-audio', [App\Http\Controllers\LuckyJoker\LuckyJokerAdminController::class, 'uploadAudio'])->name('joker.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)
