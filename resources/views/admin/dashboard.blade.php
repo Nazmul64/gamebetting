@@ -1436,10 +1436,12 @@
                             <span>Lucky Joker 100™</span>
                             <span style="font-size:9px; background:#f43f5e; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
-                        <button class="sidebar-nav-link" onclick="showAdminToast('BonBon Bonanza engine module will load here.', 'info')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.7;">
-                            <i class="fas fa-candy-cane" style="color:#e879f9; font-size:12px;"></i>
-                            <span>BonBon Bonanza</span>
-                        </button>
+                        <!-- Active Game 7: BonBon Bonanza -->
+                        <a href="{{ route('admin.bonbon.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(232, 121, 249, 0.08); border: 1px solid rgba(232, 121, 249, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-candy-cane" style="color:#e879f9; font-size:13px;"></i>
+                            <span>BonBon Bonanza™</span>
+                            <span style="font-size:9px; background:#e879f9; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
                     </div>
                 </div>
 

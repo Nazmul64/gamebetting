@@ -44,9 +44,12 @@ Route::get('/big-bass-splash', function () {
     return view('customer.big-bass-splash');
 })->middleware('auth')->name('big-bass-splash');
 
-Route::get('/bonbon-bonanza', function () {
-    return view('customer.bonbon-bonanza');
-})->middleware('auth')->name('bonbon-bonanza');
+// BonBon Bonanza Casino Slot Game Routes
+Route::get('/bonbon-bonanza', [App\Http\Controllers\BonBon\BonbonGameController::class, 'index'])->name('bonbon-bonanza');
+Route::prefix('games/bonbon-bonanza')->group(function () {
+    Route::get('/', [App\Http\Controllers\BonBon\BonbonGameController::class, 'index'])->name('bonbon.index');
+    Route::post('/spin', [App\Http\Controllers\BonBon\BonbonGameController::class, 'spin'])->name('bonbon.spin');
+});
 
 // Lucky Joker 100 Casino Slot Game Routes
 Route::get('/lucky-joker-100', [App\Http\Controllers\LuckyJoker\LuckyJokerGameController::class, 'index'])->name('lucky-joker-100');
@@ -237,6 +240,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/fortune-gems-2', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'index'])->name('gems.index');
     Route::post('/modules/fortune-gems-2/settings', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'updateSettings'])->name('gems.settings');
     Route::post('/modules/fortune-gems-2/upload-audio', [App\Http\Controllers\FortuneGems\FortuneGemsAdminController::class, 'uploadAudio'])->name('gems.audio');
+
+    // BonBon Bonanza Casino Game Management Module
+    Route::get('/modules/bonbon-bonanza', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'index'])->name('bonbon.index');
+    Route::post('/modules/bonbon-bonanza/settings', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'updateSettings'])->name('bonbon.settings');
+    Route::post('/modules/bonbon-bonanza/upload-audio', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'uploadAudio'])->name('bonbon.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)
