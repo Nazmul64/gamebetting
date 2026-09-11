@@ -11,10 +11,10 @@ use Exception;
 
 class EmirateGameService {
 
-    // The Emirate symbols
-    private array $highSymbols = ['SHEIKH', 'SHEIKHA', 'CAR_SUV', 'DUBAI_CITY'];
-    private array $lowSymbols  = ['HOOKAH', 'TEAPOT'];
-    private string $scatterSymbol = 'PALM_SCATTER';
+    // The Emirate symbols matching assets in assets/image/theemirate/
+    private array $highSymbols = ['manus2', 'manus', 'gari', 'gor']; // Sheikh, Sheikha, Car, Dubai
+    private array $lowSymbols  = ['kolci', 'n', 't']; // Hookah, Teapot, Coin
+    private string $scatterSymbol = 'hadi'; // Palm Jumeirah Scatter
 
     // 5 Classic Paylines (5x3 grid row indexes per column)
     private array $paylines = [
@@ -162,7 +162,7 @@ class EmirateGameService {
                 $grid[1] = [$luckySym, $luckySym, $luckySym, $allSymbols[array_rand($allSymbols)], $allSymbols[array_rand($allSymbols)]];
                 $grid[2] = [$allSymbols[array_rand($allSymbols)], $allSymbols[array_rand($allSymbols)], $allSymbols[array_rand($allSymbols)], $allSymbols[array_rand($allSymbols)], $allSymbols[array_rand($allSymbols)]];
 
-                $multiplier = ($luckySym === 'SHEIKH') ? rand(5, 12) : rand(2, 5);
+                $multiplier = ($luckySym === 'manus2') ? rand(5, 12) : rand(2, 5);
                 $winAmount = $betAmount * $multiplier;
                 $winningLines[] = [
                     'line' => 1,
@@ -180,7 +180,7 @@ class EmirateGameService {
             }
             // Ensure no accidental line win in row 1
             if ($grid[1][0] === $grid[1][1] && $grid[1][1] === $grid[1][2]) {
-                $grid[1][2] = ($grid[1][2] === 'SHEIKH') ? 'HOOKAH' : 'SHEIKH';
+                $grid[1][2] = ($grid[1][2] === 'manus2') ? 'kolci' : 'manus2';
             }
         }
 
