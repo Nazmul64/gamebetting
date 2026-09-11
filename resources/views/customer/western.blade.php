@@ -38,13 +38,13 @@
 
 html, body {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   background: var(--bg-deep);
   font-family: 'Outfit', -apple-system, sans-serif;
   color: #fff7df;
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -971,6 +971,7 @@ img {
 </style>
 </head>
 <body>
+@include('customer.header')
 
 <div id="outerWrapper">
 

@@ -644,6 +644,7 @@
 </style>
 </head>
 <body>
+@include('customer.header')
 
 <!-- Canvas Background & Particles -->
 <canvas id="bgCanvas"></canvas>

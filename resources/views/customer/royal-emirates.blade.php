@@ -52,9 +52,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
     height: 50px;
     z-index: 100;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -91,7 +89,7 @@
   .sidenav {
     position: fixed;
     left: 0;
-    top: 50px;
+    top: 120px;
     bottom: 40px;
     width: 54px;
     background: #0f223f;
@@ -127,10 +125,10 @@
     display: flex;
     flex: 1;
     margin-left: 54px;
-    margin-top: 50px;
+    margin-top: 0;
     margin-bottom: 40px;
     background: #040d1c;
-    min-height: calc(100vh - 90px);
+    min-height: calc(100vh - 160px);
     justify-content: center;
     align-items: center;
     padding: 14px 20px;
@@ -451,6 +449,8 @@
 </style>
 </head>
 <body>
+
+@include('customer.header')
 
 <canvas id="bgCanvas"></canvas>
 

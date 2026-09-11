@@ -895,34 +895,7 @@ html, body {
 <body>
 
 <!-- ================= 1xBet TOP NAVIGATION ================= -->
-<header class="xbet-navbar">
-  <div class="xbet-nav-left">
-    <a href="{{ route('home') }}" class="xbet-logo">1X<span>BET</span></a>
-    <div class="country-pill">
-      <span>🇧🇩</span> BANGLADESH
-    </div>
-    <ul class="nav-links-list">
-      <li><a href="{{ route('home') }}" class="nav-link-item">TOP-EVENTS</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item">LEAGUE OF WINS</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item">T20 BLAST</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item">CRICKET</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item">SPORTS</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item">LIVE</a></li>
-      <li><a href="{{ route('heads-or-tails') }}" class="nav-link-item active">1XGAMES</a></li>
-      <li><a href="{{ route('home') }}" class="nav-link-item highlight">CASINO</a></li>
-    </ul>
-  </div>
-
-  <div class="xbet-nav-right">
-    <div class="balance-pill" id="balance-pill-box">
-      <span style="font-size:11px; opacity:0.8;">BALANCE:</span>
-      <span id="balance-display">৳ {{ number_format(auth()->user()->balance ?? 1000.00, 2) }}</span>
-    </div>
-    <a href="{{ route('dashboard') }}" class="btn-deposit-top"><i class="fas fa-plus-circle"></i> DEPOSIT</a>
-    <a href="{{ route('dashboard') }}" class="btn-withdraw-top">WITHDRAW</a>
-    <a href="{{ route('dashboard') }}" class="btn-cabinet-top">CABINET</a>
-  </div>
-</header>
+@include('customer.header')
 
 <!-- ================= GAME WORKSPACE ================= -->
 <main class="game-viewport" id="game-main-frame">
@@ -941,11 +914,17 @@ html, body {
       <span>1XGAMES</span> / <span>OTHER GAMES</span> / <span class="active">HEADS OR TAILS</span>
     </div>
 
-    <div class="mode-switches">
-      <button class="demo-toggle-btn" id="demo-mode-btn" onclick="toggleDemo()">
-        <span class="dot" style="width:6px; height:6px; border-radius:50%; background:#22c55e;"></span>
-        <span>REAL MONEY</span>
-      </button>
+    <div class="mode-switches" style="display:flex; align-items:center; gap:12px;">
+      <!-- 1XBET DUAL MODE SWITCHER -->
+      <div class="mode-toggle-pill" style="display:flex; align-items:center; background:rgba(10,20,38,0.9); border:1.5px solid rgba(245,200,66,0.4); border-radius:24px; padding:3px; gap:4px;">
+        <button id="btnPlayDemo" class="mode-pill-btn" onclick="setGameMode('demo')" style="border:none; outline:none; background:transparent; color:#94a3b8; padding:5px 14px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+          <i class="fas fa-gamepad" style="color:#60a5fa;"></i> <span>DEMO (3 FREE)</span>
+        </button>
+        <button id="btnPlayReal" class="mode-pill-btn active-real" onclick="setGameMode('real')" style="border:none; outline:none; background:linear-gradient(135deg, #10b981, #059669); color:#fff; padding:5px 14px; border-radius:20px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 0 12px rgba(16,185,129,0.5);">
+          <i class="fas fa-coins" style="color:#fbbf24;"></i> <span>REAL MONEY</span>
+        </button>
+      </div>
+
       <button class="sound-toggle-btn" id="sound-btn" onclick="toggleSound()" title="Sound Toggle">
         <i class="fas fa-volume-high" id="sound-icon"></i>
       </button>
@@ -1141,20 +1120,42 @@ function selectSide(side) {
   playClickSound();
 }
 
-// Toggle Real / Demo mode
-function toggleDemo() {
+// Set Real / Demo mode
+function setGameMode(mode) {
   if (isFlipping) return;
-  isDemoMode = !isDemoMode;
-  const btn = document.getElementById('demo-mode-btn');
+  const btnDemo = document.getElementById('btnPlayDemo');
+  const btnReal = document.getElementById('btnPlayReal');
   const balDisplay = document.getElementById('balance-display');
 
-  if (isDemoMode) {
-    btn.innerHTML = '<span class="dot" style="width:6px; height:6px; border-radius:50%; background:#000;"></span> DEMO ACTIVE';
-    btn.classList.add('active');
-    balDisplay.innerText = "DEMO ৳ " + demoBalance.toFixed(2);
+  if (mode === 'demo') {
+    isDemoMode = true;
+    if (btnDemo) {
+      btnDemo.className = 'mode-pill-btn active-demo';
+      btnDemo.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+      btnDemo.style.color = '#000';
+      btnDemo.style.boxShadow = '0 0 12px rgba(245,158,11,0.5)';
+    }
+    if (btnReal) {
+      btnReal.className = 'mode-pill-btn';
+      btnReal.style.background = 'transparent';
+      btnReal.style.color = '#94a3b8';
+      btnReal.style.boxShadow = 'none';
+    }
+    if (balDisplay) balDisplay.innerText = "DEMO ৳ " + demoBalance.toFixed(2);
   } else {
-    btn.innerHTML = '<span class="dot" style="width:6px; height:6px; border-radius:50%; background:#22c55e;"></span> REAL MONEY';
-    btn.classList.remove('active');
+    isDemoMode = false;
+    if (btnReal) {
+      btnReal.className = 'mode-pill-btn active-real';
+      btnReal.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      btnReal.style.color = '#fff';
+      btnReal.style.boxShadow = '0 0 12px rgba(16,185,129,0.5)';
+    }
+    if (btnDemo) {
+      btnDemo.className = 'mode-pill-btn';
+      btnDemo.style.background = 'transparent';
+      btnDemo.style.color = '#94a3b8';
+      btnDemo.style.boxShadow = 'none';
+    }
     syncState();
   }
   playClickSound();

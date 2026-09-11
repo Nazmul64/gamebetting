@@ -19,8 +19,8 @@
 
 body {
   background: #0a1812;
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 /* ambient felt backdrop */
@@ -43,9 +43,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
   height: 50px;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -552,6 +550,7 @@ body {
 </style>
 </head>
 <body>
+@include('customer.header')
 
   <div class="table-felt"></div>
 

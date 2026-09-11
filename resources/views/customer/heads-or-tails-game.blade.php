@@ -174,6 +174,7 @@
     </style>
 </head>
 <body class="game-body-bg {{ auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
+    @include('customer.header')
     <div class="game-wrapper">
         <header class="game-header">
             <div class="header-left">

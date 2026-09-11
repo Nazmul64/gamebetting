@@ -967,6 +967,8 @@ input:checked + .slider:before { transform: translateX(14px); }
 </head>
 <body>
 
+@include('customer.header')
+
 <!-- Splash Loading Screen -->
 <div id="gameSplashScreen">
   <div class="splash-content">

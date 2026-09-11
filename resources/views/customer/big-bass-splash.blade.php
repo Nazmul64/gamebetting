@@ -846,6 +846,8 @@
 </head>
 <body>
 
+    @include('customer.header')
+
     <!-- ── BRANDED PRELOADER ── -->
     <div id="game-preloader">
         <div class="preloader-box">

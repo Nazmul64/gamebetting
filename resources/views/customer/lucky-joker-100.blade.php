@@ -951,6 +951,7 @@
   </style>
 </head>
 <body>
+@include('customer.header')
 
 <!-- TOP NAV BAR -->
 <div class="topnav">

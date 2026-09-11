@@ -4,28 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>The Emirate™ - Endorphina | 1xBet</title>
+<title>The Emirate™ - Endorphina | 1xBet Casino</title>
 
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- FontAwesome -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- FontAwesome & Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Georgia', serif; }
-body { background: #0c1626; overflow-x: hidden; color: #fff; }
-
-/* ===== LAYOUT ===== */
-#gameWrapper {
-  width: 100%; min-height: 100vh;
-  background: #0c1626;
-  display: flex; flex-direction: column;
-  position: relative;
-  padding-top: 50px;
-  padding-bottom: 40px;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0c1626; font-family: 'Outfit', sans-serif; overflow-x: hidden; color: #fff; min-height: 100vh; }
 
 /* ===== STAR BG CANVAS ===== */
 #bgCanvas {
@@ -34,189 +25,131 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
   pointer-events: none; z-index: 0;
 }
 
-/* ===== 1XBET TOP NAV ===== */
-.topnav {
-  width: 100%;
+/* ===== MAIN WRAPPER ===== */
+#gameWrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 65px);
+  padding: 0;
+}
+
+/* ===== SHELL SUB-HEADER / IN-GAME HEADER ===== */
+.ingame-header {
   background: #0f223f;
   border-bottom: 2px solid #1d3354;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 50px;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
 }
-.topnav .breadcrumb { color: #8ca3c7; font-size: 11px; display: flex; align-items: center; gap: 4px; font-weight: 600; }
-.topnav .breadcrumb a { color: #8ca3c7; text-decoration: none; transition: color 0.2s; }
-.topnav .breadcrumb a:hover { color: #fff; }
-.topnav .breadcrumb span { color: #4a7aaa; }
-.topnav .gametitle {
-  color: #fff;
+.ingame-header .breadcrumb-area {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #8ca3c7;
+}
+.ingame-header .breadcrumb-area a { color: #8ca3c7; text-decoration: none; }
+.ingame-header .breadcrumb-area a:hover { color: #fff; }
+.ingame-header .game-title-badge {
   font-family: 'Cinzel', serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: 2px;
+  color: #f5c842;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
-.topnav .topNavRight { display: flex; align-items: center; gap: 14px; }
-.topnav .search-box {
-  background: rgba(26, 48, 96, 0.6);
-  border: 1px solid #2a5090;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  width: 130px;
-  outline: none;
-}
-.topnav .navIcons { display: flex; gap: 10px; }
-.topnav .navIcon { color: #8ca3c7; font-size: 14px; cursor: pointer; transition: color 0.2s; user-select: none; }
-.topnav .navIcon:hover { color: #f5c842; }
 
-/* ===== 1XBET SIDE NAV ===== */
-.sidenav {
-  position: fixed;
-  left: 0;
-  top: 50px;
-  bottom: 40px;
-  width: 50px;
-  background: #0f223f;
-  border-right: 2px solid #1d3354;
+/* -- 1XBET DUAL MODE PILL SELECTOR -- */
+.mode-toggle-pill {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 16px 0;
-  gap: 20px;
-  z-index: 100;
+  background: rgba(10, 20, 38, 0.9);
+  border: 1.5px solid rgba(245, 200, 66, 0.4);
+  border-radius: 24px;
+  padding: 3px;
+  gap: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
-.sidenav .icon-btn {
-  width: 36px;
-  height: 36px;
+.mode-pill-btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #94a3b8;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+.mode-pill-btn:hover {
+  color: #fff;
+}
+.mode-pill-btn.active-real {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+.mode-pill-btn.active-demo {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000000;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.ingame-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ingame-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #8ca3c7;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #8ca3c7;
-  font-size: 15px;
   cursor: pointer;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  transition: all 0.2s;
-  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
 }
-.sidenav .icon-btn:hover, .sidenav .icon-btn.active {
-  background: #1d3354;
+.ingame-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
   color: #f5c842;
 }
 
-/* ===== MAIN CONTAINER WITH TOGGLE & GAME ===== */
-.main-layout-container {
-  display: flex;
-  flex: 1;
-  width: calc(100% - 50px);
-  margin-left: 50px;
-  min-height: calc(100vh - 90px);
-}
-
-.left-toggle-panel {
-  width: 220px;
-  background: #0e1e35;
-  border-right: 1px solid #1d3354;
-  padding: 20px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  color: #fff;
-  position: relative;
-  z-index: 5;
-}
-.left-toggle-panel .game-header-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.left-toggle-panel .logoOrb {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e85d04, #f5a623);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-}
-.left-toggle-panel .logoName {
-  font-size: 15px;
-  font-weight: bold;
-}
-.left-toggle-panel .rmToggle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  color: #8ca3c7;
-  margin-top: 8px;
-  cursor: pointer;
-}
-.left-toggle-panel .togSwitch {
-  width: 36px;
-  height: 18px;
-  background: #1a3050;
-  border-radius: 9px;
-  position: relative;
-  border: 1px solid #2a5070;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.left-toggle-panel .togDot {
-  width: 14px;
-  height: 14px;
-  background: #3a6090;
-  border-radius: 50%;
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  transition: left .2s, background .2s;
-}
-.left-toggle-panel .togSwitch.on {
-  background: #10b981;
-  border-color: #10b981;
-}
-.left-toggle-panel .togSwitch.on .togDot {
-  left: 19px;
-  background: #ffffff;
-}
-
-.game-content-panel {
+/* ===== MAIN GAME STAGE ===== */
+.game-stage-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
+  padding: 16px;
   position: relative;
-  z-index: 5;
 }
 
-/* ===== TITLE ===== */
-#titleArea { text-align: center; position: relative; margin-bottom: 8px; }
 #gameTitle3D {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: bold;
   letter-spacing: 3px;
   font-family: 'Cinzel', serif;
   color: #f5c842;
-  text-shadow:
-    0 1px 0 #c9a227,
-    0 2px 0 #a07800,
-    0 3px 0 #806000,
-    0 4px 12px rgba(0,0,0,0.7);
-  display: inline-block;
+  text-shadow: 0 2px 0 #a07800, 0 4px 12px rgba(0,0,0,0.7);
+  margin-bottom: 6px;
 }
 .jewel {
   display: inline-block; width: 8px; height: 8px;
@@ -224,14 +157,14 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
   border-radius: 50%; vertical-align: middle; margin: 0 8px;
 }
 
-/* ===== BALANCE DISPLAY ===== */
+/* Balance Display */
 #balanceRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(14, 30, 56, 0.75);
-  border: 1px solid rgba(245, 200, 66, 0.3);
-  padding: 4px 16px;
+  background: rgba(14, 30, 56, 0.85);
+  border: 1px solid rgba(245, 200, 66, 0.35);
+  padding: 4px 18px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 700;
@@ -244,29 +177,13 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
 #gameFrame {
   position: relative;
   width: 100%;
-  max-width: 780px;
+  max-width: 800px;
   background: #091322 url('{{ asset("assets/image/theemirate/bg.jpg") }}') center center / cover no-repeat;
   border: 2px solid #2a4870;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 25px rgba(0, 0, 0, 0.9);
 }
-
-.frameInfo {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  display: flex;
-  gap: 8px;
-  z-index: 30;
-}
-.frameInfoIcon {
-  color: #8ca3c7;
-  cursor: pointer;
-  font-size: 13px;
-  transition: color 0.2s;
-}
-.frameInfoIcon:hover { color: #f5c842; }
 
 /* 5x3 Reels Grid */
 #reelsGrid {
@@ -376,7 +293,7 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
   flex-direction: column;
   align-items: center;
   box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-  max-width: 780px;
+  max-width: 800px;
   width: 100%;
 }
 .betLabel {
@@ -430,7 +347,7 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
 /* Spin Button */
 .spinWrap { position: relative; display: flex; align-items: center; }
 #spinBtn {
-  width: 58px; height: 58px; border-radius: 50%;
+  width: 56px; height: 56px; border-radius: 50%;
   border: none; cursor: pointer;
   background: conic-gradient(
     #f5c842 0deg,#ffe066 45deg,#d4a017 90deg,
@@ -448,33 +365,6 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
 #spinBtn:active { transform: scale(0.95); }
 #spinBtn.go { animation: spinGo .7s linear infinite; pointer-events: none; }
 @keyframes spinGo { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-
-/* ===== BOTTOM BAR ===== */
-.bottombar {
-  width: 100%;
-  background: #0f223f;
-  border-top: 2px solid #1d3354;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  height: 40px;
-  z-index: 100;
-}
-.bottombar .left-tabs { display: flex; gap: 16px; font-size: 12px; color: #8ca3c7; cursor: pointer; }
-.bottombar .left-tabs .tab:hover { color: #fff; }
-.bottombar .search-box {
-  background: rgba(26, 48, 96, 0.6);
-  border: 1px solid #2a5090;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  width: 140px;
-}
 
 /* ===== DEPOSIT POPUP LOCK MODAL ===== */
 .modal-backdrop {
@@ -528,172 +418,133 @@ body { background: #0c1626; overflow-x: hidden; color: #fff; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .sidenav { display: none; }
-  .left-toggle-panel { display: none; }
-  .main-layout-container { width: 100%; margin-left: 0; }
-  #gameWrapper { padding-top: 50px; padding-bottom: 40px; }
+  .ingame-header { padding: 0 8px; gap: 6px; }
+  .ingame-header .breadcrumb-area { display: none; }
+  .mode-pill-btn { font-size: 10px; padding: 4px 8px; }
   #reelsGrid { gap: 4px; }
   .ctrlRow { flex-wrap: wrap; justify-content: center; gap: 8px; }
-  #controls { border-radius: 16px; padding: 10px; }
+  #controls { border-radius: 16px; padding: 8px; }
 }
 </style>
 </head>
 <body>
 
+<!-- 1XBET OFFICIAL TOP HEADER -->
+@include('customer.header')
+
 <!-- STAR BG CANVAS -->
 <canvas id="bgCanvas"></canvas>
 
-<!-- TOP NAV (1XBET STYLE) -->
-<div class="topnav">
-  <div class="breadcrumb">
-    <a href="{{ route('dashboard') }}">Home</a>
-    <span>/</span>
-    <a href="{{ route('dashboard') }}">Slots</a>
-    <span>/</span>
-    <a href="{{ route('dashboard') }}">Popular</a>
-    <span>/</span>
-    <span style="color:#fff; font-weight:bold;">The Emirate</span>
-  </div>
-  <div class="gametitle">THE EMIRATE</div>
-  <div class="topNavRight">
-    <input type="text" class="search-box" placeholder="Search..." disabled>
-    <div class="navIcons">
-      <span class="navIcon" title="Fullscreen" onclick="toggleFullScreen()"><i class="fas fa-expand"></i></span>
-      <span class="navIcon" title="Reload" onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></span>
-      <span class="navIcon" title="Close" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fas fa-xmark"></i></span>
-    </div>
-  </div>
-</div>
-
-<!-- SIDE NAV (1XBET STYLE) -->
-<div class="sidenav">
-  <a href="{{ route('dashboard') }}" class="icon-btn" title="Slots Lobby">
-    <i class="fas fa-gamepad"></i>
-  </a>
-  <a href="{{ route('dashboard.transactions') }}" class="icon-btn" title="History">
-    <i class="fas fa-history"></i>
-  </a>
-  <a href="{{ route('dashboard.deposit') }}" class="icon-btn" title="Deposit">
-    <i class="fas fa-wallet"></i>
-  </a>
-  <div class="icon-btn active" title="Active Game">
-    <i class="fas fa-play-circle"></i>
-  </div>
-</div>
-
 <!-- MAIN LAYOUT WRAPPER -->
 <div id="gameWrapper">
-  <div class="main-layout-container">
-    
-    <!-- LEFT PANEL: LOGO & MODE TOGGLE -->
-    <div class="left-toggle-panel">
-      <div class="game-header-info">
-        <div class="logoOrb">E</div>
-        <span class="logoName">The Emirate</span>
-      </div>
-      <div class="rmToggle" id="rmToggle">
-        <div class="togSwitch" id="rmSwitch">
-          <div class="togDot"></div>
-        </div>
-        <span id="rmToggleLabel">PLAY FOR REAL MONEY</span>
-      </div>
+
+  <!-- IN-GAME SUBHEADER BAR (WITH DUAL MODE SELECTOR) -->
+  <div class="ingame-header">
+    <div class="breadcrumb-area">
+      <a href="{{ route('dashboard') }}"><i class="fas fa-home"></i></a>
+      <span>/</span>
+      <a href="{{ route('dashboard') }}">Slots</a>
+      <span>/</span>
+      <span class="game-title-badge">The Emirate</span>
     </div>
-    
-    <!-- CENTER PANEL: THE SLOT MACHINE -->
-    <div class="game-content-panel">
-      
-      <!-- TITLE -->
-      <div id="titleArea">
-        <div id="gameTitle3D">
-          <span class="jewel"></span>The Emirate<span class="jewel"></span>
-        </div>
-      </div>
 
-      <!-- BALANCE Display -->
-      <div id="balanceRow">
-        <span>Balance:</span>
-        <span id="balDisplay">৳ {{ number_format(auth()->user()->balance ?? 0.00, 2) }}</span>
-      </div>
-
-      <!-- THE GAME REELS FRAME -->
-      <div id="gameFrame">
-        <div class="frameInfo">
-          <span class="frameInfoIcon" id="soundToggle" onclick="toggleMute()" title="Sound Toggle"><i class="fas fa-volume-up" id="soundIcon"></i></span>
-        </div>
-        
-        <div id="reelsGrid"></div>
-        <canvas id="winLinesCanvas"></canvas>
-        
-        <div id="winBanner">
-          <small>EMIRATE WINNER!</small>
-          <div class="winAmtText">+৳ <span id="winAmt">0.00</span></div>
-        </div>
-      </div>
-
-      <!-- CONTROLS PILL BAR -->
-      <div id="controls">
-        <div class="betLabel" id="statusLabel">Place Your Bet</div>
-        <div class="ctrlRow">
-
-          <div class="ctrlGroup">
-            <div class="arrBtn" onclick="chgLines(-1)"><i class="fas fa-caret-left"></i></div>
-            <div class="ctrlBlock">
-              <span class="ctrlLabel">Lines</span>
-              <span class="ctrlValue" id="linesVal">5</span>
-            </div>
-            <div class="arrBtn" onclick="chgLines(1)"><i class="fas fa-caret-right"></i></div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="ctrlBlock">
-            <span class="ctrlLabel">Currency</span>
-            <span class="ctrlValue">BDT</span>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="ctrlGroup">
-            <div class="arrBtn" onclick="chgBet(-1)"><i class="fas fa-caret-left"></i></div>
-            <div class="ctrlBlock">
-              <span class="ctrlLabel">Bet</span>
-              <span class="ctrlValue" id="betVal">5.00</span>
-            </div>
-            <div class="arrBtn" onclick="chgBet(1)"><i class="fas fa-caret-right"></i></div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="modeBtns">
-            <div class="modeBtn" id="turboBtn" onclick="togTurbo()">
-              <div class="modeDot"></div>TURBO
-            </div>
-            <div class="modeBtn" id="autoBtn" onclick="togAuto()">
-              <div class="modeDot"></div>AUTO
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="spinWrap">
-            <button id="spinBtn" onclick="doSpin()">SPIN</button>
-          </div>
-
-        </div>
-      </div>
-
-    </div><!-- /game-content-panel -->
-  </div><!-- /main-layout-container -->
-  
-  <!-- BOTTOM BAR -->
-  <div class="bottombar">
-    <div class="left-tabs">
-      <div class="tab" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fas fa-history" style="margin-right:4px;"></i> Recent Games</div>
-      <div class="tab" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fas fa-heart" style="margin-right:4px;"></i> Favorites</div>
+    <!-- 1XBET DUAL MODE SWITCHER -->
+    <div class="mode-toggle-pill">
+      <button id="btnPlayDemo" class="mode-pill-btn" onclick="setGameMode('demo')">
+        <i class="fas fa-gamepad" style="color:#60a5fa;"></i> <span>DEMO (3 FREE)</span>
+      </button>
+      <button id="btnPlayReal" class="mode-pill-btn active-real" onclick="setGameMode('real')">
+        <i class="fas fa-coins" style="color:#fbbf24;"></i> <span>REAL MONEY</span>
+      </button>
     </div>
-    <input type="text" class="search-box" placeholder="Search slots..." disabled>
+
+    <!-- Action Icons -->
+    <div class="ingame-actions">
+      <button class="ingame-icon-btn" title="Sound Toggle" onclick="toggleMute()"><i class="fas fa-volume-up" id="soundIcon"></i></button>
+      <button class="ingame-icon-btn" title="Fullscreen" onclick="toggleFullScreen()"><i class="fas fa-expand"></i></button>
+      <button class="ingame-icon-btn" title="Reload" onclick="window.location.reload()"><i class="fas fa-rotate-right"></i></button>
+    </div>
   </div>
-</div>
+
+  <!-- CENTER STAGE -->
+  <div class="game-stage-wrapper">
+    
+    <!-- TITLE -->
+    <div id="gameTitle3D">
+      <span class="jewel"></span>The Emirate<span class="jewel"></span>
+    </div>
+
+    <!-- BALANCE DISPLAY -->
+    <div id="balanceRow">
+      <span>Active Balance:</span>
+      <span id="balDisplay">৳ {{ number_format(auth()->user()->balance ?? 0.00, 2) }}</span>
+    </div>
+
+    <!-- THE GAME REELS FRAME -->
+    <div id="gameFrame">
+      <div id="reelsGrid"></div>
+      <canvas id="winLinesCanvas"></canvas>
+      
+      <div id="winBanner">
+        <small>EMIRATE WINNER!</small>
+        <div class="winAmtText">+৳ <span id="winAmt">0.00</span></div>
+      </div>
+    </div>
+
+    <!-- CONTROLS PILL BAR -->
+    <div id="controls">
+      <div class="betLabel" id="statusLabel">Place Your Bet</div>
+      <div class="ctrlRow">
+
+        <div class="ctrlGroup">
+          <div class="arrBtn" onclick="chgLines(-1)"><i class="fas fa-caret-left"></i></div>
+          <div class="ctrlBlock">
+            <span class="ctrlLabel">Lines</span>
+            <span class="ctrlValue" id="linesVal">5</span>
+          </div>
+          <div class="arrBtn" onclick="chgLines(1)"><i class="fas fa-caret-right"></i></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="ctrlBlock">
+          <span class="ctrlLabel">Currency</span>
+          <span class="ctrlValue">BDT</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="ctrlGroup">
+          <div class="arrBtn" onclick="chgBet(-1)"><i class="fas fa-caret-left"></i></div>
+          <div class="ctrlBlock">
+            <span class="ctrlLabel">Bet</span>
+            <span class="ctrlValue" id="betVal">5.00</span>
+          </div>
+          <div class="arrBtn" onclick="chgBet(1)"><i class="fas fa-caret-right"></i></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="modeBtns">
+          <div class="modeBtn" id="turboBtn" onclick="togTurbo()">
+            <div class="modeDot"></div>TURBO
+          </div>
+          <div class="modeBtn" id="autoBtn" onclick="togAuto()">
+            <div class="modeDot"></div>AUTO
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="spinWrap">
+          <button id="spinBtn" onclick="doSpin()">SPIN</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /game-stage-wrapper -->
+</div><!-- /gameWrapper -->
 
 <!-- DEPOSIT POPUP MODAL -->
 <div class="modal-backdrop" id="deposit-popup-modal">
@@ -863,19 +714,6 @@ let currentGrid = [
 ];
 let cellData = [];
 let animRAF = null;
-
-// ---- WEB AUDIO SYNTHESIZER ----
-class ArabicMusicSynth {
-  constructor(ctx) {
-    this.ctx = ctx;
-    this.isPlaying = false;
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.value = 0.5;
-    this.masterGain.connect(this.ctx.destination);
-  }
-  start() { this.isPlaying = true; }
-  stop() { this.isPlaying = false; }
-}
 
 class SlotSoundEngine {
   constructor() {
@@ -1074,23 +912,23 @@ function updateBalUI() {
   }
 }
 
-// Real/Demo Mode Toggle
-const rmToggle = document.getElementById('rmToggle');
-const rmSwitch = document.getElementById('rmSwitch');
-const rmLabel = document.getElementById('rmToggleLabel');
-
-rmToggle.addEventListener('click', () => {
+// 1XBET DUAL MODE SWITCHER FUNCTION
+function setGameMode(mode) {
   if (spinning) return;
-  isDemoMode = !isDemoMode;
-  if (isDemoMode) {
-    rmSwitch.classList.remove('on');
-    rmLabel.textContent = "DEMO PLAY (3 FREE)";
+  const btnDemo = document.getElementById('btnPlayDemo');
+  const btnReal = document.getElementById('btnPlayReal');
+
+  if (mode === 'demo') {
+    isDemoMode = true;
+    btnDemo.className = 'mode-pill-btn active-demo';
+    btnReal.className = 'mode-pill-btn';
   } else {
-    rmSwitch.classList.add('on');
-    rmLabel.textContent = "REAL PLAY ACTIVE";
+    isDemoMode = false;
+    btnReal.className = 'mode-pill-btn active-real';
+    btnDemo.className = 'mode-pill-btn';
   }
   updateBalUI();
-});
+}
 
 function closeDepositModal() {
   document.getElementById('deposit-popup-modal').classList.remove('show');
@@ -1264,7 +1102,6 @@ function toggleFullScreen() {
 window.addEventListener('DOMContentLoaded', () => {
   buildReels(currentGrid);
   initBg();
-  rmSwitch.classList.add('on');
   updateBalUI();
 });
 </script>

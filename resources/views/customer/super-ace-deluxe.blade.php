@@ -691,6 +691,7 @@
 </style>
 </head>
 <body>
+@include('customer.header')
 <div class="app" id="app">
 
   <div class="topbar">

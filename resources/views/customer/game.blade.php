@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('game.css') }}">
 </head>
 <body class="game-body-bg {{ auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
+    @include('customer.header')
     <div class="game-wrapper">
         <!-- Top Navigation / Header -->
         <header class="game-header">

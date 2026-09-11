@@ -32,14 +32,15 @@
     color:var(--text-light);
     font-family:'Sora', sans-serif;
     min-height:100vh;
-    padding:28px 16px 40px;
+    padding:0 0 40px;
     display:flex;
-    justify-content:center;
+    flex-direction:column;
+    align-items:center;
   }
   a{color:inherit;}
   :focus-visible{outline:2px solid var(--foam);outline-offset:2px;border-radius:6px;}
 
-  .app{width:100%;max-width:1040px;}
+  .app{width:100%;max-width:1040px;padding:20px 16px 0;}
 
   /* ---------- Header ---------- */
   .app-header{
@@ -363,6 +364,7 @@
 </style>
 </head>
 <body>
+@include('customer.header')
 <div class="app">
   <header class="app-header">
     <div class="title-block">

@@ -38,7 +38,7 @@ html,body{
   background:var(--black-deep);
   font-family:'Outfit','Trebuchet MS',sans-serif;
   color:#fff7df;
-  overflow:hidden;
+  overflow-x:hidden;
 }
 
 /* ============================================================
@@ -637,6 +637,8 @@ html,body{
 </style>
 </head>
 <body>
+
+@include('customer.header')
 
 <div id="outerWrapper">
   <!-- Left Vertical Sidenav -->
