@@ -1,0 +1,65 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void {
+        // ১. গেম সেটিংস ও অডিও পাথ
+        Schema::create('big_bass_settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('game_name')->default('Big Bass Splash');
+            $table->decimal('min_bet', 12, 2)->default(2.00);
+            $table->decimal('max_bet', 12, 2)->default(5000.00);
+            $table->integer('demo_spin_limit')->default(3); // ৩-৪ বার পর ডিপোজিট লক
+            $table->decimal('demo_default_balance', 12, 2)->default(10000.00);
+            
+            // এডমিন প্রফিট ও আরটিপি কন্ট্রোল
+            $table->enum('control_mode', ['house_profit', 'fixed_percentage', 'random'])->default('house_profit');
+            $table->integer('win_chance_percentage')->default(32); // উইন রেট
+            
+            // অডিও পাথ
+            $table->string('bg_music')->nullable();
+            $table->string('spin_sound')->nullable();
+            $table->string('win_sound')->nullable();
+            $table->string('reel_splash_sound')->nullable();
+            $table->string('fisherman_hook_sound')->nullable();
+            $table->timestamps();
+        });
+
+        // ২. প্রতিটি স্পিনের হিস্ট্রি ও ক্যাশ ফিশ অডিট
+        Schema::create('big_bass_spins', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->boolean('is_demo')->default(false);
+            $table->boolean('is_buy_bonus')->default(false);
+            $table->decimal('bet_amount', 12, 2);
+            $table->decimal('win_amount', 12, 2)->default(0.00);
+            $table->decimal('admin_profit', 12, 2)->default(0.00);
+            $table->json('grid_matrix'); // ৫x৩ গ্রিড
+            $table->json('fish_money_values')->nullable(); // মাছগুলোর টাকার ভ্যালু
+            $table->boolean('has_fisherman')->default(false);
+            $table->boolean('is_win')->default(false);
+            $table->timestamps();
+        });
+
+        // ৩. ওয়ালেট লেজার ট্র্যাকিং (ডাবল-স্পেন্ড প্রটেকশন)
+        Schema::create('big_bass_transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('spin_id')->constrained('big_bass_spins')->onDelete('cascade');
+            $table->enum('type', ['debit_bet', 'credit_win']);
+            $table->decimal('amount', 12, 2);
+            $table->decimal('balance_before', 12, 2);
+            $table->decimal('balance_after', 12, 2);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void {
+        Schema::dropIfExists('big_bass_transactions');
+        Schema::dropIfExists('big_bass_spins');
+        Schema::dropIfExists('big_bass_settings');
+    }
+};

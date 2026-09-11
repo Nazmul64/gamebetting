@@ -40,9 +40,12 @@ Route::get('/gems-mines', function () {
     return view('customer.gems-mines');
 })->middleware('auth')->name('gems-mines');
 
-Route::get('/big-bass-splash', function () {
-    return view('customer.big-bass-splash');
-})->middleware('auth')->name('big-bass-splash');
+// Big Bass Splash Casino Slot Game Routes
+Route::get('/big-bass-splash', [App\Http\Controllers\BigBass\BigBassGameController::class, 'index'])->name('big-bass-splash');
+Route::prefix('games/big-bass-splash')->group(function () {
+    Route::get('/', [App\Http\Controllers\BigBass\BigBassGameController::class, 'index'])->name('bigbass.index');
+    Route::post('/spin', [App\Http\Controllers\BigBass\BigBassGameController::class, 'spin'])->name('bigbass.spin');
+});
 
 // BonBon Bonanza Casino Slot Game Routes
 Route::get('/bonbon-bonanza', [App\Http\Controllers\BonBon\BonbonGameController::class, 'index'])->name('bonbon-bonanza');
@@ -116,6 +119,12 @@ Route::prefix('games/boxing-king')->group(function () {
 Route::get('/fortune-gems-2', function () {
     return view('customer.fortune-gems-2');
 })->middleware('auth')->name('fortune-gems-2');
+
+Route::get('/big-bass-splash', [App\Http\Controllers\BigBass\BigBassGameController::class, 'index'])->name('big-bass-splash');
+Route::prefix('games/big-bass-splash')->group(function () {
+    Route::get('/', [App\Http\Controllers\BigBass\BigBassGameController::class, 'index'])->name('bigbass.index');
+    Route::post('/spin', [App\Http\Controllers\BigBass\BigBassGameController::class, 'spin'])->name('bigbass.spin');
+});
 
 // Heads or Tails (Mermaid / Octopus Gold Coin) Game Routes
 Route::get('/heads-or-tails', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'index'])->name('heads-or-tails');
@@ -245,6 +254,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/bonbon-bonanza', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'index'])->name('bonbon.index');
     Route::post('/modules/bonbon-bonanza/settings', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'updateSettings'])->name('bonbon.settings');
     Route::post('/modules/bonbon-bonanza/upload-audio', [App\Http\Controllers\BonBon\BonbonAdminController::class, 'uploadAudio'])->name('bonbon.audio');
+
+    // Big Bass Splash Casino Game Management Module
+    Route::get('/modules/big-bass-splash', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'index'])->name('bigbass.index');
+    Route::post('/modules/big-bass-splash/settings', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'updateSettings'])->name('bigbass.settings');
+    Route::post('/modules/big-bass-splash/upload-audio', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'uploadAudio'])->name('bigbass.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)

@@ -1442,6 +1442,13 @@
                             <span>BonBon Bonanza™</span>
                             <span style="font-size:9px; background:#e879f9; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
+
+                        <!-- Active Game 8: Big Bass Splash -->
+                        <a href="{{ route('admin.bigbass.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-fish" style="color:#0ea5e9; font-size:13px;"></i>
+                            <span>Big Bass Splash™</span>
+                            <span style="font-size:9px; background:#0ea5e9; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
                     </div>
                 </div>
 

@@ -37,5 +37,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LuckyJokerSeeder::class);
         $this->call(FortuneGemsSeeder::class);
         $this->call(BonBonSettingSeeder::class);
+        $this->call(BigBassSettingSeeder::class);
     }
 }

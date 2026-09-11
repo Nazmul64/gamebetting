@@ -3088,6 +3088,8 @@
                     window.location.href = "{{ route('boxing-king') }}";
                 } else if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
                     window.location.href = "{{ route('bonbon-bonanza') }}";
+                } else if (gameName === 'bigbass' || gameName === 'Big Bass Splash' || gameName === 'big-bass-splash') {
+                    window.location.href = "{{ route('big-bass-splash') }}";
                 } else if (gameName === 'Lucky Joker 100') {
                     window.location.href = "{{ route('lucky-joker-100') }}";
                 } else if (gameName === 'theemirate') {
