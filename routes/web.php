@@ -126,6 +126,13 @@ Route::prefix('games/big-bass-splash')->group(function () {
     Route::post('/spin', [App\Http\Controllers\BigBass\BigBassGameController::class, 'spin'])->name('bigbass.spin');
 });
 
+// The Emirate Game Routes
+Route::get('/the-emirate', [App\Http\Controllers\TheEmirate\EmirateGameController::class, 'index'])->name('the-emirate');
+Route::prefix('games/the-emirate')->group(function () {
+    Route::get('/', [App\Http\Controllers\TheEmirate\EmirateGameController::class, 'index'])->name('emirate.index');
+    Route::post('/spin', [App\Http\Controllers\TheEmirate\EmirateGameController::class, 'spin'])->name('emirate.spin');
+});
+
 // Heads or Tails (Mermaid / Octopus Gold Coin) Game Routes
 Route::get('/heads-or-tails', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'index'])->name('heads-or-tails');
 Route::prefix('games/heads-or-tails')->group(function () {
@@ -259,6 +266,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/big-bass-splash', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'index'])->name('bigbass.index');
     Route::post('/modules/big-bass-splash/settings', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'updateSettings'])->name('bigbass.settings');
     Route::post('/modules/big-bass-splash/upload-audio', [App\Http\Controllers\BigBass\BigBassAdminController::class, 'uploadAudio'])->name('bigbass.audio');
+
+    // The Emirate Casino Game Management Module
+    Route::get('/modules/the-emirate', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'index'])->name('emirate.index');
+    Route::post('/modules/the-emirate/settings', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'updateSettings'])->name('emirate.settings');
+    Route::post('/modules/the-emirate/upload-audio', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'uploadAudio'])->name('emirate.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)
