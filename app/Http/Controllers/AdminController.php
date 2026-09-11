@@ -83,6 +83,91 @@ class AdminController extends Controller
     }
 
     /**
+     * Compute multi-game comparative analytics for all active casino game engines.
+     */
+    public function getGamePerformanceMatrix()
+    {
+        $tracker = app(\App\Services\CasinoCentralTrackingService::class);
+        $tracker->syncHistoricData();
+
+        $registries = \App\Models\CasinoGameRegistry::all()->keyBy('game_key');
+
+        $gamesConfig = [
+            'boxing_king' => [
+                'id' => 'boxing-king',
+                'name' => 'Boxing King™',
+                'category' => 'Video Slot (5x3)',
+                'icon' => 'fas fa-fist-raised',
+                'theme' => '#ef4444',
+                'route' => route('boxing-king'),
+            ],
+            'aviator_crash' => [
+                'id' => 'aviator',
+                'name' => 'Aviator Crash',
+                'category' => 'Multiplayer Crash',
+                'icon' => 'fas fa-plane-departure',
+                'theme' => '#00f2fe',
+                'route' => route('play'),
+            ],
+            'western_vault' => [
+                'id' => 'western-vault',
+                'name' => 'Western Vault™',
+                'category' => 'PVP Vault Duel',
+                'icon' => 'fas fa-hat-cowboy',
+                'theme' => '#f97316',
+                'route' => route('western'),
+            ],
+            'olympus_gold' => [
+                'id' => 'olympus',
+                'name' => 'Gates of Olympus',
+                'category' => 'Cluster Pays Slot',
+                'icon' => 'fas fa-bolt',
+                'theme' => '#fbbf24',
+                'route' => route('gates-of-olympus'),
+            ],
+            'gems_mines' => [
+                'id' => 'gems-mines',
+                'name' => 'Gems & Mines',
+                'category' => 'Grid Minesweeper',
+                'icon' => 'fas fa-gem',
+                'theme' => '#a855f7',
+                'route' => route('gems-mines'),
+            ],
+            'big_bass_splash' => [
+                'id' => 'big-bass',
+                'name' => 'Big Bass Splash',
+                'category' => 'Fishing Slot',
+                'icon' => 'fas fa-fish',
+                'theme' => '#10b981',
+                'route' => route('big-bass-splash'),
+            ],
+        ];
+
+        $matrix = [];
+        foreach ($gamesConfig as $gameKey => $cfg) {
+            $reg = $registries->get($gameKey);
+            $turnover = $reg ? (float)$reg->total_real_bets : 0.0;
+            $payout = $reg ? (float)$reg->total_real_payouts : 0.0;
+            $profit = $reg ? (float)$reg->net_house_profit : 0.0;
+            $activeUsers = $reg ? max(1, (int)$reg->active_real_players_count) : 1;
+            $health = $reg ? $reg->health_status : 'healthy';
+            $rtp = $turnover > 0 ? round(($payout / $turnover) * 100, 2) : 96.50;
+
+            $matrix[] = array_merge($cfg, [
+                'active_players' => $activeUsers,
+                'total_turnover' => $turnover,
+                'total_payout'   => $payout,
+                'admin_profit'   => $profit,
+                'rtp'            => $rtp,
+                'health_status'  => $health,
+                'status'         => 'ONLINE'
+            ]);
+        }
+
+        return $matrix;
+    }
+
+    /**
      * Show the admin dashboard.
      */
     public function dashboard()
@@ -93,8 +178,20 @@ class AdminController extends Controller
                             ->orderBy('created_at', 'desc')
                             ->limit(20)
                             ->get();
+        $gameMatrix    = $this->getGamePerformanceMatrix();
 
-        return view('admin.dashboard', compact('totalUsers', 'totalDeposits', 'recentUsers'));
+        return view('admin.dashboard', compact('totalUsers', 'totalDeposits', 'recentUsers', 'gameMatrix'));
+    }
+
+    /**
+     * API to fetch dynamic game matrix JSON
+     */
+    public function getGamePerformanceMatrixApi()
+    {
+        return response()->json([
+            'success' => true,
+            'matrix' => $this->getGamePerformanceMatrix()
+        ]);
     }
 
     /**

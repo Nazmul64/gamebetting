@@ -35,6 +35,10 @@ class OlympusGameController extends Controller
         $demoBalance = session('olympus_demo_balance', (float) $config->demo_starting_balance);
         $demoSpinsCount = session('olympus_demo_spins_count', 0);
 
+        if (Auth::check()) {
+            app(\App\Services\CasinoCentralTrackingService::class)->heartbeat('olympus_gold', Auth::id(), false);
+        }
+
         return view('customer.gates-of-olympus', compact('config', 'user', 'demoBalance', 'demoSpinsCount'));
     }
 
@@ -394,17 +398,28 @@ class OlympusGameController extends Controller
                 return response()->json([
                     'success'              => false,
                     'insufficient_balance' => true,
-                    'message'              => 'Insufficient balance. Please deposit to continue playing.',
-                    'current_balance'      => (float) $user->fresh()->balance,
+                    'current_balance'      => (float) $user->balance,
                     'required_amount'      => $totalDeducted,
+                    'message'              => 'Insufficient balance. Please deposit funds or switch to Demo mode.'
                 ], 400);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred processing the game round: ' . $e->getMessage()
+                'message' => 'Transaction error: ' . $e->getMessage()
             ], 500);
         }
+
+        // Record real money turnover and payouts in Central Ledger
+        try {
+            app(\App\Services\CasinoCentralTrackingService::class)->recordRealTransaction(
+                'olympus_gold',
+                (float)$totalDeducted,
+                (float)($responsePayload['final_win'] ?? 0)
+            );
+        } catch (\Throwable $t) {}
+
+        return response()->json($responsePayload);
     }
 
     /**

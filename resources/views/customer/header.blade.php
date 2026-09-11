@@ -28,6 +28,92 @@
     transform: scale(1.02);
     filter: brightness(1.1);
 }
+.nav-bd-dropdown:hover .bd-dropdown-menu {
+    display: block !important;
+}
+.bd-dropdown-menu a:hover {
+    background: #142847 !important;
+}
+
+/* 1xBet Mega Menu Dropdown */
+.nav-more-dropdown {
+    position: relative;
+}
+.nav-more-dropdown:hover .mega-menu-container {
+    display: grid !important;
+    animation: megaMenuFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes megaMenuFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.mega-menu-container {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: -60px;
+    width: 820px;
+    background: #091424;
+    border: 1.5px solid #1d3354;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(26, 118, 210, 0.15);
+    z-index: 100000;
+    padding: 20px 22px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    font-family: 'Outfit', 'Inter', sans-serif;
+}
+.mega-col-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #637b9f;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1d3354;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mega-menu-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.mega-menu-links a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: #cbd5e1;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.18s ease;
+}
+.mega-menu-links a:hover {
+    background: #142847 !important;
+    color: #ffffff !important;
+    transform: translateX(3px);
+}
+.mega-menu-links a i {
+    width: 16px;
+    text-align: center;
+    font-size: 13px;
+}
+.mega-badge {
+    font-size: 8.5px;
+    font-weight: 900;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-left: auto;
+    text-transform: uppercase;
+}
 
 /* Mobile Toggle Hamburger Button */
 .mobile-nav-toggle {
@@ -394,7 +480,52 @@
     </div>
     
     <!-- Desktop Navigation Links -->
-    <ul class="dashboard-nav-links" style="display: flex; list-style: none; gap: 20px; font-size: 13px; font-weight: 700; margin: 0; padding: 0;">
+    <ul class="dashboard-nav-links" style="display: flex; list-style: none; gap: 16px; font-size: 13px; font-weight: 700; margin: 0; padding: 0; align-items: center;">
+        <!-- BANGLADESH TOP PICKS DROPDOWN -->
+        <li class="nav-bd-dropdown" style="position: relative;">
+            <a href="javascript:void(0)" class="bd-nav-btn" style="color: #00e676; text-decoration: none; display: flex; align-items: center; gap: 5px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.3); padding: 5px 10px; border-radius: 6px; transition: all 0.2s;">
+                <span style="font-size: 14px;">🇧🇩</span>
+                <span style="font-weight: 800; letter-spacing: 0.5px;">BANGLADESH</span>
+                <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 2px;"></i>
+            </a>
+            <!-- Dropdown Menu -->
+            <div class="bd-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; min-width: 240px; background: #0c1a30; border: 1.5px solid #1d3354; border-radius: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); z-index: 10000; padding: 8px 0; font-family: 'Outfit', 'Inter', sans-serif;">
+                <div style="padding: 6px 14px; font-size: 10px; font-weight: 800; color: #637b9f; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1d3354;">Top Played In Bangladesh</div>
+                <a href="{{ route('boxing-king') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #ff5252; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-fist-raised" style="font-size: 14px; color: #ff5252; width: 18px;"></i>
+                    <span>Boxing King™</span>
+                    <span style="margin-left: auto; font-size: 9px; background: #ff3d00; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 800;">#1 HOT</span>
+                </a>
+                <a href="{{ route('play') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #ffbe1a; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-plane-departure" style="font-size: 14px; color: #ffbe1a; width: 18px;"></i>
+                    <span>Aviator (1xGames)</span>
+                    <span style="margin-left: auto; font-size: 9px; background: #ffbe1a; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 800;">TOP</span>
+                </a>
+                <a href="{{ route('western-vault') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #d4af37; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-hat-cowboy" style="font-size: 14px; color: #d4af37; width: 18px;"></i>
+                    <span>Western Vault</span>
+                    <span style="margin-left: auto; font-size: 9px; background: rgba(212, 175, 55, 0.2); color: #d4af37; padding: 2px 6px; border-radius: 4px; font-weight: 800;">POPULAR</span>
+                </a>
+                <a href="{{ route('gates-of-olympus') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #00d2ff; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-bolt" style="font-size: 14px; color: #00d2ff; width: 18px;"></i>
+                    <span>Gates of Olympus</span>
+                </a>
+                <a href="{{ route('gems-mines') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #ff9800; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-gem" style="font-size: 14px; color: #ff9800; width: 18px;"></i>
+                    <span>Gems & Mines</span>
+                </a>
+                <a href="{{ route('big-bass-splash') }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 14px; color: #38ef7d; text-decoration: none; font-size: 12.5px; font-weight: 700; transition: background 0.2s;">
+                    <i class="fas fa-fish" style="font-size: 14px; color: #38ef7d; width: 18px;"></i>
+                    <span>Big Bass Splash</span>
+                </a>
+                <div style="border-top: 1px solid #1d3354; margin-top: 4px; padding-top: 4px;">
+                    <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; color: #8ca3c7; text-decoration: none; font-size: 11.5px; font-weight: 700; transition: background 0.2s;">
+                        <i class="fas fa-th-large" style="font-size: 12px; width: 18px;"></i>
+                        <span>View All BD Games</span>
+                    </a>
+                </div>
+            </div>
+        </li>
         <li><a href="{{ route('home') }}" style="color: #8ca3c7; text-decoration: none;">TOP-EVENTS</a></li>
         <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LEAGUE OF WINS</a></li>
         <li><a href="#" style="color: #8ca3c7; text-decoration: none;">T20 BLAST</a></li>
@@ -402,10 +533,372 @@
         <li><a href="#" style="color: #8ca3c7; text-decoration: none;">SPORTS</a></li>
         <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LIVE</a></li>
         <li><a href="{{ route('play') }}" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-plane-departure" style="font-size:12px; margin-right:4px;"></i> 1XGAMES</a></li>
-        <li><a href="{{ route('dashboard') }}" style="color: #ffffff; text-decoration: none; border-bottom: 3px solid #007bff; padding-bottom: 6px;">CASINO</a></li>
-        <li><a href="{{ route('gems-mines') }}" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-gem" style="font-size:12px; margin-right:4px;"></i> Gems & Mines</a></li>
-        <li><a href="{{ route('big-bass-splash') }}" style="color: #38ef7d; text-decoration: none;"><i class="fas fa-fish" style="font-size:12px; margin-right:4px;"></i> Big Bass Splash</a></li>
-        <li><a href="#" style="color: #8ca3c7; text-decoration: none;">MORE <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 2px;"></i></a></li>
+        
+        <!-- 1XBET CASINO DROPDOWN / MEGA MENU -->
+        <li class="nav-more-dropdown nav-casino-dropdown">
+            <a href="{{ route('dashboard') }}" style="color: #ffffff; text-decoration: none; display: flex; align-items: center; gap: 4px; border-bottom: 3px solid #007bff; padding-bottom: 6px;">
+                <span>CASINO</span>
+                <i class="fas fa-chevron-down" style="font-size: 9px; margin-left: 2px;"></i>
+            </a>
+
+            <!-- 1xBet 4-Column Casino Games Mega Menu Box -->
+            <div class="mega-menu-container" style="left: -180px; right: auto;">
+                <!-- Column 1: Crash & 1xGames -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-gamepad" style="color: #00c6ff;"></i>
+                        <span>1xGames & Crash</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('play') }}" style="color: #ffbe1a;">
+                                <i class="fas fa-plane-departure" style="color: #ffbe1a;"></i>
+                                <span>Aviator Crash</span>
+                                <span class="mega-badge" style="background: #ffbe1a; color: #000;">HOT</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('boxing-king') }}" style="color: #ff5252;">
+                                <i class="fas fa-fist-raised" style="color: #ff5252;"></i>
+                                <span>Boxing King™</span>
+                                <span class="mega-badge" style="background: #ff3d00; color: #fff;">#1 TOP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('western-vault') }}" style="color: #f97316;">
+                                <i class="fas fa-hat-cowboy" style="color: #f97316;"></i>
+                                <span>Western Vault™</span>
+                                <span class="mega-badge" style="background: rgba(249,115,22,0.25); color: #f97316;">PVP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('gems-mines') }}">
+                                <i class="fas fa-bomb" style="color: #ef4444;"></i>
+                                <span>Gems & Mines</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('heads-or-tails') }}">
+                                <i class="fas fa-coins" style="color: #ffc107;"></i>
+                                <span>Heads or Tails</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('treasure-climb') }}">
+                                <i class="fas fa-mountain" style="color: #4caf50;"></i>
+                                <span>Treasure Climb</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 2: Popular Video Slots -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-fire" style="color: #ff5722;"></i>
+                        <span>Popular Slots</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('gates-of-olympus') }}" style="color: #00d2ff;">
+                                <i class="fas fa-bolt" style="color: #00d2ff;"></i>
+                                <span>Gates of Olympus</span>
+                                <span class="mega-badge" style="background: rgba(0,210,255,0.2); color: #00d2ff;">ZEUS</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('big-bass-splash') }}" style="color: #38ef7d;">
+                                <i class="fas fa-fish" style="color: #38ef7d;"></i>
+                                <span>Big Bass Splash</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('super-ace-deluxe') }}">
+                                <i class="fas fa-crown" style="color: #ffbe1a;"></i>
+                                <span>Super Ace Deluxe</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('fortune-gems-2') }}">
+                                <i class="fas fa-gem" style="color: #ff9800;"></i>
+                                <span>Fortune Gems 2</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('bonbon-bonanza') }}">
+                                <i class="fas fa-candy-cane" style="color: #e040fb;"></i>
+                                <span>BonBon Bonanza</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('lucky-joker-100') }}">
+                                <i class="fas fa-mask" style="color: #e91e63;"></i>
+                                <span>Lucky Joker 100</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Royal & High Roller -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-gem" style="color: #e040fb;"></i>
+                        <span>High Roller & Royal</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('royal-emirates') }}">
+                                <i class="fas fa-monument" style="color: #e040fb;"></i>
+                                <span>Royal Emirates</span>
+                                <span class="mega-badge" style="background: rgba(224,64,251,0.2); color: #e040fb;">VIP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('the-emirate') }}">
+                                <i class="fas fa-landmark" style="color: #ffb300;"></i>
+                                <span>The Emirate</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('elves-kingdom') }}">
+                                <i class="fas fa-shield-alt" style="color: #26a69a;"></i>
+                                <span>Elves Kingdom</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('temple-of-fortune') }}">
+                                <i class="fas fa-archway" style="color: #ff7043;"></i>
+                                <span>Temple of Fortune</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('dashboard') }}">
+                                <i class="fas fa-dice" style="color: #007bff;"></i>
+                                <span>Casino Lobby (100+)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Tournaments & Promos -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-trophy" style="color: #ffc107;"></i>
+                        <span>Promotions & Events</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('home') }}" style="color: #ff9800;">
+                                <i class="fas fa-award" style="color: #ff9800;"></i>
+                                <span>League of Wins</span>
+                                <span class="mega-badge" style="background: #ff9800; color: #000;">500K</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-bolt" style="color: #00e676;"></i>
+                                <span>T20 Blast Sports</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="handleHeaderAction('cabinet')">
+                                <i class="fas fa-crown" style="color: #ffbe1a;"></i>
+                                <span>VIP Cashback System</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+
+        <!-- 1XBET MORE MEGA MENU -->
+        <li class="nav-more-dropdown">
+            <a href="javascript:void(0)" style="color: #8ca3c7; text-decoration: none; display: flex; align-items: center; gap: 4px; padding: 6px 8px; border-radius: 6px;">
+                <span>MORE</span>
+                <i class="fas fa-chevron-down" style="font-size: 9px; transition: transform 0.2s;"></i>
+            </a>
+
+            <!-- 1xBet 4-Column Mega Menu Box -->
+            <div class="mega-menu-container">
+                <!-- Column 1: Crash & 1xGames -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-gamepad" style="color: #00c6ff;"></i>
+                        <span>1xGames & Crash</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('play') }}" style="color: #ffbe1a;">
+                                <i class="fas fa-plane-departure" style="color: #ffbe1a;"></i>
+                                <span>Aviator Crash</span>
+                                <span class="mega-badge" style="background: #ffbe1a; color: #000;">HOT</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('boxing-king') }}" style="color: #ff5252;">
+                                <i class="fas fa-fist-raised" style="color: #ff5252;"></i>
+                                <span>Boxing King™</span>
+                                <span class="mega-badge" style="background: #ff3d00; color: #fff;">#1 TOP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('western-vault') }}" style="color: #f97316;">
+                                <i class="fas fa-hat-cowboy" style="color: #f97316;"></i>
+                                <span>Western Vault™</span>
+                                <span class="mega-badge" style="background: rgba(249,115,22,0.25); color: #f97316;">PVP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('gems-mines') }}">
+                                <i class="fas fa-bomb" style="color: #ef4444;"></i>
+                                <span>Gems & Mines</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('heads-or-tails') }}">
+                                <i class="fas fa-coins" style="color: #ffc107;"></i>
+                                <span>Heads or Tails</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('treasure-climb') }}">
+                                <i class="fas fa-mountain" style="color: #4caf50;"></i>
+                                <span>Treasure Climb</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 2: Popular Video Slots -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-fire" style="color: #ff5722;"></i>
+                        <span>Popular Slots</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('gates-of-olympus') }}" style="color: #00d2ff;">
+                                <i class="fas fa-bolt" style="color: #00d2ff;"></i>
+                                <span>Gates of Olympus</span>
+                                <span class="mega-badge" style="background: rgba(0,210,255,0.2); color: #00d2ff;">ZEUS</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('big-bass-splash') }}" style="color: #38ef7d;">
+                                <i class="fas fa-fish" style="color: #38ef7d;"></i>
+                                <span>Big Bass Splash</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('super-ace-deluxe') }}">
+                                <i class="fas fa-crown" style="color: #ffbe1a;"></i>
+                                <span>Super Ace Deluxe</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('fortune-gems-2') }}">
+                                <i class="fas fa-gem" style="color: #ff9800;"></i>
+                                <span>Fortune Gems 2</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('bonbon-bonanza') }}">
+                                <i class="fas fa-candy-cane" style="color: #e040fb;"></i>
+                                <span>BonBon Bonanza</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('lucky-joker-100') }}">
+                                <i class="fas fa-mask" style="color: #e91e63;"></i>
+                                <span>Lucky Joker 100</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Royal & High Roller -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-gem" style="color: #e040fb;"></i>
+                        <span>High Roller & Royal</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('royal-emirates') }}">
+                                <i class="fas fa-monument" style="color: #e040fb;"></i>
+                                <span>Royal Emirates</span>
+                                <span class="mega-badge" style="background: rgba(224,64,251,0.2); color: #e040fb;">VIP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('the-emirate') }}">
+                                <i class="fas fa-landmark" style="color: #ffb300;"></i>
+                                <span>The Emirate</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('elves-kingdom') }}">
+                                <i class="fas fa-shield-alt" style="color: #26a69a;"></i>
+                                <span>Elves Kingdom</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('temple-of-fortune') }}">
+                                <i class="fas fa-archway" style="color: #ff7043;"></i>
+                                <span>Temple of Fortune</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('dashboard') }}">
+                                <i class="fas fa-dice" style="color: #007bff;"></i>
+                                <span>Casino Lobby (100+)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Tournaments & Promos -->
+                <div>
+                    <div class="mega-col-title">
+                        <i class="fas fa-trophy" style="color: #ffc107;"></i>
+                        <span>Promotions & Events</span>
+                    </div>
+                    <ul class="mega-menu-links">
+                        <li>
+                            <a href="{{ route('home') }}" style="color: #ff9800;">
+                                <i class="fas fa-award" style="color: #ff9800;"></i>
+                                <span>League of Wins</span>
+                                <span class="mega-badge" style="background: #ff9800; color: #000;">500K</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fas fa-bolt" style="color: #00e676;"></i>
+                                <span>T20 Blast Sports</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="handleHeaderAction('cabinet')">
+                                <i class="fas fa-crown" style="color: #ffbe1a;"></i>
+                                <span>VIP Cashback System</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" onclick="handleHeaderAction('cabinet')">
+                                <i class="fas fa-users" style="color: #00c6ff;"></i>
+                                <span>10% Referral Affiliate</span>
+                            </a>
+                        </li>
+                        <li style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #1d3354;">
+                            <a href="{{ route('dashboard') }}" style="color: #1a76d2; font-weight: 800; background: rgba(26,118,210,0.1);">
+                                <i class="fas fa-th-large" style="color: #1a76d2;"></i>
+                                <span>Explore All 1xGames</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
     </ul>
     
     <!-- Header Actions (Deposit / Withdraw / Balance / Cabinet) -->
@@ -568,6 +1061,38 @@
                     </div>
                     <i class="fas fa-chevron-right" style="font-size: 10px; color: #49688f;"></i>
                 </button>
+            </li>
+        </ul>
+
+        <!-- Section 1.5: Bangladesh Top Picks -->
+        <div class="drawer-section-title" style="color: #00e676;"><span style="font-size: 13px;">🇧🇩</span> Top Games in Bangladesh</div>
+        <ul class="drawer-nav-list">
+            <li class="drawer-nav-item">
+                <a href="{{ route('boxing-king') }}" style="background: rgba(255, 68, 68, 0.08); border: 1px solid rgba(255, 68, 68, 0.2);">
+                    <div class="drawer-item-left">
+                        <i class="fas fa-fist-raised drawer-item-icon" style="color: #ff5252;"></i>
+                        <span style="color: #ffffff; font-weight: 800;">Boxing King™</span>
+                    </div>
+                    <span class="drawer-item-badge" style="background: #ff3d00; color: #fff;">#1 TRENDING</span>
+                </a>
+            </li>
+            <li class="drawer-nav-item">
+                <a href="{{ route('play') }}">
+                    <div class="drawer-item-left">
+                        <i class="fas fa-plane-departure drawer-item-icon" style="color: #ffbe1a;"></i>
+                        <span>Aviator Crash</span>
+                    </div>
+                    <span class="drawer-item-badge" style="background: #ffbe1a; color: #000;">HOT</span>
+                </a>
+            </li>
+            <li class="drawer-nav-item">
+                <a href="{{ route('western-vault') }}">
+                    <div class="drawer-item-left">
+                        <i class="fas fa-hat-cowboy drawer-item-icon" style="color: #d4af37;"></i>
+                        <span>Western Vault</span>
+                    </div>
+                    <span class="drawer-item-badge" style="background: rgba(212, 175, 55, 0.2); color: #d4af37;">POPULAR</span>
+                </a>
             </li>
         </ul>
 

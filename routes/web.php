@@ -68,13 +68,21 @@ Route::get('/treasure-climb', function () {
     return view('customer.treasure-climb');
 })->middleware('auth')->name('treasure-climb');
 
-Route::get('/western', function () {
-    return view('customer.western');
-})->middleware('auth')->name('western');
+Route::get('/western', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western');
+Route::get('/western-vault', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western-vault');
+Route::prefix('games/western-vault')->group(function () {
+    Route::get('/', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western.index');
+    Route::get('/state', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'getGameState'])->name('western.state');
+    Route::post('/bet', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'placeBet'])->name('western.bet');
+});
 
-Route::get('/temple-of-fortune', function () {
-    return view('customer.temple-of-fortune');
-})->middleware('auth')->name('temple-of-fortune');
+Route::get('/temple-of-fortune', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'index'])->name('temple-of-fortune');
+Route::get('/abyss-of-glory', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'index'])->name('abyss.direct');
+Route::prefix('games/temple-of-fortune')->group(function () {
+    Route::get('/', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'index'])->name('abyss.index');
+    Route::get('/state', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'getGameState'])->name('abyss.state');
+    Route::post('/bet', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'placeBet'])->name('abyss.bet');
+});
 
 Route::get('/super-ace-deluxe', function () {
     return view('customer.super-ace-deluxe');
@@ -85,18 +93,24 @@ Route::get('/api/olympus/config', [App\Http\Controllers\OlympusGameController::c
 Route::post('/api/olympus/spin', [App\Http\Controllers\OlympusGameController::class, 'spin'])->name('olympus.spin');
 Route::get('/api/olympus/history', [App\Http\Controllers\OlympusGameController::class, 'history'])->name('olympus.history');
 
-Route::get('/boxing-king', function () {
-    return view('customer.boxing-king');
-})->middleware('auth')->name('boxing-king');
+Route::get('/boxing-king', [App\Http\Controllers\BoxingKing\BoxingKingGameController::class, 'index'])->name('boxing-king');
+Route::prefix('games/boxing-king')->group(function () {
+    Route::get('/', [App\Http\Controllers\BoxingKing\BoxingKingGameController::class, 'index'])->name('boxing.index');
+    Route::post('/spin', [App\Http\Controllers\BoxingKing\BoxingKingGameController::class, 'spin'])->name('boxing.spin');
+});
 
 Route::get('/fortune-gems-2', function () {
     return view('customer.fortune-gems-2');
 })->middleware('auth')->name('fortune-gems-2');
 
-Route::get('/heads-or-tails', function () {
-    return view('customer.heads-or-tails');
-})->middleware('auth')->name('heads-or-tails');
-
+// Heads or Tails (Mermaid / Octopus Gold Coin) Game Routes
+Route::get('/heads-or-tails', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'index'])->name('heads-or-tails');
+Route::prefix('games/heads-or-tails')->group(function () {
+    Route::get('/', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'index'])->name('headstails.index');
+    Route::get('/state', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'getGameState'])->name('headstails.state');
+    Route::post('/bet', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'placeBet'])->name('headstails.bet');
+    Route::post('/toss', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'instantToss'])->name('headstails.toss');
+});
 Route::get('/heads-or-tails/fixed', function () {
     return view('customer.heads-or-tails-game');
 })->middleware('auth')->name('heads-or-tails.fixed');
@@ -136,6 +150,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/users', [AdminController::class, 'getUsers'])->name('users');
     Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
+    Route::get('/game-matrix', [AdminController::class, 'getGamePerformanceMatrixApi'])->name('game-matrix');
+    Route::get('/analytics/games-health', [App\Http\Controllers\Admin\CasinoAnalyticsController::class, 'index'])->name('casino.analytics');
+    Route::get('/analytics/games-health/json', [App\Http\Controllers\Admin\CasinoAnalyticsController::class, 'getLiveJson'])->name('casino.analytics.json');
     Route::get('/chats', [AdminController::class, 'getChatsList'])->name('chats.list');
     Route::get('/chats/{userId}', [AdminController::class, 'getUserChat'])->name('chats.user');
     Route::post('/chats/send', [AdminController::class, 'sendAdminMessage'])->name('chats.send');
@@ -177,6 +194,28 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/olympus/settings', [AdminController::class, 'saveOlympusSettings'])->name('olympus.settings.save');
     Route::get('/olympus/rounds', [AdminController::class, 'getOlympusRounds'])->name('olympus.rounds');
     Route::get('/olympus/audit-logs', [AdminController::class, 'getOlympusAuditLogs'])->name('olympus.audit-logs');
+
+    // Western Vault Casino Game Management Module
+    Route::get('/modules/western-vault', [App\Http\Controllers\WesternVault\WesternVaultAdminController::class, 'index'])->name('western.index');
+    Route::post('/modules/western-vault/settings', [App\Http\Controllers\WesternVault\WesternVaultAdminController::class, 'updateSettings'])->name('western.settings');
+    Route::post('/modules/western-vault/audio', [App\Http\Controllers\WesternVault\WesternVaultAdminController::class, 'uploadAudio'])->name('western.audio');
+    Route::get('/modules/western-vault/transactions', [App\Http\Controllers\WesternVault\WesternVaultAdminController::class, 'ledgerIndex'])->name('western.ledger');
+
+    // Boxing King Casino Game Management Module
+    Route::get('/modules/boxing-king', [App\Http\Controllers\BoxingKing\BoxingKingAdminController::class, 'index'])->name('boxing.index');
+    Route::post('/modules/boxing-king/settings', [App\Http\Controllers\BoxingKing\BoxingKingAdminController::class, 'updateSettings'])->name('boxing.settings');
+    Route::post('/modules/boxing-king/upload-audio', [App\Http\Controllers\BoxingKing\BoxingKingAdminController::class, 'uploadAudio'])->name('boxing.audio');
+    Route::get('/modules/boxing-king/spins', [App\Http\Controllers\BoxingKing\BoxingKingAdminController::class, 'recentSpins'])->name('boxing.spins');
+
+    // Abyss of Glory (Temple of Fortune) Casino Game Management Module
+    Route::get('/modules/abyss-of-glory', [App\Http\Controllers\AbyssOfGlory\AbyssAdminController::class, 'index'])->name('abyss.index');
+    Route::post('/modules/abyss-of-glory/settings', [App\Http\Controllers\AbyssOfGlory\AbyssAdminController::class, 'updateSettings'])->name('abyss.settings');
+    Route::post('/modules/abyss-of-glory/upload-audio', [App\Http\Controllers\AbyssOfGlory\AbyssAdminController::class, 'uploadAudio'])->name('abyss.audio');
+
+    // Heads or Tails Casino Game Management Module
+    Route::get('/modules/heads-or-tails', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'index'])->name('headstails.index');
+    Route::post('/modules/heads-or-tails/settings', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'updateSettings'])->name('headstails.settings');
+    Route::post('/modules/heads-or-tails/upload-audio', [App\Http\Controllers\HeadsOrTails\HeadsTailsAdminController::class, 'uploadAudio'])->name('headstails.audio');
 });
 
 // Game engine: fetch next crash point (auth required - players only)

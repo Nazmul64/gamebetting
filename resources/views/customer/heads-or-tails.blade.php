@@ -2,1949 +2,1440 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Heads or Tails — Pirate Coin Flip</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>1xBet — Heads or Tails (Mermaid & Octopus Gold Coin)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@500;600;700;900&family=EB+Garamond:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Roboto+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-  :root{
-    --bg-deep:#050b14;
-    --gold:#f3c45a;
-    --gold-light:#ffe9b0;
-    --gold-dark:#c8902f;
-    --parchment-1:#f1e2bb;
-    --parchment-2:#dcc190;
-    --ink:#3a2a16;
-    --wood-1:#d9692f;
-    --wood-2:#9c3a17;
-    --ember:#ff5a2b;
-    --green-1:#6fd45a;
-    --green-2:#268a22;
-    --panel-bg:#0e2138;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;height:100%;background:var(--bg-deep);overflow-x:hidden;}
-  body{
-    font-family:'Inter',sans-serif;
-    color:#fff;
-    min-height:100vh;
-    position:relative;
-  }
-  video#bgVideo{
-    position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block;
-    object-fit:cover; pointer-events:none;
-  }
-  .vignette{
-    position:fixed; inset:0; z-index:1; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%);
-  }
+/* ============================================================
+   1xBet OFFICIAL HEADS OR TAILS (MERMAID & GOLD COIN) THEME
+   ============================================================ */
+:root {
+  --bg-deep: #030b18;
+  --bg-dark: #071529;
+  --topbar-bg: #09182d;
+  --topbar-active: #0c436b;
+  --accent-gold: #f5c842;
+  --gold-glow: #ffe066;
+  --gold-dark: #b8860b;
+  --wood-panel: #542810;
+  --wood-dark: #321609;
+  --wood-border: #7c401d;
+  --wood-light: #8e441d;
+  --btn-blue: #0088cc;
+  --btn-green: #2ecc71;
+  --btn-red: #e74c3c;
+  --text-main: #ffffff;
+  --text-muted: #8aa0b8;
+}
 
-  .stage{
-    position:relative; z-index:2;
-    min-height:100vh;
-    display:flex; flex-direction:column; align-items:center;
-    padding:22px 24px 160px;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg-deep);
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-main);
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
 
-  /* ---------- Top bar ---------- */
-  .topbar{
-    width:100%; max-width:1700px;
-    display:flex; justify-content:space-between; align-items:flex-start;
-    margin-bottom:18px; flex-wrap:wrap; gap:14px;
-  }
-  .breadcrumb{
-    font-size:12.5px; letter-spacing:.1em; text-transform:uppercase;
-    color:rgba(255,255,255,.7); display:flex; gap:6px; align-items:center;
-  }
-  .breadcrumb .crumb.active{ color:#fff; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
-  .breadcrumb .sep{ opacity:.5; }
+/* ================= 1xBet TOP NAVIGATION BAR ================= */
+.xbet-navbar {
+  width: 100%;
+  background: #091a30;
+  border-bottom: 1px solid #142e50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 48px;
+  position: relative;
+  z-index: 50;
+  font-size: 12.5px;
+}
 
-  .jackpot-badge{
-    font-family:'Cinzel',serif; font-weight:900; letter-spacing:.25em; font-size:14px;
-    color:#ffffff; text-shadow:0 0 8px rgba(255,215,0,0.6), 0 2px 4px rgba(0,0,0,0.8);
-    text-transform:uppercase;
-    padding:8px 35px; border-radius:6px;
-    border:3px solid #ffbe1a;
-    background:linear-gradient(180deg, #1c1303 0%, #0a0701 100%);
-    box-shadow:0 0 20px rgba(255,190,26,0.5), inset 0 0 10px rgba(255,190,26,0.3);
-    position:relative;
-  }
+.xbet-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.xbet-nav-left::-webkit-scrollbar { display: none; }
 
-  /* ---------- Title ---------- */
-  .title-block{ position:relative; text-align:center; margin:14px 0 34px; }
-  .game-title{
-    margin:0; font-family:'Cinzel',serif; font-weight:900;
-    font-size:clamp(46px,6vw,84px); line-height:.9; letter-spacing:.02em;
-    background:linear-gradient(180deg,#fff5df 0%, #f3c45a 45%, #a26b1f 100%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(0 4px 6px rgba(0,0,0,.9)) drop-shadow(0 0 10px rgba(243,196,90,.3));
-    text-transform: uppercase;
-  }
-  .game-title .sub{ display:block; font-size:.95em; }
-  .bolt-icon{ position:absolute; top:-14px; right:calc(50% - 8px); filter:drop-shadow(0 0 10px #5ec8ff) drop-shadow(0 0 4px #bfe8ff); }
+.xbet-logo {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 8px;
+}
+.xbet-logo span { color: #00aaff; }
 
-  /* ---------- Cards ---------- */
-  .cards-row{
-    display:flex; gap:64px; flex-wrap:wrap; justify-content:center;
-    width:100%; max-width:1400px;
-  }
-  .card{
-    width:380px; display:flex; flex-direction:column; align-items:center;
-    position:relative; animation:floatIn .7s ease both;
-    margin-top: 50px;
-  }
-  .card:nth-child(2){ animation-delay:.1s; }
-  @keyframes floatIn{ from{ opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+.country-pill {
+  background: #005530;
+  color: #4ade80;
+  border: 1px solid #16a34a;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
 
-  /* ---------- Card Decorations ---------- */
-  .card-decorations{
-    position:absolute; width:100%; height:100px; top:-50px; left:0;
-    pointer-events:none; z-index:1;
-  }
-  .helm-decor{
-    position:absolute; width:95px; height:95px; left:65px; top:-5px;
-    opacity:0.85; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-  }
-  .map-decor{
-    position:absolute; width:90px; height:70px; right:60px; top:-5px;
-    opacity:0.9; transform:rotate(10deg);
-    filter:drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-  }
-  .anchor-decor{
-    position:absolute; width:95px; height:95px; left:50%; transform:translateX(-50%) rotate(-10deg); top:-5px;
-    opacity:0.85; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.6));
-  }
+.nav-links-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+.nav-link-item {
+  color: #94a3b8;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-link-item:hover, .nav-link-item.active {
+  color: #fff;
+  background: #0f3460;
+}
+.nav-link-item.highlight {
+  color: #fbbf24;
+}
 
-  /* ---------- Wood Plank Banner ---------- */
-  .banner{
-    position:relative; z-index:2; width:100%;
-    clip-path:polygon(0% 15%, 4% 0%, 96% 0%, 100% 15%, 98% 50%, 100% 85%, 96% 100%, 4% 100%, 0% 85%, 2% 50%);
-    background:linear-gradient(180deg, #e67035 0%, #c14d1c 45%, #92300b 80%, #6e1c02 100%);
-    padding:16px 16px 14px; text-align:center;
-    font-family:'Cinzel',serif; font-weight:900; letter-spacing:.08em; font-size:18px;
-    color:#2a0f02; text-shadow:0 1.5px 0.5px rgba(255,255,255,.3);
-    filter:drop-shadow(0 6px 8px rgba(0,0,0,.65));
-    border-top: 2.5px solid rgba(255,255,255,0.15);
-    border-bottom: 2.5px solid rgba(0,0,0,0.3);
-  }
-  .banner.fire{ overflow:visible; }
-  .fire-blast{
-    position:absolute; right:15px; top:12px; width:90px; height:50px;
-    background:radial-gradient(circle at left, rgba(255,220,100,1) 0%, rgba(255,100,20,0.95) 30%, rgba(200,30,0,0.8) 60%, rgba(120,10,0,0) 85%);
-    mix-blend-mode:screen; filter:blur(1.5px);
-    animation:flameBurn 0.8s ease-in-out infinite alternate;
-    pointer-events:none; z-index:4;
-    clip-path:polygon(0% 25%, 35% 5%, 65% 20%, 100% 35%, 85% 55%, 100% 70%, 70% 85%, 40% 95%, 0% 75%);
-  }
-  @keyframes flameBurn{
-    0%{ transform:scale(0.95) rotate(-2deg); opacity:.85; }
-    100%{ transform:scale(1.05) rotate(3deg); opacity:1; }
-  }
+.xbet-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
 
-  /* ---------- Banner Emblems ---------- */
-  .banner-emblem{
-    position:absolute; top:-25px; left:50%; transform:translateX(-50%);
-    width:54px; height:54px; z-index:3;
-    filter:drop-shadow(0 3px 5px rgba(0,0,0,0.55));
-  }
-  .banner-emblem svg{
-    display:block; width:100%; height:100%;
-  }
-  .banner-emblem.doubled{
-    width:90px; height:54px;
-    display:flex; justify-content:center; align-items:center;
-  }
-  .banner-emblem.doubled .coin-1{
-    position:absolute; width:46px; height:46px; left:6px; z-index:2;
-  }
-  .banner-emblem.doubled .coin-2{
-    position:absolute; width:46px; height:46px; right:6px; z-index:1;
-  }
+.balance-pill {
+  background: #0a1f3a;
+  border: 1px solid #1e3a8a;
+  border-radius: 6px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fbbf24;
+  white-space: nowrap;
+}
+.balance-pill .currency { color: #94a3b8; font-size: 11px; }
 
-  /* ---------- Parchment Scroll ---------- */
-  .parchment{
-    width:100%; margin-top:-14px; position:relative; z-index:1;
-    background:linear-gradient(160deg, #f4e6c9 0%, #dbbe91 100%);
-    clip-path:polygon(0% 0%, 100% 0%, 99% 6%, 98% 12%, 99% 18%, 97% 24%, 99% 30%, 98% 36%, 99% 42%, 97% 48%, 99% 54%, 98% 60%, 99% 66%, 97% 72%, 99% 78%, 98% 84%, 99% 90%, 95% 93%, 88% 91%, 81% 94%, 74% 92%, 67% 95%, 60% 92%, 53% 94%, 46% 92%, 39% 95%, 32% 92%, 25% 94%, 18% 92%, 11% 94%, 4% 91%, 0% 93%, 1% 90%, 2% 84%, 1% 78%, 3% 72%, 1% 66%, 2% 60%, 1% 54%, 3% 48%, 1% 42%, 2% 36%, 1% 30%, 3% 24%, 1% 18%, 2% 12%, 1% 6%);
-    padding:45px 30px 45px; min-height:220px;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-    box-shadow:inset 0 0 30px rgba(120,80,30,.2);
-  }
-  .parchment p{
-    margin:0; font-family:'EB Garamond',serif; font-size:17px; line-height:1.42;
-    color:var(--ink); text-align:center; font-weight: 500;
-  }
+.btn-deposit-top {
+  background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(34,197,94,0.4);
+}
+.btn-withdraw-top {
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.btn-cabinet-top {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+}
 
-  /* ---------- Green Pill Play Button ---------- */
-  .play-btn{
-    position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
-    z-index:10; cursor:pointer;
-    width:160px; height:44px; border-radius:22px; border:2px solid #14500d;
-    background:linear-gradient(180deg,#65eb26,#1d9e03);
-    font-family:'Cinzel',serif; font-weight:900; letter-spacing:.15em; font-size:15px;
-    color:#ffffff; text-shadow:0 2px 3px rgba(0,0,0,.65);
-    box-shadow:0 6px 12px rgba(0,0,0,.5), inset 0 2px 2px rgba(255,255,255,0.5), inset 0 -2px 2px rgba(0,0,0,0.3);
-    transition:transform .15s ease, box-shadow .15s ease;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .play-btn::before{
-    content:''; position:absolute; top:2px; left:6%; width:88%; height:38%;
-    background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0));
-    border-radius:20px; pointer-events:none;
-  }
-  .play-btn:hover{ transform:translateX(-50%) translateY(-2px); box-shadow:0 10px 18px rgba(0,0,0,.6), inset 0 2px 2px rgba(255,255,255,0.5); }
-  .play-btn:active{ transform:translateX(-50%) translateY(0); }
+/* ================= GAME VIEW CONTAINER ================= */
+.game-viewport {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  background: #041021;
+  overflow: hidden;
+}
 
-  /* ---------- Side rail ---------- */
-  .side-rail{
-    position:fixed; right:0; top:50%; transform:translateY(-50%);
-    display:flex; flex-direction:column; z-index:6;
-    background:rgba(9,19,30,.75); border-radius:8px 0 0 8px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:-4px 0 16px rgba(0,0,0,.5);
-  }
-  .side-rail button{
-    width:42px; height:42px; border:none; background:transparent; cursor:pointer;
-    color:#b9cbdc; font-size:18px; display:flex; align-items:center; justify-content:center;
-    border-bottom:1px solid rgba(255,255,255,.05); transition:background .15s, color .15s;
-  }
-  .side-rail button:last-child{ border-bottom:none; }
-  .side-rail button:hover{ background:rgba(243,196,90,.15); color:#ffe28a; }
+/* Background video or ambient art */
+.game-bg-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.game-bg-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #1e3a8a 0%, #081a36 60%, #020713 100%);
+  z-index: 0;
+}
 
-  /* ---------- Bottom hub ---------- */
-  .bottom-hub{
-    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-    width:220px; height:70px; z-index:5;
-    background:linear-gradient(180deg, #b05c2a, #632408);
-    box-shadow:0 -6px 20px rgba(0,0,0,.7), inset 0 2px 1px rgba(255,255,255,0.25);
-    display:flex; align-items:center; justify-content:center; gap:20px;
-    padding-bottom:12px;
-    border-radius:110px 110px 0 0;
-    border-top:3px solid #e2854e;
-  }
-  .hub-btn{
-    width:42px; height:42px; border-radius:50%; cursor:pointer;
-    background:radial-gradient(circle at 35% 28%, #ffe9a8 0%, #caa033 65%, #8a651c 100%);
-    border:2.5px solid #4a2f07; box-shadow:0 3px 6px rgba(0,0,0,.5);
-    font-weight:900; color:#321e06; font-size:18px;
-    display:flex; align-items:center; justify-content:center;
-    transition:transform .15s;
-  }
-  .hub-btn:hover{ transform:scale(1.08); }
+/* ================= GAME SUB-HEADER ================= */
+.game-sub-header {
+  position: relative;
+  z-index: 10;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.breadcrumbs-track {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+}
+.breadcrumbs-track span.active { color: #f5c842; }
 
-  /* ---------- Demo badge + bell ---------- */
-  .demo-badge{
-    display: none !important;
-    position:fixed; bottom:24px; right:90px; z-index:6;
-    background:rgba(9,18,29,.72); border:1px solid rgba(255,255,255,.16);
-    border-radius:20px; padding:9px 16px; font-size:12.5px; letter-spacing:.05em;
-    display:flex; align-items:center; gap:9px; color:#dfe7ef; cursor:pointer;
-  }
-  .demo-badge .dot{ width:8px; height:8px; border-radius:50%; background:#3fd15d; box-shadow:0 0 8px #3fd15d; }
-  .bell-btn{
-    position:fixed; bottom:22px; right:22px; z-index:6;
-    width:44px; height:44px; border-radius:50%; border:none; cursor:pointer;
-    background:linear-gradient(160deg,#2c8fd6,#103a63);
-    color:#eaf6ff; font-size:17px; box-shadow:0 4px 12px rgba(0,0,0,.5);
-  }
+.jackpot-tag {
+  background: linear-gradient(180deg, #d97706 0%, #78350f 100%);
+  border: 1.5px solid #fbbf24;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 5px 18px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(245,158,11,0.5);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-  /* ---------- Overlays ---------- */
-  .overlay{
-    position:fixed; inset:0; z-index:30; display:flex; align-items:center; justify-content:center;
-    background:rgba(4,9,15,.82); backdrop-filter:blur(4px);
-    opacity:0; pointer-events:none; transition:opacity .22s ease;
-  }
-  .overlay.open{ opacity:1; pointer-events:auto; }
-  .panel{
-    position:relative; width:min(440px,92vw); max-height:88vh; overflow:auto;
-    background:linear-gradient(165deg,#143150,#0a1828);
-    border:1px solid rgba(243,196,90,.35); border-radius:18px;
-    padding:34px 32px 28px; text-align:center;
-    box-shadow:0 24px 60px rgba(0,0,0,.6);
-  }
-  .panel h2{
-    margin:0 0 4px; font-family:'Cinzel',serif; letter-spacing:.08em; font-size:21px;
-    color:var(--gold-light);
-  }
-  .close-x{
-    position:absolute; top:12px; right:14px; width:32px; height:32px; border-radius:50%;
-    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.05); color:#fff;
-    cursor:pointer; font-size:15px;
-  }
-  .close-x:hover{ background:rgba(255,255,255,.15); }
+/* Mode / Sound Toggles on top */
+.mode-switches {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.demo-toggle-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.demo-toggle-btn.active {
+  background: #eab308;
+  color: #000;
+  border-color: #ca8a04;
+  box-shadow: 0 0 10px rgba(234,179,8,0.5);
+}
+.sound-toggle-btn {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+}
 
-  .balance-row{
-    margin:14px 0 18px; font-size:14px; color:#cfe0ef;
-    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;
-  }
-  .balance-val{ font-weight:700; color:var(--gold-light); font-size:16px; }
-  .demo-tag{
-    font-size:10.5px; letter-spacing:.1em; padding:2px 8px; border-radius:10px;
-    background:rgba(63,209,93,.18); color:#7be592; border:1px solid rgba(63,209,93,.4);
-  }
-  .reset-link{ background:none; border:none; color:#7fb8e6; font-size:12px; cursor:pointer; text-decoration:underline; margin-left:4px; }
+/* ================= MAIN GAME WORKSPACE ================= */
+.game-main-area {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 280px 1fr 220px;
+  gap: 16px;
+  padding: 0 20px 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  align-items: center;
+}
 
-  #coinCanvas{ display:block; margin:6px auto 14px; }
+/* LEFT: Mermaid Character on Rocks */
+.mermaid-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  min-height: 420px;
+  pointer-events: none;
+}
+.mermaid-character-img {
+  width: 100%;
+  max-width: 320px;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.8));
+  animation: mermaidFloat 4s ease-in-out infinite;
+  object-fit: contain;
+}
+@keyframes mermaidFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
 
-  .controls label{ font-size:12.5px; letter-spacing:.08em; color:#aebfd1; text-transform:uppercase; }
-  .bet-input-row{ display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0 18px; }
-  .bet-input-row button{
-    width:36px; height:36px; border-radius:8px; border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.06); color:#fff; font-size:18px; cursor:pointer;
-  }
-  .bet-input-row input{
-    width:90px; text-align:center; font-size:16px; padding:8px 6px; border-radius:8px;
-    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff;
-  }
+/* CENTER: Coin Toss Stage & Controls */
+.stage-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
 
-  .side-choice{ display:flex; gap:10px; justify-content:center; margin-bottom:18px; }
-  .choice-btn{
-    flex:1; max-width:140px; padding:11px 0; border-radius:24px; cursor:pointer;
-    border:2px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05);
-    color:#dce6ef; font-family:'Cinzel',serif; font-weight:600; letter-spacing:.1em; font-size:13px;
-    transition:all .15s;
-  }
-  .choice-btn.active{
-    border-color:var(--gold); background:linear-gradient(180deg, rgba(243,196,90,.28), rgba(243,196,90,.08));
-    color:var(--gold-light); box-shadow:0 0 12px rgba(243,196,90,.35);
-  }
+/* Start Round Ribbon Banner */
+.ribbon-banner-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 24px;
+}
+.ribbon-banner {
+  background: linear-gradient(180deg, #d9531e 0%, #b83a0a 50%, #872503 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  padding: 10px 20px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+  position: relative;
+}
+.ribbon-coins-decor {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+}
+.mini-gold-coin {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff2a3, #f59e0b, #92400e);
+  border: 1.5px solid #ffd700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.banner-status-text {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  margin-top: 4px;
+}
 
-  .flip-btn, .cashout-btn, .start-btn{
-    width:100%; padding:13px 0; border-radius:30px; cursor:pointer; font-family:'Cinzel',serif;
-    font-weight:700; letter-spacing:.14em; font-size:14px; border:2px solid #b5872c;
-    box-shadow:0 6px 14px rgba(0,0,0,.4); margin-top:4px; transition:transform .15s;
-  }
-  .flip-btn, .start-btn{ background:linear-gradient(180deg,var(--green-1),var(--green-2)); color:#103a0e; }
-  .cashout-btn{ background:linear-gradient(180deg,#ffd877,#c8902f); color:#3a2308; margin-top:10px; }
-  .flip-btn:hover, .cashout-btn:hover, .start-btn:hover{ transform:translateY(-2px); }
-  .flip-btn:disabled, .cashout-btn:disabled, .start-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+/* ================= 3D COIN ARENA ================= */
+.coin-arena {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  perspective: 1000px;
+  margin-bottom: 22px;
+}
+.coin-3d {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.coin-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 20px rgba(245,200,66,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #b8860b;
+}
 
-  .double-info{ font-size:14px; color:#dce6ef; margin-bottom:14px; }
-  .double-info b{ color:var(--gold-light); font-size:17px; }
+/* Heads: Mermaid/Star face */
+.coin-face.heads {
+  background: radial-gradient(circle at 35% 30%, #fff7b8 0%, #f5c842 50%, #9a6608 100%);
+  transform: rotateY(0deg);
+}
+.coin-face.heads img {
+  width: 75%;
+  height: 75%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.coin-face.heads .fallback-symbol {
+  font-family: 'Cinzel', serif;
+  font-size: 42px;
+  font-weight: 900;
+  color: #5a3200;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+}
 
-  .result-msg{ min-height:22px; margin-top:16px; font-size:14.5px; font-weight:600; }
-  .result-msg.win{ color:#7be592; }
-  .result-msg.lose{ color:#ff8a72; }
-  .result-msg.info{ color:#9fc3e6; }
+/* Tails: Octopus Gold Coin */
+.coin-face.tails {
+  background: radial-gradient(circle at 35% 30%, #fff7b8 0%, #eab308 50%, #78350f 100%);
+  transform: rotateY(180deg);
+}
+.coin-face.tails img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+.coin-face.tails .fallback-symbol {
+  font-size: 48px;
+}
 
-  .rules-list{ text-align:left; font-size:14px; line-height:1.6; color:#d6e2ee; padding-left:18px; margin:14px 0 4px; }
+/* 3D Spin Animation */
+.coin-spinning-3d {
+  animation: flip3D 1.8s infinite linear;
+}
+@keyframes flip3D {
+  0% { transform: rotateY(0deg) scale(1); }
+  50% { transform: rotateY(900deg) scale(1.18); }
+  100% { transform: rotateY(1800deg) scale(1); }
+}
 
-  @media (max-width:760px){
-    .side-rail, .bottom-hub{ display:none; }
-    .cards-row{ gap:36px; }
-    .demo-badge{ right:16px; bottom:74px; }
-    .bell-btn{ bottom:16px; right:16px; }
-  }
+/* ================= CHOICE BUTTONS ================= */
+.choice-controls-row {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.choice-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.choice-btn.heads-btn {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  color: #fff;
+  border-color: #7dd3fc;
+}
+.choice-btn.heads-btn.selected {
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  border-color: #f5c842;
+  box-shadow: 0 0 20px rgba(245,200,66,0.8), 0 4px 15px rgba(2,132,199,0.6);
+  transform: scale(1.05);
+}
 
-  /* ── NEW GAME OVERLAY ── */
-  #gameOverlay {
-    position: fixed;
-    top: 70px;
-    left: 0; right: 0; bottom: 0;
-    z-index: 100;
-    display: none;
-    background: #1a3a5c;
-    font-family: 'Cinzel', serif;
-    user-select: none;
-    overflow: hidden;
-  }
-  #gameOverlay.open {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  #gameOverlay #overlayBgVideo {
-    position: absolute; inset: 0; z-index: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-  }
+.choice-btn.tails-btn {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  color: #451a03;
+  border-color: #fde68a;
+}
+.choice-btn.tails-btn.selected {
+  background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+  border-color: #ffffff;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 4px 15px rgba(217,119,6,0.6);
+  transform: scale(1.05);
+}
+.choice-badge-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.25);
+  font-size: 13px;
+}
 
+/* ================= STAKE PANEL & CONTROL BOX ================= */
+.stake-panel-box {
+  background: linear-gradient(180deg, #7c310f 0%, #4a1906 100%);
+  border: 2px solid #ca8a04;
+  border-radius: 12px;
+  padding: 14px 18px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.stake-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.stake-title-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fde047;
+}
+.multiplier-tag {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 800;
+  color: #4ade80;
+  background: rgba(0,0,0,0.4);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(74,222,128,0.3);
+}
 
-  #gameOverlay #app {
-    position: relative; z-index: 1;
-    width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+/* Stake Amount & Chips */
+.stake-chips-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.stake-chip {
+  background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+  border: 1px solid #d97706;
+  color: #fef08a;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.stake-chip:hover { transform: translateY(-2px); border-color: #fde047; }
+.stake-chip.active {
+  background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%);
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(234,179,8,0.6);
+}
 
-  #gameOverlay #topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px 0;
-    position: relative;
-    z-index: 10;
-  }
+/* Play & Input bar */
+.play-control-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.play-btn-primary {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  border: 2px solid #7dd3fc;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2,132,199,0.5);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.play-btn-primary:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(56,189,248,0.8);
+}
+.play-btn-primary:active { transform: scale(0.96); }
 
-  #gameOverlay #breadcrumb {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    color: #ffffff;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-    letter-spacing: 1.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  #gameOverlay #breadcrumb span { color: #f5c842; }
+.stake-input-container {
+  flex: 1;
+  background: #110502;
+  border: 1.5px solid #854d0e;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 48px;
+}
+.stake-input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 17px;
+  font-weight: 800;
+  color: #fef08a;
+  text-align: center;
+}
+.clear-stake-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+.clear-stake-btn:hover { color: #ef4444; }
 
-  #gameOverlay #jackpotBtn {
-    background: linear-gradient(180deg, #2a1a0a 0%, #1a0d04 100%);
-    border: 2px solid #c8912a;
-    border-radius: 6px;
-    padding: 8px 28px;
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 16px;
-    font-weight: 900;
-    color: #f5c842;
-    letter-spacing: 3px;
-    text-shadow: 0 0 10px #f5c84280;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(200,145,42,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
-    transition: box-shadow 0.3s;
-  }
-  #gameOverlay #jackpotBtn:hover { box-shadow: 0 0 30px rgba(245,200,66,0.5), inset 0 1px 0 rgba(255,255,255,0.1); }
+.cashout-btn {
+  background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 0 16px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1.5px solid #86efac;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(34,197,94,0.5);
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: none;
+}
+.cashout-btn:hover { transform: scale(1.04); }
 
-  #gameOverlay #mainArea {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-  }
+/* ================= RIGHT DYNAMIC HISTORY SIDEBAR ================= */
+.sidebar-right {
+  position: relative;
+  background: linear-gradient(180deg, #421b08 0%, #290f04 100%);
+  border: 2px solid #854d0e;
+  border-radius: 12px;
+  padding: 12px;
+  height: 100%;
+  max-height: 520px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+.doubling-wheel-card {
+  background: linear-gradient(180deg, #602509 0%, #3f1604 100%);
+  border: 1.5px solid #ca8a04;
+  border-radius: 8px;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+.doubling-wheel-card:hover {
+  border-color: #fde047;
+  transform: translateY(-2px);
+}
+.wheel-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde047 0%, #ca8a04 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #451a03;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.doubling-text-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #fef08a;
+}
+.doubling-text-sub {
+  font-size: 9.5px;
+  color: #d97706;
+  font-weight: 600;
+}
 
-  #gameOverlay #mermaidCanvas {
-    position: absolute;
-    bottom: 0; left: -10px;
-    width: 380px; height: 540px;
-    z-index: 2;
-  }
+.history-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #fde047;
+  text-align: center;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.history-toss-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #854d0e transparent;
+}
+.history-toss-list::-webkit-scrollbar { width: 4px; }
+.history-toss-list::-webkit-scrollbar-thumb { background: #854d0e; border-radius: 4px; }
 
-  #gameOverlay #centerContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 0px;
-    margin-top: -60px;
-    position: relative;
-    z-index: 5;
-    margin-left: 320px;
-    margin-right: 260px;
-  }
+.history-item {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(133,77,14,0.5);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+.history-item.heads-win {
+  border-color: rgba(56,189,248,0.5);
+  background: rgba(2,132,199,0.15);
+}
+.history-item.tails-win {
+  border-color: rgba(234,179,8,0.5);
+  background: rgba(202,138,4,0.15);
+}
+.hist-side-tag {
+  font-weight: 800;
+  font-family: 'Cinzel', serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.hist-side-tag.heads { color: #38bdf8; }
+.hist-side-tag.tails { color: #fbbf24; }
+.hist-payout-val {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  color: #4ade80;
+}
 
+/* ================= WIN / LOSS GLOW & ALERTS ================= */
+.win-glow {
+  box-shadow: 0 0 40px #22c55e, inset 0 0 25px #15803d !important;
+  transition: box-shadow 0.3s ease;
+}
+.loss-glow {
+  box-shadow: 0 0 40px #ef4444, inset 0 0 25px #991b1b !important;
+  transition: box-shadow 0.3s ease;
+}
 
+/* Deposit Modal Popup */
+.deposit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.deposit-modal-overlay.hidden { display: none; }
 
-  #gameOverlay #banner {
-    position: relative;
-    margin-bottom: 12px;
-    animation: bannerFloat 3s ease-in-out infinite;
-  }
-  @keyframes bannerFloat {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
+.deposit-modal-card {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid #eab308;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(234,179,8,0.3);
+  position: relative;
+  animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes modalPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.deposit-modal-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde047, #ca8a04);
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #451a03;
+  box-shadow: 0 0 20px rgba(234,179,8,0.5);
+}
+.deposit-modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fef08a;
+  margin-bottom: 8px;
+}
+.deposit-modal-desc {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.btn-deposit-action {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(34,197,94,0.5);
+  margin-bottom: 10px;
+}
+.btn-close-modal {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
-  #gameOverlay #bannerCanvas { display: block; }
-
-  #gameOverlay #bannerText {
-    position: absolute;
-    top: 52%; left: 50%;
-    transform: translate(-50%,-50%);
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-    letter-spacing: 1.5px;
-    text-align: center;
-    width: 260px;
-    line-height: 1.35;
-    pointer-events: none;
-  }
-
-  #gameOverlay #coinContainer {
-    margin-bottom: 22px;
-    perspective: 600px;
-  }
-
-  #gameOverlay #coinCanvas {
-    display: block;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
-  }
-
-  #gameOverlay #choiceRow {
-    display: flex;
+/* ================= MOBILE RESPONSIVENESS ================= */
+@media (max-width: 1024px) {
+  .game-main-area {
+    grid-template-columns: 1fr 200px;
     gap: 12px;
-    margin-bottom: 14px;
-    align-items: center;
   }
+  .mermaid-side { display: none; }
+}
 
-  #gameOverlay .choiceBtn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 30px;
-    border-radius: 30px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    transition: all 0.2s;
-    min-width: 145px;
-    justify-content: center;
-  }
-
-  #gameOverlay #headsBtn {
-    background: linear-gradient(180deg, #48c6e8 0%, #1a8ab0 100%);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(72,198,232,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
-  }
-  #gameOverlay #headsBtn.active {
-    background: linear-gradient(180deg, #60d8f8 0%, #1a9acc 100%);
-    box-shadow: 0 0 20px rgba(72,198,232,0.7), inset 0 1px 0 rgba(255,255,255,0.3);
-    transform: scale(1.05);
-  }
-
-  #gameOverlay #tailsBtn {
-    background: linear-gradient(180deg, #f5c842 0%, #c8912a 100%);
-    color: #5a3200;
-    box-shadow: 0 4px 12px rgba(245,200,66,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
-  }
-  #gameOverlay #tailsBtn.active {
-    background: linear-gradient(180deg, #ffe066 0%, #d4a030 100%);
-    box-shadow: 0 0 20px rgba(245,200,66,0.8), inset 0 1px 0 rgba(255,255,255,0.3);
-    transform: scale(1.05);
-  }
-
-  #gameOverlay .choiceBtn:hover { transform: scale(1.04); }
-  #gameOverlay .choiceBtn.active:hover { transform: scale(1.06); }
-
-  #gameOverlay .choiceIcon {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f5c842, #c8912a);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    flex-shrink: 0;
-  }
-
-  #gameOverlay .choiceMult {
-    background: url('/assets/image/headsortals/2.png') no-repeat center center;
-    background-size: cover;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
-
-
-  #gameOverlay #stakePanel {
-    background: linear-gradient(180deg, #8b3a1a 0%, #5a2010 100%);
-    border: 2px solid #c8912a;
-    border-radius: 14px;
-    padding: 12px 18px 16px;
-    width: 100%;
-    max-width: 560px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,220,120,0.2);
-  }
-
-  #gameOverlay #stakeLabel {
-    text-align: center;
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    color: #f5c842;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-  }
-
-  #gameOverlay #stakeRow {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  #gameOverlay .stakeIconBtn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 2px solid #c8912a;
-    background: linear-gradient(180deg, #f5c842 0%, #c8912a 100%);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.15s;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-    flex-shrink: 0;
-  }
-  #gameOverlay .stakeIconBtn:hover { transform: scale(1.1); }
-
-  #gameOverlay .stakeChip {
-    flex: 1;
-    padding: 8px 4px;
-    border-radius: 20px;
-    border: 2px solid #a06020;
-    background: linear-gradient(180deg, #3a1808 0%, #2a1005 100%);
-    color: #f0d080;
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
-    min-width: 46px;
-  }
-  #gameOverlay .stakeChip:hover, #gameOverlay .stakeChip.sel {
-    background: linear-gradient(180deg, #f5c842 0%, #c8912a 100%);
-    color: #3a1808;
-    border-color: #f5c842;
-    box-shadow: 0 0 10px rgba(245,200,66,0.4);
-  }
-
-  #gameOverlay #playRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
-  }
-
-  #gameOverlay #playBtn {
-    width: 58px; height: 58px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #48c6e8 0%, #1a8ab0 100%);
-    border: 3px solid rgba(255,255,255,0.5);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(72,198,232,0.6), 0 4px 12px rgba(0,0,0,0.5);
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  #gameOverlay #playBtn:hover { transform: scale(1.08); box-shadow: 0 0 30px rgba(72,198,232,0.9), 0 4px 12px rgba(0,0,0,0.5); }
-  #gameOverlay #playBtn:active { transform: scale(0.95); }
-  #gameOverlay #playBtn svg { width: 24px; height: 24px; }
-
-  #gameOverlay #stakeInput {
-    flex: 1;
-    background: linear-gradient(180deg, #1a0a04 0%, #0d0502 100%);
-    border: 2px solid #5a3010;
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: #f0d080;
-    font-family: 'Cinzel', serif;
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 52px;
-  }
-
-  #gameOverlay #clearStake {
-    background: none;
-    border: none;
-    color: #c87040;
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 4px;
-    transition: color 0.15s;
-  }
-  #gameOverlay #clearStake:hover { color: #f09060; }
-
-  #gameOverlay #rightPanel {
-    width: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 12px 0;
-    position: absolute;
-    top: 80px;
-    bottom: 24px;
-    right: 20px;
-    z-index: 5;
-  }
-
-  #gameOverlay #fixedStakeBtn {
-    background: linear-gradient(180deg, #3a1a08 0%, #2a1005 100%);
-    border: 2px solid #c8912a;
-    border-radius: 30px 30px 8px 8px;
-    padding: 10px 18px 8px;
-    display: flex; align-items: center; gap: 8px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-    width: 100%;
-    justify-content: center;
-  }
-
-  #gameOverlay .wheelIcon {
-    width: 48px; height: 48px;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  #gameOverlay #fixedStakeLabel {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    color: #f5c842;
-    letter-spacing: 1.5px;
-    font-weight: 700;
-  }
-
-  #gameOverlay #historyBoard {
-    background: linear-gradient(180deg, #3a1a08 0%, #2a1005 100%);
-    border: 2px solid #7a4818;
-    border-radius: 8px;
-    width: 100%;
-    flex: 1;
-    overflow-y: auto;
+@media (max-width: 768px) {
+  .xbet-navbar { height: auto; padding: 8px 12px; flex-wrap: wrap; gap: 8px; }
+  .game-main-area {
+    grid-template-columns: 1fr;
     padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    gap: 16px;
   }
-
-  #gameOverlay #historyBoard::-webkit-scrollbar { width: 4px; }
-  #gameOverlay #historyBoard::-webkit-scrollbar-track { background: #1a0a04; }
-  #gameOverlay #historyBoard::-webkit-scrollbar-thumb { background: #7a4818; border-radius: 2px; }
-
-  #gameOverlay .histItem {
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    animation: slideIn 0.3s ease;
+  .sidebar-right {
+    max-height: 200px;
+    order: 3;
   }
-
-  #gameOverlay .histItem.loss {
-    background: linear-gradient(90deg, #5a1010 0%, #3a0808 100%);
-    color: #ff8080;
-    border: 1px solid #8a2020;
+  .stage-center {
+    width: 100%;
+    order: 1;
   }
-  #gameOverlay .histItem.win {
-    background: linear-gradient(90deg, #1a5a28 0%, #0a3818 100%);
-    color: #80ff80;
-    border: 1px solid #208a30;
-  }
-  #gameOverlay .histItem .coin-sm {
-    width: 22px; height: 22px; flex-shrink: 0;
-  }
-
-  #gameOverlay #demoBadge {
-    display: none !important;
-    position: fixed;
-    bottom: 16px; right: 58px;
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 4px;
-    padding: 4px 10px;
-    color: #aaa;
-    font-size: 11px;
-    letter-spacing: 1px;
-    display: flex; align-items: center; gap: 6px;
-    z-index: 20;
-  }
-  #gameOverlay #demoBadge::before {
-    content: '';
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #4cf;
-    display: inline-block;
-    animation: pulse 1.5s infinite;
-  }
-
-  #gameOverlay #sideIcons {
-    position: fixed;
-    right: 0; top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    z-index: 20;
-  }
-  #gameOverlay .sideIcon {
-    width: 40px;
-    background: rgba(20,10,4,0.85);
-    border: 1px solid #4a2a10;
-    border-right: none;
-    color: #c8912a;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 10px 0;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background 0.2s;
-  }
-  #gameOverlay .sideIcon:first-child { border-radius: 8px 0 0 0; }
-  #gameOverlay .sideIcon:last-child { border-radius: 0 0 0 8px; }
-  #gameOverlay .sideIcon:hover { background: rgba(40,20,8,0.95); }
-  #gameOverlay .sideIcon.num { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; color: #f5c842; }
-
-  #gameOverlay .winPopup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    background: linear-gradient(135deg, #f5c842, #c8912a);
-    color: #3a1808;
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 28px;
-    font-weight: 900;
-    padding: 20px 40px;
-    border-radius: 16px;
-    border: 3px solid #fff;
-    box-shadow: 0 0 50px rgba(245,200,66,0.8);
-    z-index: 100;
-    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    pointer-events: none;
-    text-align: center;
-  }
-
-  /* Game balance in top bar */
-  #gameOverlay #gameBalance {
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    color: #fff;
-    font-weight: 700;
-    background: rgba(0,0,0,0.5);
-    padding: 8px 18px;
-    border-radius: 20px;
-    border: 1.5px solid rgba(255,190,26,0.3);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-  #gameOverlay #gameBalance span {
-    color: #f5c842;
-    font-weight: 900;
-  }
-
-  #gameOverlay #closeGame {
-    position: relative;
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    background: rgba(0,0,0,0.4);
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  #gameOverlay #closeGame:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
-
-  #gameOverlay #cashOutBtn {
-    flex: 1;
-    background: linear-gradient(180deg, #f5c842 0%, #c8912a 100%);
-    border: 2px solid #ffbe1a;
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: #3a1808;
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    letter-spacing: 1px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #gameOverlay #cashOutBtn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(245,200,66,0.6); }
+  .coin-arena { width: 110px; height: 110px; margin-bottom: 16px; }
+  .choice-btn { padding: 10px 14px; font-size: 13px; }
+  .stake-panel-box { padding: 10px 12px; }
+  .play-btn-primary { width: 42px; height: 42px; font-size: 16px; }
+}
 </style>
 </head>
+
 <body>
 
-@include('customer.header')
-
-<video id="bgVideo" autoplay muted loop playsinline>
-  <source src="{{ asset('assets/image/headsortals/ইমেজটা_যেরকম_আছে_সেম_টু_সেম_এক.mp4') }}" type="video/mp4">
-</video>
-
-<svg style="width:0; height:0; position:absolute;">
-  <defs>
-    <radialGradient id="goldGrad" cx="35%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#ffe9b0"/>
-      <stop offset="55%" stop-color="#f3c45a"/>
-      <stop offset="100%" stop-color="#c8902f"/>
-    </radialGradient>
-  </defs>
-</svg>
-<div class="vignette"></div>
-
-<div class="stage">
-
-  <header class="topbar">
-    <nav class="breadcrumb">
-      <span class="crumb active">ARCADE</span><span class="sep">/</span>
-      <span class="crumb">OTHER GAMES</span><span class="sep">/</span>
-      <span class="crumb active">HEADS OR TAILS</span>
-    </nav>
-    <div class="jackpot-badge">Jackpot</div>
-  </header>
-
-  <div class="title-block">
-    <svg class="bolt-icon" width="34" height="68" viewBox="0 0 40 80"><path d="M22 0 L4 42 L18 42 L10 80 L36 34 L20 34 Z" fill="#5ec8ff"/></svg>
-    <h1 class="game-title">HEADS<span class="sub">OR TAILS</span></h1>
-  </div>
-
-  <main class="cards-row">
-
-    <!-- Fixed stake card -->
-    <section class="card">
-      <div class="card-decorations">
-        <!-- Ship Helm (steering wheel) -->
-        <svg class="helm-decor" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="12" fill="#5c2e0b" stroke="#331700" stroke-width="3"/>
-          <circle cx="100" cy="100" r="40" fill="none" stroke="#5c2e0b" stroke-width="6"/>
-          <circle cx="100" cy="100" r="65" fill="none" stroke="#4a2305" stroke-width="8"/>
-          <!-- Spokes -->
-          <g stroke="#4a2305" stroke-width="6" stroke-linecap="round">
-            <line x1="100" y1="15" x2="100" y2="185"/>
-            <line x1="15" y1="100" x2="185" y2="100"/>
-            <line x1="40" y1="40" x2="160" y2="160"/>
-            <line x1="40" y1="160" x2="160" y2="40"/>
-          </g>
-          <!-- Knobs -->
-          <g fill="#4a2305">
-            <circle cx="100" cy="12" r="5"/>
-            <circle cx="100" cy="188" r="5"/>
-            <circle cx="12" cy="100" r="5"/>
-            <circle cx="188" cy="100" r="5"/>
-            <circle cx="38" cy="38" r="5"/>
-            <circle cx="162" cy="162" r="5"/>
-            <circle cx="38" cy="162" r="5"/>
-            <circle cx="162" cy="38" r="5"/>
-          </g>
-        </svg>
-        <!-- Treasure Map -->
-        <svg class="map-decor" viewBox="0 0 150 120">
-          <path d="M 20 15 C 35 5, 115 25, 130 15 L 120 100 C 105 110, 25 90, 10 100 Z" fill="#ebcf96" stroke="#bda26a" stroke-width="2"/>
-          <path d="M 35 35 Q 60 55 80 40 T 110 70" fill="none" stroke="#8c4711" stroke-width="3" stroke-dasharray="2,4"/>
-          <path d="M 102 62 L 118 78 M 118 62 L 102 78" fill="none" stroke="#b81d13" stroke-width="4" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <!-- Emblem placed outside the banner to avoid clip-path clipping -->
-      <div class="banner-emblem">
-        <svg viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="30" fill="url(#goldGrad)" stroke="#7a4d12" stroke-width="3"/>
-          <circle cx="32" cy="32" r="18" fill="none" stroke="#7a4d12" stroke-dasharray="2 2" stroke-width="1.5"/>
-          <path d="M32 20 C27 20, 26 27, 32 27 C38 27, 37 20, 32 20 Z" fill="#5a3a10"/>
-          <path d="M32 27 C30 27, 26 31, 24 35 M32 27 C34 27, 38 31, 40 35 M30 27 C27 28, 24 39, 28 42 M34 27 C37 28, 40 39, 36 42" fill="none" stroke="#5a3a10" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <div class="banner">
-        <span>FIXED STAKE</span>
-      </div>
-
-      <div class="parchment">
-        <p>Choose your stake and flip the coin.<br>Guessed right? Congratulations!<br>Your stake is doubled! Take your<br>winnings!</p>
-      </div>
-      <!-- Play button outside parchment to prevent clip-path cutting it off -->
-      <button class="play-btn" data-mode="fixed">PLAY</button>
-    </section>
-
-    <!-- Doubling stake card -->
-    <section class="card">
-      <div class="card-decorations">
-        <!-- Anchor -->
-        <svg class="anchor-decor" viewBox="0 0 160 160">
-          <path d="M 80 20 Q 95 40 80 60 T 95 110 T 60 130" fill="none" stroke="#8d6439" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-          <g stroke="#39424d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none">
-            <circle cx="80" cy="22" r="10" stroke-width="6"/>
-            <line x1="80" y1="32" x2="80" y2="120"/>
-            <line x1="50" y1="45" x2="110" y2="45" stroke-width="6"/>
-            <path d="M 40 90 C 40 130, 120 130, 120 90" stroke-width="10"/>
-            <path d="M 33 93 L 42 85 L 47 97 Z" fill="#39424d" stroke-width="2"/>
-            <path d="M 127 93 L 118 85 L 113 97 Z" fill="#39424d" stroke-width="2"/>
-          </g>
-        </svg>
-      </div>
-
-      <!-- Fire blast outside the banner so it does not get clipped by banner polygon -->
-      <div class="fire-blast"></div>
-
-      <!-- Overlapping Gold Medallions (Octopus + 10) outside the banner -->
-      <div class="banner-emblem doubled">
-        <svg class="coin-1" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="30" fill="url(#goldGrad)" stroke="#7a4d12" stroke-width="3"/>
-          <circle cx="32" cy="32" r="18" fill="none" stroke="#7a4d12" stroke-dasharray="2 2" stroke-width="1.5"/>
-          <path d="M32 20 C27 20, 26 27, 32 27 C38 27, 37 20, 32 20 Z" fill="#5a3a10"/>
-          <path d="M32 27 C30 27, 26 31, 24 35 M32 27 C34 27, 38 31, 40 35 M30 27 C27 28, 24 39, 28 42 M34 27 C37 28, 40 39, 36 42" fill="none" stroke="#5a3a10" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <svg class="coin-2" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="30" fill="url(#goldGrad)" stroke="#7a4d12" stroke-width="3"/>
-          <text x="32" y="38" font-size="18" text-anchor="middle" fill="#5a3a10" font-family="'Cinzel', Georgia, serif" font-weight="900">10</text>
-        </svg>
-      </div>
-
-      <div class="banner fire">
-        <span>DOUBLING YOUR STAKE</span>
-      </div>
-
-      <div class="parchment">
-        <p>Start with a bet of 5 EUR and flip the<br>coin.<br>Guessed right? You can take your<br>winnings of 10 EUR<br>or flip the coin again...</p>
-      </div>
-      <!-- Play button outside parchment to prevent clip-path cutting it off -->
-      <button class="play-btn" data-mode="double">PLAY</button>
-    </section>
-
-  </main>
-
-  <aside class="side-rail">
-    <button title="Settings"><i class="fas fa-cog"></i></button>
-    <button title="Bonuses"><i class="fas fa-gift"></i></button>
-    <button title="Other games"><i class="fas fa-dharmachakra"></i></button>
-    <button title="Lucky 7" style="font-weight:900; font-family:'Cinzel',serif;">7</button>
-    <button title="Cashier"><i class="fas fa-dollar-sign"></i></button>
-  </aside>
-
-  <div class="bottom-hub">
-    <button class="hub-btn" id="helpBtn" title="How to play">?</button>
-    <button class="hub-btn" id="soundBtn" title="Sound">🔊</button>
-  </div>
-
-  <button class="demo-badge" id="demoBadge"><span class="dot"></span> DEMO MODE <span style="opacity:.6">⌃</span></button>
-  <button class="bell-btn" title="Notifications"><i class="fas fa-bell"></i></button>
-
-</div>
-
-<!-- Game overlay -->
-<div class="overlay" id="gameOverlay">
-  <video id="overlayBgVideo" autoplay muted loop playsinline>
-    <source src="{{ asset('assets/image/headsortals/video1.mp4') }}" type="video/mp4">
-  </video>
-
-
-  <div id="app">
-    <!-- TOP BAR -->
-    <div id="topBar">
-      <div id="breadcrumb">XGAMES / <span>OTHER GAMES</span> / <span>HEADS OR TAILS</span></div>
-      <div id="gameBalance">BALANCE: <span id="overlayBalanceDisplay">1000.00</span> EUR</div>
-      <button id="jackpotBtn">JACKPOT</button>
+<!-- ================= 1xBet TOP NAVIGATION ================= -->
+<header class="xbet-navbar">
+  <div class="xbet-nav-left">
+    <a href="{{ route('home') }}" class="xbet-logo">1X<span>BET</span></a>
+    <div class="country-pill">
+      <span>🇧🇩</span> BANGLADESH
     </div>
-
-    <!-- MAIN -->
-    <div id="mainArea">
-
-
-      <!-- Center -->
-      <div id="centerContent">
-        <!-- Banner -->
-        <div id="banner">
-          <canvas id="bannerCanvas" width="380" height="80"></canvas>
-          <div id="bannerText">MAKE YOUR CHOICE! HEADS OR TAILS?</div>
-        </div>
-
-        <!-- Coin -->
-        <div id="coinContainer">
-          <canvas id="coinCanvas" width="100" height="100"></canvas>
-        </div>
-
-        <!-- Choice buttons -->
-        <div id="choiceRow">
-          <button class="choiceBtn active" id="headsBtn" onclick="selectChoice('heads')">
-            <img src="{{ asset('assets/image/headsortals/9.png') }}" class="choiceIcon" alt="🐙" style="border-radius: 50%;">
-            HEADS
-          </button>
-          <button class="choiceBtn" id="tailsBtn" onclick="selectChoice('tails')">
-            TAILS
-            <div class="choiceMult" id="tailsMult">2</div>
-          </button>
-        </div>
-
-
-        <!-- Stake panel -->
-        <div id="stakePanel">
-          <div id="stakeLabel">YOUR STAKE</div>
-          <div id="stakeRow">
-            <!-- Rendered dynamically depending on the mode -->
-          </div>
-          <div id="playRow">
-            <button id="playBtn" onclick="flip()">
-              <svg viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
-            </button>
-            <div id="stakeInput">
-              <span id="stakeDisplay">1</span>
-              <button id="clearStake" onclick="clearStakeVal()">✕</button>
-            </div>
-            <button id="cashOutBtn" style="display: none;" onclick="cashOut()">CASH OUT</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Right panel -->
-      <div id="rightPanel">
-        <div id="fixedStakeBtn">
-          <canvas class="wheelIcon" id="wheelCanvas" width="48" height="48"></canvas>
-          <div id="fixedStakeLabel">FIXED STAKE</div>
-        </div>
-        <div id="historyBoard"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Side icons -->
-  <div id="sideIcons">
-    <div class="sideIcon" id="sideInfoBtn">ℹ</div>
-    <div class="sideIcon" onclick="showPopupMessage('Gift rewards coming soon!')">🎁</div>
-    <div class="sideIcon num" onclick="showPopupMessage('Lucky 7 game mode coming soon!')">7</div>
-    <div class="sideIcon" onclick="showPopupMessage('Special visual effects coming soon!')">✦</div>
-    <div class="sideIcon" onclick="showPopupMessage('Cashier: credits are virtual!')">💲</div>
-  </div>
-
-  <!-- Demo badge -->
-  <div id="demoBadge">DEMO MODE ▲</div>
-</div>
-
-<!-- Help overlay -->
-<div class="overlay" id="helpOverlay">
-  <div class="panel">
-    <button class="close-x" id="closeHelp">✕</button>
-    <h2>How To Play</h2>
-    <ul class="rules-list">
-      <li><b>Fixed Stake</b> — pick heads or tails and choose your bet. Guess right and your stake is doubled. Guess wrong and you lose the bet.</li>
-      <li><b>Doubling Your Stake</b> — start a round for 5 EUR. Every correct guess doubles your prize. After any win you may cash out, or risk it all on the next flip. One wrong guess loses the whole prize.</li>
-      <li>Balances are virtual play credits, not real money.</li>
+    <ul class="nav-links-list">
+      <li><a href="{{ route('home') }}" class="nav-link-item">TOP-EVENTS</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item">LEAGUE OF WINS</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item">T20 BLAST</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item">CRICKET</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item">SPORTS</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item">LIVE</a></li>
+      <li><a href="{{ route('heads-or-tails') }}" class="nav-link-item active">1XGAMES</a></li>
+      <li><a href="{{ route('home') }}" class="nav-link-item highlight">CASINO</a></li>
     </ul>
   </div>
+
+  <div class="xbet-nav-right">
+    <div class="balance-pill" id="balance-pill-box">
+      <span style="font-size:11px; opacity:0.8;">BALANCE:</span>
+      <span id="balance-display">৳ {{ number_format(auth()->user()->balance ?? 1000.00, 2) }}</span>
+    </div>
+    <a href="{{ route('dashboard') }}" class="btn-deposit-top"><i class="fas fa-plus-circle"></i> DEPOSIT</a>
+    <a href="{{ route('dashboard') }}" class="btn-withdraw-top">WITHDRAW</a>
+    <a href="{{ route('dashboard') }}" class="btn-cabinet-top">CABINET</a>
+  </div>
+</header>
+
+<!-- ================= GAME WORKSPACE ================= -->
+<main class="game-viewport" id="game-main-frame">
+  <!-- Background Video / Artwork -->
+  @if(file_exists(public_path('assets/image/headsortals/video1.mp4')))
+    <video class="game-bg-media" autoplay muted loop playsinline>
+      <source src="{{ asset('assets/image/headsortals/video1.mp4') }}" type="video/mp4">
+    </video>
+  @else
+    <div class="game-bg-fallback"></div>
+  @endif
+
+  <!-- Sub Header: Breadcrumbs & Mode Controls -->
+  <div class="game-sub-header">
+    <div class="breadcrumbs-track">
+      <span>1XGAMES</span> / <span>OTHER GAMES</span> / <span class="active">HEADS OR TAILS</span>
+    </div>
+
+    <div class="mode-switches">
+      <button class="demo-toggle-btn" id="demo-mode-btn" onclick="toggleDemo()">
+        <span class="dot" style="width:6px; height:6px; border-radius:50%; background:#22c55e;"></span>
+        <span>REAL MONEY</span>
+      </button>
+      <button class="sound-toggle-btn" id="sound-btn" onclick="toggleSound()" title="Sound Toggle">
+        <i class="fas fa-volume-high" id="sound-icon"></i>
+      </button>
+      <div class="jackpot-tag">
+        <i class="fas fa-bolt"></i> JACKPOT
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Game 3-Column Layout -->
+  <div class="game-main-area">
+
+    <!-- LEFT COLUMN: Mermaid Character -->
+    <div class="mermaid-side">
+      @if(file_exists(public_path('assets/image/headsortals/1.jpg')))
+        <img src="{{ asset('assets/image/headsortals/1.jpg') }}" alt="Mermaid" class="mermaid-character-img" style="border-radius:12px; opacity:0.95;">
+      @else
+        <div style="font-size:100px; text-align:center; filter:drop-shadow(0 10px 20px rgba(0,0,0,0.8));">🧜‍♀️</div>
+      @endif
+    </div>
+
+    <!-- CENTER COLUMN: Coin Toss Arena -->
+    <div class="stage-center">
+
+      <!-- Start Round Ribbon Banner -->
+      <div class="ribbon-banner-wrap">
+        <div class="ribbon-coins-decor">
+          <div class="mini-gold-coin">🪙</div>
+          <div class="mini-gold-coin">🪙</div>
+        </div>
+        <div class="ribbon-banner">
+          <div class="banner-status-text" id="banner-status-text">
+            MAKE YOUR CHOICE! HEADS OR TAILS?
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Gold Coin Arena -->
+      <div class="coin-arena" onclick="placeTossBet()">
+        <div class="coin-3d" id="coin-gold-octopus">
+          <!-- Heads Face -->
+          <div class="coin-face heads">
+            @if(file_exists(public_path('assets/image/headsortals/9.png')))
+              <img src="{{ asset('assets/image/headsortals/9.png') }}" alt="Heads">
+            @else
+              <div class="fallback-symbol">10</div>
+            @endif
+          </div>
+
+          <!-- Tails Face -->
+          <div class="coin-face tails">
+            @if(file_exists(public_path('assets/image/headsortals/2.png')))
+              <img src="{{ asset('assets/image/headsortals/2.png') }}" alt="Tails Octopus">
+            @else
+              <div class="fallback-symbol">🐙</div>
+            @endif
+          </div>
+        </div>
+      </div>
+
+      <!-- Heads or Tails Choice Buttons -->
+      <div class="choice-controls-row">
+        <button class="choice-btn heads-btn selected" id="heads-btn" onclick="selectSide('heads')">
+          <div class="choice-badge-icon">🪙</div>
+          <span>HEADS</span>
+        </button>
+        <button class="choice-btn tails-btn" id="tails-btn" onclick="selectSide('tails')">
+          <div class="choice-badge-icon">🐙</div>
+          <span>TAILS</span>
+        </button>
+      </div>
+
+      <!-- Stake & Controls Box -->
+      <div class="stake-panel-box">
+        <div class="stake-box-header">
+          <span class="stake-title-label" id="stake-mode-label">YOUR STAKE</span>
+          <span class="multiplier-tag" id="multiplier-display">1.96×</span>
+        </div>
+
+        <!-- Quick Stake Chips -->
+        <div class="stake-chips-row" id="stake-chips-container">
+          <button class="stake-chip active" onclick="setStake(10)">৳10</button>
+          <button class="stake-chip" onclick="setStake(50)">৳50</button>
+          <button class="stake-chip" onclick="setStake(100)">৳100</button>
+          <button class="stake-chip" onclick="setStake(500)">৳500</button>
+          <button class="stake-chip" onclick="setStake(1000)">৳1000</button>
+        </div>
+
+        <!-- Play bar -->
+        <div class="play-control-bar">
+          <button class="play-btn-primary" id="play-trigger-btn" onclick="placeTossBet()" title="Flip Coin">
+            <i class="fas fa-play" id="play-btn-icon"></i>
+          </button>
+
+          <div class="stake-input-container">
+            <input type="number" id="bet-amount-input" class="stake-input-field" value="10" min="1" step="1">
+            <button class="clear-stake-btn" onclick="clearStake()" title="Clear">✕</button>
+          </div>
+
+          <button class="cashout-btn" id="cashout-btn" onclick="cashOutProgressive()">
+            <i class="fas fa-sack-dollar"></i> CASHOUT: <span id="cashout-amount-display">৳19.60</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Dynamic History Sidebar -->
+    <div class="sidebar-right">
+      <div class="doubling-wheel-card" onclick="toggleProgressiveMode()">
+        <div class="wheel-icon-wrap">
+          <i class="fas fa-dharmachakra"></i>
+        </div>
+        <div>
+          <div class="doubling-text-title" id="mode-text-title">DOUBLING STAKE</div>
+          <div class="doubling-text-sub" id="mode-text-sub">Progressive 1.96× ~ 7.5×</div>
+        </div>
+      </div>
+
+      <div class="history-title">
+        <i class="fas fa-clock-rotate-left"></i> Toss History
+      </div>
+
+      <div class="history-toss-list" id="history-sidebar-list">
+        @forelse($history as $item)
+          <div class="history-item {{ $item->winning_side === 'heads' ? 'heads-win' : 'tails-win' }}">
+            <span class="hist-side-tag {{ $item->winning_side }}">
+              {{ $item->winning_side === 'heads' ? '🪙 HEADS' : '🐙 TAILS' }}
+            </span>
+            <span class="hist-payout-val">
+              ৳{{ number_format($item->total_payout > 0 ? $item->total_payout : 0, 2) }}
+            </span>
+          </div>
+        @empty
+          <div style="text-align:center; color:#9ca3af; font-size:11px; padding:20px 0;">
+            No tosses recorded yet.
+          </div>
+        @endforelse
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ================= DEPOSIT POPUP MODAL (Limit 3 Tosses in Demo) ================= -->
+<div class="deposit-modal-overlay hidden" id="deposit-modal-popup">
+  <div class="deposit-modal-card">
+    <div class="deposit-modal-icon">
+      <i class="fas fa-wallet"></i>
+    </div>
+    <h3 class="deposit-modal-title">ডেমো লিমিট শেষ!</h3>
+    <p class="deposit-modal-desc">
+      আপনার ৩ বার ফ্রি ডেমো টস লিমিট পূর্ণ হয়েছে। ১xBet এর আসল ক্যাশ পুরষ্কার জিততে এখনই ডিপোজিট করে রিয়েল মানিতে খেলুন!
+    </p>
+    <a href="{{ route('dashboard') }}" class="btn-deposit-action" style="display:block; text-decoration:none; text-align:center;">
+      <i class="fas fa-bolt"></i> ডিপোজিট করুন
+    </a>
+    <button class="btn-close-modal" onclick="closeDepositModal()">বন্ধ করুন</button>
+  </div>
 </div>
 
+<!-- ================= AUDIO ELEMENTS ================= -->
+<audio id="audio-bg" loop preload="none"></audio>
+<audio id="audio-flip" preload="none"></audio>
+<audio id="audio-win" preload="none"></audio>
+<audio id="audio-loss" preload="none"></audio>
+
+<!-- ================= JAVASCRIPT GAME ENGINE ================= -->
 <script>
-// ═══════════════════════════════════════════
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-const headsImg = new Image();
-headsImg.src = "{{ asset('assets/image/headsortals/9.png') }}";
-const tailsImg = new Image();
-tailsImg.src = "{{ asset('assets/image/headsortals/2.png') }}";
-
-let balance = parseFloat(localStorage.getItem('heads_tails_balance')) || 1000.00;
-let stake = 1;
-let choice = 'heads';
-let activeMode = 'fixed'; // 'fixed' or 'double'
-let gameActive = false;
-
-
-// Doubling Mode round states
-let doubleRoundActive = false;
-let claimablePrize = 0;
-let currentDoublePrize = 10;
-
-// Autoplay
-let autoplayActive = false;
-
-// ═══════════════════════════════════════════
-// AUDIO SYNTHESIZER
-// ═══════════════════════════════════════════
-let audioCtx = null;
+// Game State
+let isDemoMode = false;
+let demoTossDone = 0;
+let demoBalance = 1000.00;
+let selectedSide = 'heads';
+let isFlipping = false;
 let soundEnabled = true;
+let progressiveMode = false;
+let progressiveStep = 1;
+let currentCashoutPrize = 0;
 
-function playSound(type) {
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const audioBg = document.getElementById('audio-bg');
+const audioFlip = document.getElementById('audio-flip');
+const audioWin = document.getElementById('audio-win');
+const audioLoss = document.getElementById('audio-loss');
+
+// Choose Heads or Tails
+function selectSide(side) {
+  if (isFlipping) return;
+  selectedSide = side;
+  document.getElementById('heads-btn').classList.toggle('selected', side === 'heads');
+  document.getElementById('tails-btn').classList.toggle('selected', side === 'tails');
+  playClickSound();
+}
+
+// Toggle Real / Demo mode
+function toggleDemo() {
+  if (isFlipping) return;
+  isDemoMode = !isDemoMode;
+  const btn = document.getElementById('demo-mode-btn');
+  const balDisplay = document.getElementById('balance-display');
+
+  if (isDemoMode) {
+    btn.innerHTML = '<span class="dot" style="width:6px; height:6px; border-radius:50%; background:#000;"></span> DEMO ACTIVE';
+    btn.classList.add('active');
+    balDisplay.innerText = "DEMO ৳ " + demoBalance.toFixed(2);
+  } else {
+    btn.innerHTML = '<span class="dot" style="width:6px; height:6px; border-radius:50%; background:#22c55e;"></span> REAL MONEY';
+    btn.classList.remove('active');
+    syncState();
+  }
+  playClickSound();
+}
+
+// Quick Stake Setter
+function setStake(amount) {
+  if (isFlipping) return;
+  const input = document.getElementById('bet-amount-input');
+  if (input) input.value = amount;
+  document.querySelectorAll('.stake-chip').forEach(c => {
+    c.classList.toggle('active', parseInt(c.innerText.replace('৳', '')) === amount);
+  });
+  playClickSound();
+}
+
+function clearStake() {
+  if (isFlipping) return;
+  const input = document.getElementById('bet-amount-input');
+  if (input) input.value = 1;
+  document.querySelectorAll('.stake-chip').forEach(c => c.classList.remove('active'));
+}
+
+// Toggle Progressive Multiplier Mode
+function toggleProgressiveMode() {
+  progressiveMode = !progressiveMode;
+  const title = document.getElementById('mode-text-title');
+  const sub = document.getElementById('mode-text-sub');
+  const label = document.getElementById('stake-mode-label');
+
+  if (progressiveMode) {
+    title.innerText = "DOUBLING STAKE";
+    sub.innerText = "Progressive 1.96× ~ 7.5×";
+    label.innerText = "PROGRESSIVE STAKE";
+  } else {
+    title.innerText = "FIXED STAKE";
+    sub.innerText = "Fixed 1.96× Multiplier";
+    label.innerText = "YOUR STAKE";
+    resetProgressiveState();
+  }
+  playClickSound();
+}
+
+function resetProgressiveState() {
+  progressiveStep = 1;
+  currentCashoutPrize = 0;
+  document.getElementById('cashout-btn').style.display = 'none';
+  document.getElementById('play-trigger-btn').style.display = 'flex';
+  document.getElementById('multiplier-display').innerText = '1.96×';
+}
+
+// Close Deposit Modal
+function closeDepositModal() {
+  document.getElementById('deposit-modal-popup').classList.add('hidden');
+}
+
+// Sound Toggle
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const icon = document.getElementById('sound-icon');
+  if (soundEnabled) {
+    icon.className = 'fas fa-volume-high';
+    if (audioBg.src) audioBg.play().catch(()=>{});
+  } else {
+    icon.className = 'fas fa-volume-xmark';
+    audioBg.pause();
+  }
+}
+
+function playClickSound() {
   if (!soundEnabled) return;
   try {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
     osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if (type === 'coin') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.22);
-    } else if (type === 'win') {
-      const now = audioCtx.currentTime;
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-      osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-      osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-      osc.start();
-      osc.stop(now + 0.45);
-    } else if (type === 'loss') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-      osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.35); // A2
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.35);
-    } else if (type === 'click') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(450, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.04);
-    }
-  } catch (e) {
-    console.warn("Audio Context init/playback failed:", e);
-  }
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(450, ctx.currentTime);
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.05);
+  } catch(e) {}
 }
 
-// Bind sound toggle in lobby
-document.getElementById('soundBtn').addEventListener('click', function(e) {
-  soundEnabled = !soundEnabled;
-  e.currentTarget.textContent = soundEnabled ? '🔊' : '🔇';
-});
-
-// ═══════════════════════════════════════════
-// BG VIDEO - video1.mp4 handles the background
-// ═══════════════════════════════════════════
-function resizeBg() {}
-function drawBg() {}
-
-
-function drawCloud(ctx, x, y, w, h) {
-  ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.88)';
-  ctx.shadowColor = 'rgba(200,220,255,0.4)';
-  ctx.shadowBlur = 10;
-  const r = h/2;
-  ctx.beginPath();
-  ctx.ellipse(x, y, w*0.5, r, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(x-w*0.22, y+r*0.3, w*0.28, r*0.7, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(x+w*0.22, y+r*0.2, w*0.32, r*0.75, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.restore();
-}
-
-// ═══════════════════════════════════════════
-// LOGO CANVAS (Overlay Logo)
-// ═══════════════════════════════════════════
-function drawLogo() {
-  const c = document.getElementById('logoCanvas');
-  if (!c) return;
-  const x = c.getContext('2d');
-  x.clearRect(0,0,120,60);
-
-  x.font = 'bold 22px "Cinzel Decorative", serif';
-  x.fillStyle = '#f5c842';
-  x.strokeStyle = '#8a5010';
-  x.lineWidth = 3;
-  x.strokeText('HEADS', 5, 25);
-  x.fillText('HEADS', 5, 25);
-
-  x.font = 'bold 14px "Cinzel", serif';
-  x.fillStyle = '#ffffff';
-  x.fillText('OR', 10, 42);
-
-  x.font = 'bold 20px "Cinzel Decorative", serif';
-  x.fillStyle = '#f5c842';
-  x.strokeStyle = '#8a5010';
-  x.lineWidth = 2;
-  x.strokeText('TAILS', 30, 55);
-  x.fillText('TAILS', 30, 55);
-}
-
-// ═══════════════════════════════════════════
-// BANNER CANVAS (Ribbon Ribbon Details)
-// ═══════════════════════════════════════════
-function drawBanner() {
-  const c = document.getElementById('bannerCanvas');
-  if (!c) return;
-  const x = c.getContext('2d');
-  const W = 380, H = 80;
-  x.clearRect(0,0,W,H);
-
-  // Banner ribbon shape
-  const grad = x.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#e8723a');
-  grad.addColorStop(0.5,'#c85828');
-  grad.addColorStop(1,'#a04010');
-  x.fillStyle = grad;
-  x.beginPath();
-  x.moveTo(20,8);
-  x.lineTo(W-20,8);
-  x.lineTo(W-5,H-5);
-  x.lineTo(W*0.75,H-18);
-  x.lineTo(W*0.5,H-8);
-  x.lineTo(W*0.25,H-18);
-  x.lineTo(5,H-5);
-  x.closePath();
-  x.fill();
-
-  // Border
-  x.strokeStyle = '#f0a060';
-  x.lineWidth = 2;
-  x.stroke();
-
-  // Octopus coin at top center
-  x.save();
-  x.translate(W/2, 4);
-  if (headsImg.complete && headsImg.naturalWidth !== 0) {
-    x.drawImage(headsImg, -18, -18, 36, 36);
-  } else {
-    drawCoinSmall(x, 18, '#f5c842', '#c8912a', '🐙', true);
-  }
-  x.restore();
-
-
-  // Pirate papers on right
-  drawPaperScroll(x, W*0.72, -5, 60, 50);
-}
-
-function drawPaperScroll(ctx, x, y, w, h) {
-  ctx.save();
-  ctx.translate(x,y);
-  ctx.rotate(0.15);
-  ctx.fillStyle = '#f0e0c0';
-  ctx.strokeStyle = '#c0a060';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.roundRect(0,0,w,h,4);
-  ctx.fill(); ctx.stroke();
-  // X mark
-  ctx.strokeStyle = '#c03020';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(w*0.55,h*0.4); ctx.lineTo(w*0.8,h*0.7);
-  ctx.moveTo(w*0.8,h*0.4); ctx.lineTo(w*0.55,h*0.7);
-  ctx.stroke();
-  ctx.restore();
-
-  // Second paper
-  ctx.save();
-  ctx.translate(x+8,y-6);
-  ctx.rotate(-0.1);
-  ctx.fillStyle = '#efe0b0';
-  ctx.strokeStyle = '#c0a060';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.roundRect(0,0,w*0.8,h*0.9,4);
-  ctx.fill(); ctx.stroke();
-  ctx.restore();
-}
-
-function drawCoinSmall(ctx, r, c1, c2, sym, top) {
-  const grad = ctx.createRadialGradient(-r*0.3,-r*0.3,0,0,0,r);
-  grad.addColorStop(0,'#ffe880');
-  grad.addColorStop(0.6,c1);
-  grad.addColorStop(1,c2);
-  ctx.fillStyle = grad;
-  ctx.strokeStyle = c2;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(0,0,r,0,Math.PI*2);
-  ctx.fill(); ctx.stroke();
-  if (sym) {
-    ctx.font = `${r}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(sym, 0, 1);
-  }
-}
-
-// ═══════════════════════════════════════════
-// COIN CANVAS (Flipping Eased Rotation)
-// ═══════════════════════════════════════════
-let coinPhase = 0;
-let coinSpinning = false;
-let coinSpinSpeed = 0;
-let coinSpinResult = null;
-let coinSpinDone = false;
-
-function drawCoin() {
-  const c = document.getElementById('coinCanvas');
-  if (!c) return;
-  const x = c.getContext('2d');
-  const W = 100, H = 100;
-  x.clearRect(0,0,W,H);
-
-  const cx = W/2, cy = H/2, r = 42;
-
-  // Shadow
-  x.save();
-  x.fillStyle = 'rgba(0,0,0,0.25)';
-  x.beginPath();
-  x.ellipse(cx+4, cy+6, r, r*0.2, 0, 0, Math.PI*2);
-  x.fill();
-  x.restore();
-
-  // Coin body
-  x.save();
-  x.translate(cx,cy);
-
-  let scaleX = 1;
-  if (coinSpinning) {
-    coinPhase += coinSpinSpeed;
-    scaleX = Math.cos(coinPhase);
-    coinSpinSpeed *= 0.985;
-    if (coinSpinSpeed < 0.02) {
-      coinSpinning = false;
-      coinSpinDone = true;
-      scaleX = 1;
-      onCoinLanded();
-    }
-  }
-
-  x.scale(Math.abs(scaleX) < 0.05 ? 0.05 : scaleX, 1);
-
-  const showHeads = (coinSpinResult === null) ? true :
-    (coinSpinDone ? coinSpinResult === 'heads' : (Math.floor(coinPhase/0.5)%2===0));
-
-  const imgToDraw = showHeads ? headsImg : tailsImg;
-  if (imgToDraw.complete && imgToDraw.naturalWidth !== 0) {
-    x.drawImage(imgToDraw, -r, -r, r*2, r*2);
-  } else {
-    // Edge highlight
-    x.strokeStyle = '#8a6010';
-    x.lineWidth = 5;
-    x.beginPath();
-    x.arc(0,0,r,0,Math.PI*2);
-    x.stroke();
-
-    // Face
-    const grad = x.createRadialGradient(-r*0.3,-r*0.3,0,0,0,r);
-    grad.addColorStop(0,'#ffe880');
-    grad.addColorStop(0.5,'#f5c842');
-    grad.addColorStop(1,'#c8912a');
-    x.fillStyle = grad;
-    x.beginPath();
-    x.arc(0,0,r,0,Math.PI*2);
-    x.fill();
-
-    // Inner circle
-    x.strokeStyle = 'rgba(200,145,42,0.5)';
-    x.lineWidth = 2;
-    x.beginPath();
-    x.arc(0,0,r*0.8,0,Math.PI*2);
-    x.stroke();
-
-    x.fillStyle = '#a06010';
-    x.font = 'bold 32px "Cinzel", serif';
-    x.textAlign = 'center';
-    x.textBaseline = 'middle';
-    x.fillText(showHeads ? '10' : '⚓', 0, 2);
-  }
-
-  x.restore();
-
-}
-
-// ═══════════════════════════════════════════
-// MERMAID CANVAS (Shimmering & Flowing animations)
-// ═══════════════════════════════════════════
-function drawMermaid() {}
-
-
-// ═══════════════════════════════════════════
-// WHEEL CANVAS (Home / Lobby Exit Button)
-// ═══════════════════════════════════════════
-let wheelAngle = 0;
-function drawWheel() {
-  const c = document.getElementById('wheelCanvas');
-  if (!c) return;
-  const x = c.getContext('2d');
-  const W = 48, H = 48, cx = W/2, cy = H/2, r = 22;
-  x.clearRect(0,0,W,H);
-
-  x.save();
-  x.translate(cx,cy);
-  x.rotate(wheelAngle);
-  wheelAngle += 0.005;
-
-  // Rim
-  x.strokeStyle = '#8a5010';
-  x.lineWidth = 4;
-  x.beginPath();
-  x.arc(0,0,r,0,Math.PI*2);
-  x.stroke();
-
-  // Spokes
-  x.strokeStyle = '#8a5010';
-  x.lineWidth = 2.5;
-  for (let i = 0; i < 8; i++) {
-    const a = (i/8)*Math.PI*2;
-    x.beginPath();
-    x.moveTo(0,0);
-    x.lineTo(Math.cos(a)*r, Math.sin(a)*r);
-    x.stroke();
-  }
-
-  // Hub
-  const hubGrad = x.createRadialGradient(0,0,0,0,0,8);
-  hubGrad.addColorStop(0,'#f5c842');
-  hubGrad.addColorStop(1,'#c8912a');
-  x.fillStyle = hubGrad;
-  x.beginPath();
-  x.arc(0,0,8,0,Math.PI*2);
-  x.fill();
-
-  // House icon
-  x.fillStyle = '#3a1808';
-  x.font = '10px serif';
-  x.textAlign = 'center';
-  x.textBaseline = 'middle';
-  x.fillText('🏠', 0, 1);
-
-  x.restore();
-}
-
-// Wire exit to fixedStakeBtn wheel
-document.getElementById('fixedStakeBtn').addEventListener('click', function() {
-  playSound('click');
-  closeGame();
-});
-
-// ═══════════════════════════════════════════
-// HISTORY BOARD
-// ═══════════════════════════════════════════
-let history = [];
-
-function addHistory(won, amount) {
-  const board = document.getElementById('historyBoard');
-  if (!board) return;
-  const coinSrc = "{{ asset('assets/image/headsortals/2.png') }}";
-  if (won) {
-    const win = document.createElement('div');
-    win.className = 'histItem win';
-    win.innerHTML = `<img class="coin-sm" src="${coinSrc}"><span>Winnings:<br>${amount.toFixed(2)} EUR</span>`;
-    board.prepend(win);
-  } else {
-    const loss = document.createElement('div');
-    loss.className = 'histItem loss';
-    loss.innerHTML = `<img class="coin-sm" src="${coinSrc}"><span>Loss.</span>`;
-    board.prepend(loss);
-  }
-  // Max 20 items
-  while (board.children.length > 20) board.removeChild(board.lastChild);
-}
-
-
-
-
-// ═══════════════════════════════════════════
-// GAME SELECTION AND CORE LOGIC
-// ═══════════════════════════════════════════
-window.selectChoice = function(c) {
-  if (coinSpinning) return;
-  playSound('click');
-  choice = c;
-  document.getElementById('headsBtn').classList.toggle('active', c === 'heads');
-  document.getElementById('tailsBtn').classList.toggle('active', c === 'tails');
-};
-
-window.setStake = function(v) {
-  if (coinSpinning || activeMode === 'double') return;
-  playSound('click');
-  stake = v;
-  document.getElementById('stakeDisplay').textContent = v;
-  document.querySelectorAll('.stakeChip').forEach(btn => {
-    btn.classList.toggle('sel', parseInt(btn.textContent) === v);
-  });
-};
-
-window.clearStakeVal = function() {
-  if (coinSpinning || activeMode === 'double') return;
-  playSound('click');
-  stake = 0;
-  document.getElementById('stakeDisplay').textContent = '0';
-  document.querySelectorAll('.stakeChip').forEach(b => b.classList.remove('sel'));
-};
-
-function saveBalance() {
-  localStorage.setItem('heads_tails_balance', balance);
-}
-
-function updateBalanceDisplay() {
-  const displays = [
-    document.getElementById('overlayBalanceDisplay'),
-    ...document.querySelectorAll('.balance-val')
-  ];
-  displays.forEach(d => {
-    if (d) d.textContent = balance.toFixed(2);
-  });
-}
-
-// Custom error/info banner alerts
-function showPopupMessage(text) {
-  const alertEl = document.createElement('div');
-  alertEl.style.position = 'fixed';
-  alertEl.style.top = '20px';
-  alertEl.style.left = '50%';
-  alertEl.style.transform = 'translateX(-50%)';
-  alertEl.style.background = 'rgba(20, 10, 4, 0.95)';
-  alertEl.style.color = '#f5c842';
-  alertEl.style.border = '2px solid #c8912a';
-  alertEl.style.borderRadius = '8px';
-  alertEl.style.padding = '12px 24px';
-  alertEl.style.fontFamily = 'Cinzel, serif';
-  alertEl.style.fontSize = '14px';
-  alertEl.style.zIndex = '1000';
-  alertEl.style.boxShadow = '0 4px 15px rgba(0,0,0,0.5)';
-  alertEl.style.letterSpacing = '1px';
-  alertEl.textContent = text;
-  document.body.appendChild(alertEl);
-  setTimeout(() => {
-    alertEl.style.transition = 'opacity 0.4s';
-    alertEl.style.opacity = '0';
-    setTimeout(() => alertEl.remove(), 400);
-  }, 2000);
-}
-
-function renderStakeChips() {
-  const row = document.getElementById('stakeRow');
-  if (!row) return;
-  if (activeMode === 'fixed') {
-    row.innerHTML = `
-      <div class="stakeIconBtn" id="gameHelpBtn" title="Info">❓</div>
-      <div class="stakeIconBtn" id="gameAutoBtn" title="Auto">🎯</div>
-      <div class="stakeChip ${stake===1?'sel':''}" onclick="setStake(1)">1</div>
-      <div class="stakeChip ${stake===2?'sel':''}" onclick="setStake(2)">2</div>
-      <div class="stakeChip ${stake===3?'sel':''}" onclick="setStake(3)">3</div>
-      <div class="stakeChip ${stake===5?'sel':''}" onclick="setStake(5)">5</div>
-      <div class="stakeChip ${stake===10?'sel':''}" onclick="setStake(10)">10</div>
-      <div class="stakeChip ${stake===25?'sel':''}" onclick="setStake(25)">25</div>
-    `;
-  } else {
-    row.innerHTML = `
-      <div class="stakeIconBtn" id="gameHelpBtn" title="Info">❓</div>
-      <div class="stakeChip sel">5</div>
-      <div style="font-family:'Cinzel',serif;font-size:11px;color:#ffbe1a;margin-left:10px;letter-spacing:1px;">PROGRESSIVE DOUBLE MODE</div>
-    `;
-  }
-  attachHelpAutoListeners();
-}
-
-
-function attachHelpAutoListeners() {
-  const helpBtn = document.getElementById('gameHelpBtn');
-  if (helpBtn) {
-    helpBtn.onclick = function() {
-      playSound('click');
-      document.getElementById('helpOverlay').classList.add('open');
-    };
-  }
-  const autoBtn = document.getElementById('gameAutoBtn');
-  if (autoBtn) {
-    autoBtn.onclick = function() {
-      playSound('click');
-      toggleAutoplay();
-    };
-  }
-}
-
-// Autoplay trigger
-window.toggleAutoplay = function() {
-  autoplayActive = !autoplayActive;
-  const btn = document.getElementById('gameAutoBtn');
-  if (btn) btn.classList.toggle('sel', autoplayActive);
-  if (autoplayActive && !coinSpinning && activeMode === 'fixed' && stake > 0) {
-    flip();
-  }
-};
-
-window.flip = function() {
-  if (coinSpinning) return;
-  playSound('click');
-
-  if (activeMode === 'fixed') {
-    if (stake <= 0) {
-      showPopupMessage("Choose a stake amount first!");
-      return;
-    }
-    if (stake > balance) {
-      showPopupMessage("Insufficient balance for this stake!");
-      autoplayActive = false;
-      const autoBtn = document.getElementById('gameAutoBtn');
-      if (autoBtn) autoBtn.classList.remove('sel');
-      return;
-    }
-
-    balance -= stake;
-    saveBalance();
-    updateBalanceDisplay();
-
-    coinSpinResult = Math.random() < 0.5 ? 'heads' : 'tails';
-    coinSpinDone = false;
-    coinPhase = 0;
-    coinSpinSpeed = 0.25 + Math.random()*0.1;
-    coinSpinning = true;
-    playSound('coin');
-
-    document.getElementById('bannerText').textContent = '🪙 FLIPPING...';
-  } else {
-    // Doubling Stake mode round triggers
-    if (!doubleRoundActive) {
-      if (balance < 5) {
-        showPopupMessage("Requires at least 5.00 EUR to start a doubling round!");
-        return;
+// Sync State from Backend
+function syncState() {
+  fetch("{{ route('headstails.state') }}")
+    .then(res => res.json())
+    .then(data => {
+      // Audio sync
+      if (data.audio.bg && !audioBg.src) {
+        audioBg.src = data.audio.bg;
+        if (soundEnabled) audioBg.play().catch(()=>{});
       }
-      balance -= 5;
-      saveBalance();
-      updateBalanceDisplay();
+      if (data.audio.flip) audioFlip.src = data.audio.flip;
+      if (data.audio.win) audioWin.src = data.audio.win;
+      if (data.audio.loss) audioLoss.src = data.audio.loss;
 
-      doubleRoundActive = true;
-      claimablePrize = 0;
-      currentDoublePrize = 10; // First round prize
+      // Real balance sync
+      if (!isDemoMode && data.user_balance !== null) {
+        const balEl = document.getElementById('balance-display');
+        if (balEl) balEl.innerText = "৳ " + parseFloat(data.user_balance).toFixed(2);
+      }
 
-      document.getElementById('stakeInput').style.display = 'none';
-      const cBtn = document.getElementById('cashOutBtn');
-      cBtn.style.display = 'flex';
-      cBtn.disabled = true;
-      cBtn.textContent = 'CASH OUT';
-
-      document.getElementById('tailsMult').textContent = 'x2';
-      setStake(5);
-
-      // Trigger first round flip
-      coinSpinResult = Math.random() < 0.5 ? 'heads' : 'tails';
-      coinSpinDone = false;
-      coinPhase = 0;
-      coinSpinSpeed = 0.25 + Math.random()*0.1;
-      coinSpinning = true;
-      playSound('coin');
-      document.getElementById('bannerText').textContent = '🪙 FLIPPING...';
-    } else {
-      // Active round progressive flip
-      coinSpinResult = Math.random() < 0.5 ? 'heads' : 'tails';
-      coinSpinDone = false;
-      coinPhase = 0;
-      coinSpinSpeed = 0.25 + Math.random()*0.1;
-      coinSpinning = true;
-      playSound('coin');
-      document.getElementById('bannerText').textContent = '🪙 FLIPPING...';
-    }
-  }
-};
-
-function onCoinLanded() {
-  if (activeMode === 'fixed') {
-    const won = coinSpinResult === choice;
-    const winAmount = won ? stake * 2 : 0;
-
-    if (won) {
-      balance += winAmount;
-      saveBalance();
-      updateBalanceDisplay();
-      document.getElementById('bannerText').textContent = '🎉 YOU WIN! +' + winAmount + ' EUR';
-      showWinPopup(winAmount);
-      playSound('win');
-    } else {
-      document.getElementById('bannerText').textContent = 'BETTER LUCK NEXT TIME';
-      playSound('loss');
-    }
-
-    addHistory(won, winAmount);
-
-    if (autoplayActive) {
-      setTimeout(() => {
-        if (autoplayActive && !coinSpinning && balance >= stake && stake > 0) {
-          flip();
-        } else if (balance < stake) {
-          autoplayActive = false;
-          const autoBtn = document.getElementById('gameAutoBtn');
-          if (autoBtn) autoBtn.classList.remove('sel');
-          showPopupMessage("Autoplay stopped: Insufficient balance!");
-        }
-      }, 2000);
-    } else {
-      setTimeout(() => {
-        if (!coinSpinning && !autoplayActive) {
-          document.getElementById('bannerText').textContent = 'MAKE YOUR CHOICE! HEADS OR TAILS?';
-        }
-      }, 2500);
-    }
-  } else {
-    // Doubling Mode Landed
-    const won = coinSpinResult === choice;
-    if (won) {
-      playSound('win');
-      showWinPopup(currentDoublePrize);
-      document.getElementById('bannerText').textContent = '🎉 CORRECT! PRIZE: ' + currentDoublePrize + ' EUR';
-
-      claimablePrize = currentDoublePrize;
-      const cBtn = document.getElementById('cashOutBtn');
-      cBtn.disabled = false;
-      cBtn.textContent = `CASH OUT: ${claimablePrize} EUR`;
-
-      // Next level target setup
-      currentDoublePrize *= 2;
-      document.getElementById('tailsMult').textContent = 'x' + (currentDoublePrize / 5);
-
-      addHistory(true, claimablePrize);
-    } else {
-      playSound('loss');
-      document.getElementById('bannerText').textContent = '⚓ LOST ROUND!';
-      addHistory(false, 0);
-      resetDoubleRoundState();
-    }
-  }
+      // Render Dynamic Sidebar History
+      if (data.history) {
+        renderSidebarHistory(data.history);
+      }
+    })
+    .catch(err => console.error("Sync state failed:", err));
 }
 
-window.cashOut = function() {
-  if (!doubleRoundActive || claimablePrize <= 0) return;
-  playSound('win');
-  balance += claimablePrize;
-  saveBalance();
-  updateBalanceDisplay();
-  showWinPopup(claimablePrize);
-  document.getElementById('bannerText').textContent = `🎉 CASHED OUT: +${claimablePrize} EUR`;
-  resetDoubleRoundState();
-};
+function renderSidebarHistory(historyList) {
+  const container = document.getElementById('history-sidebar-list');
+  if (!container || !historyList) return;
 
-function resetDoubleRoundState() {
-  doubleRoundActive = false;
-  claimablePrize = 0;
-  currentDoublePrize = 10;
-  document.getElementById('stakeInput').style.display = 'flex';
-  document.getElementById('cashOutBtn').style.display = 'none';
-  document.getElementById('tailsMult').textContent = '10';
-  setTimeout(() => {
-    if (!coinSpinning && activeMode === 'double') {
-      document.getElementById('bannerText').textContent = 'START ROUND (5 EUR)';
-    }
-  }, 2500);
+  container.innerHTML = '';
+  historyList.forEach(item => {
+    const div = document.createElement('div');
+    const isHeads = item.winning_side === 'heads';
+    div.className = `history-item ${isHeads ? 'heads-win' : 'tails-win'}`;
+    div.innerHTML = `
+      <span class="hist-side-tag ${item.winning_side}">
+        ${isHeads ? '🪙 HEADS' : '🐙 TAILS'}
+      </span>
+      <span class="hist-payout-val">
+        ৳${parseFloat(item.total_payout || 0).toFixed(2)}
+      </span>
+    `;
+    container.appendChild(div);
+  });
 }
 
-function showWinPopup(amount) {
-  const el = document.createElement('div');
-  el.className = 'winPopup';
-  el.innerHTML = `🏆 YOU WIN!<br><span style="font-size:20px">${amount} EUR</span>`;
-  document.body.appendChild(el);
+// 3D Coin Flip Trigger
+function trigger3DCoinFlip(winner, onFinish) {
+  if (soundEnabled && audioFlip.src) {
+    audioFlip.currentTime = 0;
+    audioFlip.play().catch(()=>{});
+  }
+
+  const coin = document.getElementById('coin-gold-octopus');
+  const banner = document.getElementById('banner-status-text');
+  if (banner) banner.innerText = "🪙 FLIPPING COIN...";
+
+  if (coin) {
+    coin.classList.add('coin-spinning-3d');
+  }
+
   setTimeout(() => {
-    el.style.transition = 'opacity 0.5s';
-    el.style.opacity = '0';
-    setTimeout(() => el.remove(), 500);
+    if (coin) {
+      coin.classList.remove('coin-spinning-3d');
+      // Set winning side rotation
+      coin.style.transform = (winner === 'heads') ? 'rotateY(0deg)' : 'rotateY(180deg)';
+    }
+
+    if (onFinish) onFinish();
   }, 1800);
 }
 
-// ═══════════════════════════════════════════
-// WINDOW OVERLAY TOGGLES
-// ═══════════════════════════════════════════
-function openGame(mode) {
-  activeMode = mode;
-  gameActive = true;
-
-  // Initialize AudioContext under user gestures
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-
-  // Adjust display sizes
-  resizeBg();
-  drawLogo();
-  drawBanner();
-
-  document.getElementById('gameOverlay').classList.add('open');
-  updateBalanceDisplay();
-
-  const wheelLabel = document.getElementById('fixedStakeLabel');
-  if (mode === 'fixed') {
-    if (wheelLabel) wheelLabel.textContent = 'FIXED STAKE';
-    setStake(1);
-    document.getElementById('bannerText').textContent = 'MAKE YOUR CHOICE! HEADS OR TAILS?';
-    document.getElementById('tailsMult').textContent = '2';
-    document.getElementById('stakeInput').style.display = 'flex';
-    document.getElementById('cashOutBtn').style.display = 'none';
-  } else {
-    if (wheelLabel) wheelLabel.textContent = 'DOUBLING STAKE';
-    doubleRoundActive = false;
-    claimablePrize = 0;
-    currentDoublePrize = 10;
-    document.getElementById('bannerText').textContent = 'START ROUND (5 EUR)';
-    document.getElementById('tailsMult').textContent = '10';
-    document.getElementById('stakeInput').style.display = 'flex';
-    document.getElementById('cashOutBtn').style.display = 'none';
-    setStake(5);
-  }
-
-  renderStakeChips();
-  loop();
+// Show Screen Glow
+function showResultGlow(isWin) {
+  const frame = document.getElementById('game-main-frame');
+  if (!frame) return;
+  frame.classList.add(isWin ? 'win-glow' : 'loss-glow');
+  setTimeout(() => frame.classList.remove('win-glow', 'loss-glow'), 2500);
 }
 
-function closeGame() {
-  gameActive = false;
-  autoplayActive = false;
-  doubleRoundActive = false;
-  document.getElementById('gameOverlay').classList.remove('open');
-}
+// Main Place Bet & Toss Engine
+function placeTossBet() {
+  if (isFlipping) return;
 
-// Hook play buttons from lobby cards
-document.querySelectorAll('.play-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    openGame(btn.dataset.mode);
+  const betInput = document.getElementById('bet-amount-input');
+  const amount = parseFloat(betInput ? betInput.value : 10.00);
+
+  if (isNaN(amount) || amount <= 0) {
+    alert("অনুগ্রহ করে সঠিক বেটের পরিমাণ লিখুন।");
+    return;
+  }
+
+  if (isDemoMode && demoTossDone >= 3) {
+    document.getElementById('deposit-modal-popup').classList.remove('hidden');
+    return;
+  }
+
+  isFlipping = true;
+
+  fetch("{{ route('headstails.toss') }}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-TOKEN": csrfToken
+    },
+    body: JSON.stringify({
+      side: selectedSide,
+      amount: amount,
+      is_demo: isDemoMode,
+      step: progressiveStep,
+      demo_toss_done: demoTossDone
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.deposit_required) {
+      isFlipping = false;
+      document.getElementById('deposit-modal-popup').classList.remove('hidden');
+      return;
+    }
+
+    if (data.error) {
+      isFlipping = false;
+      alert(data.error);
+      return;
+    }
+
+    // Trigger 3D Spin Animation with backend result
+    trigger3DCoinFlip(data.winning_side, () => {
+      isFlipping = false;
+      const banner = document.getElementById('banner-status-text');
+
+      if (data.is_win) {
+        if (soundEnabled && audioWin.src) audioWin.play().catch(()=>{});
+        showResultGlow(true);
+        if (banner) banner.innerText = `🎉 WINNER! +৳${parseFloat(data.win_amount).toFixed(2)}`;
+
+        if (progressiveMode) {
+          progressiveStep++;
+          currentCashoutPrize = data.win_amount;
+          const cashBtn = document.getElementById('cashout-btn');
+          const cashAmt = document.getElementById('cashout-amount-display');
+          cashAmt.innerText = "৳" + parseFloat(currentCashoutPrize).toFixed(2);
+          cashBtn.style.display = 'block';
+
+          const nextMult = (progressiveStep === 2) ? '3.84×' : '7.50×';
+          document.getElementById('multiplier-display').innerText = nextMult;
+        }
+      } else {
+        if (soundEnabled && audioLoss.src) audioLoss.play().catch(()=>{});
+        showResultGlow(false);
+        if (banner) banner.innerText = `LOSS: ${data.winning_side.toUpperCase()} WON!`;
+        if (progressiveMode) {
+          resetProgressiveState();
+        }
+      }
+
+      // Update balances
+      if (isDemoMode) {
+        demoTossDone++;
+        if (data.is_win) demoBalance += (data.win_amount - amount);
+        else demoBalance -= amount;
+        document.getElementById('balance-display').innerText = "DEMO ৳ " + demoBalance.toFixed(2);
+      } else if (data.new_balance !== undefined && data.new_balance !== null) {
+        document.getElementById('balance-display').innerText = "৳ " + parseFloat(data.new_balance).toFixed(2);
+      }
+
+      // Refresh recent history
+      syncState();
+
+      setTimeout(() => {
+        if (!isFlipping && banner) {
+          banner.innerText = "MAKE YOUR CHOICE! HEADS OR TAILS?";
+        }
+      }, 3500);
+    });
+  })
+  .catch(err => {
+    isFlipping = false;
+    console.error("Bet placement failed:", err);
   });
-});
-
-// Sound button & help instructions from lobby header
-document.getElementById('helpBtn').addEventListener('click', () => {
-  playSound('click');
-  document.getElementById('helpOverlay').classList.add('open');
-});
-document.getElementById('closeHelp').onclick = function() {
-  playSound('click');
-  document.getElementById('helpOverlay').classList.remove('open');
-};
-document.getElementById('helpOverlay').onclick = function(e) {
-  if (e.target === this) this.classList.remove('open');
-};
-
-// Side info icon within overlay
-document.getElementById('sideInfoBtn').onclick = function() {
-  playSound('click');
-  document.getElementById('helpOverlay').classList.add('open');
-};
-
-// ═══════════════════════════════════════════
-// ANIMATION TICKER LOOP
-// ═══════════════════════════════════════════
-function loop() {
-  if (!gameActive) return;
-  drawBg();
-  drawCoin();
-  drawWheel();
-  drawMermaid();
-  requestAnimationFrame(loop);
 }
 
-// Screen resize binds
-window.addEventListener('resize', () => {
-  if (gameActive) resizeBg();
-});
+function cashOutProgressive() {
+  if (currentCashoutPrize <= 0) return;
+  alert(`অভিনন্দন! আপনি ৳${parseFloat(currentCashoutPrize).toFixed(2)} ক্যাশ আউট করেছেন।`);
+  resetProgressiveState();
+  syncState();
+}
+
+// Start State Poller
+syncState();
+setInterval(syncState, 3000);
 </script>
 </body>
 </html>
-

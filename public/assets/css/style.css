@@ -58,6 +58,22 @@ body.game-body-bg {
 .text-green { color: var(--color-green); }
 .text-red { color: var(--color-red); }
 .text-gold { color: var(--color-gold); }
+
+/* Aviator Canvas Auto-Scaling & Responsiveness */
+.aviator-wrapper, .game-screen-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9; /* Keeps perfect aspect ratio across desktop & mobile */
+    position: relative;
+    overflow: hidden;
+}
+
+.aviator-wrapper canvas, .game-screen-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
 .hidden { display: none !important; }
 
 /* Custom Scrollbars */
@@ -3220,6 +3236,82 @@ body.light-theme .chat-input-field {
     color: #0f172a;
     border: 1px solid #cbd5e1;
 }
+
+/* ============================================================
+   AVIATOR CRASH GAME FULL RESPONSIVE MEDIA QUERIES
+   ============================================================ */
+@media (max-width: 1200px) {
+    .main-layout {
+        gap: 8px;
+        padding: 8px;
+    }
+    .live-bets-panel {
+        width: 240px;
+        min-width: 240px;
+    }
+    .betting-controls-column {
+        width: 280px;
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 992px) {
+    .main-layout {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+    }
+    .live-bets-panel {
+        width: 100%;
+        min-width: 100%;
+        max-height: 220px;
+    }
+    .center-right-container {
+        flex-direction: column;
+    }
+    .betting-controls-column {
+        width: 100%;
+        min-width: 100%;
+        flex-direction: row;
+        gap: 10px;
+    }
+    .betting-board {
+        flex: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-header {
+        flex-direction: column;
+        height: auto;
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .user-info-header {
+        display: none !important;
+    }
+    .game-screen-container {
+        height: 260px;
+        min-height: 260px;
+    }
+    .betting-controls-column {
+        flex-direction: column;
+        width: 100%;
+    }
+    .bet-input-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .enable-autoplay-btn {
+        width: 100%;
+    }
+}
+
 
 
 

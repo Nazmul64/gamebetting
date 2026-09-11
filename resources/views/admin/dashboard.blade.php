@@ -15,38 +15,73 @@
     <title>Admin Dashboard — Aviator Control Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg-deep:        #05070f;
-            --bg-sidebar:     #080c1a;
-            --bg-card:        #0d1225;
-            --bg-panel:       #111827;
-            --bg-input:       rgba(255,255,255,0.04);
-            --accent-blue:    #4f8ef7;
+            --bg-deep:        #060813;
+            --bg-sidebar:     #080d1e;
+            --bg-sidebar-nav: rgba(14, 22, 45, 0.6);
+            --bg-card:        #0d1428;
+            --bg-card-hover:  #121c37;
+            --bg-panel:       #0f172a;
+            --bg-input:       rgba(255, 255, 255, 0.045);
+            --bg-input-focus: rgba(255, 255, 255, 0.08);
+            
+            --accent-cyan:    #00f2fe;
+            --accent-blue:    #3b82f6;
+            --accent-indigo:  #6366f1;
             --accent-purple:  #8b5cf6;
-            --accent-orange:  #f06424;
-            --accent-gold:    #ffbe1a;
-            --accent-green:   #22c55e;
+            --accent-pink:    #ec4899;
+            --accent-orange:  #f97316;
+            --accent-gold:    #fbbf24;
+            --accent-green:   #10b981;
             --accent-red:     #ef4444;
             --accent-teal:    #14b8a6;
-            --text-primary:   #f1f5f9;
+            
+            --text-primary:   #f8fafc;
             --text-secondary: #94a3b8;
-            --text-muted:     #4b5563;
-            --border-subtle:  rgba(255,255,255,0.06);
-            --border-hover:   rgba(255,255,255,0.12);
-            --sidebar-width:  240px;
+            --text-muted:     #64748b;
+            --border-subtle:  rgba(255, 255, 255, 0.07);
+            --border-hover:   rgba(255, 255, 255, 0.16);
+            --border-glow:    rgba(99, 102, 241, 0.35);
+            
+            --sidebar-width:  270px;
+            --topbar-height:  68px;
+            --radius-sm:      8px;
+            --radius-md:      12px;
+            --radius-lg:      16px;
+            --radius-xl:      22px;
+            
+            --card-shadow:    0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            --glow-indigo:    0 0 25px rgba(99, 102, 241, 0.25);
+            --glow-gold:      0 0 25px rgba(251, 191, 36, 0.25);
+            --glow-green:     0 0 25px rgba(16, 185, 129, 0.25);
+            --glow-red:       0 0 25px rgba(239, 68, 68, 0.25);
         }
 
         html, body {
             height: 100%;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-deep);
             color: var(--text-primary);
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle mesh glow background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* ===================== LAYOUT ===================== */
@@ -54,6 +89,24 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Backdrop overlay for mobile sidebar */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 7, 16, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-backdrop.active {
+            display: block;
+            opacity: 1;
         }
 
         /* ===================== SIDEBAR ===================== */
@@ -65,138 +118,287 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            z-index: 20;
+            z-index: 999;
             overflow-y: auto;
+            backdrop-filter: blur(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
 
-        /* Sidebar glow accent */
+        .admin-sidebar::-webkit-scrollbar { width: 5px; }
+        .admin-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+
+        /* Sidebar glowing aura header */
         .admin-sidebar::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 200px;
-            background: radial-gradient(ellipse at top, rgba(79,142,247,0.12) 0%, transparent 70%);
+            height: 220px;
+            background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 80%);
             pointer-events: none;
         }
 
         /* Sidebar logo */
         .sidebar-logo {
-            padding: 24px 20px 20px;
+            padding: 22px 20px 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
+            position: relative;
         }
+
+        .sidebar-brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
         .logo-icon-wrap {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #1e3a5f, #0f2040);
-            border: 1px solid rgba(79,142,247,0.2);
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 4px 18px rgba(79, 70, 229, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
         }
+
+        .logo-icon-wrap::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(60deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            animation: logoShine 4s infinite linear;
+        }
+
+        @keyframes logoShine {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
+        }
+
         .logo-icon-wrap i {
-            font-size: 16px;
-            color: var(--accent-blue);
+            font-size: 19px;
+            color: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
+
         .logo-text {
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
             color: var(--text-primary);
-            line-height: 1.2;
+            line-height: 1.15;
+            font-family: 'Space Grotesk', sans-serif;
         }
+
         .logo-text small {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 10px;
-            font-weight: 400;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.8px;
             text-transform: uppercase;
+            margin-top: 3px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .logo-text small::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        .sidebar-close-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sidebar-close-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Sidebar nav */
         .sidebar-nav {
             flex: 1;
-            padding: 16px 12px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
         }
+
         .nav-section-label {
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-muted);
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            padding: 8px 8px 6px;
+            padding: 12px 10px 6px;
             margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .nav-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
         .sidebar-nav-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 13.5px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 2px;
-            border: none;
-            background: none;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            background: transparent;
             width: 100%;
             text-align: left;
+            position: relative;
+            overflow: hidden;
         }
-        .sidebar-nav-link i {
-            width: 18px;
-            text-align: center;
-            font-size: 14px;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-        .sidebar-nav-link:hover {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-primary);
-        }
-        .sidebar-nav-link:hover i { opacity: 1; }
-        .sidebar-nav-link.active {
-            background: linear-gradient(135deg, rgba(79,142,247,0.15), rgba(139,92,246,0.08));
-            color: var(--accent-blue);
-            border: 1px solid rgba(79,142,247,0.15);
-        }
-        .sidebar-nav-link.active i { color: var(--accent-blue); opacity: 1; }
 
-        /* Admin info at bottom of sidebar */
+        .sidebar-nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 15px;
+            opacity: 0.8;
+            transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-nav-link:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateX(3px);
+        }
+
+        .sidebar-nav-link:hover i {
+            opacity: 1;
+            transform: scale(1.15);
+            color: var(--accent-cyan);
+        }
+
+        .sidebar-nav-link.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(6, 182, 212, 0.1));
+            color: #ffffff;
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+        }
+
+        .sidebar-nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            bottom: 25%;
+            width: 3.5px;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-indigo));
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .sidebar-nav-link.active i {
+            color: var(--accent-cyan);
+            opacity: 1;
+        }
+
+        .sidebar-badge-count {
+            margin-left: auto;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Sidebar admin card at bottom */
         .sidebar-admin-card {
-            margin: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            background: rgba(79,142,247,0.06);
-            border: 1px solid rgba(79,142,247,0.12);
+            margin: 14px;
+            padding: 12px 14px;
+            border-radius: var(--radius-lg);
+            background: rgba(14, 22, 45, 0.7);
+            border: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-shrink: 0;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.2s, background 0.2s;
         }
+
+        .sidebar-admin-card:hover {
+            border-color: var(--border-hover);
+            background: rgba(18, 28, 58, 0.8);
+        }
+
         .admin-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #2563eb, #4f8ef7);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             color: #fff;
             flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+            position: relative;
         }
+
+        .admin-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            border: 2px solid var(--bg-sidebar);
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
         .admin-info { flex: 1; min-width: 0; }
         .admin-info-name {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
@@ -204,23 +406,35 @@
         }
         .admin-info-role {
             font-size: 10px;
-            color: var(--accent-blue);
-            font-weight: 600;
+            color: var(--accent-cyan);
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
         }
+
         .sidebar-logout-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
             cursor: pointer;
-            font-size: 14px;
-            padding: 4px;
-            border-radius: 6px;
-            transition: color 0.2s;
+            font-size: 13px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
             flex-shrink: 0;
         }
-        .sidebar-logout-btn:hover { color: var(--accent-red); }
+        .sidebar-logout-btn:hover {
+            background: var(--accent-red);
+            color: #ffffff;
+            border-color: var(--accent-red);
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
 
         /* ===================== MAIN CONTENT ===================== */
         .admin-main {
@@ -229,68 +443,177 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: var(--bg-deep);
+            position: relative;
         }
 
         /* Top bar */
         .admin-topbar {
-            height: 58px;
-            min-height: 58px;
-            background: var(--bg-sidebar);
+            height: var(--topbar-height);
+            min-height: var(--topbar-height);
+            background: rgba(8, 13, 30, 0.85);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 24px;
             flex-shrink: 0;
+            z-index: 10;
         }
-        .topbar-title {
-            font-size: 16px;
-            font-weight: 700;
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .mobile-toggle-btn {
+            display: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
             color: var(--text-primary);
+            font-size: 15px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .mobile-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-hover);
+        }
+
+        .topbar-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .topbar-title span {
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 12.5px;
+            font-weight: 500;
             color: var(--text-muted);
-            margin-left: 8px;
+            font-family: 'Outfit', sans-serif;
         }
+
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            flex-shrink: 0;
         }
+
+        /* Digital Clock Widget */
+        .topbar-clock-widget {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .topbar-clock-widget i {
+            color: var(--accent-cyan);
+            font-size: 12px;
+        }
+
+        /* Quick View Site / Game Pills */
+        .topbar-shortcut-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .topbar-shortcut-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        /* Status Badge with Ping */
         .topbar-badge {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            background: rgba(34,197,94,0.1);
-            border: 1px solid rgba(34,197,94,0.2);
-            color: var(--accent-green);
-            font-size: 11px;
-            font-weight: 600;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 24px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
         }
         .status-dot {
-            width: 7px; height: 7px;
+            width: 8px; height: 8px;
             border-radius: 50%;
             background: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
             animation: pulse 2s infinite;
         }
+
+        .theme-toggle-btn {
+            padding: 7px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+        }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
         }
         @keyframes crashPulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
-            50% { box-shadow: 0 0 8px 2px rgba(239,68,68,0.35); }
+            50% { box-shadow: 0 0 16px 3px rgba(239,68,68,0.45); }
         }
 
         /* Content scroll area */
         .admin-content {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 26px;
         }
         .admin-content::-webkit-scrollbar { width: 6px; }
         .admin-content::-webkit-scrollbar-track { background: transparent; }
@@ -298,182 +621,240 @@
 
         /* ===================== TAB CONTENT ===================== */
         .tab-pane { display: none; }
-        .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-pane.active { 
+            display: block; 
+            animation: paneSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; 
+        }
+        @keyframes paneSlideIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
 
         /* Page header */
         .page-header {
             margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .page-header h2 {
-            font-size: 22px;
-            font-weight: 700;
+        .page-header-title-group h2 {
+            font-size: 24px;
+            font-weight: 800;
             color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.3px;
         }
-        .page-header p {
-            font-size: 13px;
+        .page-header-title-group p {
+            font-size: 13.5px;
             color: var(--text-secondary);
             margin-top: 4px;
+            line-height: 1.4;
         }
 
         /* ===================== STAT CARDS ===================== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 18px;
+            margin-bottom: 26px;
         }
 
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: var(--radius-lg);
+            padding: 22px;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s, transform 0.2s;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(12px);
         }
         .stat-card:hover {
             border-color: var(--border-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            background: var(--bg-card-hover);
         }
         .stat-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 2px;
-            border-radius: 14px 14px 0 0;
+            height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         }
-        .stat-card.blue::before  { background: linear-gradient(90deg, #4f8ef7, #818cf8); }
-        .stat-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
-        .stat-card.green::before  { background: linear-gradient(90deg, #22c55e, #4ade80); }
-        .stat-card.orange::before { background: linear-gradient(90deg, #f06424, #ffbe1a); }
+        .stat-card.blue::before   { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .stat-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+        .stat-card.green::before  { background: linear-gradient(90deg, #10b981, #34d399); }
+        .stat-card.orange::before { background: linear-gradient(90deg, #f97316, #fbbf24); }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
 
         .stat-card-icon {
-            width: 42px; height: 42px;
-            border-radius: 11px;
+            width: 44px; height: 44px;
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            margin-bottom: 14px;
+            font-size: 19px;
+            transition: transform 0.25s ease;
         }
-        .stat-card.blue   .stat-card-icon { background: rgba(79,142,247,0.15); color: var(--accent-blue); }
-        .stat-card.purple .stat-card-icon { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
-        .stat-card.green  .stat-card-icon { background: rgba(34,197,94,0.15);  color: var(--accent-green); }
-        .stat-card.orange .stat-card-icon { background: rgba(240,100,36,0.15); color: var(--accent-orange); }
+        .stat-card:hover .stat-card-icon {
+            transform: scale(1.1) rotate(4deg);
+        }
+
+        .stat-card.blue   .stat-card-icon { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+        .stat-card.purple .stat-card-icon { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.25); box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2); }
+        .stat-card.green  .stat-card-icon { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .stat-card.orange .stat-card-icon { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.25); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); }
 
         .stat-card-val {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             color: var(--text-primary);
-            font-family: 'Roboto Mono', monospace;
-            line-height: 1;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
         }
         .stat-card-label {
             font-size: 12px;
+            font-weight: 700;
             color: var(--text-secondary);
-            margin-top: 6px;
+            margin-top: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.6px;
         }
         .stat-card-change {
-            position: absolute;
-            top: 16px; right: 16px;
             font-size: 11px;
-            font-weight: 600;
-            padding: 3px 8px;
+            font-weight: 700;
+            padding: 3px 9px;
             border-radius: 20px;
+            letter-spacing: 0.3px;
         }
-        .change-up { background: rgba(34,197,94,0.12); color: var(--accent-green); }
+        .change-up { 
+            background: rgba(16, 185, 129, 0.12); 
+            color: #34d399; 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+        }
 
         /* ===================== PANELS ===================== */
         .panel {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            margin-bottom: 20px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
             overflow: hidden;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(12px);
+            transition: border-color 0.2s;
+        }
+        .panel:hover {
+            border-color: var(--border-hover);
         }
         .panel-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 20px;
+            padding: 18px 22px;
             border-bottom: 1px solid var(--border-subtle);
+            background: rgba(255, 255, 255, 0.015);
+            flex-wrap: wrap;
+            gap: 12px;
         }
         .panel-title {
-            font-size: 14px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 800;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
         }
-        .panel-title i { color: var(--accent-blue); }
-        .panel-body { padding: 20px; }
+        .panel-title i { color: var(--accent-cyan); font-size: 16px; }
+        .panel-body { padding: 22px; }
 
         /* ===================== TABLES ===================== */
-        .table-wrap { overflow-x: auto; }
+        .table-wrap { 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+        .table-wrap::-webkit-scrollbar { height: 6px; }
+        .table-wrap::-webkit-scrollbar-track { background: transparent; }
+        .table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
         .admin-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             font-size: 13px;
+            min-width: 650px;
         }
         .admin-table thead tr {
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.025);
         }
         .admin-table th {
-            padding: 10px 14px;
+            padding: 12px 16px;
             text-align: left;
-            font-size: 10.5px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.8px;
             white-space: nowrap;
+            border-bottom: 1px solid var(--border-subtle);
         }
         .admin-table td {
-            padding: 11px 14px;
-            border-top: 1px solid var(--border-subtle);
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border-subtle);
             color: var(--text-secondary);
             vertical-align: middle;
+            transition: background 0.15s ease;
+        }
+        .admin-table tbody tr {
+            transition: all 0.15s ease;
         }
         .admin-table tbody tr:hover {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.035);
         }
 
         /* Status badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 3px 9px;
+            gap: 5px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
+            font-size: 10.5px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
         .badge-active {
-            background: rgba(34,197,94,0.1);
-            border: 1px solid rgba(34,197,94,0.2);
-            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            color: #34d399;
         }
 
         /* Currency pill */
         .currency-pill {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            padding: 2px 7px;
-            border-radius: 5px;
-            background: rgba(255,190,26,0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(251, 191, 36, 0.12);
             color: var(--accent-gold);
             font-weight: 700;
-            border: 1px solid rgba(255,190,26,0.15);
+            border: 1px solid rgba(251, 191, 36, 0.22);
         }
 
         /* Balance value */
         .balance-val {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -483,208 +864,259 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px; height: 28px;
-            border-radius: 7px;
+            width: 32px; height: 32px;
+            border-radius: 8px;
             border: 1px solid var(--border-subtle);
-            background: none;
-            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             transition: all 0.2s;
         }
-        .action-btn:hover { color: var(--text-primary); border-color: var(--border-hover); background: rgba(255,255,255,0.06); }
-        .action-btn.edit:hover { color: var(--accent-blue); border-color: rgba(79,142,247,0.3); }
-        .action-btn.del:hover { color: var(--accent-red); border-color: rgba(239,68,68,0.3); }
-        .action-btn.block-user { color: #f97316; border-color: rgba(249,115,22,0.25); }
-        .action-btn.block-user:hover { color: #fb923c; border-color: rgba(249,115,22,0.5); background: rgba(249,115,22,0.08); }
-        .action-btn.unblock { color: var(--accent-green, #22c55e); border-color: rgba(34,197,94,0.25); }
-        .action-btn.unblock:hover { color: #4ade80; border-color: rgba(34,197,94,0.5); background: rgba(34,197,94,0.08); }
+        .action-btn:hover { 
+            color: var(--text-primary); 
+            border-color: var(--border-hover); 
+            background: rgba(255, 255, 255, 0.08); 
+            transform: scale(1.05);
+        }
+        .action-btn.edit:hover { 
+            color: var(--accent-cyan); 
+            border-color: rgba(6, 182, 212, 0.4); 
+            background: rgba(6, 182, 212, 0.1); 
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+        }
+        .action-btn.del:hover { 
+            color: var(--accent-red); 
+            border-color: rgba(239, 68, 68, 0.4); 
+            background: rgba(239, 68, 68, 0.1); 
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+        }
+        .action-btn.block-user { color: #fb923c; border-color: rgba(249, 115, 22, 0.3); }
+        .action-btn.block-user:hover { color: #fed7aa; border-color: rgba(249, 115, 22, 0.6); background: rgba(249, 115, 22, 0.12); }
+        .action-btn.unblock { color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+        .action-btn.unblock:hover { color: #a7f3d0; border-color: rgba(16, 185, 129, 0.6); background: rgba(16, 185, 129, 0.12); }
 
         /* User status badge */
         .user-status-badge {
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            padding: 3px 9px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.3px;
         }
         .user-status-badge.active {
-            background: rgba(34,197,94,0.1);
-            color: #4ade80;
-            border: 1px solid rgba(34,197,94,0.2);
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
         .user-status-badge.blocked {
-            background: rgba(239,68,68,0.1);
+            background: rgba(239, 68, 68, 0.12);
             color: #f87171;
-            border: 1px solid rgba(239,68,68,0.2);
+            border: 1px solid rgba(239, 68, 68, 0.25);
         }
 
-        /* Blocked row subtle highlight */
         .user-row-blocked td {
-            opacity: 0.7;
+            opacity: 0.65;
         }
-        .user-row-blocked { background: rgba(239,68,68,0.03); }
-
-
+        .user-row-blocked { background: rgba(239, 68, 68, 0.04); }
 
         /* ===================== SEARCH BAR ===================== */
         .search-bar {
             position: relative;
-            max-width: 260px;
+            max-width: 280px;
+            width: 100%;
         }
         .search-bar i {
             position: absolute;
-            left: 11px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 13px;
+            pointer-events: none;
         }
         .search-input {
             width: 100%;
-            padding: 8px 12px 8px 34px;
+            padding: 9px 14px 9px 36px;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
-            border-radius: 9px;
+            border-radius: var(--radius-md);
             color: var(--text-primary);
-            font-family: 'Outfit', sans-serif;
+            font-family: inherit;
             font-size: 13px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
         .search-input::placeholder { color: var(--text-muted); }
-        .search-input:focus { border-color: var(--accent-blue); }
+        .search-input:focus { 
+            border-color: var(--accent-cyan); 
+            background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
 
-        /* ===================== EDIT BALANCE MODAL ===================== */
+        /* ===================== MODALS ===================== */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            backdrop-filter: blur(4px);
+            background: rgba(3, 6, 15, 0.8);
+            z-index: 1200;
+            backdrop-filter: blur(10px);
             align-items: center;
             justify-content: center;
+            padding: 16px;
         }
         .modal-overlay.open { display: flex; }
+        
         .design-preview-card {
             cursor: pointer;
             transition: all 0.22s ease !important;
             background: rgba(255,255,255,0.02) !important;
             padding: 12px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             border: 2px solid var(--border-subtle) !important;
             text-align: center;
         }
         .design-preview-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(79,142,247,0.3) !important;
-            background: rgba(255,255,255,0.04) !important;
+            transform: translateY(-3px);
+            border-color: rgba(6, 182, 212, 0.4) !important;
+            background: rgba(255,255,255,0.05) !important;
         }
         .design-preview-card.selected-design {
             border-color: var(--accent-gold) !important;
-            background: rgba(255,190,26,0.08) !important;
-            box-shadow: 0 0 12px rgba(255,190,26,0.25);
+            background: rgba(251, 191, 36, 0.1) !important;
+            box-shadow: 0 0 16px rgba(251, 191, 36, 0.3);
         }
+        
         .modal-box {
             background: var(--bg-panel);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 28px;
-            width: 380px;
+            border: 1px solid var(--border-hover);
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            width: 100%;
+            max-width: 440px;
             position: relative;
             animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to   { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
         }
         .modal-close {
             position: absolute;
-            top: 14px; right: 14px;
-            background: none;
-            border: none;
+            top: 18px; right: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 16px;
-            padding: 4px;
-            border-radius: 6px;
-            transition: color 0.2s;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
-        .modal-close:hover { color: var(--text-primary); }
+        .modal-close:hover { 
+            color: var(--text-primary); 
+            background: rgba(255, 255, 255, 0.1); 
+        }
         .modal-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 22px;
             color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .modal-title i { margin-right: 8px; color: var(--accent-blue); }
-        .form-group { margin-bottom: 16px; }
+        .modal-title i { color: var(--accent-cyan); }
+        
+        .form-group { margin-bottom: 18px; }
         .form-label {
             display: block;
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 7px;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
         .form-input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 11px 16px;
             background: var(--bg-input);
             border: 1px solid var(--border-subtle);
-            border-radius: 9px;
+            border-radius: var(--radius-md);
             color: var(--text-primary);
-            font-family: 'Outfit', sans-serif;
+            font-family: inherit;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-        .form-input:focus { border-color: var(--accent-blue); }
-        .form-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .form-input:focus { 
+            border-color: var(--accent-cyan); 
+            background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+        .form-input:disabled { opacity: 0.55; cursor: not-allowed; }
 
         /* Submit btn */
         .btn-primary {
             width: 100%;
-            padding: 11px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2563eb, #4f8ef7);
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
             color: #fff;
-            font-family: 'Outfit', sans-serif;
-            font-size: 13px;
+            font-family: inherit;
+            font-size: 13.5px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(79,142,247,0.3);
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 18px rgba(79, 70, 229, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,142,247,0.4); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 24px rgba(6, 182, 212, 0.4); 
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Toast */
+        /* Toast Notification */
         .admin-toast {
             position: fixed;
             bottom: 24px; right: 24px;
             background: var(--bg-panel);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 14px 18px;
-            font-size: 13px;
+            border: 1px solid var(--border-hover);
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            font-size: 13.5px;
+            font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 10px;
-            z-index: 2000;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            gap: 12px;
+            z-index: 2500;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1);
             transform: translateX(120%);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(16px);
         }
         .admin-toast.show { transform: translateX(0); }
-        .admin-toast i { color: var(--accent-green); }
+        .admin-toast i { color: var(--accent-green); font-size: 16px; }
         .admin-toast.error i { color: var(--accent-red); }
 
         /* Spin */
@@ -697,197 +1129,326 @@
             padding: 48px 20px;
             color: var(--text-muted);
         }
-        .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; opacity: 0.4; }
+        .empty-state i { font-size: 42px; margin-bottom: 14px; display: block; opacity: 0.35; color: var(--accent-cyan); }
         .empty-state p { font-size: 14px; }
 
         /* Loading state */
         .loading-row td {
             text-align: center;
-            padding: 40px;
+            padding: 42px;
             color: var(--text-muted);
-        }
-
-        /* ===================== ADMIN SIDEBAR UPGRADES ===================== */
-        .admin-sidebar {
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar-nav-link {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            border: 1px solid transparent;
-        }
-        .sidebar-nav-link::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 0;
-            background: var(--accent-purple);
-            border-radius: 0 4px 4px 0;
-            transition: height 0.25s ease;
-        }
-        .sidebar-nav-link.active::after {
-            height: 60%;
-        }
-        .sidebar-nav-link:hover {
-            transform: translateX(4px);
-        }
-        .sidebar-nav-link i {
-            transition: transform 0.25s ease;
-        }
-        .sidebar-nav-link:hover i {
-            transform: scale(1.1);
+            font-weight: 600;
         }
 
         /* ===================== ADMIN LIGHT THEME ===================== */
         .light-theme {
-            --bg-deep:        #f3f4f6;
+            --bg-deep:        #f1f5f9;
             --bg-sidebar:     #ffffff;
+            --bg-sidebar-nav: #f8fafc;
             --bg-card:        #ffffff;
-            --bg-panel:       #f9fafb;
-            --bg-input:       #ffffff;
-            --text-primary:   #111827;
-            --text-secondary: #4b5563;
-            --text-muted:     #9ca3af;
-            --border-subtle:  #e5e7eb;
+            --bg-card-hover:  #f8fafc;
+            --bg-panel:       #ffffff;
+            --bg-input:       #f8fafc;
+            --bg-input-focus: #ffffff;
+            
+            --text-primary:   #0f172a;
+            --text-secondary: #475569;
+            --text-muted:     #94a3b8;
+            --border-subtle:  #e2e8f0;
             --border-hover:   #cbd5e1;
+            --border-glow:    rgba(99, 102, 241, 0.2);
+            --card-shadow:    0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px #e2e8f0;
+        }
+
+        .light-theme body::before {
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.03) 0%, transparent 40%);
         }
 
         .light-theme .admin-sidebar {
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
         }
 
         .light-theme .admin-sidebar::before {
-            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+            background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
         }
 
         .light-theme .sidebar-nav-link:hover {
-            background: rgba(139, 92, 246, 0.04);
-            color: var(--accent-purple);
+            background: #f1f5f9;
+            color: #4f46e5;
         }
 
         .light-theme .sidebar-nav-link.active {
-            background: rgba(139, 92, 246, 0.08);
-            color: var(--accent-purple);
-            border-color: rgba(139, 92, 246, 0.2);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.06));
+            color: #4f46e5;
+            border-color: rgba(99, 102, 241, 0.25);
         }
         
         .light-theme .sidebar-nav-link.active i {
-            color: var(--accent-purple);
+            color: #4f46e5;
         }
 
         .light-theme .sidebar-admin-card {
-            background: rgba(139, 92, 246, 0.05);
-            border-color: rgba(139, 92, 246, 0.12);
+            background: #f8fafc;
+            border-color: #e2e8f0;
         }
 
-        .light-theme .sidebar-logout-btn {
-            color: #6b7280;
+        .light-theme .admin-topbar {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .light-theme .sidebar-logout-btn:hover {
-            color: var(--accent-red);
+        .light-theme .admin-table thead tr {
+            background: #f8fafc;
         }
 
-        .light-theme .panel,
-        .light-theme .stat-card,
+        .light-theme .admin-table th {
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .light-theme .admin-table td {
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .light-theme .admin-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
         .light-theme .modal-box {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
             background: #ffffff;
-            border-color: #e5e7eb;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px #e2e8f0;
         }
 
         .light-theme .form-input,
         .light-theme select {
             border: 1px solid #cbd5e1;
-            color: #111827;
+            color: #0f172a;
             background: #ffffff;
-        }
-
-        .light-theme .admin-table th {
-            background: #f3f4f6;
-            color: #4b5563;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .light-theme .admin-table td {
-            color: #111827;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .light-theme .admin-table tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        .light-theme .admin-topbar {
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
         }
 
         .light-theme .admin-toast {
             background: #ffffff;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.12), 0 0 0 1px #e2e8f0;
+        }
+
+        /* ===================== RESPONSIVE BREAKPOINTS ===================== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .admin-sidebar {
+                position: fixed;
+                top: 0; left: 0; bottom: 0;
+                width: 280px;
+                transform: translateX(-100%);
+                box-shadow: none;
+            }
+            .admin-sidebar.open {
+                transform: translateX(0);
+                box-shadow: 10px 0 50px rgba(0, 0, 0, 0.8);
+            }
+            .sidebar-close-btn {
+                display: inline-flex;
+            }
+            .mobile-toggle-btn {
+                display: inline-flex;
+            }
+            .topbar-clock-widget {
+                display: none;
+            }
+            .admin-topbar {
+                padding: 0 16px;
+            }
+            .admin-content {
+                padding: 18px 14px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .page-header h2 {
+                font-size: 20px;
+            }
+            .topbar-title span {
+                display: none;
+            }
+            .topbar-shortcut-link span {
+                display: none;
+            }
+            .topbar-badge {
+                padding: 5px 10px;
+                font-size: 10.5px;
+            }
+            .theme-toggle-btn span {
+                display: none;
+            }
+            .panel-header {
+                padding: 14px 16px;
+            }
+            .panel-body {
+                padding: 16px;
+            }
+            .stat-card {
+                padding: 18px;
+            }
+            .stat-card-val {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="admin-layout">
 
+        <!-- Backdrop overlay for mobile drawer -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleMobileSidebar(false)"></div>
+
         <!-- ==================== SIDEBAR ==================== -->
-        <aside class="admin-sidebar">
+        <aside class="admin-sidebar" id="admin-sidebar">
             <div class="sidebar-logo">
-                <div class="logo-icon-wrap">
-                    <i class="fas fa-shield-halved"></i>
-                </div>
-                <div class="logo-text">
-                    Aviator Admin
-                    <small>Control Panel</small>
-                </div>
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-wrapper">
+                    <div class="logo-icon-wrap">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="logo-text">
+                        Aviator Pro
+                        <small>Control Center</small>
+                    </div>
+                </a>
+                <button class="sidebar-close-btn" onclick="toggleMobileSidebar(false)" title="Close Menu">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
-                <div class="nav-section-label">Main</div>
+                <div class="nav-section-label">Core Operations</div>
                 <button class="sidebar-nav-link active" id="nav-overview" onclick="switchTab('overview', this)">
-                    <i class="fas fa-chart-pie"></i> Overview
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Overview</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-users" onclick="switchTab('users', this)">
-                    <i class="fas fa-users"></i> User Management
+                    <i class="fas fa-users"></i>
+                    <span>User Management</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-withdrawals" onclick="switchTab('withdrawals', this)">
-                    <i class="fas fa-money-bill-transfer"></i> Withdrawal Requests
+                    <i class="fas fa-money-bill-transfer"></i>
+                    <span>Withdrawal Requests</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-deposits" onclick="switchTab('deposits', this)">
-                    <i class="fas fa-circle-down"></i> Deposit Requests
+                    <i class="fas fa-circle-down"></i>
+                    <span>Deposit Requests</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-support" onclick="switchTab('support', this)">
-                    <i class="fas fa-comments"></i> Support Chat <span class="badge-unread-total" id="admin-chat-unread-badge" style="display:none; background:var(--accent-red); color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:700;">0</span>
+                    <i class="fas fa-comments"></i>
+                    <span>Support Chat</span>
+                    <span class="badge-unread-total sidebar-badge-count" id="admin-chat-unread-badge" style="display:none; background:var(--accent-red); color:#fff;">0</span>
                 </button>
 
-                <div class="nav-section-label" style="margin-top:8px;">Tools</div>
+                <div class="nav-section-label">Platform Setup</div>
                 <button class="sidebar-nav-link" id="nav-gateways" onclick="switchTab('gateways', this)">
-                    <i class="fas fa-circle-down"></i> Deposit Gateways Setup
+                    <i class="fas fa-circle-arrow-down"></i>
+                    <span>Deposit Gateways</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-withdraw-gateways" onclick="switchTab('withdraw-gateways', this)">
-                    <i class="fas fa-circle-up"></i> Withdraw Payment Setup
+                    <i class="fas fa-circle-arrow-up"></i>
+                    <span>Withdraw Payment Setup</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-settings" onclick="switchTab('settings', this)">
-                    <i class="fas fa-percent"></i> Commission Setup
+                    <i class="fas fa-percent"></i>
+                    <span>Commission Setup</span>
                 </button>
+
+                <div class="nav-section-label">Casino Game Modules</div>
+                <a href="{{ route('admin.casino.analytics') }}" class="sidebar-nav-link" target="_blank" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; margin-bottom: 8px;">
+                    <i class="fas fa-heart-pulse" style="color: #34d399;"></i>
+                    <span>Game Health & Analytics</span>
+                    <span style="font-size: 9px; background: #10b981; color: #fff; padding: 1px 6px; border-radius: 4px; margin-left: auto; font-weight: 800;">LIVE</span>
+                </a>
+                <div style="background: rgba(14, 22, 45, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px; margin-bottom: 6px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; cursor:pointer;" onclick="toggleGamesSubmenu()">
+                        <div style="font-size:11px; font-weight:800; color:#cbd5e1; text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; gap:6px;">
+                            <i class="fas fa-cubes" style="color:var(--accent-gold);"></i> 100+ Game Engines
+                        </div>
+                        <span style="background:rgba(251, 191, 36, 0.15); color:var(--accent-gold); font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:10px; border:1px solid rgba(251, 191, 36, 0.3);">READY</span>
+                    </div>
+                    
+                    <div id="games-module-submenu" style="display:flex; flex-direction:column; gap:4px;">
+                        <!-- Active Game 1: Olympus Gold -->
+                        <button class="sidebar-nav-link" id="nav-olympus" onclick="switchTab('olympus', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.25);">
+                            <i class="fas fa-bolt" style="color:var(--accent-gold); font-size:13px;"></i>
+                            <span>Olympus Gold™</span>
+                            <span style="font-size:9px; background:#10b981; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- Active Game 2: Western Vault -->
+                        <button class="sidebar-nav-link" id="nav-western" onclick="switchTab('western', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25);">
+                            <i class="fas fa-vault" style="color:var(--accent-orange); font-size:13px;"></i>
+                            <span>Western Vault™</span>
+                            <span style="font-size:9px; background:#f97316; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- Aviator Crash Settings -->
+                        <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px;">
+                            <i class="fas fa-plane-departure" style="color:#00f2fe; font-size:13px;"></i>
+                            <span>Aviator Crash</span>
+                            <span style="font-size:9px; background:#00f2fe; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- Upcoming Modules Slots -->
+                        <button class="sidebar-nav-link" onclick="showAdminToast('Fortune Gems 2 engine module will load here.', 'info')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.7;">
+                            <i class="fas fa-gem" style="color:#60a5fa; font-size:12px;"></i>
+                            <span>Fortune Gems 2</span>
+                        </button>
+                        <!-- Active Game 3: Boxing King -->
+                        <button class="sidebar-nav-link" id="nav-boxing-king" onclick="switchTab('boxing-king', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                            <i class="fas fa-crown" style="color:#ef4444; font-size:13px;"></i>
+                            <span>Boxing King™</span>
+                            <span style="font-size:9px; background:#ef4444; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- Active Game 4: Abyss of Glory / Temple of Fortune -->
+                        <a href="{{ route('admin.abyss.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-landmark" style="color:#fbbf24; font-size:13px;"></i>
+                            <span>Abyss of Glory™</span>
+                            <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game 5: Heads or Tails (Mermaid / Octopus Gold Coin) -->
+                        <a href="{{ route('admin.headstails.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-coins" style="color:#eab308; font-size:13px;"></i>
+                            <span>Heads or Tails™</span>
+                            <span style="font-size:9px; background:#eab308; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+                        <button class="sidebar-nav-link" onclick="showAdminToast('BonBon Bonanza engine module will load here.', 'info')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.7;">
+                            <i class="fas fa-candy-cane" style="color:#e879f9; font-size:12px;"></i>
+                            <span>BonBon Bonanza</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="nav-section-label">Shortcuts & Control</div>
                 <a href="{{ route('play') }}" class="sidebar-nav-link" target="_blank">
-                    <i class="fas fa-gamepad"></i> View Game
+                    <i class="fas fa-gamepad" style="color:var(--accent-cyan);"></i>
+                    <span>Launch Game</span>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size:11px; margin-left:auto; opacity:0.5;"></i>
                 </a>
                 <a href="{{ route('home') }}" class="sidebar-nav-link" target="_blank">
-                    <i class="fas fa-globe"></i> View Site
+                    <i class="fas fa-globe" style="color:var(--accent-indigo);"></i>
+                    <span>View Site</span>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size:11px; margin-left:auto; opacity:0.5;"></i>
                 </a>
 
                 <!-- ⚡ FORCE CRASH BUTTON -->
-                <div style="margin-top:16px; padding: 0 4px;">
+                <div style="margin-top:10px;">
                     <button
                         id="sidebar-force-crash-btn"
                         onclick="adminForceCrash()"
@@ -898,11 +1459,11 @@
                             gap: 8px;
                             width: 100%;
                             padding: 11px 12px;
-                            border-radius: 10px;
-                            border: 1px solid rgba(239,68,68,0.4);
-                            background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(185,28,28,0.12));
-                            color: #f87171;
-                            font-family: 'Outfit', sans-serif;
+                            border-radius: var(--radius-md);
+                            border: 1px solid rgba(239, 68, 68, 0.45);
+                            background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(185, 28, 28, 0.15));
+                            color: #fca5a5;
+                            font-family: inherit;
                             font-size: 13px;
                             font-weight: 700;
                             cursor: pointer;
@@ -910,54 +1471,12 @@
                             transition: all 0.2s;
                             animation: crashPulse 2s infinite;
                         "
-                        onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.35),rgba(185,28,28,0.25))'; this.style.borderColor='rgba(239,68,68,0.7)'; this.style.color='#fca5a5';"
-                        onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.18),rgba(185,28,28,0.12))'; this.style.borderColor='rgba(239,68,68,0.4)'; this.style.color='#f87171';"
+                        onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.38),rgba(185,28,28,0.3))'; this.style.borderColor='rgba(239,68,68,0.8)';"
+                        onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.22),rgba(185,28,28,0.15))'; this.style.borderColor='rgba(239,68,68,0.45)';"
                     >
-                        <i class="fas fa-bolt"></i>
+                        <i class="fas fa-bolt" style="color:var(--accent-red);"></i>
                         <span>Force Crash Game</span>
                     </button>
-                </div>
-
-                <!-- 🎰 DEDICATED CASINO & SLOT GAMES MODULE (100+ GAMES ENGINE) -->
-                <div style="margin-top:16px; padding: 0 4px;">
-                    <div style="background: rgba(14, 28, 51, 0.7); border: 1.5px solid #1d3354; border-radius: 12px; padding: 10px; margin-bottom: 10px;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; cursor:pointer;" onclick="toggleGamesSubmenu()">
-                            <div style="font-size:11px; font-weight:800; color:#cbd5e1; text-transform:uppercase; letter-spacing:0.8px; display:flex; align-items:center; gap:6px;">
-                                <i class="fas fa-cubes" style="color:var(--accent-gold);"></i> Game Modules
-                            </div>
-                            <span style="background:rgba(245, 197, 66, 0.15); color:var(--accent-gold); font-size:10px; font-weight:800; padding:2px 7px; border-radius:10px; border:1px solid rgba(245,197,66,0.3);">100+ READY</span>
-                        </div>
-                        
-                        <div id="games-module-submenu" style="display:flex; flex-direction:column; gap:4px;">
-                            <!-- Active Game 1: Olympus Gold -->
-                            <button class="sidebar-nav-link" id="nav-olympus" onclick="switchTab('olympus', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 197, 66, 0.08); border: 1px solid rgba(245, 197, 66, 0.25);">
-                                <i class="fas fa-bolt" style="color:var(--accent-gold); font-size:12px;"></i>
-                                <span>Olympus Gold™</span>
-                                <span style="font-size:9px; background:#22c55e; color:#fff; padding:1px 5px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
-                            </button>
-
-                            <!-- Aviator Crash Settings -->
-                            <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px;">
-                                <i class="fas fa-plane-departure" style="color:#38ef7d; font-size:12px;"></i>
-                                <span>Aviator Crash</span>
-                                <span style="font-size:9px; background:#38ef7d; color:#000; padding:1px 5px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
-                            </button>
-
-                            <!-- Upcoming Modules Slots -->
-                            <button class="sidebar-nav-link" onclick="alert('Fortune Gems 2 engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
-                                <i class="fas fa-gem" style="color:#60a5fa; font-size:11px;"></i>
-                                <span>Fortune Gems 2</span>
-                            </button>
-                            <button class="sidebar-nav-link" onclick="alert('Boxing King engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
-                                <i class="fas fa-crown" style="color:#f43f5e; font-size:11px;"></i>
-                                <span>Boxing King</span>
-                            </button>
-                            <button class="sidebar-nav-link" onclick="alert('BonBon Bonanza engine module will load here.')" style="padding: 7px 10px; font-size: 12px; border-radius: 8px; opacity:0.65;">
-                                <i class="fas fa-candy-cane" style="color:#e879f9; font-size:11px;"></i>
-                                <span>BonBon Bonanza</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </nav>
 
@@ -968,13 +1487,13 @@
                 </div>
                 <div class="admin-info">
                     <div class="admin-info-name">{{ auth()->user()->name }}</div>
-                    <div class="admin-info-role">Super Admin</div>
+                    <div class="admin-info-role">Super Administrator</div>
                 </div>
                 <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
                     @csrf
                 </form>
-                <button class="sidebar-logout-btn" onclick="document.getElementById('admin-logout-form').submit()" title="Logout">
-                    <i class="fas fa-arrow-right-from-bracket"></i>
+                <button class="sidebar-logout-btn" onclick="document.getElementById('admin-logout-form').submit()" title="Logout Admin Session">
+                    <i class="fas fa-power-off"></i>
                 </button>
             </div>
         </aside>
@@ -984,16 +1503,38 @@
 
             <!-- Top bar -->
             <div class="admin-topbar">
-                <div class="topbar-title" id="topbar-page-title">
-                    Overview <span>/ Admin Dashboard</span>
-                </div>
-                <div class="topbar-actions">
-                    <button id="admin-theme-toggle" onclick="toggleAdminTheme()" class="sidebar-nav-link" style="padding: 6px 12px; margin-bottom:0; display:inline-flex; align-items:center; gap:6px; cursor:pointer; width:auto; border:1px solid var(--border-subtle); border-radius:8px; background:rgba(255,255,255,0.03); color:var(--text-primary); font-size:12px; font-weight:600;">
-                        <i class="fas fa-sun" id="admin-theme-icon"></i> <span id="admin-theme-text">Light Mode</span>
+                <div class="topbar-left">
+                    <button class="mobile-toggle-btn" id="mobile-sidebar-toggle" onclick="toggleMobileSidebar(true)" title="Open Menu">
+                        <i class="fas fa-bars"></i>
                     </button>
+                    <div class="topbar-title" id="topbar-page-title">
+                        Overview <span>/ Admin Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- Live Digital Clock -->
+                    <div class="topbar-clock-widget" id="topbar-clock-widget">
+                        <i class="fas fa-clock"></i>
+                        <span id="live-topbar-clock">--:--:--</span>
+                    </div>
+
+                    <!-- Quick Site Shortcuts -->
+                    <a href="{{ route('play') }}" class="topbar-shortcut-link" target="_blank" title="Play Game">
+                        <i class="fas fa-gamepad" style="color:var(--accent-cyan);"></i>
+                        <span>Play</span>
+                    </a>
+
+                    <!-- Theme Toggle -->
+                    <button id="admin-theme-toggle" onclick="toggleAdminTheme()" class="theme-toggle-btn" title="Toggle Light / Dark theme">
+                        <i class="fas fa-sun" id="admin-theme-icon"></i> 
+                        <span id="admin-theme-text">Light Mode</span>
+                    </button>
+
+                    <!-- Status Badge -->
                     <div class="topbar-badge">
                         <div class="status-dot"></div>
-                        System Online
+                        <span>Live • 99.9%</span>
                     </div>
                 </div>
             </div>
@@ -1001,6 +1542,11 @@
             <!-- Scrollable content area -->
             <div class="admin-content">
 
+                @hasSection('module_content')
+                    <div style="padding: 10px 0;">
+                        @yield('module_content')
+                    </div>
+                @else
                 <!-- ========== TAB: OVERVIEW ========== -->
                 <div class="tab-pane active" id="tab-overview">
                     <div class="page-header">
@@ -1012,13 +1558,13 @@
                     <div class="stats-grid">
                         <div class="stat-card blue">
                             <div class="stat-card-icon"><i class="fas fa-users"></i></div>
-                            <div class="stat-card-val" id="stat-total-users">{{ $totalUsers }}</div>
+                            <div class="stat-card-val" id="stat-total-users">{{ $totalUsers ?? 0 }}</div>
                             <div class="stat-card-label">Total Users</div>
                             <span class="stat-card-change change-up">Active</span>
                         </div>
                         <div class="stat-card green">
                             <div class="stat-card-icon"><i class="fas fa-wallet"></i></div>
-                            <div class="stat-card-val" id="stat-total-balance">{{ number_format($totalDeposits, 0, '.', ',') }}</div>
+                            <div class="stat-card-val" id="stat-total-balance">{{ number_format($totalDeposits ?? 0, 0, '.', ',') }}</div>
                             <div class="stat-card-label">Total Wallet Balance</div>
                             <span class="stat-card-change change-up">BDT</span>
                         </div>
@@ -1031,6 +1577,130 @@
                             <div class="stat-card-icon"><i class="fas fa-earth-asia"></i></div>
                             <div class="stat-card-val" id="stat-countries">—</div>
                             <div class="stat-card-label">Active Countries</div>
+                        </div>
+                    </div>
+
+                    <!-- =========================================================
+                         MULTI-GAME REAL PLAYERS & PROFIT BREAKDOWN MATRIX
+                         ========================================================= -->
+                    <div class="panel" style="margin-bottom: 26px; border: 1.5px solid rgba(99, 102, 241, 0.25); background: linear-gradient(180deg, rgba(13, 20, 40, 0.9), rgba(10, 16, 32, 0.95));">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                            <div class="panel-title" style="font-size:16px;">
+                                <i class="fas fa-cubes" style="color:var(--accent-gold);"></i> 
+                                <span>Multi-Game Performance Matrix & Live Player Accounting</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:11px; background:rgba(16, 185, 129, 0.15); color:#34d399; border:1px solid rgba(16, 185, 129, 0.3); padding:4px 10px; border-radius:20px; font-weight:700;">
+                                    <i class="fas fa-circle" style="font-size:7px; margin-right:4px;"></i> Real-Time Accounting
+                                </span>
+                                <button type="button" onclick="refreshGameMatrix()" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-subtle); color:var(--text-secondary); border-radius:8px; padding:5px 12px; font-size:12px; cursor:pointer; font-weight:700; transition:all 0.2s;" title="Refresh matrix">
+                                    <i class="fas fa-sync-alt" id="matrix-refresh-icon"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="admin-table" style="min-width: 820px;">
+                                <thead>
+                                    <tr>
+                                        <th>GAME & ENGINE</th>
+                                        <th>CATEGORY</th>
+                                        <th style="text-align:center;">ACTIVE USERS</th>
+                                        <th>TOTAL REAL STAKES</th>
+                                        <th>TOTAL PAID OUT</th>
+                                        <th>HOUSE PROFIT</th>
+                                        <th style="text-align:center;">RTP %</th>
+                                        <th style="text-align:center;">ENGINE STATUS</th>
+                                        <th style="text-align:right;">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="game-matrix-tbody">
+                                    @if(isset($gameMatrix) && count($gameMatrix) > 0)
+                                        @foreach($gameMatrix as $game)
+                                        <tr>
+                                            <td>
+                                                <div style="display:flex; align-items:center; gap:10px;">
+                                                    <div style="width:34px; height:34px; border-radius:8px; background:{{ $game['theme'] }}22; border:1px solid {{ $game['theme'] }}55; display:flex; align-items:center; justify-content:center; color:{{ $game['theme'] }}; font-size:14px; flex-shrink:0;">
+                                                        <i class="{{ $game['icon'] }}"></i>
+                                                    </div>
+                                                    <div>
+                                                        <strong style="color:var(--text-primary); font-size:13.5px;">{{ $game['name'] }}</strong>
+                                                        <div style="font-size:10.5px; color:var(--text-muted); font-family:'Roboto Mono',monospace;">ID: {{ $game['id'] }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span style="font-size:11.5px; color:var(--text-secondary);">{{ $game['category'] }}</span></td>
+                                            <td style="text-align:center;">
+                                                <span style="display:inline-flex; align-items:center; gap:4px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:var(--accent-cyan); background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.25); padding:2px 8px; border-radius:12px;">
+                                                    <i class="fas fa-user" style="font-size:10px;"></i> {{ $game['active_players'] }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <strong style="font-family:'JetBrains Mono',monospace; color:var(--text-primary); font-size:13px;">৳ {{ number_format($game['total_turnover'], 2) }}</strong>
+                                            </td>
+                                            <td>
+                                                <span style="font-family:'JetBrains Mono',monospace; color:#38ef7d; font-size:13px; font-weight:700;">৳ {{ number_format($game['total_payout'], 2) }}</span>
+                                            </td>
+                                            <td>
+                                                @php $profit = $game['admin_profit']; @endphp
+                                                <span style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:{{ $profit >= 0 ? '#10b981' : '#ef4444' }}; background:{{ $profit >= 0 ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)' }}; padding:3px 8px; border-radius:6px; border:1px solid {{ $profit >= 0 ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)' }};">
+                                                    {{ $profit >= 0 ? '+' : '' }}৳ {{ number_format($profit, 2) }}
+                                                </span>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span style="font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--accent-gold);">
+                                                    {{ number_format($game['rtp'], 2) }}%
+                                                </span>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                @php $health = $game['health_status'] ?? 'healthy'; @endphp
+                                                @if($health === 'healthy')
+                                                    <span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);">
+                                                        <i class="fas fa-shield-check"></i> HEALTHY
+                                                    </span>
+                                                @elseif($health === 'balanced')
+                                                    <span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(0,242,254,0.15); color:#00f2fe; border:1px solid rgba(0,242,254,0.3);">
+                                                        <i class="fas fa-scale-balanced"></i> BALANCED
+                                                    </span>
+                                                @else
+                                                    <span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);">
+                                                        <i class="fas fa-triangle-exclamation"></i> CRITICAL
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <a href="{{ $game['route'] }}" target="_blank" class="action-btn" title="Launch Game" style="text-decoration:none; margin-right:4px;">
+                                                    <i class="fas fa-external-link-alt" style="font-size:11px;"></i>
+                                                </a>
+                                                @if($game['id'] === 'boxing-king')
+                                                    <button onclick="switchTab('boxing-king', document.getElementById('nav-boxing-king'))" class="action-btn edit" title="Manage Boxing King">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                @elseif($game['id'] === 'western-vault')
+                                                    <button onclick="switchTab('western', document.getElementById('nav-western'))" class="action-btn edit" title="Manage Western Vault">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                @elseif($game['id'] === 'olympus')
+                                                    <button onclick="switchTab('olympus', document.getElementById('nav-olympus'))" class="action-btn edit" title="Manage Olympus">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                @elseif($game['id'] === 'aviator')
+                                                    <button onclick="switchTab('game', document.getElementById('nav-game'))" class="action-btn edit" title="Manage Aviator">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="9" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                                No game engine statistics found.
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -1569,59 +2239,69 @@
                 </div>
 
                 <!-- Support Chat Tab Panel -->
+                <!-- Support Chat Tab Panel -->
                 <div class="tab-pane" id="tab-support">
                     <div class="page-header">
-                        <h2>Support Chat Center</h2>
-                        <p>Chat with active players and help them resolve their queries in real-time.</p>
+                        <div class="page-header-title-group">
+                            <h2>Support Chat Center</h2>
+                            <p>Chat with active players and help them resolve their queries in real-time.</p>
+                        </div>
                     </div>
 
-                    <div style="display: flex; gap: 20px; height: calc(100vh - 220px); min-height: 520px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; overflow: hidden;">
+                    <div class="chat-container-layout" style="display: flex; gap: 0; height: calc(100vh - 210px); min-height: 520px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--card-shadow);">
                         
                         <!-- Left Panel: Chat List -->
-                        <div style="width: 320px; min-width: 320px; border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.15);">
-                            <div style="padding: 16px; border-bottom: 1px solid var(--border-subtle); font-weight: 700; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
-                                <span>Conversations</span>
-                                <button onclick="loadSupportChats()" style="background: none; border: none; color: var(--accent-blue); cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;" title="Refresh conversations"><i class="fas fa-rotate"></i> Refresh</button>
+                        <div class="chat-sidebar-pane" id="admin-chat-sidebar-pane" style="width: 320px; min-width: 320px; border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.15);">
+                            <div style="padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); font-weight: 800; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; font-family: 'Space Grotesk', sans-serif;">
+                                <span>Active Conversations</span>
+                                <button onclick="loadSupportChats()" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 4px 10px; color: var(--accent-cyan); cursor: pointer; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" title="Refresh conversations"><i class="fas fa-rotate"></i> Refresh</button>
                             </div>
-                            <div id="admin-chat-users-list" style="flex: 1; overflow-y: auto; padding: 10px 0;">
-                                <div style="padding: 20px; text-align: center; color: var(--text-muted);">
-                                    <i class="fas fa-comments" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
-                                    No active chats
+                            <div id="admin-chat-users-list" style="flex: 1; overflow-y: auto; padding: 6px 0;">
+                                <div style="padding: 30px 20px; text-align: center; color: var(--text-muted);">
+                                    <i class="fas fa-comments" style="font-size: 28px; margin-bottom: 10px; display: block; opacity: 0.4;"></i>
+                                    No active conversations
                                 </div>
                             </div>
                         </div>
 
                         <!-- Right Panel: Active Message Window -->
-                        <div id="admin-chat-window" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted); background: rgba(0, 0, 0, 0.05); position: relative;">
-                            <div id="admin-chat-window-empty" style="padding: 40px;">
-                                <i class="fas fa-message" style="font-size: 54px; margin-bottom: 18px; color: var(--text-muted); opacity: 0.25;"></i>
-                                <h3 style="color: var(--text-primary); font-weight: 700; font-size: 16px;">Select a Conversation</h3>
-                                <p style="font-size: 13px; margin-top: 6px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.4;">Choose a user from the list on the left to start chatting with them in real-time.</p>
+                        <div class="chat-window-pane" id="admin-chat-window" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted); background: rgba(0, 0, 0, 0.04); position: relative;">
+                            <div id="admin-chat-window-empty" style="padding: 40px 20px;">
+                                <div style="width: 70px; height: 70px; border-radius: 20px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; color: var(--accent-indigo); font-size: 28px;">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <h3 style="color: var(--text-primary); font-weight: 800; font-size: 17px; font-family: 'Space Grotesk', sans-serif;">Select a Conversation</h3>
+                                <p style="font-size: 13.5px; margin-top: 6px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.5; color: var(--text-secondary);">Choose a user from the list on the left to start chatting with them in real-time.</p>
                             </div>
 
                             <!-- Chat Box Wrapper (Hidden by default until user selected) -->
                             <div id="admin-chat-window-active" style="display: none; width: 100%; height: 100%; flex-direction: column; text-align: left;">
                                 <!-- Active User Profile Header -->
-                                <div style="padding: 14px 20px; border-bottom: 1px solid var(--border-subtle); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
-                                    <div>
-                                        <h4 id="active-chat-user-name" style="color: var(--text-primary); font-size: 14.5px; font-weight: 700;">Customer Name</h4>
-                                        <p id="active-chat-user-meta" style="color: var(--text-secondary); font-size: 11px; margin-top: 2px;">email@example.com / 01700000000</p>
+                                <div style="padding: 14px 20px; border-bottom: 1px solid var(--border-subtle); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                                        <button type="button" class="mobile-chat-back-btn" onclick="toggleAdminMobileChat(false)" style="display:none; background:rgba(255,255,255,0.06); border:1px solid var(--border-subtle); color:#fff; border-radius:8px; width:34px; height:34px; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                                            <i class="fas fa-arrow-left"></i>
+                                        </button>
+                                        <div style="min-width: 0;">
+                                            <h4 id="active-chat-user-name" style="color: var(--text-primary); font-size: 15px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Customer Name</h4>
+                                            <p id="active-chat-user-meta" style="color: var(--text-secondary); font-size: 11.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">email@example.com / 01700000000</p>
+                                        </div>
                                     </div>
-                                    <div style="font-size: 11px; background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.18); color: var(--accent-blue); padding: 4px 12px; border-radius: 20px; font-weight: 600;">
-                                        Active Conversation
+                                    <div style="font-size: 11px; background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.28); color: var(--accent-cyan); padding: 5px 12px; border-radius: 20px; font-weight: 700; flex-shrink: 0;">
+                                        Active Chat
                                     </div>
                                 </div>
 
                                 <!-- Messages Box Scroll Area -->
-                                <div id="admin-chat-messages-box" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.08);">
+                                <div id="admin-chat-messages-box" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: rgba(0,0,0,0.08);">
                                     <!-- Messages rendered here -->
                                 </div>
 
                                 <!-- Textarea Input Send Box -->
-                                <form id="admin-chat-send-form" onsubmit="submitAdminChatMessage(event)" style="padding: 16px; border-top: 1px solid var(--border-subtle); background: var(--bg-card); display: flex; gap: 12px; align-items: center; flex-shrink: 0; margin-bottom: 0;">
+                                <form id="admin-chat-send-form" onsubmit="submitAdminChatMessage(event)" style="padding: 16px 20px; border-top: 1px solid var(--border-subtle); background: var(--bg-card); display: flex; gap: 12px; align-items: center; flex-shrink: 0; margin-bottom: 0;">
                                     <input type="hidden" id="active-chat-user-id">
-                                    <input type="text" id="admin-chat-input" placeholder="Type your reply here..." autocomplete="off" required style="flex: 1; padding: 12px 16px; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: 10px; color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 13.5px; outline: none; transition: border-color 0.2s;">
-                                    <button type="submit" style="background: linear-gradient(135deg, #2563eb, #4f8ef7); border: none; border-radius: 10px; color: #fff; padding: 12px 22px; font-weight: 700; font-size: 13px; font-family: 'Outfit', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79,142,247,0.25);">
+                                    <input type="text" id="admin-chat-input" placeholder="Type your reply here..." autocomplete="off" required style="flex: 1; padding: 12px 16px; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-primary); font-family: inherit; font-size: 13.5px; outline: none; transition: border-color 0.2s;">
+                                    <button type="submit" class="btn-primary" style="width: auto; padding: 12px 22px; flex-shrink: 0;">
                                         <span>Send</span> <i class="fas fa-paper-plane"></i>
                                     </button>
                                 </form>
@@ -1848,6 +2528,467 @@
 
                 </div>
 
+                <!-- ==================== TAB: WESTERN VAULT CASINO MODULE ==================== -->
+                <div class="tab-pane" id="tab-western">
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+                        <div>
+                            <h2>Western Vault™ Management & Engine Controls</h2>
+                            <p>Manage House Profit Algorithm, Fixed Win %, Bot Injection Simulation, Real Bets, Sound FX, and Real-time Audits.</p>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <a href="{{ route('western') }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:8px 16px; font-size:12px; background:linear-gradient(135deg, #f97316, #ea580c); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-arrow-up-right-from-square"></i> Open Game Window
+                            </a>
+                            <button onclick="loadWesternSettings(); loadWesternRounds(); loadWesternLedger();" class="btn-primary" style="width:auto; padding:8px 14px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-rotate"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Row 1: Analytics Counters -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+                        <div class="stat-card blue">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Total Bets Collected</span>
+                                <div class="stat-card-icon"><i class="fas fa-coins"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="wv-stat-collected">৳ 0.00</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Side A + Side B Real Player Stakes</div>
+                        </div>
+
+                        <div class="stat-card orange">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Total Payouts Distributed</span>
+                                <div class="stat-card-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="wv-stat-payout">৳ 0.00</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Real Cash Wins Paid to Users</div>
+                        </div>
+
+                        <div class="stat-card green">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">House Net Profit</span>
+                                <div class="stat-card-icon"><i class="fas fa-vault"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="wv-stat-profit">৳ 0.00</div>
+                            <div style="font-size:11px; color:#34d399; margin-top:4px;"><i class="fas fa-arrow-trend-up"></i> Protected System Revenue</div>
+                        </div>
+
+                        <div class="stat-card purple">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Active Bot Engine</span>
+                                <div class="stat-card-icon"><i class="fas fa-robot"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="wv-stat-bot-status" style="font-size:20px; text-transform:uppercase;">ACTIVE</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;" id="wv-stat-bot-desc">Triggers when players &lt; 10</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Engine Config & Sounds -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:24px;">
+                        
+                        <!-- Panel: Engine & Win Controls -->
+                        <div class="panel" style="margin-bottom:0;">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-sliders" style="color:var(--accent-orange);"></i> Game Algorithm & Win Controller</div>
+                                <span class="badge" style="padding:4px 10px; border-radius:8px; font-size:11px; font-weight:700; background:rgba(249,115,22,0.15); color:var(--accent-orange); border:1px solid rgba(249,115,22,0.3);">1xBet Core</span>
+                            </div>
+                            <div class="panel-body">
+                                <form id="wv-settings-form" onsubmit="saveWesternSettings(event)">
+                                    <div class="form-group" style="margin-bottom:14px;">
+                                        <label class="form-label" style="font-weight:700;">Algorithm Mode (কন্ট্রোল অ্যালগরিদম)</label>
+                                        <select class="form-input" id="wv-control-mode" required style="cursor:pointer; width:100%;">
+                                            <option value="house_profit">House Profit Mode (কম টাকার সাইড জিতবে — Admin Safe)</option>
+                                            <option value="fixed_percentage">Fixed Win Rate % (কাস্টম উইন রেট অনুযায়ী জিতবে)</option>
+                                            <option value="random">100% Random Mode (ন্যাচারাল র‍্যান্ডম আরটিপি)</option>
+                                        </select>
+                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;">In House Profit mode, the server calculates real stakes on Side A vs Side B and always picks the side with less liability.</small>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                        <div class="form-group">
+                                            <label class="form-label">Player Win Chance (%)</label>
+                                            <input type="number" class="form-input" id="wv-win-chance" min="1" max="100" step="1" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">House Edge (%)</label>
+                                            <input type="number" class="form-input" id="wv-house-edge" min="0" max="50" step="0.5" required>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                        <div class="form-group">
+                                            <label class="form-label">Min Bet (৳)</label>
+                                            <input type="number" class="form-input" id="wv-min-bet" min="1" step="1" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Max Bet (৳)</label>
+                                            <input type="number" class="form-input" id="wv-max-bet" min="10" step="10" required>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                        <div class="form-group">
+                                            <label class="form-label">Round Duration (Seconds)</label>
+                                            <input type="number" class="form-input" id="wv-round-duration" min="5" max="120" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Demo Starting Balance (৳)</label>
+                                            <input type="number" class="form-input" id="wv-demo-balance" min="100" step="100" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bot Simulation Configuration -->
+                                    <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:14px; margin-top:14px;">
+                                        <div style="font-size:12px; font-weight:800; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                                            <i class="fas fa-robot"></i> Dynamic Bot Simulation
+                                        </div>
+                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Bot Status</label>
+                                                <select class="form-input" id="wv-bot-status" required>
+                                                    <option value="1">Enabled (অটোমেটিক বট সক্রিয়)</option>
+                                                    <option value="0">Disabled (বট বন্ধ)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Trigger Real Players Limit</label>
+                                                <input type="number" class="form-input" id="wv-bot-trigger-count" min="1" max="100" required>
+                                            </div>
+                                        </div>
+                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                            <div class="form-group">
+                                                <label class="form-label">Bot Min Bet (৳)</label>
+                                                <input type="number" class="form-input" id="wv-bot-min-bet" min="10" step="10" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Bot Max Bet (৳)</label>
+                                                <input type="number" class="form-input" id="wv-bot-max-bet" min="50" step="50" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top:18px; display:flex; justify-content:flex-end;">
+                                        <button type="submit" class="btn-primary" id="btn-save-wv-config" style="width:auto; padding:11px 24px; display:inline-flex; align-items:center; gap:8px;">
+                                            <i class="fas fa-floppy-disk"></i> Save Western Vault Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Sound & Audio Customization -->
+                        <div class="panel" style="margin-bottom:0;">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-music" style="color:var(--accent-indigo);"></i> Sound Effects & Audio Media</div>
+                                <span class="badge" style="padding:4px 10px; border-radius:8px; font-size:11px; font-weight:700; background:rgba(99,102,241,0.15); color:var(--accent-indigo);">MP3 / WAV</span>
+                            </div>
+                            <div class="panel-body">
+                                <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:18px;">
+                                    Upload custom Western Vault soundtracks. When uploaded, sounds will automatically play during game ambiance, reel spinning, and big wins.
+                                </p>
+
+                                <!-- BG Music -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:14px; margin-bottom:14px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-volume-high" style="color:var(--accent-cyan); margin-right:6px;"></i> Background Music (Looping)</label>
+                                        <span id="wv-audio-bg-status" style="font-size:11px; color:var(--text-muted);">Default Synth</span>
+                                    </div>
+                                    <form onsubmit="uploadWesternAudio(event, 'bg_music')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+
+                                <!-- Spin Sound -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:14px; margin-bottom:14px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-dharmachakra" style="color:var(--accent-gold); margin-right:6px;"></i> Reel Spinning FX</label>
+                                        <span id="wv-audio-spin-status" style="font-size:11px; color:var(--text-muted);">Default Ticking</span>
+                                    </div>
+                                    <form onsubmit="uploadWesternAudio(event, 'spin_sound')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+
+                                <!-- Win Sound -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:14px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-trophy" style="color:var(--accent-green); margin-right:6px;"></i> Win Celebration FX</label>
+                                        <span id="wv-audio-win-status" style="font-size:11px; color:var(--text-muted);">Default Chime</span>
+                                    </div>
+                                    <form onsubmit="uploadWesternAudio(event, 'win_sound')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Row 3: Live Round History & Audit -->
+                    <div class="panel" style="margin-bottom:24px;">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-clock-rotate-left" style="color:var(--accent-gold);"></i> Recent Western Vault Rounds Audit</div>
+                            <button onclick="loadWesternRounds()" class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fas fa-rotate"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ROUND ID</th>
+                                        <th>STATUS</th>
+                                        <th>REAL BETS (A / B)</th>
+                                        <th>BOT BETS (A / B)</th>
+                                        <th>WINNER</th>
+                                        <th>TOTAL PAYOUT</th>
+                                        <th>ADMIN PROFIT</th>
+                                        <th>TIME</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wv-rounds-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading rounds...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Financial Transactions Ledger -->
+                    <div class="panel">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-receipt" style="color:var(--accent-teal);"></i> Western Vault Balance & Ledger Logs</div>
+                            <button onclick="loadWesternLedger()" class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fas fa-rotate"></i> Refresh Ledger
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>USER</th>
+                                        <th>TYPE</th>
+                                        <th>AMOUNT</th>
+                                        <th>OPENING BAL</th>
+                                        <th>CLOSING BAL</th>
+                                        <th>DESCRIPTION</th>
+                                        <th>DATE / TIME</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wv-ledger-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="7"><i class="fas fa-spinner fa-spin"></i> Loading ledger records...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ========== TAB: BOXING KING (RING CHAMPION) ========== -->
+                <div class="tab-pane" id="tab-boxing-king">
+                    <div class="page-header">
+                        <div class="page-header-title-group">
+                            <h2>Boxing King (Ring Champion)™ Control Module</h2>
+                            <p>Manage 5x3 reel slot math algorithms, House Profit protections, Fire-Burst animations, audio FX, and user spin audits.</p>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <a href="{{ route('boxing-king') }}" target="_blank" class="btn-primary" style="width:auto; padding:8px 16px; font-size:12.5px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-gamepad"></i> Launch Game
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Total Real Bets</span>
+                                <div class="stat-card-icon"><i class="fas fa-coins"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="bk-stat-collected">৳ 0.00</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Player Real Stakes Volume</div>
+                        </div>
+
+                        <div class="stat-card orange">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Total Payouts Distributed</span>
+                                <div class="stat-card-icon"><i class="fas fa-trophy"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="bk-stat-payout">৳ 0.00</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Real Cash Wins Paid to Users</div>
+                        </div>
+
+                        <div class="stat-card green">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">House Net Profit</span>
+                                <div class="stat-card-icon"><i class="fas fa-sack-dollar"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="bk-stat-profit">৳ 0.00</div>
+                            <div style="font-size:11px; color:#34d399; margin-top:4px;"><i class="fas fa-arrow-trend-up"></i> Protected System Revenue</div>
+                        </div>
+
+                        <div class="stat-card purple">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span class="stat-card-label">Algorithm Status</span>
+                                <div class="stat-card-icon"><i class="fas fa-fire"></i></div>
+                            </div>
+                            <div class="stat-card-val" id="bk-stat-mode" style="font-size:18px; text-transform:uppercase;">HOUSE PROFIT</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;" id="bk-stat-winrate">30% Target Win Rate</div>
+                        </div>
+                    </div>
+
+                    <!-- Config & Media Row -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:24px;">
+                        
+                        <!-- Panel: Engine & Win Controls -->
+                        <div class="panel" style="margin-bottom:0;">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-sliders" style="color:var(--accent-gold);"></i> Game Algorithm & Win/Loss Control</div>
+                                <span class="badge" style="padding:4px 10px; border-radius:8px; font-size:11px; font-weight:700; background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3);">RNG Safe</span>
+                            </div>
+                            <div class="panel-body">
+                                <form id="bk-settings-form" onsubmit="saveBoxingSettings(event)">
+                                    <div class="form-group" style="margin-bottom:14px;">
+                                        <label class="form-label" style="font-weight:700;">Algorithm Mode (অ্যালগরিদম মোড)</label>
+                                        <select class="form-input" id="bk-control-mode" required style="cursor:pointer; width:100%;">
+                                            <option value="house_profit">House Profit Mode (এডমিন ১০০% সেফ ও লাভজনক)</option>
+                                            <option value="fixed_percentage">Fixed Percentage (নিচের টার্গেট উইন রেট অনুযায়ী)</option>
+                                            <option value="random">100% Random Mode (ন্যাচারাল আরটিপি)</option>
+                                        </select>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                        <div class="form-group">
+                                            <label class="form-label">User Win Chance Target (%)</label>
+                                            <input type="number" class="form-input" id="bk-win-chance" min="1" max="99" step="1" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Demo Spin Limit (ফ্রি ট্রায়াল লিমিট)</label>
+                                            <input type="number" class="form-input" id="bk-demo-limit" min="1" max="50" step="1" required>
+                                        </div>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                                        <div class="form-group">
+                                            <label class="form-label">Min Bet (৳)</label>
+                                            <input type="number" class="form-input" id="bk-min-bet" min="0.5" step="0.5" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Max Bet (৳)</label>
+                                            <input type="number" class="form-input" id="bk-max-bet" min="10" step="10" required>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top:18px; display:flex; justify-content:flex-end;">
+                                        <button type="submit" class="btn-primary" id="btn-save-bk-config" style="width:auto; padding:11px 24px; display:inline-flex; align-items:center; gap:8px;">
+                                            <i class="fas fa-floppy-disk"></i> Save Boxing King Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Sound & Audio Customization -->
+                        <div class="panel" style="margin-bottom:0;">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-music" style="color:var(--accent-cyan);"></i> Sound Effects & Audio FX</div>
+                                <span class="badge" style="padding:4px 10px; border-radius:8px; font-size:11px; font-weight:700; background:rgba(99,102,241,0.15); color:var(--accent-indigo);">MP3 / WAV</span>
+                            </div>
+                            <div class="panel-body">
+                                <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:18px;">
+                                    Upload custom sound effects for Boxing King arena ambiance, reel spin, knockout wins, and Fire-Burst flame combo effects.
+                                </p>
+
+                                <!-- BG Music -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:12px; margin-bottom:12px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-volume-high" style="color:var(--accent-cyan); margin-right:6px;"></i> Background Arena Music</label>
+                                        <span id="bk-audio-bg-status" style="font-size:11px; color:var(--text-muted);">Default</span>
+                                    </div>
+                                    <form onsubmit="uploadBoxingAudio(event, 'bg_music')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+
+                                <!-- Spin Sound -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:12px; margin-bottom:12px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-dharmachakra" style="color:var(--accent-gold); margin-right:6px;"></i> Reel Spinning FX</label>
+                                        <span id="bk-audio-spin-status" style="font-size:11px; color:var(--text-muted);">Default</span>
+                                    </div>
+                                    <form onsubmit="uploadBoxingAudio(event, 'spin_sound')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+
+                                <!-- Win Sound -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:12px; margin-bottom:12px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-trophy" style="color:var(--accent-green); margin-right:6px;"></i> Win / Knockout FX</label>
+                                        <span id="bk-audio-win-status" style="font-size:11px; color:var(--text-muted);">Default</span>
+                                    </div>
+                                    <form onsubmit="uploadBoxingAudio(event, 'win_sound')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+
+                                <!-- Fire Burn Sound -->
+                                <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:10px; padding:12px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                        <label style="font-size:12px; font-weight:700; color:var(--text-primary);"><i class="fas fa-fire" style="color:var(--accent-orange); margin-right:6px;"></i> Fire-Burst & Combo Blast FX</label>
+                                        <span id="bk-audio-fire-status" style="font-size:11px; color:var(--text-muted);">Default</span>
+                                    </div>
+                                    <form onsubmit="uploadBoxingAudio(event, 'fire_burn_sound')" style="display:flex; gap:8px;">
+                                        <input type="file" name="audio_file" accept="audio/*" class="form-input" style="flex:1; padding:6px 10px; font-size:12px;" required>
+                                        <button type="submit" class="btn-primary" style="width:auto; padding:6px 14px; font-size:12px;">Upload</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Row 3: Live Spins Audit History -->
+                    <div class="panel">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="panel-title"><i class="fas fa-clock-rotate-left" style="color:var(--accent-indigo);"></i> Recent Spins & Player Audit Ledger</div>
+                            <button onclick="loadBoxingSpins()" class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:5px;">
+                                <i class="fas fa-rotate"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>SPIN ID</th>
+                                        <th>PLAYER</th>
+                                        <th>MODE</th>
+                                        <th>BET AMOUNT</th>
+                                        <th>WIN AMOUNT</th>
+                                        <th>ADMIN PROFIT</th>
+                                        <th>OUTCOME</th>
+                                        <th>TIME</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bk-spins-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading spins...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -2185,12 +3326,42 @@
             .catch(err => console.error('[MONITOR] Sync failed:', err));
         }
 
+        // Mobile Sidebar Drawer Controller
+        function toggleMobileSidebar(show) {
+            const sidebar = document.getElementById('admin-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar || !backdrop) return;
+            const isOpen = (typeof show === 'boolean') ? show : !sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.add('open');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Live Digital Clock in Topbar
+        function updateLiveClock() {
+            const clockEl = document.getElementById('live-topbar-clock');
+            if (!clockEl) return;
+            const now = new Date();
+            clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
         // Tab switcher
         function switchTab(tabId, btn) {
+            // Automatically close mobile sidebar when navigating on mobile
+            toggleMobileSidebar(false);
+
             document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
 
             const titles = {
                 overview: 'Overview <span>/ Admin Dashboard</span>',
@@ -2203,6 +3374,8 @@
                 settings: 'Platform Settings <span>/ Configuration</span>',
                 support: 'Support Live Chat <span>/ Customer Chats</span>',
                 olympus: 'Olympus Slot Game <span>/ Management & Engine Controls</span>',
+                western: 'Western Vault™ <span>/ Management & Engine Controls</span>',
+                'boxing-king': 'Boxing King™ <span>/ Management & Engine Controls</span>',
             };
             document.getElementById('topbar-page-title').innerHTML = titles[tabId] || tabId;
 
@@ -2214,6 +3387,19 @@
                 loadOlympusSettings();
                 loadOlympusRounds();
                 loadOlympusAuditLogs();
+            }
+
+            // Load western vault settings when western tab is opened
+            if (tabId === 'western') {
+                loadWesternSettings();
+                loadWesternRounds();
+                loadWesternLedger();
+            }
+
+            // Load boxing king settings when boxing-king tab is opened
+            if (tabId === 'boxing-king') {
+                loadBoxingSettings();
+                loadBoxingSpins();
             }
 
             // Load users table when tab is opened
@@ -4100,10 +5286,33 @@
             }).join('');
         }
 
+        function toggleAdminMobileChat(showChat) {
+            const sidebarPane = document.getElementById('admin-chat-sidebar-pane');
+            const windowPane = document.getElementById('admin-chat-window');
+            if (!sidebarPane || !windowPane) return;
+            
+            if (window.innerWidth <= 768) {
+                if (showChat) {
+                    sidebarPane.style.display = 'none';
+                    windowPane.style.display = 'flex';
+                } else {
+                    sidebarPane.style.display = 'flex';
+                    windowPane.style.display = 'none';
+                    activeChatUserId = null;
+                }
+            } else {
+                sidebarPane.style.display = 'flex';
+                windowPane.style.display = 'flex';
+            }
+        }
+
         function openSupportChat(userId) {
             activeChatUserId = userId;
             document.getElementById('active-chat-user-id').value = userId;
             
+            // Switch view on mobile
+            toggleAdminMobileChat(true);
+
             // Re-render chat list to highlight active item immediately
             loadSupportChats();
 
@@ -4479,6 +5688,534 @@
                 }
             })
             .catch(err => console.error('Failed to load Olympus audit logs:', err));
+        }
+
+        /* ==================== WESTERN VAULT FUNCTIONS ==================== */
+        let currentWesternSettings = null;
+
+        function loadWesternSettings() {
+            fetch('{{ route("admin.western.index") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.settings) {
+                    const s = data.settings;
+                    currentWesternSettings = s;
+
+                    document.getElementById('wv-control-mode').value = s.control_mode || 'house_profit';
+                    document.getElementById('wv-win-chance').value = s.win_chance_percentage || 35;
+                    document.getElementById('wv-house-edge').value = s.house_edge_percent || 5.00;
+                    document.getElementById('wv-min-bet').value = s.min_bet || 10;
+                    document.getElementById('wv-max-bet').value = s.max_bet || 50000;
+                    document.getElementById('wv-round-duration').value = s.round_duration || 25;
+                    document.getElementById('wv-demo-balance').value = s.demo_initial_balance || 10000;
+
+                    document.getElementById('wv-bot-status').value = s.bot_status ? '1' : '0';
+                    document.getElementById('wv-bot-trigger-count').value = s.bot_trigger_player_count || 10;
+                    document.getElementById('wv-bot-min-bet').value = s.bot_min_bet || 50;
+                    document.getElementById('wv-bot-max-bet').value = s.bot_max_bet || 2000;
+
+                    // Update stats
+                    document.getElementById('wv-stat-collected').textContent = '৳ ' + parseFloat(data.totalCollected || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('wv-stat-payout').textContent = '৳ ' + parseFloat(data.totalPaidOut || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('wv-stat-profit').textContent = '৳ ' + parseFloat(data.netProfit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('wv-stat-bot-status').textContent = s.bot_status ? 'ACTIVE' : 'DISABLED';
+                    document.getElementById('wv-stat-bot-status').style.color = s.bot_status ? '#34d399' : '#f87171';
+                    document.getElementById('wv-stat-bot-desc').textContent = 'Triggers when players < ' + s.bot_trigger_player_count;
+
+                    // Audio status
+                    if (s.bg_music) {
+                        document.getElementById('wv-audio-bg-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom File Uploaded</span>';
+                    }
+                    if (s.spin_sound) {
+                        document.getElementById('wv-audio-spin-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom File Uploaded</span>';
+                    }
+                    if (s.win_sound) {
+                        document.getElementById('wv-audio-win-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom File Uploaded</span>';
+                    }
+                }
+            })
+            .catch(err => console.error('Failed to load Western Vault settings:', err));
+        }
+
+        function saveWesternSettings(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-wv-config');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                control_mode: document.getElementById('wv-control-mode').value,
+                win_chance_percentage: parseInt(document.getElementById('wv-win-chance').value),
+                house_edge_percent: parseFloat(document.getElementById('wv-house-edge').value),
+                min_bet: parseFloat(document.getElementById('wv-min-bet').value),
+                max_bet: parseFloat(document.getElementById('wv-max-bet').value),
+                round_duration: parseInt(document.getElementById('wv-round-duration').value),
+                demo_initial_balance: parseFloat(document.getElementById('wv-demo-balance').value),
+                bot_status: document.getElementById('wv-bot-status').value === '1',
+                bot_trigger_player_count: parseInt(document.getElementById('wv-bot-trigger-count').value),
+                bot_min_bet: parseFloat(document.getElementById('wv-bot-min-bet').value),
+                bot_max_bet: parseFloat(document.getElementById('wv-bot-max-bet').value),
+            };
+
+            fetch('{{ route("admin.western.settings") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Western Vault Settings';
+
+                if (data.success) {
+                    showAdminToast('✅ Western Vault configuration updated successfully!', 'success');
+                    loadWesternSettings();
+                } else {
+                    showAdminToast('Error: ' + (data.message || 'Could not save settings.'), 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Western Vault Settings';
+                showAdminToast('Failed to save Western Vault settings.', 'error');
+            });
+        }
+
+        function uploadWesternAudio(e, audioType) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const fileInput = form.querySelector('input[type="file"]');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                showAdminToast('Please choose an audio file first.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('audio_type', audioType);
+            formData.append('audio_file', fileInput.files[0]);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('{{ route("admin.western.audio") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload';
+
+                if (data.success) {
+                    showAdminToast('✅ Audio file uploaded successfully!', 'success');
+                    loadWesternSettings();
+                    form.reset();
+                } else {
+                    showAdminToast('Audio upload failed: ' + (data.message || 'Error'), 'error');
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload';
+                showAdminToast('Upload failed due to network or server error.', 'error');
+            });
+        }
+
+        function loadWesternRounds() {
+            const tbody = document.getElementById('wv-rounds-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading rounds...</td></tr>';
+
+            fetch('{{ route("admin.western.index") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.recentRounds) {
+                    const rounds = data.recentRounds;
+                    if (rounds.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">No Western Vault rounds recorded yet.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = rounds.map(r => {
+                        const totalReal = parseFloat(r.real_bets_total_a || 0) + parseFloat(r.real_bets_total_b || 0);
+                        const totalBot = parseFloat(r.bot_bets_total_a || 0) + parseFloat(r.bot_bets_total_b || 0);
+                        const payout = parseFloat(r.total_payout || 0);
+                        const profit = parseFloat(r.admin_profit || 0);
+                        const isProfit = profit >= 0;
+
+                        return `
+                            <tr>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--accent-orange);">${r.round_id}</td>
+                                <td>
+                                    <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; text-transform:uppercase; background:${r.status === 'completed' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(249, 115, 22, 0.15)'}; color:${r.status === 'completed' ? '#34d399' : '#fb923c'};">
+                                        ${r.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#60a5fa;">A: ৳${parseFloat(r.real_bets_total_a || 0).toFixed(2)}</span> / 
+                                    <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#f43f5e;">B: ৳${parseFloat(r.real_bets_total_b || 0).toFixed(2)}</span>
+                                </td>
+                                <td>
+                                    <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text-muted);">A: ৳${parseFloat(r.bot_bets_total_a || 0).toFixed(2)}</span> / 
+                                    <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text-muted);">B: ৳${parseFloat(r.bot_bets_total_b || 0).toFixed(2)}</span>
+                                </td>
+                                <td>
+                                    ${r.winning_side ? `<span style="font-weight:800; font-size:11.5px; color:${r.winning_side === 'side_a' ? '#60a5fa' : '#f43f5e'}; text-transform:uppercase;">${r.winning_side.replace('_', ' ')}</span>` : '<span style="color:var(--text-muted);">-</span>'}
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:#fca5a5;">৳ ${payout.toFixed(2)}</td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:${isProfit ? '#34d399' : '#f87171'};">
+                                    ${isProfit ? '+' : ''}৳ ${profit.toFixed(2)}
+                                </td>
+                                <td style="font-size:11px; color:var(--text-muted);">
+                                    ${new Date(r.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => console.error('Failed to load Western rounds:', err));
+        }
+
+        function loadWesternLedger() {
+            const tbody = document.getElementById('wv-ledger-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fas fa-spinner fa-spin"></i> Loading ledger records...</td></tr>';
+
+            fetch('{{ route("admin.western.ledger") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.transactions && data.transactions.data) {
+                    const txs = data.transactions.data;
+                    if (txs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">No Western Vault transaction records found.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = txs.map(t => {
+                        const isWin = t.type === 'win_payout';
+                        const sign = isWin ? '+' : '-';
+                        const colorClass = isWin ? '#34d399' : '#fca5a5';
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="font-weight:700; color:#fff; font-size:12.5px;">${t.user ? t.user.name : 'User #' + t.user_id}</div>
+                                    <div style="font-size:10.5px; color:var(--text-muted);">${t.user ? t.user.email : ''}</div>
+                                </td>
+                                <td>
+                                    <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; text-transform:uppercase; background:${isWin ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color:${colorClass};">
+                                        ${t.type.replace('_', ' ')}
+                                    </span>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:${colorClass};">
+                                    ${sign}৳ ${parseFloat(t.amount).toFixed(2)}
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace; color:var(--text-secondary); font-size:12px;">৳ ${parseFloat(t.opening_balance).toFixed(2)}</td>
+                                <td style="font-family:'JetBrains Mono',monospace; color:#fff; font-weight:700; font-size:12px;">৳ ${parseFloat(t.closing_balance).toFixed(2)}</td>
+                                <td style="font-size:11.5px; color:var(--text-secondary); max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.description}</td>
+                                <td style="font-size:11px; color:var(--text-muted);">${new Date(t.created_at).toLocaleString()}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => console.error('Failed to load Western ledger:', err));
+        }
+
+        /* ==================== BOXING KING FUNCTIONS ==================== */
+        let currentBoxingSettings = null;
+
+        function loadBoxingSettings() {
+            fetch('{{ route("admin.boxing.index") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.settings) {
+                    const s = data.settings;
+                    currentBoxingSettings = s;
+
+                    document.getElementById('bk-control-mode').value = s.control_mode || 'house_profit';
+                    document.getElementById('bk-win-chance').value = s.win_chance_percentage || 30;
+                    document.getElementById('bk-demo-limit').value = s.demo_spin_limit || 3;
+                    document.getElementById('bk-min-bet').value = s.min_bet || 3;
+                    document.getElementById('bk-max-bet').value = s.max_bet || 10000;
+
+                    // Update stats
+                    document.getElementById('bk-stat-collected').textContent = '৳ ' + parseFloat(data.totalBets || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('bk-stat-payout').textContent = '৳ ' + parseFloat(data.totalPayout || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('bk-stat-profit').textContent = '৳ ' + parseFloat(data.adminProfit || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('bk-stat-mode').textContent = (s.control_mode || 'house_profit').replace('_', ' ').toUpperCase();
+                    document.getElementById('bk-stat-winrate').textContent = (s.win_chance_percentage || 30) + '% Target Win Rate';
+
+                    // Audio status
+                    if (s.bg_music) {
+                        document.getElementById('bk-audio-bg-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom Audio</span>';
+                    }
+                    if (s.spin_sound) {
+                        document.getElementById('bk-audio-spin-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom Audio</span>';
+                    }
+                    if (s.win_sound) {
+                        document.getElementById('bk-audio-win-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom Audio</span>';
+                    }
+                    if (s.fire_burn_sound) {
+                        document.getElementById('bk-audio-fire-status').innerHTML = '<span style="color:#34d399;"><i class="fas fa-check-circle"></i> Custom Audio</span>';
+                    }
+                }
+            })
+            .catch(err => console.error('Failed to load Boxing King settings:', err));
+        }
+
+        function saveBoxingSettings(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-bk-config');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const payload = {
+                control_mode: document.getElementById('bk-control-mode').value,
+                win_chance_percentage: parseInt(document.getElementById('bk-win-chance').value),
+                demo_spin_limit: parseInt(document.getElementById('bk-demo-limit').value),
+                min_bet: parseFloat(document.getElementById('bk-min-bet').value),
+                max_bet: parseFloat(document.getElementById('bk-max-bet').value),
+            };
+
+            fetch('{{ route("admin.boxing.settings") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Boxing King Settings';
+
+                if (data.success) {
+                    showAdminToast('✅ Boxing King configuration updated successfully!', 'success');
+                    loadBoxingSettings();
+                } else {
+                    showAdminToast('Error: ' + (data.message || 'Could not save settings.'), 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Boxing King Settings';
+                showAdminToast('Failed to save Boxing King settings.', 'error');
+            });
+        }
+
+        function uploadBoxingAudio(e, audioType) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const fileInput = form.querySelector('input[type="file"]');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                showAdminToast('Please choose an audio file first.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('audio_type', audioType);
+            formData.append('audio_file', fileInput.files[0]);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('{{ route("admin.boxing.audio") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload';
+
+                if (data.success) {
+                    showAdminToast('✅ Audio file uploaded successfully!', 'success');
+                    loadBoxingSettings();
+                    form.reset();
+                } else {
+                    showAdminToast('Audio upload failed: ' + (data.message || 'Error'), 'error');
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload';
+                showAdminToast('Upload failed due to network or server error.', 'error');
+            });
+        }
+
+        function loadBoxingSpins() {
+            const tbody = document.getElementById('bk-spins-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading spins...</td></tr>';
+
+            fetch('{{ route("admin.boxing.spins") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.spins && data.spins.data) {
+                    const spins = data.spins.data;
+                    if (spins.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);">No Boxing King spins recorded yet.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = spins.map(s => {
+                        const isWin = s.is_win || parseFloat(s.win_amount) > 0;
+                        const profit = parseFloat(s.admin_profit || 0);
+                        const isProfit = profit >= 0;
+
+                        return `
+                            <tr>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--accent-gold);">#${s.id}</td>
+                                <td>
+                                    <div style="font-weight:700; color:#fff; font-size:12.5px;">${s.user ? s.user.name : (s.is_demo ? 'Demo Player' : 'Guest')}</div>
+                                    <div style="font-size:10.5px; color:var(--text-muted);">${s.user ? s.user.email : ''}</div>
+                                </td>
+                                <td>
+                                    <span style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:10px; text-transform:uppercase; background:${s.is_demo ? 'rgba(251,191,36,0.15)' : 'rgba(16,185,129,0.15)'}; color:${s.is_demo ? '#fbbf24' : '#34d399'};">
+                                        ${s.is_demo ? 'DEMO' : 'REAL'}
+                                    </span>
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#fff;">৳ ${parseFloat(s.bet_amount).toFixed(2)}</td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:${isWin ? '#34d399' : 'var(--text-muted)'};">
+                                    ৳ ${parseFloat(s.win_amount).toFixed(2)}
+                                </td>
+                                <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:${isProfit ? '#34d399' : '#f87171'};">
+                                    ${isProfit ? '+' : ''}৳ ${profit.toFixed(2)}
+                                </td>
+                                <td>
+                                    ${isWin ? '<span style="font-size:10.5px; font-weight:800; color:#34d399;"><i class="fas fa-fire" style="color:#ef4444;"></i> WIN</span>' : '<span style="font-size:10.5px; color:#f87171;">LOSS</span>'}
+                                </td>
+                                <td style="font-size:11px; color:var(--text-muted);">
+                                    ${new Date(s.created_at).toLocaleString()}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => console.error('Failed to load Boxing King spins:', err));
+        }
+
+        function refreshGameMatrix() {
+            const tbody = document.getElementById('game-matrix-tbody');
+            const icon = document.getElementById('matrix-refresh-icon');
+            if (icon) icon.classList.add('fa-spin');
+
+            fetch('{{ route("admin.game-matrix") }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (icon) icon.classList.remove('fa-spin');
+                if (data.success && data.matrix && tbody) {
+                    tbody.innerHTML = data.matrix.map(game => {
+                        const profit = parseFloat(game.admin_profit);
+                        const isProfit = profit >= 0;
+                        const profitColor = isProfit ? '#10b981' : '#ef4444';
+                        const profitBg = isProfit ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+                        const profitBorder = isProfit ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+
+                        let healthBadge = `<span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3);"><i class="fas fa-shield-check"></i> HEALTHY</span>`;
+                        if (game.health_status === 'balanced') {
+                            healthBadge = `<span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(0,242,254,0.15); color:#00f2fe; border:1px solid rgba(0,242,254,0.3);"><i class="fas fa-scale-balanced"></i> BALANCED</span>`;
+                        } else if (game.health_status === 'critical_loss') {
+                            healthBadge = `<span style="font-size:9.5px; font-weight:800; padding:3px 8px; border-radius:6px; background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);"><i class="fas fa-triangle-exclamation"></i> CRITICAL</span>`;
+                        }
+
+                        let manageBtn = '';
+                        if (game.id === 'boxing-king') {
+                            manageBtn = `<button onclick="switchTab('boxing-king', document.getElementById('nav-boxing-king'))" class="action-btn edit" title="Manage Boxing King"><i class="fas fa-cog"></i></button>`;
+                        } else if (game.id === 'western-vault') {
+                            manageBtn = `<button onclick="switchTab('western', document.getElementById('nav-western'))" class="action-btn edit" title="Manage Western Vault"><i class="fas fa-cog"></i></button>`;
+                        } else if (game.id === 'olympus') {
+                            manageBtn = `<button onclick="switchTab('olympus', document.getElementById('nav-olympus'))" class="action-btn edit" title="Manage Olympus"><i class="fas fa-cog"></i></button>`;
+                        } else if (game.id === 'aviator') {
+                            manageBtn = `<button onclick="switchTab('game', document.getElementById('nav-game'))" class="action-btn edit" title="Manage Aviator"><i class="fas fa-cog"></i></button>`;
+                        }
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <div style="width:34px; height:34px; border-radius:8px; background:${game.theme}22; border:1px solid ${game.theme}55; display:flex; align-items:center; justify-content:center; color:${game.theme}; font-size:14px; flex-shrink:0;">
+                                            <i class="${game.icon}"></i>
+                                        </div>
+                                        <div>
+                                            <strong style="color:var(--text-primary); font-size:13.5px;">${game.name}</strong>
+                                            <div style="font-size:10.5px; color:var(--text-muted); font-family:'Roboto Mono',monospace;">ID: ${game.id}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span style="font-size:11.5px; color:var(--text-secondary);">${game.category}</span></td>
+                                <td style="text-align:center;">
+                                    <span style="display:inline-flex; align-items:center; gap:4px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:var(--accent-cyan); background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.25); padding:2px 8px; border-radius:12px;">
+                                        <i class="fas fa-user" style="font-size:10px;"></i> ${game.active_players}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong style="font-family:'JetBrains Mono',monospace; color:var(--text-primary); font-size:13px;">৳ ${parseFloat(game.total_turnover).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>
+                                </td>
+                                <td>
+                                    <span style="font-family:'JetBrains Mono',monospace; color:#38ef7d; font-size:13px; font-weight:700;">৳ ${parseFloat(game.total_payout).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                </td>
+                                <td>
+                                    <span style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:${profitColor}; background:${profitBg}; padding:3px 8px; border-radius:6px; border:1px solid ${profitBorder};">
+                                        ${isProfit ? '+' : ''}৳ ${profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                    </span>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span style="font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--accent-gold);">
+                                        ${parseFloat(game.rtp).toFixed(2)}%
+                                    </span>
+                                </td>
+                                <td style="text-align:center;">
+                                    ${healthBadge}
+                                </td>
+                                <td style="text-align:right;">
+                                    <a href="${game.route}" target="_blank" class="action-btn" title="Launch Game" style="text-decoration:none; margin-right:4px;">
+                                        <i class="fas fa-external-link-alt" style="font-size:11px;"></i>
+                                    </a>
+                                    ${manageBtn}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => {
+                if (icon) icon.classList.remove('fa-spin');
+                console.error('Failed to refresh game matrix:', err);
+            });
         }
 
         function toggleGamesSubmenu() {

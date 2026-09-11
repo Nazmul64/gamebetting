@@ -32,5 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AdminSeeder::class);
         $this->call(PaymentGatewaySeeder::class);
+        $this->call(WesternVaultSeeder::class);
+        $this->call(HeadsTailsSettingSeeder::class);
     }
 }
