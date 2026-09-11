@@ -20,6 +20,7 @@
         <!-- Top Navigation / Header -->
         <header class="game-header">
             <div class="header-left">
+                <a href="{{ route('dashboard') }}" class="mobile-home-icon" title="Back to Dashboard"><i class="fas fa-arrow-left"></i></a>
                 <span class="logo-text">1XGAMES</span>
                 <span class="separator">/</span>
                 <span class="sub-logo-text">LOTTERIES</span>
@@ -28,18 +29,20 @@
             </div>
             
             <div class="header-right">
-                <div class="user-info-header" style="margin-right: 16px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; height: 36px; line-height: 1.2;">
+                <div class="user-info-header">
                     <span class="user-header-name" id="user-header-name" style="font-weight: 700; color: #fff; font-size: 12px;">{{ auth()->user()->name }}</span>
-                    <div style="display: flex; gap: 8px; margin-top: 2px;">
-                        <a href="{{ route('dashboard') }}" style="font-size: 10px; color: var(--color-gold); text-decoration: none; font-weight: 700; letter-spacing: 0.5px; transition: color 0.2s;">DASHBOARD</a>
-                        <span style="color: var(--text-muted); font-size: 10px;">|</span>
-                        <a href="{{ route('gems-mines') }}" style="font-size: 10px; color: #ffbe1a; text-decoration: none; font-weight: 700; letter-spacing: 0.5px; transition: color 0.2s;"><i class="fas fa-gem" style="font-size:9px;"></i> GEMS & MINES</a>
-                        <span style="color: var(--text-muted); font-size: 10px;">|</span>
-                        <a href="{{ route('big-bass-splash') }}" style="font-size: 10px; color: #38ef7d; text-decoration: none; font-weight: 700; letter-spacing: 0.5px; transition: color 0.2s;"><i class="fas fa-fish" style="font-size:9px;"></i> BIG BASS SPLASH</a>
-                        <span style="color: var(--text-muted); font-size: 10px;">|</span>
-                        <a href="#" id="game-theme-toggle" onclick="toggleGameTheme(event)" style="font-size: 10px; color: var(--accent-blue); text-decoration: none; font-weight: 700; letter-spacing: 0.5px; transition: color 0.2s; cursor:pointer;">THEME</a>
-                        <span style="color: var(--text-muted); font-size: 10px;">|</span>
-                        <a href="#" id="header-logout-btn" style="font-size: 10px; color: var(--color-red); text-decoration: none; font-weight: 700; letter-spacing: 0.5px; transition: color 0.2s;">LOGOUT</a>
+                    <div class="header-nav-links">
+                        <a href="{{ route('dashboard') }}" class="header-link link-gold">DASHBOARD</a>
+                        <span class="link-sep">|</span>
+                        <a href="{{ route('gems-mines') }}" class="header-link link-yellow"><i class="fas fa-gem"></i> GEMS & MINES</a>
+                        <span class="link-sep">|</span>
+                        <a href="{{ route('big-bass-splash') }}" class="header-link link-green"><i class="fas fa-fish"></i> BIG BASS SPLASH</a>
+                        <span class="link-sep">|</span>
+                        <a href="{{ route('bonbon-bonanza') }}" class="header-link link-pink"><i class="fas fa-candy-cane"></i> BONBON</a>
+                        <span class="link-sep">|</span>
+                        <a href="#" id="game-theme-toggle" onclick="toggleGameTheme(event)" class="header-link link-blue">THEME</a>
+                        <span class="link-sep">|</span>
+                        <a href="#" id="header-logout-btn" class="header-link link-red">LOGOUT</a>
                     </div>
                 </div>
                 <div class="balance-container">
@@ -47,15 +50,24 @@
                     <span class="balance-value" id="user-balance">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
                     <span class="balance-currency" id="user-currency">{{ auth()->user()->currency }}</span>
                 </div>
-                <button class="deposit-btn"><i class="fas fa-plus-circle"></i> DEPOSIT</button>
+                <a href="{{ route('dashboard') }}#depositModal" class="deposit-btn"><i class="fas fa-plus-circle"></i> DEPOSIT</a>
             </div>
         </header>
+
+        <!-- Mobile Horizontal Quick Bar (Visible only on mobile/tablet) -->
+        <div class="mobile-quick-nav-bar">
+            <a href="{{ route('dashboard') }}" class="mobile-nav-chip"><i class="fas fa-home"></i> Home</a>
+            <a href="{{ route('gems-mines') }}" class="mobile-nav-chip"><i class="fas fa-gem" style="color:#ffd66b;"></i> Mines</a>
+            <a href="{{ route('big-bass-splash') }}" class="mobile-nav-chip"><i class="fas fa-fish" style="color:#34d399;"></i> Big Bass</a>
+            <a href="{{ route('bonbon-bonanza') }}" class="mobile-nav-chip"><i class="fas fa-candy-cane" style="color:#f472b6;"></i> BonBon</a>
+            <a href="#" onclick="toggleGameTheme(event)" class="mobile-nav-chip"><i class="fas fa-moon"></i> Theme</a>
+        </div>
 
         <!-- Main Workspace -->
         <div class="main-layout-container">
             <div class="main-layout">
                 <!-- Left Side: Live Bets Panel -->
-                <aside class="live-bets-panel">
+                <aside class="live-bets-panel" id="live-bets-panel-wrapper">
                     <div class="stats-summary-box">
                         <div class="stat-item">
                             <span class="stat-title">Number of bets</span>
@@ -134,8 +146,31 @@
                             </div>
                         </div>
 
+                        <!-- Mobile Double Bet Switcher (Visible only on mobile/tablet) -->
+                        <div class="mobile-bet-tabs-nav" id="mobile-bet-tabs-nav">
+                            <button class="mobile-bet-tab-btn active-tab" id="btn-tab-panel1" onclick="switchMobileBetPanel('panel1')">
+                                <i class="fas fa-dice-one"></i> BET #1
+                            </button>
+                            <button class="mobile-bet-tab-btn" id="btn-tab-panel2" onclick="switchMobileBetPanel('panel2')">
+                                <i class="fas fa-dice-two"></i> BET #2
+                            </button>
+                            <button class="mobile-bet-tab-btn" id="btn-tab-both" onclick="switchMobileBetPanel('both')">
+                                <i class="fas fa-layer-group"></i> BOTH
+                            </button>
+                        </div>
+
+                        <!-- Mobile Data Tabs Bar (Live Bets vs History) -->
+                        <div class="mobile-data-tabs-bar" id="mobile-data-tabs-bar">
+                            <button class="mobile-data-tab-btn active-tab" id="btn-data-tab-history" onclick="switchMobileDataTab('history')">
+                                <i class="fas fa-clock-rotate-left"></i> My Bets History
+                            </button>
+                            <button class="mobile-data-tab-btn" id="btn-data-tab-live" onclick="switchMobileDataTab('live')">
+                                <i class="fas fa-users"></i> Live Active Bets
+                            </button>
+                        </div>
+
                         <!-- Bottom Log Panel (History / Bets) -->
-                        <section class="personal-history-section">
+                        <section class="personal-history-section" id="personal-history-wrapper">
                             <div class="history-section-header">
                                 <div class="header-tab active"><i class="fas fa-history"></i> HISTORY</div>
                             </div>
@@ -165,7 +200,7 @@
                     </main>
 
                     <!-- Right Side: Double Betting Control Column -->
-                    <aside class="betting-controls-column">
+                    <aside class="betting-controls-column" id="betting-controls-wrapper">
                         <!-- Betting Control Board 1 -->
                         <div class="betting-board" id="bet-panel-1">
                             <div class="board-content">
@@ -237,7 +272,7 @@
                 <button class="toolbar-icon-btn" title="Gifts"><i class="fas fa-gift"></i></button>
                 <button class="toolbar-icon-btn active" title="Round History">7</button>
                 <button class="toolbar-icon-btn" id="sound-toggle" title="Toggle Sound"><i class="fas fa-volume-up"></i></button>
-                <button class="toolbar-icon-btn" title="Deposit / Wallet"><i class="fas fa-dollar-sign"></i></button>
+                <a href="{{ route('dashboard') }}#depositModal" class="toolbar-icon-btn" title="Deposit / Wallet" style="color:inherit; text-decoration:none; display:flex; align-items:center; justify-content:center;"><i class="fas fa-dollar-sign"></i></a>
             </aside>
         </div>
     </div>
@@ -432,7 +467,85 @@
     // 2. Dynamic Currency string update for script calculations if needed
     window.UserCurrency = "{{ auth()->user()->currency }}";
 
-    // 3. Floating Live Support Chat Controller
+    // 3. Mobile Bet Panel & Mobile Data Tab Controllers
+    window.switchMobileBetPanel = function(mode) {
+        const panel1 = document.getElementById('bet-panel-1');
+        const panel2 = document.getElementById('bet-panel-2');
+        const btn1 = document.getElementById('btn-tab-panel1');
+        const btn2 = document.getElementById('btn-tab-panel2');
+        const btnBoth = document.getElementById('btn-tab-both');
+
+        if (!panel1 || !panel2) return;
+
+        [btn1, btn2, btnBoth].forEach(b => b && b.classList.remove('active-tab'));
+
+        if (mode === 'panel1') {
+            panel1.style.display = 'block';
+            panel2.style.display = 'none';
+            if (btn1) btn1.classList.add('active-tab');
+        } else if (mode === 'panel2') {
+            panel1.style.display = 'none';
+            panel2.style.display = 'block';
+            if (btn2) btn2.classList.add('active-tab');
+        } else {
+            panel1.style.display = 'block';
+            panel2.style.display = 'block';
+            if (btnBoth) btnBoth.classList.add('active-tab');
+        }
+    };
+
+    window.switchMobileDataTab = function(tab) {
+        const livePanel = document.getElementById('live-bets-panel-wrapper');
+        const historyPanel = document.getElementById('personal-history-wrapper');
+        const btnHist = document.getElementById('btn-data-tab-history');
+        const btnLive = document.getElementById('btn-data-tab-live');
+
+        if (btnHist) btnHist.classList.remove('active-tab');
+        if (btnLive) btnLive.classList.remove('active-tab');
+
+        if (tab === 'live') {
+            if (livePanel) livePanel.style.display = 'flex';
+            if (historyPanel) historyPanel.style.display = 'none';
+            if (btnLive) btnLive.classList.add('active-tab');
+        } else {
+            if (livePanel) livePanel.style.display = 'none';
+            if (historyPanel) historyPanel.style.display = 'flex';
+            if (btnHist) btnHist.classList.add('active-tab');
+        }
+    };
+
+    // Auto-adjust layout on resize
+    window.addEventListener('resize', () => {
+        if (typeof resizeCanvas === 'function') resizeCanvas();
+        if (window.innerWidth > 992) {
+            const p1 = document.getElementById('bet-panel-1');
+            const p2 = document.getElementById('bet-panel-2');
+            const lp = document.getElementById('live-bets-panel-wrapper');
+            const hp = document.getElementById('personal-history-wrapper');
+            if (p1) p1.style.display = '';
+            if (p2) p2.style.display = '';
+            if (lp) lp.style.display = '';
+            if (hp) hp.style.display = '';
+        } else {
+            // Default to history tab on mobile if not set
+            const hp = document.getElementById('personal-history-wrapper');
+            const lp = document.getElementById('live-bets-panel-wrapper');
+            if (lp && lp.style.display === 'flex') {
+                // Keep active
+            } else if (hp) {
+                hp.style.display = 'flex';
+                if (lp) lp.style.display = 'none';
+            }
+        }
+    });
+
+    window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+            if (typeof resizeCanvas === 'function') resizeCanvas();
+        }, 200);
+    });
+
+    // 4. Floating Live Support Chat Controller
     (function() {
         const triggerBtn = document.getElementById('chat-trigger-btn');
         const closeBtn = document.getElementById('chat-box-close');

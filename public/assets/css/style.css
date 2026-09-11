@@ -3238,77 +3238,339 @@ body.light-theme .chat-input-field {
 }
 
 /* ============================================================
-   AVIATOR CRASH GAME FULL RESPONSIVE MEDIA QUERIES
+   AVIATOR CRASH GAME FULL RESPONSIVE MEDIA QUERIES & MOBILE UI
    ============================================================ */
-@media (max-width: 1200px) {
-    .main-layout {
-        gap: 8px;
-        padding: 8px;
-    }
-    .live-bets-panel {
-        width: 240px;
-        min-width: 240px;
-    }
-    .betting-controls-column {
-        width: 280px;
-        min-width: 280px;
-    }
+
+/* Mobile Navigation Helpers */
+.mobile-home-icon {
+    display: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-right: 8px;
+    text-decoration: none;
+}
+.mobile-home-icon:hover {
+    color: var(--color-orange);
 }
 
-@media (max-width: 992px) {
-    .main-layout {
-        flex-direction: column;
-        overflow-y: auto;
-        height: auto;
+.header-nav-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+}
+.header-link {
+    font-size: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+}
+.header-link:hover {
+    opacity: 0.8;
+}
+.link-gold { color: var(--color-gold); }
+.link-yellow { color: #ffbe1a; }
+.link-green { color: #38ef7d; }
+.link-pink { color: #f472b6; }
+.link-blue { color: #38bdf8; }
+.link-red { color: var(--color-red); }
+.link-sep { color: var(--text-muted); font-size: 10px; }
+
+/* Mobile Quick Nav Bar */
+.mobile-quick-nav-bar {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 6px 4px 8px;
+    margin-bottom: 4px;
+    scrollbar-width: none;
+}
+.mobile-quick-nav-bar::-webkit-scrollbar { display: none; }
+.mobile-nav-chip {
+    padding: 5px 12px;
+    background: rgba(22, 32, 58, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    color: var(--text-primary);
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+.mobile-nav-chip:active {
+    transform: scale(0.95);
+    background: rgba(36, 52, 92, 0.9);
+}
+
+/* Mobile Double Bet Switcher Tabs */
+.mobile-bet-tabs-nav {
+    display: none;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 4px;
+    gap: 4px;
+    margin: 8px 0;
+}
+.mobile-bet-tab-btn {
+    flex: 1;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.mobile-bet-tab-btn.active-tab {
+    background: linear-gradient(135deg, var(--color-orange), #e04f0f);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(240, 100, 36, 0.4);
+}
+
+/* Mobile Data Tabs Bar (Live vs History) */
+.mobile-data-tabs-bar {
+    display: none;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 4px;
+    gap: 4px;
+    margin: 8px 0;
+}
+.mobile-data-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.mobile-data-tab-btn.active-tab {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Media Query: Tablets & Medium Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    body.game-body-bg {
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh;
     }
-    .live-bets-panel {
-        width: 100%;
-        min-width: 100%;
-        max-height: 220px;
+    .game-wrapper {
+        height: auto !important;
+        min-height: 100vh;
+        padding: 6px 10px 28px;
+    }
+    .main-layout-container {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+    .main-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px;
+        height: auto !important;
     }
     .center-right-container {
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px;
+        height: auto !important;
     }
     .betting-controls-column {
-        width: 100%;
-        min-width: 100%;
-        flex-direction: row;
+        width: 100% !important;
+        min-width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
         gap: 10px;
     }
     .betting-board {
         flex: 1;
+        width: 100%;
+    }
+    .live-bets-panel {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 280px !important;
+    }
+    .personal-history-section {
+        width: 100% !important;
+        height: 260px !important;
+    }
+    .right-toolbar-sidebar {
+        flex-direction: row !important;
+        width: 100% !important;
+        height: 48px !important;
+        justify-content: space-around;
+        padding: 0 12px;
+        margin-top: 6px;
+    }
+    .right-toolbar-sidebar .toolbar-icon-btn.active {
+        border-left: none;
+        border-bottom: 2px solid var(--color-orange);
     }
 }
 
+/* Media Query: Mobile Screens (max-width: 768px) */
 @media (max-width: 768px) {
-    .game-header {
-        flex-direction: column;
-        height: auto;
-        padding: 8px 12px;
-        gap: 8px;
-    }
-    .header-right {
-        width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
+    .mobile-home-icon {
+        display: inline-flex;
     }
     .user-info-header {
         display: none !important;
     }
-    .game-screen-container {
-        height: 260px;
-        min-height: 260px;
+    .mobile-quick-nav-bar {
+        display: flex;
     }
-    .betting-controls-column {
-        flex-direction: column;
-        width: 100%;
+    .game-header {
+        height: auto;
+        padding: 6px 4px;
+        flex-wrap: wrap;
+        gap: 8px;
     }
-    .bet-input-row {
-        flex-direction: column;
+    .header-left .sub-logo-text,
+    .header-left .separator:first-of-type {
+        display: none;
+    }
+    .header-right {
         gap: 6px;
     }
+    .balance-container {
+        padding: 4px 10px;
+    }
+    .balance-label {
+        font-size: 9px;
+    }
+    .balance-value {
+        font-size: 13px;
+    }
+    .deposit-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    .game-screen-container {
+        height: clamp(230px, 52vw, 320px) !important;
+        min-height: 230px;
+    }
+    .multiplier-display-floating {
+        font-size: clamp(42px, 11vw, 72px) !important;
+        right: 20px !important;
+        bottom: 20px !important;
+    }
+    .radial-countdown-container {
+        width: 110px;
+        height: 110px;
+    }
+    .countdown-number {
+        font-size: 42px;
+    }
+    .mobile-bet-tabs-nav {
+        display: flex;
+    }
+    .mobile-data-tabs-bar {
+        display: flex;
+    }
+    .betting-controls-column {
+        flex-direction: column !important;
+        gap: 8px;
+    }
+    /* Bet panel 2 hidden by default on mobile until tab clicked */
+    #bet-panel-2 {
+        display: none;
+    }
+    .quick-bets-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 4px !important;
+    }
+    .quick-btn {
+        padding: 7px 4px !important;
+        font-size: 11px !important;
+    }
+    .place-bet-btn {
+        padding: 12px 16px !important;
+    }
+    .btn-primary-text {
+        font-size: 15px !important;
+    }
+    .btn-secondary-text {
+        font-size: 10px !important;
+    }
+    .live-bets-panel {
+        display: none; /* Controlled by switchMobileDataTab */
+        height: 280px !important;
+        width: 100% !important;
+    }
+    .personal-history-section {
+        height: 280px !important;
+        width: 100% !important;
+    }
+    .table-header-row, .bet-row {
+        padding: 6px 8px;
+        font-size: 10px;
+    }
+    .history-table th, .history-table td {
+        padding: 6px 8px;
+        font-size: 10.5px;
+    }
+}
+
+/* Media Query: Extra Small Phones (max-width: 420px) */
+@media (max-width: 420px) {
+    .game-wrapper {
+        padding: 4px 6px 24px;
+    }
+    .logo-text {
+        font-size: 13px;
+    }
+    .active-page {
+        font-size: 11px;
+    }
+    .balance-container {
+        padding: 3px 8px;
+    }
+    .deposit-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    .game-screen-container {
+        height: 215px !important;
+        min-height: 215px;
+    }
+    .multiplier-display-floating {
+        font-size: 38px !important;
+        right: 14px !important;
+        bottom: 14px !important;
+    }
+    .bet-input-row {
+        gap: 4px;
+    }
     .enable-autoplay-btn {
-        width: 100%;
+        font-size: 9px;
+        padding: 0 8px;
     }
 }
 
