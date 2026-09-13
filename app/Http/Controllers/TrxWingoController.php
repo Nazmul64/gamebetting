@@ -111,10 +111,15 @@ class TrxWingoController extends Controller {
     public function getMyHistory(Request $request) {
         $user = Auth::user();
         $isDemo = $request->query('is_demo', '0') == '1';
+        $timeType = $request->query('time_type');
 
         $query = TrxWingoBet::with('period')
             ->orderBy('id', 'desc')
-            ->take(20);
+            ->take(50);
+
+        if ($timeType && in_array($timeType, ['1m', '3m', '5m'])) {
+            $query->where('time_type', $timeType);
+        }
 
         if ($isDemo) {
             $query->where('is_demo', true);

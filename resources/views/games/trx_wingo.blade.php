@@ -319,44 +319,44 @@
             <button onclick="openBetModal('size', 'small')" class="bg-[#5352ed] hover:bg-[#3742fa] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Small</button>
         </div>
 
-        <!-- গেম হিস্ট্রি, চার্ট ও মাই হিস্ট্রি ট্যাব -->
+        <!-- গেম হিস্ট্রি, চার্ট ও মাই হিস্ট্রি ট্যাব (Screenshots 1, 2, 3 Match) -->
         <div class="px-4 mt-6">
-            <div class="grid grid-cols-3 bg-[#f1f3f8] p-1 rounded-xl text-xs font-bold text-gray-500 mb-3">
-                <button onclick="switchHistoryTab('history')" id="tab-btn-history" class="py-2 rounded-lg bg-[#00b977] text-white transition shadow-sm">Game history</button>
-                <button onclick="switchHistoryTab('chart')" id="tab-btn-chart" class="py-2 rounded-lg transition">Chart</button>
-                <button onclick="switchHistoryTab('my')" id="tab-btn-my" class="py-2 rounded-lg transition">My history</button>
+            <div class="grid grid-cols-3 gap-2 bg-[#f1f3f8] p-1.5 rounded-2xl text-xs font-black text-gray-500 mb-3.5">
+                <button onclick="switchHistoryTab('history')" id="tab-btn-history" class="py-2.5 rounded-xl bg-[#00b977] text-white transition shadow-sm font-black">Game history</button>
+                <button onclick="switchHistoryTab('chart')" id="tab-btn-chart" class="py-2.5 rounded-xl bg-white text-gray-500 transition font-bold">Chart</button>
+                <button onclick="switchHistoryTab('my')" id="tab-btn-my" class="py-2.5 rounded-xl bg-white text-gray-500 transition font-bold">My history</button>
             </div>
 
-            <!-- ১. গেম হিস্ট্রি (ব্লকচেইন হ্যাশ টেবিল) -->
+            <!-- ১. গেম হিস্ট্রি (ব্লকচেইন হ্যাশ টেবিল - Screenshot 2 Match) -->
             <div id="section-history">
-                <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+                <div class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm bg-white">
                     <table class="w-full text-center text-xs">
                         <thead>
-                            <tr class="bg-[#00b977] text-white font-bold">
-                                <th class="py-2.5 px-2">Period</th>
-                                <th class="py-2.5 px-2">Block height</th>
-                                <th class="py-2.5 px-2">Block time</th>
-                                <th class="py-2.5 px-2">Hash value</th>
-                                <th class="py-2.5 px-2">Result</th>
+                            <tr class="bg-[#00b977] text-white font-extrabold">
+                                <th class="py-3 px-2">Period</th>
+                                <th class="py-3 px-2">Block height</th>
+                                <th class="py-3 px-2">Block time</th>
+                                <th class="py-3 px-2">Hash value</th>
+                                <th class="py-3 px-2">Result</th>
                             </tr>
                         </thead>
-                        <tbody id="history-tbody" class="divide-y divide-gray-100 text-gray-600 font-medium bg-white">
+                        <tbody id="history-tbody" class="divide-y divide-gray-100 text-gray-700 font-medium bg-white">
                             <!-- ডাইনামিক ডেটা লোড হবে -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- পেজিনেশন -->
-                <div class="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
-                    <button onclick="prevPage()" class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"><i class="fa-solid fa-chevron-left"></i></button>
-                    <span id="page-display" class="font-bold">1 / 5</span>
-                    <button onclick="nextPage()" class="w-7 h-7 rounded-lg bg-[#00b977] text-white flex items-center justify-center hover:bg-[#00a368] transition"><i class="fa-solid fa-chevron-right"></i></button>
+                <!-- পেজিনেশন (Screenshot 2 Match) -->
+                <div class="flex items-center justify-center gap-4 mt-4 text-xs">
+                    <button onclick="prevPage()" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition font-black"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
+                    <span id="page-display" class="font-bold text-gray-600 font-mono">1 / 50</span>
+                    <button onclick="nextPage()" class="w-8 h-8 rounded-lg bg-[#00b977] text-white flex items-center justify-center hover:bg-[#00a368] transition font-black shadow-sm"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
                 </div>
             </div>
 
-            <!-- ২. চার্ট ও ট্রেন্ড অ্যানালাইসিস (জিগজ্যাগ চার্ট) -->
+            <!-- ২. চার্ট ও ট্রেন্ড অ্যানালাইসিস (জিগজ্যাগ চার্ট - Screenshot 1 Match) -->
             <div id="section-chart" class="hidden">
-                <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm mb-3 text-[11px] space-y-1.5">
+                <div class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm mb-3.5 text-[11px] space-y-2">
                     <div class="font-black text-gray-800 flex items-center justify-between">
                         <span>Statistic (last 100 Periods)</span>
                     </div>
@@ -365,36 +365,36 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-center text-[10px]">
                             <thead>
-                                <tr class="text-gray-400 font-semibold border-b">
-                                    <th class="text-left py-1">Num</th>
+                                <tr class="text-gray-400 font-semibold border-b border-gray-100">
+                                    <th class="text-left py-1 text-gray-700">Num</th>
                                     @for($i = 0; $i <= 9; $i++)
-                                        <th class="py-1">{{ $i }}</th>
+                                        <th class="py-1 text-gray-500 font-mono">{{ $i }}</th>
                                     @endfor
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 text-gray-600 font-mono">
                                 <tr>
-                                    <td class="text-left font-sans font-bold text-gray-400">Missing</td>
+                                    <td class="text-left font-sans font-bold text-gray-700 py-1">Missing</td>
                                     @for($i = 0; $i <= 9; $i++)
-                                        <td id="stat-missing-{{ $i }}">0</td>
+                                        <td id="stat-missing-{{ $i }}" class="py-1 text-gray-500">0</td>
                                     @endfor
                                 </tr>
                                 <tr>
-                                    <td class="text-left font-sans font-bold text-gray-400">Avg missing</td>
+                                    <td class="text-left font-sans font-bold text-gray-700 py-1">Avg missing</td>
                                     @for($i = 0; $i <= 9; $i++)
-                                        <td id="stat-avg-{{ $i }}">5</td>
+                                        <td id="stat-avg-{{ $i }}" class="py-1 text-gray-500">5</td>
                                     @endfor
                                 </tr>
                                 <tr>
-                                    <td class="text-left font-sans font-bold text-gray-400">Frequency</td>
+                                    <td class="text-left font-sans font-bold text-gray-700 py-1">Frequency</td>
                                     @for($i = 0; $i <= 9; $i++)
-                                        <td id="stat-freq-{{ $i }}">0</td>
+                                        <td id="stat-freq-{{ $i }}" class="py-1 text-gray-500">0</td>
                                     @endfor
                                 </tr>
                                 <tr>
-                                    <td class="text-left font-sans font-bold text-gray-400">Max consec</td>
+                                    <td class="text-left font-sans font-bold text-gray-700 py-1">Max consec</td>
                                     @for($i = 0; $i <= 9; $i++)
-                                        <td id="stat-max-{{ $i }}">0</td>
+                                        <td id="stat-max-{{ $i }}" class="py-1 text-gray-500">0</td>
                                     @endfor
                                 </tr>
                             </tbody>
@@ -403,22 +403,58 @@
                 </div>
 
                 <!-- জিগজ্যাগ ট্রেন্ড রো ও SVG লাইন -->
-                <div class="relative bg-white rounded-xl border border-gray-100 p-2 shadow-sm overflow-hidden" id="trend-chart-box">
+                <div class="relative bg-white rounded-2xl border border-gray-100 p-2.5 shadow-sm overflow-hidden" id="trend-chart-box">
                     <svg id="trend-svg" class="chart-svg"></svg>
-                    <div id="trend-rows" class="space-y-1.5 relative z-20">
+                    <div id="trend-rows" class="space-y-2 relative z-20">
                         <!-- ট্রেন্ড রোগুলো লোড হবে -->
                     </div>
                 </div>
             </div>
 
-            <!-- ৩. মাই হিস্ট্রি -->
+            <!-- ৩. মাই হিস্ট্রি (Screenshot 3 Match) -->
             <div id="section-my" class="hidden">
-                <div id="my-history-list" class="space-y-2">
+                <div class="flex justify-end mb-3">
+                    <button onclick="openMyHistoryDetailModal()" class="border border-[#00b977] text-[#00b977] hover:bg-emerald-50 rounded-full px-3 py-1 text-xs font-bold flex items-center gap-1 transition shadow-2xs">
+                        <span>Detail</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                </div>
+                <div id="my-history-list" class="space-y-2.5">
                     <!-- লোডিং বা বেট লিস্ট আসবে -->
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- My History Full Detail Modal (Screenshot 4 Match) -->
+    <div id="my-history-detail-modal" class="fixed inset-0 bg-[#f8f9fd] z-50 overflow-y-auto max-w-[430px] mx-auto shadow-2xl hidden flex flex-col">
+        <!-- Green Top Navigation -->
+        <div class="bg-gradient-to-r from-[#00b977] to-[#009e66] px-4 py-3.5 text-white flex items-center justify-between sticky top-0 z-30 shadow-md">
+            <button onclick="closeMyHistoryDetailModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition">
+                <i class="fa-solid fa-chevron-left text-lg"></i>
+            </button>
+            <h3 class="font-black text-lg tracking-wider">Trx Win Go</h3>
+            <div class="w-8"></div>
+        </div>
+
+        <!-- Time Type Subtabs: TrxWinGo 1 Min, TrxWinGo 3 Min, TrxWinGo 5 Min -->
+        <div class="bg-white border-b border-gray-100 px-2 flex justify-around sticky top-[52px] z-20 shadow-xs">
+            <button onclick="switchDetailTimeType('1m')" id="detail-tab-1m" class="py-3 px-3 text-xs font-black text-[#00b977] border-b-2 border-[#00b977] transition">
+                TrxWinGo 1 Min
+            </button>
+            <button onclick="switchDetailTimeType('3m')" id="detail-tab-3m" class="py-3 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent transition">
+                TrxWinGo 3 Min
+            </button>
+            <button onclick="switchDetailTimeType('5m')" id="detail-tab-5m" class="py-3 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent transition">
+                TrxWinGo 5 Min
+            </button>
+        </div>
+
+        <!-- Bets list content -->
+        <div id="detail-bets-container" class="p-4 space-y-2.5 flex-1">
+            <!-- Dynamic items or empty state -->
+        </div>
     </div>
 
     <!-- শেষ ৫ সেকেন্ডের কাউন্টডাউন ফুল-কার্ড লক ওভারলে (Screenshot 2 Match) -->
@@ -669,19 +705,150 @@
             openBetModal('number', String(randNum));
         }
 
+        let currentDetailTimeType = '1m';
+
         function switchHistoryTab(tab) {
             ['history', 'chart', 'my'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-btn-${t}`).className = 'py-2 rounded-lg transition';
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    btn.className = 'py-2.5 rounded-xl bg-white text-gray-500 transition font-bold text-xs';
+                }
             });
             document.getElementById(`section-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-btn-${tab}`).className = 'py-2 rounded-lg bg-[#00b977] text-white transition shadow-sm';
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if (activeBtn) {
+                activeBtn.className = 'py-2.5 rounded-xl bg-[#00b977] text-white transition shadow-sm font-black text-xs';
+            }
 
             if (tab === 'chart') {
                 renderZigZagChart();
             } else if (tab === 'my') {
                 fetchMyHistory();
             }
+        }
+
+        function openMyHistoryDetailModal() {
+            document.getElementById('my-history-detail-modal').classList.remove('hidden');
+            switchDetailTimeType(currentTimeType);
+        }
+
+        function closeMyHistoryDetailModal() {
+            document.getElementById('my-history-detail-modal').classList.add('hidden');
+        }
+
+        function switchDetailTimeType(type) {
+            currentDetailTimeType = type;
+            ['1m', '3m', '5m'].forEach(t => {
+                const tabBtn = document.getElementById(`detail-tab-${t}`);
+                if (t === type) {
+                    tabBtn.className = 'py-3 px-3 text-xs font-black text-[#00b977] border-b-2 border-[#00b977] transition';
+                } else {
+                    tabBtn.className = 'py-3 px-3 text-xs font-bold text-gray-400 border-b-2 border-transparent transition';
+                }
+            });
+
+            fetchDetailBets(type);
+        }
+
+        function fetchDetailBets(type) {
+            const container = document.getElementById('detail-bets-container');
+            container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs">লোড হচ্ছে...</div>';
+
+            fetch(`{{ route('trxwingo.myhistory') }}?time_type=${type}&is_demo=${isDemoMode ? 1 : 0}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.bets || data.bets.length === 0) {
+                        container.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-20 text-center">
+                                <svg class="w-32 h-32 text-gray-300 mb-4" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M25 30C25 24.4772 29.4772 20 35 20H65C70.5228 20 75 24.4772 75 30V70C75 75.5228 70.5228 80 65 80H35C29.4772 80 25 75.5228 25 70V30Z" fill="#E2E8F0"/>
+                                    <path d="M35 32H65M35 44H65M35 56H55" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+                                    <circle cx="68" cy="65" r="14" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="2"/>
+                                    <path d="M68 60V66L72 68" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="text-sm font-bold text-gray-400">No data</span>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    data.bets.forEach(bet => {
+                        const isWon = bet.status === 'won';
+                        const isPending = bet.status === 'pending';
+
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm text-xs space-y-2';
+                        card.innerHTML = `
+                            <div class="flex justify-between items-center font-bold">
+                                <span class="font-mono text-gray-800">Period: ${bet.period_number}</span>
+                                <span class="${isWon ? 'text-[#00b977]' : (isPending ? 'text-amber-500' : 'text-red-500')} uppercase font-black">
+                                    ${isWon ? '+৳ ' + bet.win_amount.toFixed(2) : (isPending ? 'Pending' : '-৳ ' + bet.total_amount.toFixed(2))}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center text-gray-500 text-[11px] pt-1 border-t border-gray-50">
+                                <span>Select: <strong class="text-gray-800 uppercase">${bet.bet_type} (${bet.selected_value})</strong></span>
+                                <span>Total: ৳${bet.total_amount.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-gray-400">
+                                <span>Order ID: #${bet.id}</span>
+                                <span>${bet.date} ${bet.time}</span>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    container.innerHTML = '<div class="text-center py-10 text-red-400 text-xs">ডাটা লোড করতে ব্যর্থ হয়েছে</div>';
+                });
+        }
+
+        function fetchMyHistory() {
+            const list = document.getElementById('my-history-list');
+            list.innerHTML = '<div class="text-center py-6 text-gray-400 text-xs">লোড হচ্ছে...</div>';
+
+            fetch(`{{ route('trxwingo.myhistory') }}?time_type=${currentTimeType}&is_demo=${isDemoMode ? 1 : 0}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.bets || data.bets.length === 0) {
+                        list.innerHTML = `
+                            <div class="flex flex-col items-center justify-center py-12 text-center bg-white rounded-2xl p-6 border border-gray-100">
+                                <svg class="w-24 h-24 text-gray-300 mb-3" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M25 30C25 24.4772 29.4772 20 35 20H65C70.5228 20 75 24.4772 75 30V70C75 75.5228 70.5228 80 65 80H35C29.4772 80 25 75.5228 25 70V30Z" fill="#E2E8F0"/>
+                                    <path d="M35 32H65M35 44H65M35 56H55" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+                                    <circle cx="68" cy="65" r="14" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="2"/>
+                                    <path d="M68 60V66L72 68" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span class="text-xs font-bold text-gray-400">No data</span>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    list.innerHTML = '';
+                    data.bets.forEach(bet => {
+                        const isWon = bet.status === 'won';
+                        const isPending = bet.status === 'pending';
+
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm text-xs space-y-1.5';
+                        card.innerHTML = `
+                            <div class="flex justify-between items-center font-bold">
+                                <span class="font-mono text-gray-800">Period: ${bet.period_number}</span>
+                                <span class="${isWon ? 'text-[#00b977]' : (isPending ? 'text-amber-500' : 'text-red-500')} uppercase font-black">
+                                    ${isWon ? '+৳ ' + bet.win_amount.toFixed(2) : (isPending ? 'Pending' : '-৳ ' + bet.total_amount.toFixed(2))}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center text-gray-500 text-[11px]">
+                                <span>Select: <strong class="text-gray-800 uppercase">${bet.bet_type} (${bet.selected_value})</strong></span>
+                                <span>Total: ৳${bet.total_amount.toFixed(2)}</span>
+                            </div>
+                            <div class="text-[10px] text-gray-400">${bet.date} ${bet.time}</div>
+                        `;
+                        list.appendChild(card);
+                    });
+                });
         }
 
         function openHowToPlayModal() {
