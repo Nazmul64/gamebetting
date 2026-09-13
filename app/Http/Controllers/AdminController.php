@@ -93,53 +93,157 @@ class AdminController extends Controller
         $registries = \App\Models\CasinoGameRegistry::all()->keyBy('game_key');
 
         $gamesConfig = [
-            'boxing_king' => [
-                'id' => 'boxing-king',
-                'name' => 'Boxing King™',
-                'category' => 'Video Slot (5x3)',
-                'icon' => 'fas fa-fist-raised',
-                'theme' => '#ef4444',
-                'route' => route('boxing-king'),
-            ],
-            'aviator_crash' => [
-                'id' => 'aviator',
-                'name' => 'Aviator Crash',
+            'helicopterx' => [
+                'id' => 'helicopterx',
+                'name' => 'HelicopterX',
                 'category' => 'Multiplayer Crash',
-                'icon' => 'fas fa-plane-departure',
-                'theme' => '#00f2fe',
-                'route' => route('play'),
+                'icon' => 'fas fa-helicopter',
+                'theme' => '#f59e0b',
+                'route' => route('play', ['game' => 'helicopterx']),
             ],
-            'western_vault' => [
-                'id' => 'western-vault',
-                'name' => 'Western Vault™',
-                'category' => 'PVP Vault Duel',
-                'icon' => 'fas fa-hat-cowboy',
-                'theme' => '#f97316',
-                'route' => route('western'),
+            '1xaero' => [
+                'id' => '1xaero',
+                'name' => '1xAero',
+                'category' => 'Multiplayer Crash',
+                'icon' => 'fas fa-jet-fighter',
+                'theme' => '#00f2fe',
+                'route' => route('play', ['game' => '1xaero']),
+            ],
+            'aero' => [
+                'id' => 'aero',
+                'name' => 'Aero',
+                'category' => 'Multiplayer Crash',
+                'icon' => 'fas fa-plane',
+                'theme' => '#ef4444',
+                'route' => route('play', ['game' => 'aero']),
+            ],
+            'crashx' => [
+                'id' => 'crashx',
+                'name' => 'CrashX',
+                'category' => 'Multiplayer Crash',
+                'icon' => 'fas fa-rocket',
+                'theme' => '#10b981',
+                'route' => route('play', ['game' => 'crashx']),
+            ],
+            'crash' => [
+                'id' => 'crash',
+                'name' => 'Crash (1xGames)',
+                'category' => 'Multiplayer Crash',
+                'icon' => 'fas fa-meteor',
+                'theme' => '#8b5cf6',
+                'route' => route('play', ['game' => 'crash']),
             ],
             'olympus_gold' => [
                 'id' => 'olympus',
-                'name' => 'Gates of Olympus',
+                'name' => 'Olympus Gold™',
                 'category' => 'Cluster Pays Slot',
                 'icon' => 'fas fa-bolt',
                 'theme' => '#fbbf24',
                 'route' => route('gates-of-olympus'),
             ],
-            'gems_mines' => [
-                'id' => 'gems-mines',
-                'name' => 'Gems & Mines',
-                'category' => 'Grid Minesweeper',
+            'western_vault' => [
+                'id' => 'western-vault',
+                'name' => 'Western Vault™',
+                'category' => 'PVP Vault Duel',
+                'icon' => 'fas fa-vault',
+                'theme' => '#f97316',
+                'route' => route('western'),
+            ],
+            'fortune_gems_2' => [
+                'id' => 'fortune-gems-2',
+                'name' => 'Fortune Gems 2™',
+                'category' => 'Cascading Gem Slot (3x3)',
                 'icon' => 'fas fa-gem',
-                'theme' => '#a855f7',
-                'route' => route('gems-mines'),
+                'theme' => '#f59e0b',
+                'route' => route('fortune-gems-2'),
+            ],
+            'boxing_king' => [
+                'id' => 'boxing-king',
+                'name' => 'Boxing King™',
+                'category' => 'Video Slot (5x3)',
+                'icon' => 'fas fa-crown',
+                'theme' => '#ef4444',
+                'route' => route('boxing-king'),
+            ],
+            'abyss_of_glory' => [
+                'id' => 'abyss-of-glory',
+                'name' => 'Abyss of Glory™',
+                'category' => 'Temple Multiplier Slot',
+                'icon' => 'fas fa-landmark',
+                'theme' => '#fbbf24',
+                'route' => route('temple-of-fortune'),
+            ],
+            'heads_or_tails' => [
+                'id' => 'heads-or-tails',
+                'name' => 'Heads or Tails™',
+                'category' => 'Mermaid & Octopus Coin Toss',
+                'icon' => 'fas fa-coins',
+                'theme' => '#eab308',
+                'route' => route('heads-or-tails'),
+            ],
+            'lucky_joker_100' => [
+                'id' => 'lucky-joker-100',
+                'name' => 'Lucky Joker 100™',
+                'category' => 'Classic Fruit & Joker Slot',
+                'icon' => 'fas fa-hat-cowboy-side',
+                'theme' => '#f43f5e',
+                'route' => route('lucky-joker-100'),
+            ],
+            'bonbon_bonanza' => [
+                'id' => 'bonbon-bonanza',
+                'name' => 'BonBon Bonanza™',
+                'category' => 'Sweet Candy Cascading Slot',
+                'icon' => 'fas fa-candy-cane',
+                'theme' => '#e879f9',
+                'route' => route('bonbon-bonanza'),
             ],
             'big_bass_splash' => [
                 'id' => 'big-bass',
-                'name' => 'Big Bass Splash',
-                'category' => 'Fishing Slot',
+                'name' => 'Big Bass Splash™',
+                'category' => 'Fishing Multiplier Slot',
                 'icon' => 'fas fa-fish',
-                'theme' => '#10b981',
+                'theme' => '#0ea5e9',
                 'route' => route('big-bass-splash'),
+            ],
+            'the_emirate' => [
+                'id' => 'the-emirate',
+                'name' => 'The Emirate™',
+                'category' => 'Royal Arabic Classic Slot',
+                'icon' => 'fas fa-gem',
+                'theme' => '#f59e0b',
+                'route' => route('the-emirate'),
+            ],
+            'royal_emirates' => [
+                'id' => 'royal-emirates',
+                'name' => 'Royal Emirates™',
+                'category' => 'Hold and Spin Slot (5x3)',
+                'icon' => 'fas fa-coins',
+                'theme' => '#fbbf24',
+                'route' => route('royal-emirates'),
+            ],
+            'wingo' => [
+                'id' => 'wingo',
+                'name' => 'WinGo Lottery™',
+                'category' => 'Color & Number Prediction (30s/1m/3m/5m)',
+                'icon' => 'fas fa-dice',
+                'theme' => '#00b977',
+                'route' => route('wingo.index'),
+            ],
+            'k3' => [
+                'id' => 'k3',
+                'name' => 'K3 Lottery™',
+                'category' => '3-Dice Fast Prediction (1m/3m/5m/10m)',
+                'icon' => 'fas fa-cubes',
+                'theme' => '#10b981',
+                'route' => route('k3.index'),
+            ],
+            'trx_wingo' => [
+                'id' => 'trxwingo',
+                'name' => 'TrxWinGo Lottery™',
+                'category' => 'TRON Public Chain Block Hash (1m/3m/5m)',
+                'icon' => 'fas fa-cube',
+                'theme' => '#00b977',
+                'route' => route('trxwingo.index'),
             ],
         ];
 
@@ -149,7 +253,7 @@ class AdminController extends Controller
             $turnover = $reg ? (float)$reg->total_real_bets : 0.0;
             $payout = $reg ? (float)$reg->total_real_payouts : 0.0;
             $profit = $reg ? (float)$reg->net_house_profit : 0.0;
-            $activeUsers = $reg ? max(1, (int)$reg->active_real_players_count) : 1;
+            $activeUsers = $reg ? (int)$reg->active_real_players_count : 0;
             $health = $reg ? $reg->health_status : 'healthy';
             $rtp = $turnover > 0 ? round(($payout / $turnover) * 100, 2) : 96.50;
 
@@ -308,32 +412,44 @@ class AdminController extends Controller
     // CRASH GAME POINTS MANAGEMENT
     // =============================================
 
+    // =============================================
+    // CRASH GAME POINTS MANAGEMENT (MULTI-GAME)
+    // =============================================
+
     /**
-     * Get all crash points ordered by sort_order.
+     * Get all crash points, optionally filtered by game_key.
      */
-    public function getCrashPoints()
+    public function getCrashPoints(Request $request)
     {
-        $points = CrashPoint::orderBy('sort_order')->orderBy('id')->get();
-        return response()->json(['success' => true, 'points' => $points]);
+        $gameKey = $request->query('game_key');
+        $query = CrashPoint::orderBy('sort_order')->orderBy('id');
+        if ($gameKey && in_array($gameKey, ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'])) {
+            $query->where('game_key', $gameKey);
+        }
+        $points = $query->get();
+        return response()->json(['success' => true, 'points' => $points, 'game_key' => $gameKey]);
     }
 
     /**
-     * Create a new crash point.
+     * Create a new crash point for a specific game.
      */
     public function createCrashPoint(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'point'  => 'required|numeric|min:1.00|max:1000.00',
-            'status' => 'required|in:active,inactive',
+            'game_key' => 'nullable|string|in:helicopterx,1xaero,aero,crashx,crash',
+            'point'    => 'required|numeric|min:1.00|max:1000.00',
+            'status'   => 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
         }
 
-        $maxOrder = CrashPoint::max('sort_order') ?? 0;
+        $gameKey = $request->input('game_key', 'helicopterx');
+        $maxOrder = CrashPoint::where('game_key', $gameKey)->max('sort_order') ?? 0;
 
         $cp = CrashPoint::create([
+            'game_key'   => $gameKey,
             'point'      => $request->point,
             'status'     => $request->status,
             'sort_order' => $maxOrder + 1,
@@ -353,18 +469,24 @@ class AdminController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'point'  => 'required|numeric|min:1.00|max:1000.00',
-            'status' => 'required|in:active,inactive',
+            'game_key' => 'nullable|string|in:helicopterx,1xaero,aero,crashx,crash',
+            'point'    => 'required|numeric|min:1.00|max:1000.00',
+            'status'   => 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
         }
 
-        $cp->update([
+        $updateData = [
             'point'  => $request->point,
             'status' => $request->status,
-        ]);
+        ];
+        if ($request->has('game_key')) {
+            $updateData['game_key'] = $request->game_key;
+        }
+
+        $cp->update($updateData);
 
         return response()->json(['success' => true, 'message' => 'Crash point updated.', 'point' => $cp]);
     }
@@ -386,34 +508,52 @@ class AdminController extends Controller
 
     /**
      * PUBLIC endpoint (auth required for logged-in players).
-     * Returns the next crash point in sequence and advances the internal index.
-     * The sequence cycles through active crash points only.
-     * This is called by the game engine at the start of each round.
+     * Returns the next crash point in sequence for the given game and advances its index.
      */
-    public function getNextCrashPoint()
+    public function getNextCrashPoint(Request $request)
     {
-        // Check if there was an advancement within the last 4 seconds to prevent multiple increments in same round
-        $lastTimeRecord = DB::table('game_state')->where('key', 'last_advancement_time')->first();
+        $game = strtolower($request->query('game', 'helicopterx'));
+        $validGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+        if (!in_array($game, $validGames)) {
+            $game = 'helicopterx';
+        }
+
+        $lastTimeKey = 'last_advancement_time_' . $game;
+        $currentValKey = 'current_crash_point_value_' . $game;
+        $currentRoundKey = 'current_round_id_' . $game;
+        $historyKey = 'recent_crash_history_' . $game;
+        $seqIndexKey = 'crash_sequence_index_' . $game;
+
+        $lastTimeRecord = DB::table('game_state')->where('key', $lastTimeKey)->first();
         $lastTime = $lastTimeRecord ? (int) $lastTimeRecord->value : 0;
         
-        $currentValRecord = DB::table('game_state')->where('key', 'current_crash_point_value')->first();
+        $currentValRecord = DB::table('game_state')->where('key', $currentValKey)->first();
         $currentVal = $currentValRecord ? (float) $currentValRecord->value : null;
 
-        $currentRoundIdRecord = DB::table('game_state')->where('key', 'current_round_id')->first();
+        $currentRoundIdRecord = DB::table('game_state')->where('key', $currentRoundKey)->first();
         $currentRoundId = $currentRoundIdRecord ? $currentRoundIdRecord->value : null;
 
         $now = time();
         $timeDiff = $now - $lastTime;
 
-        $settings = [
-            'active_helicopter_design' => Setting::getVal('active_helicopter_design', '1'),
-            'game_countdown_time'      => Setting::getVal('game_countdown_time', '10'),
-            'game_bg_music'            => Setting::getVal('game_bg_music', ''),
-            'game_countdown_sound'     => Setting::getVal('game_countdown_sound', ''),
+        $defaultDesigns = [
+            'helicopterx' => '2',
+            '1xaero'      => '1',
+            'aero'        => '7',
+            'crashx'      => '6',
+            'crash'       => '5',
         ];
 
-        // Retrieve recent crash history from DB
-        $historyRecord = DB::table('game_state')->where('key', 'recent_crash_history')->first();
+        $settings = [
+            'game'                     => $game,
+            'active_helicopter_design' => Setting::getVal("active_helicopter_design_{$game}", Setting::getVal('active_helicopter_design', $defaultDesigns[$game] ?? '1')),
+            'game_countdown_time'      => Setting::getVal("game_countdown_time_{$game}", Setting::getVal('game_countdown_time', '10')),
+            'game_bg_music'            => Setting::getVal("game_bg_music_{$game}", Setting::getVal('game_bg_music', '')),
+            'game_countdown_sound'     => Setting::getVal("game_countdown_sound_{$game}", Setting::getVal('game_countdown_sound', '')),
+        ];
+
+        // Retrieve recent crash history from DB for this game
+        $historyRecord = DB::table('game_state')->where('key', $historyKey)->first();
         $history = $historyRecord ? json_decode($historyRecord->value, true) : [1.85, 12.04, 1.03, 2.50, 1.25, 4.33, 1.12, 18.50, 1.54, 3.22, 1.01, 1.08, 2.15, 1.44, 9.50];
         if (!is_array($history)) {
             $history = [1.85, 12.04, 1.03, 2.50, 1.25, 4.33, 1.12, 18.50, 1.54, 3.22, 1.01, 1.08, 2.15, 1.44, 9.50];
@@ -450,33 +590,48 @@ class AdminController extends Controller
                     $history = array_slice($history, -20);
                 }
                 DB::table('game_state')->updateOrInsert(
-                    ['key' => 'recent_crash_history'],
+                    ['key' => $historyKey],
                     ['value' => json_encode(array_values($history)), 'updated_at' => now(), 'created_at' => now()]
                 );
             }
         }
 
         // Generate new round ID
-        $newRoundId = 'RC-' . mt_rand(100000, 999999);
+        $prefixMap = [
+            'helicopterx' => 'HX-',
+            '1xaero'      => 'AX-',
+            'aero'        => 'AE-',
+            'crashx'      => 'CX-',
+            'crash'       => 'RC-',
+        ];
+        $prefix = $prefixMap[$game] ?? 'RC-';
+        $newRoundId = $prefix . mt_rand(100000, 999999);
 
-        // Get next crash point
-        $activePoints = CrashPoint::where('status', 'active')
+        // Get next crash point for this game
+        $activePoints = CrashPoint::where('game_key', $game)
+                                   ->where('status', 'active')
                                    ->orderBy('sort_order')
                                    ->orderBy('id')
                                    ->get();
 
         if ($activePoints->isEmpty()) {
-            // NO RANDOM FALLBACK — admin must configure crash points.
-            // Return a failure so the game client waits and retries.
+            // Fallback to any active points if game-specific ones are not yet configured
+            $activePoints = CrashPoint::where('status', 'active')
+                                       ->orderBy('sort_order')
+                                       ->orderBy('id')
+                                       ->get();
+        }
+
+        if ($activePoints->isEmpty()) {
             return response()->json([
                 'success'        => false,
-                'message'        => 'No active crash points configured. Please add crash points in Admin Panel.',
+                'message'        => "No active crash points configured for {$game}. Please add crash points in Admin Panel.",
                 'no_points'      => true,
                 'recent_history' => array_values($history)
             ]);
         }
 
-        $stateRecord = DB::table('game_state')->where('key', 'crash_sequence_index')->first();
+        $stateRecord = DB::table('game_state')->where('key', $seqIndexKey)->first();
         $currentIndex = $stateRecord ? (int) $stateRecord->value : 0;
         if ($currentIndex >= $activePoints->count()) {
             $currentIndex = 0;
@@ -486,24 +641,24 @@ class AdminController extends Controller
         $nextIndex = ($currentIndex + 1) % $activePoints->count();
 
         DB::table('game_state')->updateOrInsert(
-            ['key' => 'crash_sequence_index'],
+            ['key' => $seqIndexKey],
             ['value' => $nextIndex, 'updated_at' => now(), 'created_at' => now()]
         );
         $source = 'admin_sequence';
 
-        // Save updated values in DB
+        // Save updated values in DB for this game
         DB::table('game_state')->updateOrInsert(
-            ['key' => 'last_advancement_time'],
+            ['key' => $lastTimeKey],
             ['value' => $now, 'updated_at' => now(), 'created_at' => now()]
         );
 
         DB::table('game_state')->updateOrInsert(
-            ['key' => 'current_crash_point_value'],
+            ['key' => $currentValKey],
             ['value' => $nextPointVal, 'updated_at' => now(), 'created_at' => now()]
         );
 
         DB::table('game_state')->updateOrInsert(
-            ['key' => 'current_round_id'],
+            ['key' => $currentRoundKey],
             ['value' => $newRoundId, 'updated_at' => now(), 'created_at' => now()]
         );
 
@@ -517,32 +672,55 @@ class AdminController extends Controller
     }
 
     /**
-     * ADMIN: Force crash the current game round immediately.
-     * Sets a flag in game_state that the game engine polls every second.
+     * ADMIN: Force crash game round(s) immediately.
      */
-    public function forceCrash()
+    public function forceCrash(Request $request)
     {
-        DB::table('game_state')->updateOrInsert(
-            ['key' => 'force_crash'],
-            ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
-        );
+        $game = strtolower($request->input('game_key', 'all'));
+        $gamesList = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+
+        if ($game === 'all') {
+            foreach ($gamesList as $g) {
+                DB::table('game_state')->updateOrInsert(
+                    ['key' => 'force_crash_' . $g],
+                    ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
+                );
+            }
+            DB::table('game_state')->updateOrInsert(
+                ['key' => 'force_crash'],
+                ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
+            );
+            $msg = 'Force crash signal sent to all 5 crash games!';
+        } else {
+            DB::table('game_state')->updateOrInsert(
+                ['key' => 'force_crash_' . $game],
+                ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
+            );
+            $msg = "Force crash signal sent to {$game}!";
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Force crash signal sent! Game will crash on next poll.'
+            'message' => $msg
         ]);
     }
 
     /**
-     * GAME CLIENT: Check if admin has triggered a force crash.
-     * Returns true once, then clears the flag automatically.
+     * GAME CLIENT: Check if admin has triggered a force crash for this game.
      */
-    public function checkForceCrash()
+    public function checkForceCrash(Request $request)
     {
-        $record = DB::table('game_state')->where('key', 'force_crash')->first();
+        $game = strtolower($request->query('game', 'helicopterx'));
+        $record = DB::table('game_state')->where('key', 'force_crash_' . $game)->first();
+        if (!$record) {
+            $record = DB::table('game_state')->where('key', 'force_crash')->first();
+        }
 
         if ($record && $record->value === '1') {
-            // Clear immediately so it only fires once
+            DB::table('game_state')->where('key', 'force_crash_' . $game)->update([
+                'value'      => '0',
+                'updated_at' => now()
+            ]);
             DB::table('game_state')->where('key', 'force_crash')->update([
                 'value'      => '0',
                 'updated_at' => now()
@@ -556,13 +734,20 @@ class AdminController extends Controller
     /**
      * GAME CLIENT: Check force crash and sync crash point.
      */
-    public function checkStatus()
+    public function checkStatus(Request $request)
     {
-        $record = DB::table('game_state')->where('key', 'force_crash')->first();
+        $game = strtolower($request->query('game', 'helicopterx'));
+        $record = DB::table('game_state')->where('key', 'force_crash_' . $game)->first();
+        if (!$record) {
+            $record = DB::table('game_state')->where('key', 'force_crash')->first();
+        }
         $forceCrash = false;
 
         if ($record && $record->value === '1') {
-            // Clear immediately so it only fires once
+            DB::table('game_state')->where('key', 'force_crash_' . $game)->update([
+                'value'      => '0',
+                'updated_at' => now()
+            ]);
             DB::table('game_state')->where('key', 'force_crash')->update([
                 'value'      => '0',
                 'updated_at' => now()
@@ -570,24 +755,25 @@ class AdminController extends Controller
             $forceCrash = true;
         }
 
-        $currentVal = DB::table('game_state')->where('key', 'current_crash_point_value')->value('value') ?? 1.00;
-        $currentRoundId = DB::table('game_state')->where('key', 'current_round_id')->value('value');
+        $currentVal = DB::table('game_state')->where('key', 'current_crash_point_value_' . $game)->value('value') 
+            ?? DB::table('game_state')->where('key', 'current_crash_point_value')->value('value') 
+            ?? 1.00;
+            
+        $currentRoundId = DB::table('game_state')->where('key', 'current_round_id_' . $game)->value('value')
+            ?? DB::table('game_state')->where('key', 'current_round_id')->value('value');
 
         $realBets = [];
         if ($currentRoundId) {
             $realBets = DB::table('game_bets')
                 ->join('users', 'game_bets.user_id', '=', 'users.id')
                 ->where('game_bets.round_id', $currentRoundId)
-                ->where('game_bets.user_id', '!=', Auth::id()) // exclude current user
+                ->where('game_bets.user_id', '!=', Auth::id())
                 ->select('users.name', 'game_bets.bet_amount', 'game_bets.cashout_odds', 'game_bets.winnings', 'game_bets.result')
                 ->get()
                 ->map(function($bet) {
                     $rawName = $bet->name;
                     $len = strlen($rawName);
-                    // Mask username
                     $masked = $len > 4 ? substr($rawName, 0, 2) . '***' . substr($rawName, -2) : $rawName . '***';
-                    
-                    // Generate a deterministic nice avatar for the real user based on their name
                     $avatarId = (crc32($rawName) % 70) + 1;
                     $gender = (crc32($rawName) % 2 === 0) ? 'men' : 'women';
                     $avatar = "https://randomuser.me/api/portraits/thumb/{$gender}/{$avatarId}.jpg";
@@ -605,6 +791,7 @@ class AdminController extends Controller
 
         return response()->json([
             'success'     => true,
+            'game'        => $game,
             'force_crash' => $forceCrash,
             'crash_point' => (float)$currentVal,
             'real_bets'   => $realBets
@@ -614,15 +801,21 @@ class AdminController extends Controller
     /**
      * ADMIN: Get live status of the running game round for the monitor panel.
      */
-    public function getGameStatus()
+    public function getGameStatus(Request $request)
     {
-        $seqIndex = DB::table('game_state')->where('key', 'crash_sequence_index')->value('value') ?? 0;
-        $currentVal = DB::table('game_state')->where('key', 'current_crash_point_value')->value('value') ?? 1.00;
-        $lastTime = DB::table('game_state')->where('key', 'last_advancement_time')->value('value') ?? 0;
-        $roundId = DB::table('game_state')->where('key', 'current_round_id')->value('value') ?? 'N/A';
-        $forceCrash = DB::table('game_state')->where('key', 'force_crash')->value('value') ?? '0';
+        $game = strtolower($request->query('game', 'helicopterx'));
+        $validGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+        if (!in_array($game, $validGames)) {
+            $game = 'helicopterx';
+        }
 
-        $countdownDuration = (int)Setting::getVal('game_countdown_time', '10');
+        $seqIndex = DB::table('game_state')->where('key', 'crash_sequence_index_' . $game)->value('value') ?? 0;
+        $currentVal = DB::table('game_state')->where('key', 'current_crash_point_value_' . $game)->value('value') ?? 1.00;
+        $lastTime = DB::table('game_state')->where('key', 'last_advancement_time_' . $game)->value('value') ?? 0;
+        $roundId = DB::table('game_state')->where('key', 'current_round_id_' . $game)->value('value') ?? 'N/A';
+        $forceCrash = DB::table('game_state')->where('key', 'force_crash_' . $game)->value('value') ?? '0';
+
+        $countdownDuration = (int)Setting::getVal("game_countdown_time_{$game}", Setting::getVal('game_countdown_time', '10'));
         $now = time();
         $elapsed = $now - (int)$lastTime;
 
@@ -641,7 +834,6 @@ class AdminController extends Controller
             }
         }
 
-        // Count real bets placed on this round
         $totalRealBets = 0.00;
         $realBetsCount = 0;
         if ($roundId !== 'N/A') {
@@ -651,6 +843,7 @@ class AdminController extends Controller
 
         return response()->json([
             'success'               => true,
+            'game'                  => $game,
             'sequence_index'        => (int)$seqIndex,
             'current_crash_value'   => (float)$currentVal,
             'last_start_time'       => (int)$lastTime,
@@ -663,49 +856,64 @@ class AdminController extends Controller
         ]);
     }
 
-
     /**
      * Get Platform Settings.
      */
     public function getSettings()
     {
+        $games = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+        $defaultDesigns = [
+            'helicopterx' => '2',
+            '1xaero'      => '1',
+            'aero'        => '7',
+            'crashx'      => '6',
+            'crash'       => '5',
+        ];
+
+        $settings = [
+            'referral_commission_l1'        => Setting::getVal('referral_commission_l1', '10'),
+            'referral_commission_l1_status' => Setting::getVal('referral_commission_l1_status', 'active'),
+            'referral_commission_l2'        => Setting::getVal('referral_commission_l2', '5'),
+            'referral_commission_l2_status' => Setting::getVal('referral_commission_l2_status', 'active'),
+            'referral_commission_l3'        => Setting::getVal('referral_commission_l3', '2'),
+            'referral_commission_l3_status' => Setting::getVal('referral_commission_l3_status', 'active'),
+            'withdraw_commission'           => Setting::getVal('withdraw_commission', '5'),
+            'withdraw_commission_status'    => Setting::getVal('withdraw_commission_status', 'active'),
+            // Global legacy fallbacks
+            'active_helicopter_design'      => Setting::getVal('active_helicopter_design', '1'),
+            'game_bg_music'                 => Setting::getVal('game_bg_music', ''),
+            'game_countdown_sound'          => Setting::getVal('game_countdown_sound', ''),
+            'game_countdown_time'           => Setting::getVal('game_countdown_time', '10'),
+        ];
+
+        // Add settings for all 5 crash games
+        foreach ($games as $g) {
+            $settings["active_helicopter_design_{$g}"] = Setting::getVal("active_helicopter_design_{$g}", $defaultDesigns[$g] ?? '1');
+            $settings["game_countdown_time_{$g}"]      = Setting::getVal("game_countdown_time_{$g}", '10');
+            $settings["game_bg_music_{$g}"]            = Setting::getVal("game_bg_music_{$g}", '');
+            $settings["game_countdown_sound_{$g}"]     = Setting::getVal("game_countdown_sound_{$g}", '');
+        }
+
         return response()->json([
-            'success' => true,
-            'settings' => [
-                'referral_commission_l1' => Setting::getVal('referral_commission_l1', '10'),
-                'referral_commission_l1_status' => Setting::getVal('referral_commission_l1_status', 'active'),
-                'referral_commission_l2' => Setting::getVal('referral_commission_l2', '5'),
-                'referral_commission_l2_status' => Setting::getVal('referral_commission_l2_status', 'active'),
-                'referral_commission_l3' => Setting::getVal('referral_commission_l3', '2'),
-                'referral_commission_l3_status' => Setting::getVal('referral_commission_l3_status', 'active'),
-                'withdraw_commission' => Setting::getVal('withdraw_commission', '5'),
-                'withdraw_commission_status' => Setting::getVal('withdraw_commission_status', 'active'),
-                'active_helicopter_design' => Setting::getVal('active_helicopter_design', '1'),
-                'game_bg_music' => Setting::getVal('game_bg_music', ''),
-                'game_countdown_sound' => Setting::getVal('game_countdown_sound', ''),
-                'game_countdown_time' => Setting::getVal('game_countdown_time', '10'),
-            ]
+            'success'  => true,
+            'settings' => $settings
         ]);
     }
 
     /**
-     * Save Platform Settings.
+     * Save Platform Settings for Referral Commissions and all 5 Crash Games.
      */
     public function saveSettings(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'referral_commission_l1' => 'required|numeric|min:0|max:100',
+            'referral_commission_l1'        => 'required|numeric|min:0|max:100',
             'referral_commission_l1_status' => 'required|in:active,inactive',
-            'referral_commission_l2' => 'required|numeric|min:0|max:100',
+            'referral_commission_l2'        => 'required|numeric|min:0|max:100',
             'referral_commission_l2_status' => 'required|in:active,inactive',
-            'referral_commission_l3' => 'required|numeric|min:0|max:100',
+            'referral_commission_l3'        => 'required|numeric|min:0|max:100',
             'referral_commission_l3_status' => 'required|in:active,inactive',
-            'withdraw_commission' => 'required|numeric|min:0|max:100',
-            'withdraw_commission_status' => 'required|in:active,inactive',
-            'active_helicopter_design' => 'required|integer|min:1|max:10',
-            'game_bg_music_file' => 'nullable|file|mimes:mp3,wav,ogg,mpeg,mp4|max:15360', // 15MB max
-            'game_countdown_sound_file' => 'nullable|file|mimes:mp3,wav,ogg,mpeg,mp4|max:5120', // 5MB max
-            'game_countdown_time' => 'required|integer|min:2|max:60',
+            'withdraw_commission'           => 'required|numeric|min:0|max:100',
+            'withdraw_commission_status'    => 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
@@ -720,20 +928,57 @@ class AdminController extends Controller
         Setting::setVal('referral_commission_l3_status', $request->referral_commission_l3_status);
         Setting::setVal('withdraw_commission', $request->withdraw_commission);
         Setting::setVal('withdraw_commission_status', $request->withdraw_commission_status);
-        Setting::setVal('active_helicopter_design', $request->active_helicopter_design);
-        Setting::setVal('game_countdown_time', $request->game_countdown_time);
 
+        $games = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+
+        // Ensure upload directory exists
+        $uploadDir = public_path('uploads/sounds');
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        foreach ($games as $g) {
+            // Save flight design
+            if ($request->has("active_helicopter_design_{$g}")) {
+                Setting::setVal("active_helicopter_design_{$g}", $request->input("active_helicopter_design_{$g}"));
+            }
+            // Save countdown time
+            if ($request->has("game_countdown_time_{$g}")) {
+                Setting::setVal("game_countdown_time_{$g}", $request->input("game_countdown_time_{$g}"));
+            }
+            // Upload BG music file
+            if ($request->hasFile("game_bg_music_file_{$g}")) {
+                $file = $request->file("game_bg_music_file_{$g}");
+                $fileName = "bg_music_{$g}_" . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move($uploadDir, $fileName);
+                Setting::setVal("game_bg_music_{$g}", '/uploads/sounds/' . $fileName);
+            }
+            // Upload countdown sound file
+            if ($request->hasFile("game_countdown_sound_file_{$g}")) {
+                $file = $request->file("game_countdown_sound_file_{$g}");
+                $fileName = "countdown_{$g}_" . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move($uploadDir, $fileName);
+                Setting::setVal("game_countdown_sound_{$g}", '/uploads/sounds/' . $fileName);
+            }
+        }
+
+        // Also update legacy values if provided
+        if ($request->has('active_helicopter_design')) {
+            Setting::setVal('active_helicopter_design', $request->active_helicopter_design);
+        }
+        if ($request->has('game_countdown_time')) {
+            Setting::setVal('game_countdown_time', $request->game_countdown_time);
+        }
         if ($request->hasFile('game_bg_music_file')) {
             $file = $request->file('game_bg_music_file');
             $fileName = 'bg_music_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/sounds'), $fileName);
+            $file->move($uploadDir, $fileName);
             Setting::setVal('game_bg_music', '/uploads/sounds/' . $fileName);
         }
-
         if ($request->hasFile('game_countdown_sound_file')) {
             $file = $request->file('game_countdown_sound_file');
             $fileName = 'countdown_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/sounds'), $fileName);
+            $file->move($uploadDir, $fileName);
             Setting::setVal('game_countdown_sound', '/uploads/sounds/' . $fileName);
         }
 
@@ -745,11 +990,9 @@ class AdminController extends Controller
                 'l3' => $request->referral_commission_l3 . '% (' . $request->referral_commission_l3_status . ')',
             ],
             'withdraw_commission' => $request->withdraw_commission . '% (' . $request->withdraw_commission_status . ')',
-            'active_helicopter_design' => $request->active_helicopter_design,
-            'game_countdown_time' => $request->game_countdown_time,
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Platform settings updated successfully.']);
+        return response()->json(['success' => true, 'message' => 'Platform settings for all 5 Crash Games updated successfully.']);
     }
 
     /**
@@ -1352,4 +1595,64 @@ class AdminController extends Controller
             'logs'    => $logs,
         ]);
     }
+
+    /**
+     * Update Site Branding, Custom Logo, and Global Demo Spins Limit.
+     */
+    public function updateBrandingSettings(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate([
+            'site_name' => 'nullable|string|max:100',
+            'demo_spins_limit' => 'nullable|integer|min:1|max:100',
+            'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg,gif|max:5120',
+            'remove_logo' => 'nullable|boolean',
+        ]);
+
+        if ($request->filled('site_name')) {
+            Setting::setVal('site_name', trim($request->site_name));
+        }
+
+        if ($request->filled('demo_spins_limit')) {
+            Setting::setVal('demo_spins_limit', (int)$request->demo_spins_limit);
+        }
+
+        if ($request->boolean('remove_logo')) {
+            $oldLogo = Setting::getVal('site_logo');
+            if ($oldLogo && file_exists(public_path($oldLogo))) {
+                @unlink(public_path($oldLogo));
+            }
+            Setting::setVal('site_logo', null);
+        } elseif ($request->hasFile('site_logo')) {
+            $file = $request->file('site_logo');
+            $filename = 'site_logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $destDir = public_path('assets/image/uploads');
+            if (!\Illuminate\Support\Facades\File::isDirectory($destDir)) {
+                \Illuminate\Support\Facades\File::makeDirectory($destDir, 0755, true, true);
+            }
+            $file->move($destDir, $filename);
+            Setting::setVal('site_logo', 'assets/image/uploads/' . $filename);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Site branding and Demo limit settings saved successfully!',
+            'site_name' => Setting::getVal('site_name', '1XBET'),
+            'site_logo' => Setting::getVal('site_logo') ? asset(Setting::getVal('site_logo')) : null,
+            'demo_spins_limit' => (int)Setting::getVal('demo_spins_limit', 3),
+        ]);
+    }
+
+    /**
+     * Get Site Branding and Demo Settings.
+     */
+    public function getBrandingSettings(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'site_name' => Setting::getVal('site_name', '1XBET'),
+            'site_logo' => Setting::getVal('site_logo') ? asset(Setting::getVal('site_logo')) : null,
+            'demo_spins_limit' => (int)Setting::getVal('demo_spins_limit', 3),
+        ]);
+    }
 }
+

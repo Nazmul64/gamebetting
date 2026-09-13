@@ -1,10 +1,77 @@
+@php
+    $currentGame = $game ?? request()->query('game', 'helicopterx');
+    $validGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+    if (!in_array(strtolower($currentGame), $validGames)) {
+        $currentGame = 'helicopterx';
+    }
+    $currentGame = strtolower($currentGame);
+
+    $gameMeta = [
+        'helicopterx' => [
+            'name'          => 'HelicopterX',
+            'tag'           => '1XGAMES EXCLUSIVE',
+            'icon'          => 'fas fa-helicopter',
+            'themeColor'    => '#ffbe1a',
+            'secondary'     => '#f06424',
+            'glowColor'     => 'rgba(255, 190, 26, 0.35)',
+            'bgGradient'    => 'linear-gradient(135deg, #0b1226 0%, #17213c 100%)',
+            'defaultDesign' => 2,
+        ],
+        '1xaero' => [
+            'name'          => '1xAero',
+            'tag'           => 'SUPERSONIC FLIGHT',
+            'icon'          => 'fas fa-plane-up',
+            'themeColor'    => '#00f2fe',
+            'secondary'     => '#4facfe',
+            'glowColor'     => 'rgba(0, 242, 254, 0.35)',
+            'bgGradient'    => 'linear-gradient(135deg, #06182c 0%, #0d2b45 100%)',
+            'defaultDesign' => 1,
+        ],
+        'aero' => [
+            'name'          => 'Aero',
+            'tag'           => 'VINTAGE FLIGHT',
+            'icon'          => 'fas fa-plane',
+            'themeColor'    => '#f87171',
+            'secondary'     => '#dc2626',
+            'glowColor'     => 'rgba(248, 113, 113, 0.35)',
+            'bgGradient'    => 'linear-gradient(135deg, #200d14 0%, #2e101a 100%)',
+            'defaultDesign' => 7,
+        ],
+        'crashx' => [
+            'name'          => 'CrashX',
+            'tag'           => 'CYBER MULTIPLIER',
+            'icon'          => 'fas fa-rocket',
+            'themeColor'    => '#2dd4bf',
+            'secondary'     => '#0d9488',
+            'glowColor'     => 'rgba(45, 212, 191, 0.35)',
+            'bgGradient'    => 'linear-gradient(135deg, #041f1e 0%, #0d2f35 100%)',
+            'defaultDesign' => 6,
+        ],
+        'crash' => [
+            'name'          => 'Crash',
+            'tag'           => '1XGAMES EXCLUSIVE',
+            'icon'          => 'fas fa-fire',
+            'themeColor'    => '#fb923c',
+            'secondary'     => '#ea580c',
+            'glowColor'     => 'rgba(251, 146, 60, 0.35)',
+            'bgGradient'    => 'linear-gradient(135deg, #1f0d04 0%, #2e1509 100%)',
+            'defaultDesign' => 5,
+        ],
+    ];
+
+    $meta = $gameMeta[$currentGame] ?? $gameMeta['helicopterx'];
+    $activeDesign = \App\Models\Setting::getVal("active_helicopter_design_{$currentGame}", \App\Models\Setting::getVal('active_helicopter_design', $meta['defaultDesign']));
+    $bgMusic = \App\Models\Setting::getVal("game_bg_music_{$currentGame}", \App\Models\Setting::getVal('game_bg_music', ''));
+    $countdownSound = \App\Models\Setting::getVal("game_countdown_sound_{$currentGame}", \App\Models\Setting::getVal('game_countdown_sound', ''));
+    $countdownTime = \App\Models\Setting::getVal("game_countdown_time_{$currentGame}", \App\Models\Setting::getVal('game_countdown_time', '10'));
+@endphp
 <!DOCTYPE html>
 <html lang="en" class="{{ auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Bettingsite - Crash Game Clone</title>
+    <title>{{ $meta['name'] }} - 1XGAMES Crash Flight</title>
     <!-- Google Fonts for premium typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +81,17 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('game.css') }}">
+    <style>
+        :root {
+            --game-theme-accent: {{ $meta['themeColor'] }};
+            --game-theme-secondary: {{ $meta['secondary'] }};
+            --game-theme-glow: {{ $meta['glowColor'] }};
+        }
+        .active-page {
+            color: var(--game-theme-accent) !important;
+            text-shadow: 0 0 10px var(--game-theme-glow);
+        }
+    </style>
 </head>
 <body class="game-body-bg {{ auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
     @include('customer.header')
@@ -26,7 +104,7 @@
                 <span class="separator">/</span>
                 <span class="sub-logo-text">LOTTERIES</span>
                 <span class="separator">/</span>
-                <span class="active-page">CRASH</span>
+                <span class="active-page"><i class="{{ $meta['icon'] }}" style="margin-right: 4px;"></i> {{ strtoupper($meta['name']) }}</span>
             </div>
             
             <div class="header-right">
@@ -341,14 +419,16 @@
         localStorage.setItem('crash_is_logged_in', 'true');
         localStorage.setItem('crash_username', "{{ auth()->user()->name }}");
         localStorage.setItem('crash_clone_balance', "{{ auth()->user()->balance }}");
-        window.activeHelicopterDesign = {{ \App\Models\Setting::getVal('active_helicopter_design', '1') }};
-        window.gameBgMusicUrl = "{{ \App\Models\Setting::getVal('game_bg_music', '') }}";
-        window.gameCountdownSoundUrl = "{{ \App\Models\Setting::getVal('game_countdown_sound', '') }}";
-        window.gameCountdownTime = {{ \App\Models\Setting::getVal('game_countdown_time', '10') }};
+        
+        window.currentGameKey = "{{ $currentGame }}";
+        window.activeHelicopterDesign = {{ (int)$activeDesign }};
+        window.gameBgMusicUrl = "{{ $bgMusic }}";
+        window.gameCountdownSoundUrl = "{{ $countdownSound }}";
+        window.gameCountdownTime = {{ (int)$countdownTime }};
 
-        // Realtime background sync of helicopter design, timer, background music and ticking beeps
+        // Realtime background sync of helicopter design, timer, background music and ticking beeps for this game
         setInterval(() => {
-            fetch('/game/active-settings', {
+            fetch('/game/active-settings?game=' + encodeURIComponent(window.currentGameKey), {
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -360,14 +440,14 @@
                     if (data.active_helicopter_design) {
                         const newDesign = parseInt(data.active_helicopter_design);
                         if (window.activeHelicopterDesign !== newDesign) {
-                            console.log(`[REALTIME] Helicopter design updated: ${window.activeHelicopterDesign} -> ${newDesign}`);
+                            console.log(`[REALTIME] Helicopter design updated for ${window.currentGameKey}: ${window.activeHelicopterDesign} -> ${newDesign}`);
                             window.activeHelicopterDesign = newDesign;
                         }
                     }
                     if (data.game_countdown_time) {
                         const newCountdown = parseInt(data.game_countdown_time);
                         if (window.gameCountdownTime !== newCountdown) {
-                            console.log(`[REALTIME] Countdown duration updated: ${window.gameCountdownTime} -> ${newCountdown}`);
+                            console.log(`[REALTIME] Countdown duration updated for ${window.currentGameKey}: ${window.gameCountdownTime} -> ${newCountdown}`);
                             window.gameCountdownTime = newCountdown;
                             if (typeof GameConfig !== 'undefined') {
                                 GameConfig.countdownDuration = newCountdown;
@@ -377,7 +457,7 @@
                     if (typeof data.game_bg_music !== 'undefined') {
                         const newBgMusic = data.game_bg_music;
                         if (window.gameBgMusicUrl !== newBgMusic) {
-                            console.log(`[REALTIME] BG music updated: ${window.gameBgMusicUrl} -> ${newBgMusic}`);
+                            console.log(`[REALTIME] BG music updated for ${window.currentGameKey}: ${window.gameBgMusicUrl} -> ${newBgMusic}`);
                             if (typeof soundEngine !== 'undefined') {
                                 if (soundEngine.bgAudio) {
                                     soundEngine.bgAudio.pause();
@@ -401,11 +481,11 @@
         }, 2000);
 
         // ===================================================
-        // FORCE CRASH POLLING — checks every 1 second
+        // FORCE CRASH POLLING — checks every 1 second for this game
         // If admin triggered force crash, crash the game now
         // ===================================================
         setInterval(() => {
-            fetch('/game/check-force-crash', {
+            fetch('/game/check-force-crash?game=' + encodeURIComponent(window.currentGameKey), {
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -414,19 +494,17 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success && data.force_crash === true) {
-                    console.warn('[ADMIN] Force crash triggered by admin!');
-                    // Trigger the game crash immediately via the global crash function
+                    console.warn(`[ADMIN] Force crash triggered for ${window.currentGameKey}!`);
                     if (typeof window.adminForceCrashGame === 'function') {
                         window.adminForceCrashGame();
                     } else if (typeof window.triggerCrash === 'function') {
                         window.triggerCrash();
                     } else {
-                        // Fallback: dispatch a custom event the game JS can listen to
                         window.dispatchEvent(new CustomEvent('admin-force-crash'));
                     }
                 }
             })
-            .catch(() => {}); // silent fail - don't spam console
+            .catch(() => {});
         }, 1000);
 
         function toggleGameTheme(e) {

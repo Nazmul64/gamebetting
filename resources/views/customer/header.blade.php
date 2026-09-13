@@ -472,10 +472,22 @@
             <i class="fas fa-bars"></i>
         </button>
 
+        @php
+            $customSiteLogo = \App\Models\Setting::getVal('site_logo');
+            $customSiteName = \App\Models\Setting::getVal('site_name', '1XBET');
+        @endphp
         <a href="{{ route('dashboard') }}" style="text-decoration: none; display: flex; align-items: center; gap: 6px;">
-            <span class="logo-text" style="font-style: italic; font-weight: 900; font-size: 24px; letter-spacing: -0.5px; color: #1a76d2; text-shadow: 0 0 10px rgba(26, 118, 210, 0.3);">
-                <span style="color: #ffffff;">1X</span>BET
-            </span>
+            @if($customSiteLogo && file_exists(public_path($customSiteLogo)))
+                <img src="{{ asset($customSiteLogo) }}" alt="{{ $customSiteName }}" style="max-height: 38px; max-width: 160px; object-fit: contain;">
+            @else
+                <span class="logo-text" style="font-style: italic; font-weight: 900; font-size: 24px; letter-spacing: -0.5px; color: #1a76d2; text-shadow: 0 0 10px rgba(26, 118, 210, 0.3); text-transform: uppercase;">
+                    @if(str_starts_with(strtoupper($customSiteName), '1X'))
+                        <span style="color: #ffffff;">1X</span>{{ substr($customSiteName, 2) }}
+                    @else
+                        <span style="color: #ffffff;">{{ substr($customSiteName, 0, 2) }}</span>{{ substr($customSiteName, 2) }}
+                    @endif
+                </span>
+            @endif
         </a>
     </div>
     

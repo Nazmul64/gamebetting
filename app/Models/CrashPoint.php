@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CrashPoint extends Model
 {
-    protected $fillable = ['point', 'status', 'sort_order'];
+    protected $fillable = ['game_key', 'point', 'status', 'sort_order'];
 
     protected function casts(): array
     {

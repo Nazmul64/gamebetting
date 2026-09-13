@@ -457,14 +457,35 @@ class DashboardController extends Controller
     /**
      * Get active game settings in real-time.
      */
-    public function getActiveSettings()
+    public function getActiveSettings(Request $request)
     {
+        $game = strtolower($request->query('game', 'helicopterx'));
+        $validGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+        if (!in_array($game, $validGames)) {
+            $game = 'helicopterx';
+        }
+
+        $defaultDesigns = [
+            'helicopterx' => '2',
+            '1xaero'      => '1',
+            'aero'        => '7',
+            'crashx'      => '6',
+            'crash'       => '5',
+        ];
+        $fallbackDesign = $defaultDesigns[$game] ?? '1';
+
+        $design = Setting::getVal("active_helicopter_design_{$game}", Setting::getVal('active_helicopter_design', $fallbackDesign));
+        $countdown = Setting::getVal("game_countdown_time_{$game}", Setting::getVal('game_countdown_time', '10'));
+        $bgMusic = Setting::getVal("game_bg_music_{$game}", Setting::getVal('game_bg_music', ''));
+        $countdownSound = Setting::getVal("game_countdown_sound_{$game}", Setting::getVal('game_countdown_sound', ''));
+
         return response()->json([
-            'success' => true,
-            'active_helicopter_design' => Setting::getVal('active_helicopter_design', '1'),
-            'game_countdown_time'      => Setting::getVal('game_countdown_time', '10'),
-            'game_bg_music'            => Setting::getVal('game_bg_music', ''),
-            'game_countdown_sound'     => Setting::getVal('game_countdown_sound', ''),
+            'success'                  => true,
+            'game'                     => $game,
+            'active_helicopter_design' => $design,
+            'game_countdown_time'      => $countdown,
+            'game_bg_music'            => $bgMusic,
+            'game_countdown_sound'     => $countdownSound,
         ]);
     }
 

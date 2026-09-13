@@ -1354,6 +1354,14 @@
                 </button>
 
                 <div class="nav-section-label">Platform Setup</div>
+                <button class="sidebar-nav-link" id="nav-branding" onclick="switchTab('branding', this)">
+                    <i class="fas fa-palette" style="color: #a855f7;"></i>
+                    <span>Site Branding & Demo</span>
+                </button>
+                <button class="sidebar-nav-link" id="nav-sliders" onclick="switchTab('sliders', this)">
+                    <i class="fas fa-images" style="color: #06b6d4;"></i>
+                    <span>Promotional Sliders</span>
+                </button>
                 <button class="sidebar-nav-link" id="nav-gateways" onclick="switchTab('gateways', this)">
                     <i class="fas fa-circle-arrow-down"></i>
                     <span>Deposit Gateways</span>
@@ -1396,11 +1404,39 @@
                             <span style="font-size:9px; background:#f97316; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
-                        <!-- Aviator Crash Settings -->
-                        <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px;">
-                            <i class="fas fa-plane-departure" style="color:#00f2fe; font-size:13px;"></i>
-                            <span>Aviator Crash</span>
+                        <!-- 1. HelicopterX Crash Engine -->
+                        <button class="sidebar-nav-link" id="nav-game-helicopterx" onclick="openGameTab('helicopterx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25);">
+                            <i class="fas fa-helicopter" style="color:#f59e0b; font-size:13px;"></i>
+                            <span>HelicopterX</span>
+                            <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- 2. 1xAero Crash Engine -->
+                        <button class="sidebar-nav-link" id="nav-game-1xaero" onclick="openGameTab('1xaero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25);">
+                            <i class="fas fa-jet-fighter" style="color:#00f2fe; font-size:13px;"></i>
+                            <span>1xAero</span>
                             <span style="font-size:9px; background:#00f2fe; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- 3. Aero Crash Engine -->
+                        <button class="sidebar-nav-link" id="nav-game-aero" onclick="openGameTab('aero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                            <i class="fas fa-plane" style="color:#ef4444; font-size:13px;"></i>
+                            <span>Aero</span>
+                            <span style="font-size:9px; background:#ef4444; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- 4. CrashX Engine -->
+                        <button class="sidebar-nav-link" id="nav-game-crashx" onclick="openGameTab('crashx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);">
+                            <i class="fas fa-rocket" style="color:#10b981; font-size:13px;"></i>
+                            <span>CrashX</span>
+                            <span style="font-size:9px; background:#10b981; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </button>
+
+                        <!-- 5. Crash (1xGames Exclusive) -->
+                        <button class="sidebar-nav-link" id="nav-game-crash" onclick="openGameTab('crash', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25);">
+                            <i class="fas fa-meteor" style="color:#8b5cf6; font-size:13px;"></i>
+                            <span>Crash (1xGames)</span>
+                            <span style="font-size:9px; background:#8b5cf6; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- Active Game: Fortune Gems 2 -->
@@ -1455,6 +1491,34 @@
                             <i class="fas fa-gem" style="color:#f59e0b; font-size:13px;"></i>
                             <span>The Emirate™</span>
                             <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game 10: Royal Emirates (Hold and Spin) -->
+                        <a href="{{ route('admin.royalemirates.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-coins" style="color:#fbbf24; font-size:13px;"></i>
+                            <span>Royal Emirates™</span>
+                            <span style="font-size:9px; background:#fbbf24; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game 11: WinGo Lottery -->
+                        <a href="{{ route('admin.wingo.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); text-decoration:none; color:inherit;">
+                            <i class="fas fa-dice" style="color:#10b981; font-size:13px;"></i>
+                            <span>WinGo Lottery™</span>
+                            <span style="font-size:9px; background:#10b981; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">HOT</span>
+                        </a>
+
+                        <!-- Active Game 12: K3 Lottery -->
+                        <a href="{{ route('admin.k3.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); text-decoration:none; color:inherit;">
+                            <i class="fas fa-cubes" style="color:#34d399; font-size:13px;"></i>
+                            <span>K3 Lottery™</span>
+                            <span style="font-size:9px; background:#34d399; color:#061510; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">NEW</span>
+                        </a>
+
+                        <!-- Active Game 13: TrxWinGo Lottery -->
+                        <a href="{{ route('admin.trxwingo.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(0, 185, 119, 0.15); border: 1px solid rgba(0, 185, 119, 0.45); text-decoration:none; color:inherit;">
+                            <i class="fas fa-cube" style="color:#00b977; font-size:13px;"></i>
+                            <span>TrxWinGo™ (TRX)</span>
+                            <span style="font-size:9px; background:#00b977; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">TRX</span>
                         </a>
                     </div>
                 </div>
@@ -1696,7 +1760,11 @@
                                                 <a href="{{ $game['route'] }}" target="_blank" class="action-btn" title="Launch Game" style="text-decoration:none; margin-right:4px;">
                                                     <i class="fas fa-external-link-alt" style="font-size:11px;"></i>
                                                 </a>
-                                                @if($game['id'] === 'boxing-king')
+                                                @if(in_array($game['id'], ['helicopterx', '1xaero', 'aero', 'crashx', 'crash']))
+                                                    <button onclick="openGameTab('{{ $game['id'] }}', document.getElementById('nav-game-{{ $game['id'] }}'))" class="action-btn edit" title="Manage {{ $game['name'] }}">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                @elseif($game['id'] === 'boxing-king')
                                                     <button onclick="switchTab('boxing-king', document.getElementById('nav-boxing-king'))" class="action-btn edit" title="Manage Boxing King">
                                                         <i class="fas fa-cog"></i>
                                                     </button>
@@ -1708,10 +1776,50 @@
                                                     <button onclick="switchTab('olympus', document.getElementById('nav-olympus'))" class="action-btn edit" title="Manage Olympus">
                                                         <i class="fas fa-cog"></i>
                                                     </button>
-                                                @elseif($game['id'] === 'aviator')
-                                                    <button onclick="switchTab('game', document.getElementById('nav-game'))" class="action-btn edit" title="Manage Aviator">
+                                                @elseif($game['id'] === 'fortune-gems-2')
+                                                    <a href="{{ route('admin.gems.index') }}" class="action-btn edit" title="Manage Fortune Gems 2" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                                                         <i class="fas fa-cog"></i>
-                                                    </button>
+                                                    </a>
+                                                @elseif($game['id'] === 'abyss-of-glory')
+                                                    <a href="{{ route('admin.abyss.index') }}" class="action-btn edit" title="Manage Abyss of Glory" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'heads-or-tails')
+                                                    <a href="{{ route('admin.headstails.index') }}" class="action-btn edit" title="Manage Heads or Tails" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'lucky-joker-100')
+                                                    <a href="{{ route('admin.joker.index') }}" class="action-btn edit" title="Manage Lucky Joker 100" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'bonbon-bonanza')
+                                                    <a href="{{ route('admin.bonbon.index') }}" class="action-btn edit" title="Manage BonBon Bonanza" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'big-bass')
+                                                    <a href="{{ route('admin.bigbass.index') }}" class="action-btn edit" title="Manage Big Bass Splash" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'the-emirate')
+                                                    <a href="{{ route('admin.emirate.index') }}" class="action-btn edit" title="Manage The Emirate" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'royal-emirates')
+                                                    <a href="{{ route('admin.royalemirates.index') }}" class="action-btn edit" title="Manage Royal Emirates" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'wingo')
+                                                    <a href="{{ route('admin.wingo.index') }}" class="action-btn edit" title="Manage WinGo Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'k3')
+                                                    <a href="{{ route('admin.k3.index') }}" class="action-btn edit" title="Manage K3 Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
+                                                @elseif($game['id'] === 'trxwingo')
+                                                    <a href="{{ route('admin.trxwingo.index') }}" class="action-btn edit" title="Manage TrxWinGo Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                                        <i class="fas fa-cog"></i>
+                                                    </a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -1892,27 +2000,70 @@
                     </div>
                 </div>
 
-                <!-- ========== TAB: GAME SETTINGS ========== -->
+                <!-- ========== TAB: GAME SETTINGS (5 CRASH GAME ENGINES) ========== -->
                 <div class="tab-pane" id="tab-game">
-                    <div class="page-header">
-                        <h2>Game Settings — Crash Points</h2>
-                        <p>Manage the crash multiplier sequence. Active points are used in order. Customers cannot see this list.</p>
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                        <div>
+                            <h2>Game Settings — 5 Crash Game Engines</h2>
+                            <p>Manage real-time telemetry, emergency force crash, and independent multiplier sequence points for all 5 Crash games.</p>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <a href="{{ route('play', ['game' => 'helicopterx']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:7px 14px; font-size:12px; background:linear-gradient(135deg, #f59e0b, #d97706); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-helicopter"></i> HelicopterX
+                            </a>
+                            <a href="{{ route('play', ['game' => '1xaero']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:7px 14px; font-size:12px; background:linear-gradient(135deg, #00f2fe, #0284c7); display:inline-flex; align-items:center; gap:6px; color:#000; font-weight:700;">
+                                <i class="fas fa-jet-fighter"></i> 1xAero
+                            </a>
+                            <a href="{{ route('play', ['game' => 'aero']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:7px 14px; font-size:12px; background:linear-gradient(135deg, #ef4444, #b91c1c); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-plane"></i> Aero
+                            </a>
+                            <a href="{{ route('play', ['game' => 'crashx']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:7px 14px; font-size:12px; background:linear-gradient(135deg, #10b981, #047857); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-rocket"></i> CrashX
+                            </a>
+                            <a href="{{ route('play', ['game' => 'crash']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:7px 14px; font-size:12px; background:linear-gradient(135deg, #8b5cf6, #6d28d9); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-meteor"></i> Crash Exclusive
+                            </a>
+                        </div>
                     </div>
 
                     <!-- ⚡ LIVE GAME MONITOR PANEL -->
                     <div class="panel" style="border: 1px solid rgba(168, 85, 247, 0.3); background: linear-gradient(to right, rgba(17, 24, 39, 0.95), rgba(88, 28, 135, 0.15)); margin-bottom: 24px; border-radius: 12px; box-shadow: 0 4px 20px -2px rgba(168, 85, 247, 0.15);">
-                        <div class="panel-header" style="border-bottom: 1px solid rgba(168, 85, 247, 0.2); padding: 16px 20px;">
-                            <div class="panel-title" style="display:flex; align-items:center; gap:8px; font-weight:700; color:#fff; font-size:16px;">
+                        <div class="panel-header" style="border-bottom: 1px solid rgba(168, 85, 247, 0.2); padding: 16px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                            <div class="panel-title" style="display:flex; align-items:center; gap:10px; font-weight:700; color:#fff; font-size:16px;">
                                 <i class="fas fa-satellite-dish" style="color:#a855f7; font-size:18px;"></i>
-                                Live Game Monitor
+                                <span>Live Game Monitor & Emergency Controls</span>
                             </div>
-                            <span class="badge" id="live-monitor-state-badge" style="padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: rgba(107, 114, 128, 0.2); color: #9ca3af;">
-                                Offline
-                            </span>
+                            <!-- Game Monitor Target Selector -->
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="button" class="monitor-game-btn active" onclick="switchMonitorGame('helicopterx', this)" style="padding:5px 12px; font-size:11.5px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245,158,11,0.18); color:#fbbf24; font-weight:700; cursor:pointer; transition:all 0.2s;">
+                                    <i class="fas fa-helicopter"></i> HelicopterX
+                                </button>
+                                <button type="button" class="monitor-game-btn" onclick="switchMonitorGame('1xaero', this)" style="padding:5px 12px; font-size:11.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer; transition:all 0.2s;">
+                                    <i class="fas fa-jet-fighter"></i> 1xAero
+                                </button>
+                                <button type="button" class="monitor-game-btn" onclick="switchMonitorGame('aero', this)" style="padding:5px 12px; font-size:11.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer; transition:all 0.2s;">
+                                    <i class="fas fa-plane"></i> Aero
+                                </button>
+                                <button type="button" class="monitor-game-btn" onclick="switchMonitorGame('crashx', this)" style="padding:5px 12px; font-size:11.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer; transition:all 0.2s;">
+                                    <i class="fas fa-rocket"></i> CrashX
+                                </button>
+                                <button type="button" class="monitor-game-btn" onclick="switchMonitorGame('crash', this)" style="padding:5px 12px; font-size:11.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer; transition:all 0.2s;">
+                                    <i class="fas fa-meteor"></i> Crash
+                                </button>
+                            </div>
                         </div>
                         <div class="panel-body" style="padding: 20px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: rgba(0,0,0,0.25); padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; letter-spacing:0.5px;">Active Monitored Engine:</span>
+                                    <span id="live-monitor-game-label" style="font-weight:800; font-size:13.5px; color:#fbbf24; font-family:'Space Grotesk',sans-serif;">HelicopterX</span>
+                                </div>
+                                <span class="badge" id="live-monitor-state-badge" style="padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(107, 114, 128, 0.2); color: #9ca3af;">
+                                    Offline
+                                </span>
+                            </div>
+
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                                
                                 <!-- Card: Round ID -->
                                 <div style="background: rgba(31, 41, 55, 0.5); padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                                     <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Current Round ID</div>
@@ -1937,40 +2088,71 @@
                                     <div id="live-monitor-bets-amount" style="font-size: 18px; font-weight: 700; color: #fff;">0.00 BDT</div>
                                     <div id="live-monitor-bets-count" style="font-size: 10px; color: #9ca3af; margin-top: 2px;">0 players</div>
                                 </div>
-
                             </div>
 
                             <!-- Force Crash CTA Box -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 10px;">
-                                <div style="flex: 1; text-align: left;">
-                                    <h4 style="margin: 0 0 4px 0; color: #fca5a5; font-size: 14px; font-weight: 700;">Emergency Force Crash</h4>
-                                    <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.4;">Clicking this button will instantly crash the currently running flight round for all players at the exact live multiplier value displayed above.</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 10px; flex-wrap:wrap;">
+                                <div style="flex: 1; min-width: 260px; text-align: left;">
+                                    <h4 style="margin: 0 0 4px 0; color: #fca5a5; font-size: 14px; font-weight: 700;">Emergency Force Crash Target</h4>
+                                    <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.4;">Instantly crash the currently running flight round for the selected game or broadcast crash to all 5 games simultaneously.</p>
                                 </div>
-                                <button 
-                                    id="live-monitor-force-crash-btn"
-                                    onclick="adminForceCrash()"
-                                    style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 8px; background: #ef4444; color: #fff; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);"
-                                    onmouseover="this.style.background='#dc2626'; this.style.transform='translateY(-1px)';"
-                                    onmouseout="this.style.background='#ef4444'; this.style.transform='translateY(0)';"
-                                >
-                                    <i class="fas fa-bolt"></i> Force Crash Game
-                                </button>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <button 
+                                        id="live-monitor-force-crash-target-btn"
+                                        onclick="adminForceCrashTarget()"
+                                        style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border: none; border-radius: 8px; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);"
+                                    >
+                                        <i class="fas fa-bolt"></i> Force Crash (<span id="force-target-label">HelicopterX</span>)
+                                    </button>
+                                    <button 
+                                        id="live-monitor-force-crash-all-btn"
+                                        onclick="adminForceCrashAll()"
+                                        style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; background: rgba(239,68,68,0.15); color: #fca5a5; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;"
+                                    >
+                                        <i class="fas fa-radiation"></i> Force Crash All 5 Games
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- CRASH POINTS SEQUENCE TABLE WITH 5-GAME TABS -->
                     <div class="panel">
-                        <div class="panel-header">
-                            <div class="panel-title"><i class="fas fa-list-ol"></i> Crash Point Sequence</div>
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                            <div>
+                                <div class="panel-title"><i class="fas fa-list-ol"></i> Crash Point Multiplier Sequences</div>
+                                <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Switch between games to configure distinct crash multiplier ladders.</div>
+                            </div>
                             <button onclick="openAddPointModal()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;border:none;background:linear-gradient(135deg,#2563eb,#4f8ef7);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">
                                 <i class="fas fa-plus"></i> Add New Point
                             </button>
                         </div>
+
+                        <!-- 5 Game Filter Tabs for Crash Points -->
+                        <div style="display:flex; gap:8px; padding:12px 20px; background:rgba(0,0,0,0.15); border-bottom:1px solid var(--border-subtle); overflow-x:auto;">
+                            <button type="button" class="cp-game-tab active" onclick="switchCrashPointsGame('helicopterx', this)" style="padding:8px 16px; font-size:12.5px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245,158,11,0.2); color:#fbbf24; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-helicopter"></i> HelicopterX
+                            </button>
+                            <button type="button" class="cp-game-tab" onclick="switchCrashPointsGame('1xaero', this)" style="padding:8px 16px; font-size:12.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:var(--text-secondary); font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-jet-fighter"></i> 1xAero
+                            </button>
+                            <button type="button" class="cp-game-tab" onclick="switchCrashPointsGame('aero', this)" style="padding:8px 16px; font-size:12.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:var(--text-secondary); font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-plane"></i> Aero
+                            </button>
+                            <button type="button" class="cp-game-tab" onclick="switchCrashPointsGame('crashx', this)" style="padding:8px 16px; font-size:12.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:var(--text-secondary); font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-rocket"></i> CrashX
+                            </button>
+                            <button type="button" class="cp-game-tab" onclick="switchCrashPointsGame('crash', this)" style="padding:8px 16px; font-size:12.5px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:var(--text-secondary); font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-meteor"></i> Crash (1xGames)
+                            </button>
+                        </div>
+
                         <div class="table-wrap">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>TARGET GAME</th>
                                         <th>CRASH POINT</th>
                                         <th>STATUS</th>
                                         <th>ACTIONS</th>
@@ -1978,7 +2160,7 @@
                                 </thead>
                                 <tbody id="crash-points-tbody">
                                     <tr class="loading-row">
-                                        <td colspan="4"><i class="fas fa-spinner fa-spin"></i> Loading...</td>
+                                        <td colspan="5"><i class="fas fa-spinner fa-spin"></i> Loading...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1987,14 +2169,14 @@
 
                     <div class="panel">
                         <div class="panel-header">
-                            <div class="panel-title"><i class="fas fa-circle-info" style="color:var(--accent-orange);"></i> How It Works</div>
+                            <div class="panel-title"><i class="fas fa-circle-info" style="color:var(--accent-orange);"></i> How 5-Engine Sequencing Operates</div>
                         </div>
                         <div class="panel-body">
                             <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
-                                <strong style="color:var(--text-primary);">Sequence Mode:</strong> The game engine reads crash points from this list in order (top to bottom). When the list ends, it loops back to the beginning.<br>
-                                <strong style="color:var(--text-primary);">Active vs Inactive:</strong> Only <span style="color:var(--accent-green);">Active</span> points are used in the sequence. Inactive points are skipped.<br>
-                                <strong style="color:var(--text-primary);">Fallback:</strong> If no active points exist, the game uses a random crash point automatically.<br>
-                                <strong style="color:var(--accent-orange);">Security:</strong> Customers cannot see the crash point list or predict upcoming crashes. The crash point is only sent to the game at the moment the round begins.
+                                <strong style="color:var(--text-primary);">Independent Sequences:</strong> Each of the 5 games maintains its own separate sequence pointer, recent crash history, and active multiplier list.<br>
+                                <strong style="color:var(--text-primary);">Active vs Inactive:</strong> Only <span style="color:var(--accent-green);">Active</span> points are used in the sequence. Inactive points are skipped during gameplay.<br>
+                                <strong style="color:var(--text-primary);">Looping Logic:</strong> When a game reaches the end of its active sequence, it seamlessly loops back to point #1.<br>
+                                <strong style="color:var(--accent-orange);">Fairness & Concealment:</strong> Multiplier values are never broadcast in advance to clients; they are computed server-side and synced via encrypted realtime payloads.
                             </p>
                         </div>
                     </div>
@@ -2071,20 +2253,140 @@
                     </div>
                 </div>
 
-                <!-- ========== TAB: SETTINGS (COMMISSIONS) ========== -->
-                <div class="tab-pane" id="tab-settings">
+                <!-- ========== TAB: SITE BRANDING & DEMO LIMIT ========== -->
+                <div class="tab-pane" id="tab-branding">
                     <div class="page-header">
-                        <h2>Commission Setup</h2>
-                        <p>Configure referral commission percentages and withdrawal charge percentages, along with their active/inactive status.</p>
+                        <h2>Site Branding & Global Demo Spins Configuration</h2>
+                        <p>Customize the platform branding name, upload custom brand logo for headers across all games, and configure the global free spins limit for Demo mode.</p>
+                    </div>
+
+                    <form id="branding-settings-form" onsubmit="saveBrandingSettings(event)" enctype="multipart/form-data">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+                            <!-- Panel 1: Site Identity & Custom Logo -->
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-palette" style="color:var(--accent-purple);"></i> Site Branding & Header Logo</div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group" style="margin-bottom:18px;">
+                                        <label class="form-label" style="font-weight:700;">Site Name / Brand Title</label>
+                                        <input type="text" class="form-input" id="setting-site-name" name="site_name" value="{{ \App\Models\Setting::getVal('site_name', '1XBET') }}" placeholder="e.g. 1XBET, BetMaster, etc." required style="font-weight:700; font-size:14px;">
+                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;">Displayed in headers, titles, and meta tags if no custom logo is uploaded.</small>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom:18px;">
+                                        <label class="form-label" style="font-weight:700;">Custom Site Logo Image</label>
+                                        <div style="display:flex; align-items:center; gap:16px; margin-top:6px;">
+                                            <div id="logo-preview-container" style="width:140px; height:60px; background:#071224; border:1.5px dashed rgba(255,255,255,0.2); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:4px;">
+                                                @php $curLogo = \App\Models\Setting::getVal('site_logo'); @endphp
+                                                @if($curLogo && file_exists(public_path($curLogo)))
+                                                    <img id="logo-preview-img" src="{{ asset($curLogo) }}" alt="Logo" style="max-height:100%; max-width:100%; object-fit:contain;">
+                                                @else
+                                                    <span id="logo-preview-placeholder" style="font-size:11px; color:#64748b; font-weight:700;">No Image (Text Active)</span>
+                                                @endif
+                                            </div>
+                                            <div style="flex:1;">
+                                                <input type="file" class="form-input" id="setting-site-logo-file" name="site_logo" accept="image/*" onchange="previewLogoFile(this)" style="font-size:12px; padding:6px 10px;">
+                                                <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                                                    <label style="font-size:12px; color:#f87171; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                                                        <input type="checkbox" id="setting-remove-logo" name="remove_logo" value="1">
+                                                        <span>Reset / Use Text Branding</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="background:rgba(26,118,210,0.08); border:1px solid rgba(26,118,210,0.25); border-radius:8px; padding:12px;">
+                                        <span style="font-size:11px; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;"><i class="fas fa-info-circle"></i> Instant Header Sync</span>
+                                        <p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.4;">When saved, all game pages, casino lobbies, and user dashboards will instantly render the updated branding.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel 2: Global Demo Free Spins Limit -->
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <div class="panel-title"><i class="fas fa-gamepad" style="color:var(--accent-cyan);"></i> Global Demo Spins Engine</div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group" style="margin-bottom:18px;">
+                                        <label class="form-label" style="font-weight:700;">Demo Free Spins Limit (Per Game)</label>
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <input type="number" class="form-input" id="setting-demo-spins-limit" name="demo_spins_limit" min="1" max="50" value="{{ \App\Models\Setting::getVal('demo_spins_limit', 3) }}" required style="font-weight:800; font-size:16px; width:120px; text-align:center; color:var(--accent-cyan);">
+                                            <span style="font-size:13px; font-weight:700; color:#cbd5e1;">Free Spins</span>
+                                        </div>
+                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:6px;">Default is 3 spins. Once a guest/user consumes these demo spins in any dynamic casino slot game, the screen will automatically lock with the deposit prompt modal.</small>
+                                    </div>
+
+                                    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; padding:12px; margin-bottom:16px;">
+                                        <span style="font-size:11px; font-weight:800; color:#34d399; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;"><i class="fas fa-shield-halved"></i> Universal Game Enforcement</span>
+                                        <p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.4;">Applicable across all 16+ slot and casino game engines dynamically with real-time deposit conversion triggers.</p>
+                                    </div>
+
+                                    <div style="display:flex; justify-content:flex-end;">
+                                        <button type="submit" id="btn-save-branding" class="btn-primary" style="padding:10px 24px; font-size:13px; font-weight:800;">
+                                            <i class="fas fa-floppy-disk"></i> Save Branding &amp; Demo Limit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ========== TAB: PROMOTIONAL SLIDERS ========== -->
+                <div class="tab-pane" id="tab-sliders">
+                    <div class="page-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <h2>Promotional Banner Sliders</h2>
+                            <p>Manage the dynamic promotional carousel banners displayed on the customer lobby and homepage.</p>
+                        </div>
+                        <button type="button" onclick="openSliderModal()" class="btn-primary" style="padding:9px 18px; font-size:13px; font-weight:800; display:inline-flex; align-items:center; gap:8px;">
+                            <i class="fas fa-plus-circle"></i> Add New Slide Banner
+                        </button>
                     </div>
 
                     <div class="panel">
-                        <div class="panel-header">
-                            <div class="panel-title"><i class="fas fa-percent"></i> Platform Commission Configurations</div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:60px;">ORDER</th>
+                                        <th style="width:120px;">BANNER</th>
+                                        <th>TITLE &amp; BADGE</th>
+                                        <th>PRIZE / SUBTITLE</th>
+                                        <th>BUTTON CTA</th>
+                                        <th style="text-align:center;">STATUS</th>
+                                        <th style="text-align:right;">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sliders-table-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="7"><i class="fas fa-spinner fa-spin"></i> Loading promotional slides...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="panel-body">
-                            <form id="platform-settings-form" onsubmit="savePlatformSettings(event)" style="max-width: 1000px;">
-                                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    </div>
+                </div>
+
+                <!-- ========== TAB: SETTINGS (COMMISSIONS & 5 CRASH GAME MODULES) ========== -->
+                <div class="tab-pane" id="tab-settings">
+                    <div class="page-header">
+                        <h2>Platform & 5 Crash Games Configuration</h2>
+                        <p>Configure affiliate referral commissions, withdrawal fee percentages, and 5 independent Crash game modules (Helicopter designs, countdown timers, custom BG music, and tick sound effects).</p>
+                    </div>
+
+                    <form id="platform-settings-form" onsubmit="savePlatformSettings(event)">
+                        
+                        <!-- 1. COMMISSION SETUP CARD -->
+                        <div class="panel" style="margin-bottom:24px;">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fas fa-percent" style="color:var(--accent-gold);"></i> Platform Commission Configurations</div>
+                            </div>
+                            <div class="panel-body">
+                                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
                                     <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                         <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">LEVEL 1 REFERRAL</label>
                                         <div class="form-group" style="margin-bottom:12px;">
@@ -2144,67 +2446,438 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
-                                        <label class="form-label" style="font-size:11px;color:var(--accent-teal);margin-bottom:8px;font-weight:700;">FLIGHT DESIGN SELECTOR</label>
-                                        <div class="form-group" style="margin-bottom:12px;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
-                                            <select class="form-input" id="setting-helicopter-design" style="cursor:pointer;" required>
-                                                <option value="1">Design 1: Gold Fighter Jet</option>
-                                                <option value="2">Design 2: Classic Chopper</option>
-                                                <option value="3">Design 3: Space Rocket</option>
-                                                <option value="4">Design 4: Alien UFO</option>
-                                                <option value="5">Design 5: Stealth Bomber</option>
-                                                <option value="6">Design 6: Cyber Drone</option>
-                                                <option value="7">Design 7: Vintage Biplane</option>
-                                                <option value="8">Design 8: Hot Air Balloon</option>
-                                                <option value="9">Design 9: Future Skycar</option>
-                                                <option value="10">Design 10: Phoenix Firebird</option>
-                                            </select>
+                        <!-- 2. 5 INDEPENDENT CRASH GAME MODULES SECTION -->
+                        <div class="panel" style="margin-bottom:24px; border:1px solid rgba(0,242,254,0.25);">
+                            <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                                <div>
+                                    <div class="panel-title" style="font-size:16px; color:#fff;">
+                                        <i class="fas fa-cubes-stacked" style="color:var(--accent-cyan);"></i> 
+                                        5 Independent Crash Game Setup Modules
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                                        Customize active flight sprite designs (1-10), countdown durations, and audio tracks for each of the 5 lobby games.
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;" id="game-settings-tab-buttons">
+                                    <button type="button" class="settings-game-tab-btn active" onclick="showGameSettingModule('helicopterx', this)" style="padding:6px 14px; font-size:12px; border-radius:8px; border:1px solid #f59e0b; background:rgba(245,158,11,0.2); color:#fbbf24; font-weight:700; cursor:pointer;">
+                                        <i class="fas fa-helicopter"></i> HelicopterX
+                                    </button>
+                                    <button type="button" class="settings-game-tab-btn" onclick="showGameSettingModule('1xaero', this)" style="padding:6px 14px; font-size:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer;">
+                                        <i class="fas fa-jet-fighter"></i> 1xAero
+                                    </button>
+                                    <button type="button" class="settings-game-tab-btn" onclick="showGameSettingModule('aero', this)" style="padding:6px 14px; font-size:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer;">
+                                        <i class="fas fa-plane"></i> Aero
+                                    </button>
+                                    <button type="button" class="settings-game-tab-btn" onclick="showGameSettingModule('crashx', this)" style="padding:6px 14px; font-size:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer;">
+                                        <i class="fas fa-rocket"></i> CrashX
+                                    </button>
+                                    <button type="button" class="settings-game-tab-btn" onclick="showGameSettingModule('crash', this)" style="padding:6px 14px; font-size:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:var(--text-secondary); font-weight:700; cursor:pointer;">
+                                        <i class="fas fa-meteor"></i> Crash
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                
+                                <!-- MODULE 1: HELICOPTERX -->
+                                <div class="game-setting-pane active" id="module-helicopterx">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(245,158,11,0.2); border:1px solid rgba(245,158,11,0.4); display:flex; align-items:center; justify-content:center; color:#f59e0b; font-size:16px;">
+                                                <i class="fas fa-helicopter"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-size:16px; color:#fff; font-weight:800;">HelicopterX Settings</h3>
+                                                <div style="font-size:11px; color:var(--text-muted);">Route: <code>/play/helicopterx</code></div>
+                                            </div>
                                         </div>
-                                        <button type="button" onclick="openViewHelicoptersModal()" class="btn-primary" style="background:linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                            <i class="fas fa-eye"></i> View 10 Designs
-                                        </button>
+                                        <a href="{{ route('play', ['game' => 'helicopterx']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #f59e0b, #d97706);">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Test Play
+                                        </a>
                                     </div>
 
-                                    <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
-                                        <label class="form-label" style="font-size:11px;color:var(--accent-teal);margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
-                                        <div class="form-group" style="margin-bottom:0;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Wait Duration (seconds)</label>
-                                            <input type="number" class="form-input" id="setting-countdown-time" min="2" max="60" placeholder="Enter wait duration in seconds" required>
+                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                                        <!-- Design Selector -->
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#f59e0b;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (HELICOPTERX)</label>
+                                            <div class="form-group" style="margin-bottom:12px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <select class="form-input" id="setting-helicopter-design-helicopterx" style="cursor:pointer;" required>
+                                                    <option value="1">Design 1: Gold Fighter Jet</option>
+                                                    <option value="2">Design 2: Classic Chopper</option>
+                                                    <option value="3">Design 3: Space Rocket</option>
+                                                    <option value="4">Design 4: Alien UFO</option>
+                                                    <option value="5">Design 5: Stealth Bomber</option>
+                                                    <option value="6">Design 6: Cyber Drone</option>
+                                                    <option value="7">Design 7: Vintage Biplane</option>
+                                                    <option value="8">Design 8: Hot Air Balloon</option>
+                                                    <option value="9">Design 9: Future Skycar</option>
+                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" onclick="openViewHelicoptersModal('helicopterx')" class="btn-primary" style="background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
+                                                <i class="fas fa-eye"></i> View 10 Designs
+                                            </button>
                                         </div>
-                                    </div>
 
-                                    <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
-                                        <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
-                                        <div class="form-group" style="margin-bottom:12px;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active BG Music File Path</label>
-                                            <input type="text" class="form-input" id="setting-bg-music" placeholder="No custom music uploaded yet" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted);">
+                                        <!-- Countdown Timer -->
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#f59e0b;margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Duration (seconds)</label>
+                                                <input type="number" class="form-input" id="setting-countdown-time-helicopterx" min="2" max="60" placeholder="e.g. 10" required>
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="margin-bottom:0;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Music File (.mp3/.wav/.ogg)</label>
-                                            <input type="file" class="form-input" id="setting-bg-music-file" accept="audio/*">
-                                        </div>
-                                    </div>
 
-                                    <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
-                                        <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK SOUND</label>
-                                        <div class="form-group" style="margin-bottom:12px;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Tick Sound File Path</label>
-                                            <input type="text" class="form-input" id="setting-countdown-sound" placeholder="No custom countdown tick uploaded yet" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted);">
+                                        <!-- BG Music -->
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-bg-music-helicopterx" placeholder="Default HelicopterX Audio" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-bg-helicopterx" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-bg-music-file-helicopterx" accept="audio/*">
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="margin-bottom:0;">
-                                            <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Sound File (.mp3/.wav/.ogg)</label>
-                                            <input type="file" class="form-input" id="setting-countdown-sound-file" accept="audio/*">
+
+                                        <!-- Countdown Sound -->
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK FX</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-countdown-sound-helicopterx" placeholder="Default Countdown Tick" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-tick-helicopterx" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-countdown-sound-file-helicopterx" accept="audio/*">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn-primary" id="btn-save-settings" style="width:auto; padding: 12px 30px; margin-top: 10px;">
-                                    <i class="fas fa-save"></i> Save Platform Configurations
-                                </button>
-                            </form>
+
+                                <!-- MODULE 2: 1XAERO -->
+                                <div class="game-setting-pane" id="module-1xaero" style="display:none;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(0,242,254,0.2); border:1px solid rgba(0,242,254,0.4); display:flex; align-items:center; justify-content:center; color:#00f2fe; font-size:16px;">
+                                                <i class="fas fa-jet-fighter"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-size:16px; color:#fff; font-weight:800;">1xAero Settings</h3>
+                                                <div style="font-size:11px; color:var(--text-muted);">Route: <code>/play/1xaero</code></div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('play', ['game' => '1xaero']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #00f2fe, #0284c7); color:#000; font-weight:700;">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Test Play
+                                        </a>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#00f2fe;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (1XAERO)</label>
+                                            <div class="form-group" style="margin-bottom:12px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <select class="form-input" id="setting-helicopter-design-1xaero" style="cursor:pointer;" required>
+                                                    <option value="1">Design 1: Gold Fighter Jet</option>
+                                                    <option value="2">Design 2: Classic Chopper</option>
+                                                    <option value="3">Design 3: Space Rocket</option>
+                                                    <option value="4">Design 4: Alien UFO</option>
+                                                    <option value="5">Design 5: Stealth Bomber</option>
+                                                    <option value="6">Design 6: Cyber Drone</option>
+                                                    <option value="7">Design 7: Vintage Biplane</option>
+                                                    <option value="8">Design 8: Hot Air Balloon</option>
+                                                    <option value="9">Design 9: Future Skycar</option>
+                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" onclick="openViewHelicoptersModal('1xaero')" class="btn-primary" style="background:linear-gradient(135deg, #00f2fe, #0284c7); color:#000; font-weight:700; box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
+                                                <i class="fas fa-eye"></i> View 10 Designs
+                                            </button>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#00f2fe;margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Duration (seconds)</label>
+                                                <input type="number" class="form-input" id="setting-countdown-time-1xaero" min="2" max="60" placeholder="e.g. 10" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-bg-music-1xaero" placeholder="Default 1xAero Audio" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-bg-1xaero" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-bg-music-file-1xaero" accept="audio/*">
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK FX</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-countdown-sound-1xaero" placeholder="Default Countdown Tick" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-tick-1xaero" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-countdown-sound-file-1xaero" accept="audio/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODULE 3: AERO -->
+                                <div class="game-setting-pane" id="module-aero" style="display:none;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); display:flex; align-items:center; justify-content:center; color:#ef4444; font-size:16px;">
+                                                <i class="fas fa-plane"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-size:16px; color:#fff; font-weight:800;">Aero Settings</h3>
+                                                <div style="font-size:11px; color:var(--text-muted);">Route: <code>/play/aero</code></div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('play', ['game' => 'aero']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #ef4444, #b91c1c);">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Test Play
+                                        </a>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#ef4444;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (AERO)</label>
+                                            <div class="form-group" style="margin-bottom:12px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <select class="form-input" id="setting-helicopter-design-aero" style="cursor:pointer;" required>
+                                                    <option value="1">Design 1: Gold Fighter Jet</option>
+                                                    <option value="2">Design 2: Classic Chopper</option>
+                                                    <option value="3">Design 3: Space Rocket</option>
+                                                    <option value="4">Design 4: Alien UFO</option>
+                                                    <option value="5">Design 5: Stealth Bomber</option>
+                                                    <option value="6">Design 6: Cyber Drone</option>
+                                                    <option value="7">Design 7: Vintage Biplane</option>
+                                                    <option value="8">Design 8: Hot Air Balloon</option>
+                                                    <option value="9">Design 9: Future Skycar</option>
+                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" onclick="openViewHelicoptersModal('aero')" class="btn-primary" style="background:linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
+                                                <i class="fas fa-eye"></i> View 10 Designs
+                                            </button>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#ef4444;margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Duration (seconds)</label>
+                                                <input type="number" class="form-input" id="setting-countdown-time-aero" min="2" max="60" placeholder="e.g. 10" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-bg-music-aero" placeholder="Default Aero Audio" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-bg-aero" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-bg-music-file-aero" accept="audio/*">
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK FX</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-countdown-sound-aero" placeholder="Default Countdown Tick" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-tick-aero" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-countdown-sound-file-aero" accept="audio/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODULE 4: CRASHX -->
+                                <div class="game-setting-pane" id="module-crashx" style="display:none;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); display:flex; align-items:center; justify-content:center; color:#10b981; font-size:16px;">
+                                                <i class="fas fa-rocket"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-size:16px; color:#fff; font-weight:800;">CrashX Settings</h3>
+                                                <div style="font-size:11px; color:var(--text-muted);">Route: <code>/play/crashx</code></div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('play', ['game' => 'crashx']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #10b981, #047857);">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Test Play
+                                        </a>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#10b981;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (CRASHX)</label>
+                                            <div class="form-group" style="margin-bottom:12px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <select class="form-input" id="setting-helicopter-design-crashx" style="cursor:pointer;" required>
+                                                    <option value="1">Design 1: Gold Fighter Jet</option>
+                                                    <option value="2">Design 2: Classic Chopper</option>
+                                                    <option value="3">Design 3: Space Rocket</option>
+                                                    <option value="4">Design 4: Alien UFO</option>
+                                                    <option value="5">Design 5: Stealth Bomber</option>
+                                                    <option value="6">Design 6: Cyber Drone</option>
+                                                    <option value="7">Design 7: Vintage Biplane</option>
+                                                    <option value="8">Design 8: Hot Air Balloon</option>
+                                                    <option value="9">Design 9: Future Skycar</option>
+                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" onclick="openViewHelicoptersModal('crashx')" class="btn-primary" style="background:linear-gradient(135deg, #10b981, #047857); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
+                                                <i class="fas fa-eye"></i> View 10 Designs
+                                            </button>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#10b981;margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Duration (seconds)</label>
+                                                <input type="number" class="form-input" id="setting-countdown-time-crashx" min="2" max="60" placeholder="e.g. 10" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-bg-music-crashx" placeholder="Default CrashX Audio" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-bg-crashx" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-bg-music-file-crashx" accept="audio/*">
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK FX</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-countdown-sound-crashx" placeholder="Default Countdown Tick" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-tick-crashx" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-countdown-sound-file-crashx" accept="audio/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MODULE 5: CRASH (1XGAMES EXCLUSIVE) -->
+                                <div class="game-setting-pane" id="module-crash" style="display:none;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:36px; height:36px; border-radius:8px; background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); display:flex; align-items:center; justify-content:center; color:#8b5cf6; font-size:16px;">
+                                                <i class="fas fa-meteor"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-size:16px; color:#fff; font-weight:800;">Crash (1xGames Exclusive) Settings</h3>
+                                                <div style="font-size:11px; color:var(--text-muted);">Route: <code>/play/crash</code></div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('play', ['game' => 'crash']) }}" target="_blank" class="btn-primary" style="text-decoration:none; width:auto; padding:6px 14px; font-size:12px; background:linear-gradient(135deg, #8b5cf6, #6d28d9);">
+                                            <i class="fas fa-arrow-up-right-from-square"></i> Test Play
+                                        </a>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#8b5cf6;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (CRASH EXCLUSIVE)</label>
+                                            <div class="form-group" style="margin-bottom:12px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <select class="form-input" id="setting-helicopter-design-crash" style="cursor:pointer;" required>
+                                                    <option value="1">Design 1: Gold Fighter Jet</option>
+                                                    <option value="2">Design 2: Classic Chopper</option>
+                                                    <option value="3">Design 3: Space Rocket</option>
+                                                    <option value="4">Design 4: Alien UFO</option>
+                                                    <option value="5">Design 5: Stealth Bomber</option>
+                                                    <option value="6">Design 6: Cyber Drone</option>
+                                                    <option value="7">Design 7: Vintage Biplane</option>
+                                                    <option value="8">Design 8: Hot Air Balloon</option>
+                                                    <option value="9">Design 9: Future Skycar</option>
+                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                </select>
+                                            </div>
+                                            <button type="button" onclick="openViewHelicoptersModal('crash')" class="btn-primary" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
+                                                <i class="fas fa-eye"></i> View 10 Designs
+                                            </button>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:#8b5cf6;margin-bottom:8px;font-weight:700;">LOBBY COUNTDOWN TIMER</label>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Countdown Duration (seconds)</label>
+                                                <input type="number" class="form-input" id="setting-countdown-time-crash" min="2" max="60" placeholder="e.g. 10" required>
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-blue);margin-bottom:8px;font-weight:700;">BACKGROUND MUSIC</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-bg-music-crash" placeholder="Default Crash Audio" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-bg-crash" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New BG Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-bg-music-file-crash" accept="audio/*">
+                                            </div>
+                                        </div>
+
+                                        <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                                            <label class="form-label" style="font-size:11px;color:var(--accent-orange);margin-bottom:8px;font-weight:700;">COUNTDOWN TICK FX</label>
+                                            <div class="form-group" style="margin-bottom:10px;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Current Audio</label>
+                                                <input type="text" class="form-input" id="setting-countdown-sound-crash" placeholder="Default Countdown Tick" readonly style="background:rgba(255,255,255,0.02); color:var(--text-muted); margin-bottom:6px;">
+                                                <audio id="audio-preview-tick-crash" controls style="width:100%; height:30px; display:none;"></audio>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Upload New Tick Audio (.mp3/.wav/.ogg)</label>
+                                                <input type="file" class="form-input" id="setting-countdown-sound-file-crash" accept="audio/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
-                    </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+                            <button type="submit" class="btn-primary" id="btn-save-settings" style="width:auto; padding: 14px 36px; font-size:14px; font-weight:800; display:inline-flex; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(0,242,254,0.3);">
+                                <i class="fas fa-save"></i> Save All Platform & Game Configurations
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
                     <div class="panel">
                         <div class="panel-header">
@@ -3024,6 +3697,16 @@
             <div class="modal-title" id="cp-modal-title"><i class="fas fa-plus-circle"></i> Add Crash Point</div>
             <input type="hidden" id="cp-editing-id">
             <div class="form-group">
+                <label class="form-label">Target Game Engine</label>
+                <select class="form-input" id="cp-game-input" style="cursor:pointer;">
+                    <option value="helicopterx">HelicopterX (helicopterx)</option>
+                    <option value="1xaero">1xAero (1xaero)</option>
+                    <option value="aero">Aero (aero)</option>
+                    <option value="crashx">CrashX (crashx)</option>
+                    <option value="crash">Crash (1xGames Exclusive)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Crash Multiplier Value (e.g. 1.5, 2.25, 10)</label>
                 <input type="number" class="form-input" id="cp-point-input" min="1.00" max="1000" step="0.01" placeholder="e.g. 2.50">
             </div>
@@ -3115,6 +3798,69 @@
 
                 <button type="submit" class="btn-primary" id="btn-save-gateway" style="margin-top:20px; width:100%; padding:12px; font-weight:700;">
                     <i class="fas fa-save"></i> Save Payment Gateway
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== PROMOTIONAL SLIDER CREATE / EDIT MODAL ==================== -->
+    <div class="modal-overlay" id="slider-modal">
+        <div class="modal-box" style="max-width:540px;">
+            <button class="modal-close" onclick="closeSliderModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title" id="slider-modal-title"><i class="fas fa-images" style="color:var(--accent-cyan);"></i> Add Promotional Slide</div>
+            <form id="slider-form" onsubmit="saveSlider(event)" enctype="multipart/form-data">
+                <input type="hidden" id="slider-id" name="id">
+                
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-weight:700;">Slide Title (Main Headline) *</label>
+                    <input type="text" class="form-input" id="slider-title" name="title" required placeholder="e.g. SPINOLEAGUE TOURNAMENT">
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Badge / Date Tag</label>
+                        <input type="text" class="form-input" id="slider-badge" name="badge_text" placeholder="e.g. Exclusive Release">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Order Position</label>
+                        <input type="number" class="form-input" id="slider-order" name="order" min="1" value="1">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-weight:700;">Prize / Subtitle Highlight</label>
+                    <input type="text" class="form-input" id="slider-prize" name="prize_text" placeholder="e.g. MULTIPLY YOUR WINNINGS UP TO 500,000 BDT">
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Button CTA Text</label>
+                        <input type="text" class="form-input" id="slider-btn-text" name="button_text" value="PLAY NOW">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Button Target URL / Route</label>
+                        <input type="text" class="form-input" id="slider-btn-url" name="button_url" value="/play" placeholder="/play or /royal-emirates">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-weight:700;">Banner Image (Upload File)</label>
+                    <input type="file" class="form-input" id="slider-img-file" name="image_file" accept="image/*" style="font-size:12px; padding:6px 10px;">
+                    <div style="margin-top:6px;">
+                        <input type="text" class="form-input" id="slider-img-url" name="image_url" placeholder="Or paste external image URL (https://...)" style="font-size:12px;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:18px;">
+                    <label class="form-label" style="font-weight:700;">Status</label>
+                    <select class="form-input" id="slider-status" name="status" style="cursor:pointer;">
+                        <option value="active">Active (Visible in Carousel)</option>
+                        <option value="inactive">Inactive (Hidden)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-save-slider" style="width:100%; padding:12px; font-weight:800;">
+                    <i class="fas fa-save"></i> Save Slide Banner
                 </button>
             </form>
         </div>
@@ -3265,6 +4011,52 @@
 
         // --- LIVE GAME MONITOR SYSTEM ---
         let liveMonitorInterval = null;
+        let currentMonitorGame = 'helicopterx';
+
+        const gameMeta = {
+            'helicopterx': { name: 'HelicopterX', color: '#f59e0b', border: '#f59e0b' },
+            '1xaero':      { name: '1xAero',      color: '#00f2fe', border: '#00f2fe' },
+            'aero':        { name: 'Aero',        color: '#ef4444', border: '#ef4444' },
+            'crashx':      { name: 'CrashX',      color: '#10b981', border: '#10b981' },
+            'crash':       { name: 'Crash',       color: '#8b5cf6', border: '#8b5cf6' }
+        };
+
+        function switchMonitorGame(gameKey, btn) {
+            currentMonitorGame = gameKey;
+            
+            // Update button UI
+            document.querySelectorAll('.monitor-game-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'rgba(255,255,255,0.03)';
+                b.style.borderColor = 'rgba(255,255,255,0.1)';
+                b.style.color = 'var(--text-secondary)';
+            });
+
+            const activeBtn = btn || Array.from(document.querySelectorAll('.monitor-game-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${gameKey}'`));
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                const meta = gameMeta[gameKey] || gameMeta['helicopterx'];
+                activeBtn.style.background = `rgba(255,255,255,0.08)`;
+                activeBtn.style.borderColor = meta.border;
+                activeBtn.style.color = meta.color;
+            }
+
+            // Update Label
+            const label = document.getElementById('live-monitor-game-label');
+            if (label) {
+                const meta = gameMeta[gameKey] || { name: gameKey, color: '#fbbf24' };
+                label.textContent = meta.name;
+                label.style.color = meta.color;
+            }
+
+            // Update Target Button Label
+            const targetLabel = document.getElementById('force-target-label');
+            if (targetLabel) {
+                targetLabel.textContent = gameMeta[gameKey] ? gameMeta[gameKey].name : gameKey;
+            }
+
+            updateLiveMonitor();
+        }
 
         function startLiveMonitor() {
             if (liveMonitorInterval) return;
@@ -3280,7 +4072,7 @@
         }
 
         function updateLiveMonitor() {
-            fetch('/admin/game-status', {
+            fetch(`/admin/game-status?game=${currentMonitorGame}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': CSRF_TOKEN
@@ -3326,7 +4118,7 @@
                     // Update Multiplier
                     const multEl = document.getElementById('live-monitor-multiplier');
                     if (multEl) {
-                        multEl.textContent = data.current_multiplier.toFixed(2) + 'x';
+                        multEl.textContent = Number(data.current_multiplier).toFixed(2) + 'x';
                         if (data.game_state === 'CRASHED') {
                             multEl.style.color = '#ef4444';
                         } else if (data.game_state === 'PLAYING') {
@@ -3339,15 +4131,64 @@
                     // Update Bets Count and Total Amount
                     const betsCountEl = document.getElementById('live-monitor-bets-count');
                     if (betsCountEl) {
-                        betsCountEl.textContent = data.real_bets_count + ' player(s)';
+                        betsCountEl.textContent = (data.real_bets_count || 0) + ' player(s)';
                     }
                     const betsAmountEl = document.getElementById('live-monitor-bets-amount');
                     if (betsAmountEl) {
-                        betsAmountEl.textContent = data.total_real_bets.toFixed(2) + ' BDT';
+                        betsAmountEl.textContent = Number(data.total_real_bets || 0).toFixed(2) + ' BDT';
                     }
                 }
             })
             .catch(err => console.error('[MONITOR] Sync failed:', err));
+        }
+
+        function adminForceCrashTarget() {
+            const name = gameMeta[currentMonitorGame] ? gameMeta[currentMonitorGame].name : currentMonitorGame;
+            if (!confirm(`Are you sure you want to force crash the active round for ${name} immediately?`)) return;
+
+            fetch('{{ route('admin.game.force-crash') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ game_key: currentMonitorGame })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message);
+                    updateLiveMonitor();
+                } else {
+                    showToast('Failed to trigger force crash.', true);
+                }
+            })
+            .catch(() => showToast('Network connection error.', true));
+        }
+
+        function adminForceCrashAll() {
+            if (!confirm('EMERGENCY: Are you sure you want to FORCE CRASH active rounds across ALL 5 GAMES simultaneously?')) return;
+
+            fetch('{{ route('admin.game.force-crash') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ game_key: 'all' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message);
+                    updateLiveMonitor();
+                } else {
+                    showToast('Failed to trigger force crash all.', true);
+                }
+            })
+            .catch(() => showToast('Network connection error.', true));
         }
 
         // Mobile Sidebar Drawer Controller
@@ -3377,6 +4218,14 @@
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
+        // Open dedicated crash game tab and switch sub-modules
+        function openGameTab(gameKey, btn) {
+            switchTab('game', btn || document.getElementById('nav-game-' + gameKey));
+            switchMonitorGame(gameKey);
+            switchCrashPointsGame(gameKey);
+            showGameSettingModule(gameKey);
+        }
+
         // Tab switcher
         function switchTab(tabId, btn) {
             // Automatically close mobile sidebar when navigating on mobile
@@ -3389,6 +4238,8 @@
 
             const titles = {
                 overview: 'Overview <span>/ Admin Dashboard</span>',
+                branding: 'Site Branding & Demo <span>/ Platform Customization</span>',
+                sliders:  'Promotional Sliders <span>/ Banner Management</span>',
                 users:    'User Management <span>/ All Accounts</span>',
                 withdrawals: 'Withdrawal Requests <span>/ Operational Requests</span>',
                 deposits: 'Deposit Requests <span>/ Operational Requests</span>',
@@ -3405,6 +4256,11 @@
 
             // Stop live monitor first (will be started if active)
             stopLiveMonitor();
+
+            // Load sliders table when sliders tab is opened
+            if (tabId === 'sliders') {
+                loadSlidersTable();
+            }
 
             // Load olympus settings when olympus tab is opened
             if (tabId === 'olympus') {
@@ -3962,13 +4818,33 @@
 
         // ==================== CRASH POINTS ====================
         let allCrashPoints = [];
+        let currentCrashGame = 'helicopterx';
 
-        function loadCrashPoints() {
+        function switchCrashPointsGame(gameKey, btn) {
+            currentCrashGame = gameKey;
+            document.querySelectorAll('.cp-game-tab').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.borderColor = 'rgba(255,255,255,0.08)';
+                b.style.color = 'var(--text-secondary)';
+            });
+            const activeBtn = btn || Array.from(document.querySelectorAll('.cp-game-tab')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${gameKey}'`));
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                const meta = gameMeta[gameKey] || gameMeta['helicopterx'];
+                activeBtn.style.background = 'rgba(255,255,255,0.08)';
+                activeBtn.style.borderColor = meta.border;
+                activeBtn.style.color = meta.color;
+            }
+            loadCrashPoints(gameKey);
+        }
+
+        function loadCrashPoints(gameKey = currentCrashGame) {
             const tbody = document.getElementById('crash-points-tbody');
             if (!tbody) return;
-            tbody.innerHTML = `<tr class="loading-row"><td colspan="4"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>`;
+            tbody.innerHTML = `<tr class="loading-row"><td colspan="5"><i class="fas fa-spinner fa-spin"></i> Loading sequence for ${gameKey}...</td></tr>`;
 
-            fetch('{{ route('admin.crash-points.index') }}', {
+            fetch(`/admin/crash-points?game=${gameKey}`, {
                 headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
             })
             .then(r => r.json())
@@ -3979,7 +4855,7 @@
                 }
             })
             .catch(() => {
-                tbody.innerHTML = `<tr class="loading-row"><td colspan="4" style="color:var(--accent-red);">Failed to load.</td></tr>`;
+                tbody.innerHTML = `<tr class="loading-row"><td colspan="5" style="color:var(--accent-red);">Failed to load.</td></tr>`;
             });
         }
 
@@ -3987,14 +4863,22 @@
             const tbody = document.getElementById('crash-points-tbody');
             if (!tbody) return;
             if (allCrashPoints.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-list-ol"></i><p>No crash points added yet. Click "Add New Point" to start.</p></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-list-ol"></i><p>No crash points configured for this game engine yet. Click "Add New Point" to begin.</p></div></td></tr>`;
                 return;
             }
-            tbody.innerHTML = allCrashPoints.map((cp, idx) => `
+            tbody.innerHTML = allCrashPoints.map((cp, idx) => {
+                const targetGameKey = cp.game_key || currentCrashGame;
+                const meta = gameMeta[targetGameKey] || { name: targetGameKey, color: '#fbbf24' };
+                return `
                 <tr id="cp-row-${cp.id}">
                     <td style="color:var(--text-muted);font-family:'Roboto Mono',monospace;font-size:11px;">${idx + 1}</td>
                     <td>
-                        <span style="font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:${parseFloat(cp.point) >= 2 ? 'var(--accent-gold)' : parseFloat(cp.point) >= 10 ? 'var(--accent-green)' : 'var(--text-primary)'}">${parseFloat(cp.point).toFixed(2)}x</span>
+                        <span style="display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:${meta.color}; background:rgba(255,255,255,0.04); padding:3px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
+                            ${meta.name}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:${parseFloat(cp.point) >= 10 ? 'var(--accent-green)' : parseFloat(cp.point) >= 2 ? 'var(--accent-gold)' : 'var(--text-primary)'}">${parseFloat(cp.point).toFixed(2)}x</span>
                     </td>
                     <td>
                         <span class="status-badge ${cp.status === 'active' ? 'badge-active' : ''}" style="${cp.status !== 'active' ? 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--accent-red);' : ''}">
@@ -4004,7 +4888,7 @@
                     </td>
                     <td>
                         <div style="display:flex;gap:5px;">
-                            <button class="action-btn edit" title="Edit" onclick="openEditPointModal(${cp.id}, ${cp.point}, '${cp.status}')">
+                            <button class="action-btn edit" title="Edit" onclick="openEditPointModal(${cp.id}, ${cp.point}, '${cp.status}', '${targetGameKey}')">
                                 <i class="fas fa-pen"></i>
                             </button>
                             <button class="action-btn del" title="Delete" onclick="deleteCrashPoint(${cp.id})">
@@ -4013,20 +4897,24 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         function openAddPointModal() {
             document.getElementById('cp-editing-id').value = '';
             document.getElementById('cp-modal-title').innerHTML = '<i class="fas fa-plus-circle"></i> Add New Crash Point';
+            const gameInput = document.getElementById('cp-game-input');
+            if (gameInput) gameInput.value = currentCrashGame;
             document.getElementById('cp-point-input').value = '';
             document.getElementById('cp-status-input').value = 'active';
             document.getElementById('crash-point-modal').classList.add('open');
         }
 
-        function openEditPointModal(id, point, status) {
+        function openEditPointModal(id, point, status, gameKey) {
             document.getElementById('cp-editing-id').value = id;
             document.getElementById('cp-modal-title').innerHTML = '<i class="fas fa-pen"></i> Edit Crash Point';
+            const gameInput = document.getElementById('cp-game-input');
+            if (gameInput) gameInput.value = gameKey || currentCrashGame;
             document.getElementById('cp-point-input').value = parseFloat(point).toFixed(2);
             document.getElementById('cp-status-input').value = status;
             document.getElementById('crash-point-modal').classList.add('open');
@@ -4037,10 +4925,11 @@
         }
 
         function saveCrashPoint() {
-            const id     = document.getElementById('cp-editing-id').value;
-            const point  = document.getElementById('cp-point-input').value;
-            const status = document.getElementById('cp-status-input').value;
-            const btn    = document.getElementById('btn-save-crash-point');
+            const id       = document.getElementById('cp-editing-id').value;
+            const game_key = document.getElementById('cp-game-input') ? document.getElementById('cp-game-input').value : currentCrashGame;
+            const point    = document.getElementById('cp-point-input').value;
+            const status   = document.getElementById('cp-status-input').value;
+            const btn      = document.getElementById('btn-save-crash-point');
 
             if (!point || isNaN(parseFloat(point)) || parseFloat(point) < 1) {
                 showToast('Please enter a valid crash point (minimum 1.00)', true);
@@ -4057,7 +4946,7 @@
             fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
-                body: JSON.stringify({ point, status })
+                body: JSON.stringify({ point, status, game_key })
             })
             .then(r => r.json())
             .then(data => {
@@ -4066,7 +4955,7 @@
                 if (data.success) {
                     closeCrashModal();
                     showToast(data.message);
-                    loadCrashPoints();
+                    loadCrashPoints(currentCrashGame);
                 } else {
                     showToast((data.errors || ['Error']).join(' '), true);
                 }
@@ -4088,7 +4977,7 @@
             .then(data => {
                 if (data.success) {
                     showToast(data.message);
-                    loadCrashPoints();
+                    loadCrashPoints(currentCrashGame);
                 } else {
                     showToast((data.errors || ['Error']).join(' '), true);
                 }
@@ -4115,6 +5004,33 @@
         // SETTINGS & PAYMENT GATEWAY HANDLERS          
         // ==============================================
         let allGateways = [];
+        const supportedCrashGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+
+        function showGameSettingModule(gameKey, btn) {
+            // Hide all game setting panes
+            document.querySelectorAll('.game-setting-pane').forEach(p => p.style.display = 'none');
+            
+            // Show selected pane
+            const targetPane = document.getElementById(`module-${gameKey}`);
+            if (targetPane) targetPane.style.display = 'block';
+
+            // Update tab button styles
+            document.querySelectorAll('.settings-game-tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'rgba(255,255,255,0.03)';
+                b.style.borderColor = 'rgba(255,255,255,0.08)';
+                b.style.color = 'var(--text-secondary)';
+            });
+
+            const activeBtn = btn || Array.from(document.querySelectorAll('.settings-game-tab-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${gameKey}'`));
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                const meta = gameMeta[gameKey] || gameMeta['helicopterx'];
+                activeBtn.style.background = 'rgba(255,255,255,0.08)';
+                activeBtn.style.borderColor = meta.border;
+                activeBtn.style.color = meta.color;
+            }
+        }
 
         function loadPlatformSettings() {
             fetch('{{ route('admin.settings.get') }}', {
@@ -4123,49 +5039,96 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('setting-ref-l1').value = data.settings.referral_commission_l1;
-                    document.getElementById('setting-ref-l1-status').value = data.settings.referral_commission_l1_status || 'active';
-                    document.getElementById('setting-ref-l2').value = data.settings.referral_commission_l2;
-                    document.getElementById('setting-ref-l2-status').value = data.settings.referral_commission_l2_status || 'active';
-                    document.getElementById('setting-ref-l3').value = data.settings.referral_commission_l3;
-                    document.getElementById('setting-ref-l3-status').value = data.settings.referral_commission_l3_status || 'active';
-                    document.getElementById('setting-withdraw-fee').value = data.settings.withdraw_commission;
-                    document.getElementById('setting-withdraw-fee-status').value = data.settings.withdraw_commission_status || 'active';
-                    document.getElementById('setting-helicopter-design').value = data.settings.active_helicopter_design || '1';
-                    document.getElementById('setting-bg-music').value = data.settings.game_bg_music || '';
-                    document.getElementById('setting-countdown-sound').value = data.settings.game_countdown_sound || '';
-                    document.getElementById('setting-countdown-time').value = data.settings.game_countdown_time || '10';
+                    const s = data.settings;
+                    // Commissions
+                    if (document.getElementById('setting-ref-l1')) document.getElementById('setting-ref-l1').value = s.referral_commission_l1 || '10';
+                    if (document.getElementById('setting-ref-l1-status')) document.getElementById('setting-ref-l1-status').value = s.referral_commission_l1_status || 'active';
+                    if (document.getElementById('setting-ref-l2')) document.getElementById('setting-ref-l2').value = s.referral_commission_l2 || '5';
+                    if (document.getElementById('setting-ref-l2-status')) document.getElementById('setting-ref-l2-status').value = s.referral_commission_l2_status || 'active';
+                    if (document.getElementById('setting-ref-l3')) document.getElementById('setting-ref-l3').value = s.referral_commission_l3 || '2';
+                    if (document.getElementById('setting-ref-l3-status')) document.getElementById('setting-ref-l3-status').value = s.referral_commission_l3_status || 'active';
+                    if (document.getElementById('setting-withdraw-fee')) document.getElementById('setting-withdraw-fee').value = s.withdraw_commission || '5';
+                    if (document.getElementById('setting-withdraw-fee-status')) document.getElementById('setting-withdraw-fee-status').value = s.withdraw_commission_status || 'active';
+
+                    // 5 Independent Game Modules
+                    supportedCrashGames.forEach(g => {
+                        const designEl = document.getElementById(`setting-helicopter-design-${g}`);
+                        if (designEl) {
+                            designEl.value = s[`active_helicopter_design_${g}`] || (g === 'helicopterx' ? '2' : (g === '1xaero' ? '1' : (g === 'aero' ? '7' : (g === 'crashx' ? '6' : '5'))));
+                        }
+
+                        const countEl = document.getElementById(`setting-countdown-time-${g}`);
+                        if (countEl) {
+                            countEl.value = s[`game_countdown_time_${g}`] || '10';
+                        }
+
+                        const bgEl = document.getElementById(`setting-bg-music-${g}`);
+                        const bgAudio = document.getElementById(`audio-preview-bg-${g}`);
+                        const bgVal = s[`game_bg_music_${g}`] || s.game_bg_music || '';
+                        if (bgEl) bgEl.value = bgVal;
+                        if (bgAudio) {
+                            if (bgVal) {
+                                bgAudio.src = bgVal;
+                                bgAudio.style.display = 'block';
+                            } else {
+                                bgAudio.style.display = 'none';
+                            }
+                        }
+
+                        const tickEl = document.getElementById(`setting-countdown-sound-${g}`);
+                        const tickAudio = document.getElementById(`audio-preview-tick-${g}`);
+                        const tickVal = s[`game_countdown_sound_${g}`] || s.game_countdown_sound || '';
+                        if (tickEl) tickEl.value = tickVal;
+                        if (tickAudio) {
+                            if (tickVal) {
+                                tickAudio.src = tickVal;
+                                tickAudio.style.display = 'block';
+                            } else {
+                                tickAudio.style.display = 'none';
+                            }
+                        }
+                    });
                 }
             })
             .catch(() => showToast('Failed to load platform settings.', true));
         }
 
         function savePlatformSettings(e) {
-            e.preventDefault();
+            if (e && e.preventDefault) e.preventDefault();
             const btn = document.getElementById('btn-save-settings');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Configurations...';
+            }
 
             const formData = new FormData();
-            formData.append('referral_commission_l1', document.getElementById('setting-ref-l1').value);
-            formData.append('referral_commission_l1_status', document.getElementById('setting-ref-l1-status').value);
-            formData.append('referral_commission_l2', document.getElementById('setting-ref-l2').value);
-            formData.append('referral_commission_l2_status', document.getElementById('setting-ref-l2-status').value);
-            formData.append('referral_commission_l3', document.getElementById('setting-ref-l3').value);
-            formData.append('referral_commission_l3_status', document.getElementById('setting-ref-l3-status').value);
-            formData.append('withdraw_commission', document.getElementById('setting-withdraw-fee').value);
-            formData.append('withdraw_commission_status', document.getElementById('setting-withdraw-fee-status').value);
-            formData.append('active_helicopter_design', document.getElementById('setting-helicopter-design').value);
-            formData.append('game_countdown_time', document.getElementById('setting-countdown-time').value);
+            formData.append('referral_commission_l1', document.getElementById('setting-ref-l1')?.value || '10');
+            formData.append('referral_commission_l1_status', document.getElementById('setting-ref-l1-status')?.value || 'active');
+            formData.append('referral_commission_l2', document.getElementById('setting-ref-l2')?.value || '5');
+            formData.append('referral_commission_l2_status', document.getElementById('setting-ref-l2-status')?.value || 'active');
+            formData.append('referral_commission_l3', document.getElementById('setting-ref-l3')?.value || '2');
+            formData.append('referral_commission_l3_status', document.getElementById('setting-ref-l3-status')?.value || 'active');
+            formData.append('withdraw_commission', document.getElementById('setting-withdraw-fee')?.value || '5');
+            formData.append('withdraw_commission_status', document.getElementById('setting-withdraw-fee-status')?.value || 'active');
 
-            const bgMusicFile = document.getElementById('setting-bg-music-file').files[0];
-            if (bgMusicFile) {
-                formData.append('game_bg_music_file', bgMusicFile);
-            }
-            const countdownSoundFile = document.getElementById('setting-countdown-sound-file').files[0];
-            if (countdownSoundFile) {
-                formData.append('game_countdown_sound_file', countdownSoundFile);
-            }
+            // 5 Games data
+            supportedCrashGames.forEach(g => {
+                const designVal = document.getElementById(`setting-helicopter-design-${g}`)?.value;
+                if (designVal) formData.append(`active_helicopter_design_${g}`, designVal);
+
+                const countVal = document.getElementById(`setting-countdown-time-${g}`)?.value;
+                if (countVal) formData.append(`game_countdown_time_${g}`, countVal);
+
+                const bgFile = document.getElementById(`setting-bg-music-file-${g}`)?.files[0];
+                if (bgFile) formData.append(`game_bg_music_file_${g}`, bgFile);
+
+                const tickFile = document.getElementById(`setting-countdown-sound-file-${g}`)?.files[0];
+                if (tickFile) formData.append(`game_countdown_sound_file_${g}`, tickFile);
+            });
+
+            // Also set default fallback keys based on current active game
+            formData.append('active_helicopter_design', document.getElementById('setting-helicopter-design-helicopterx')?.value || '2');
+            formData.append('game_countdown_time', document.getElementById('setting-countdown-time-helicopterx')?.value || '10');
 
             fetch('{{ route('admin.settings.save') }}', {
                 method: 'POST',
@@ -4177,21 +5140,29 @@
             })
             .then(r => r.json())
             .then(data => {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Save Platform Configurations';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save"></i> Save All Platform & Game Configurations';
+                }
                 if (data.success) {
                     showToast(data.message);
                     // Clear the file inputs
-                    document.getElementById('setting-bg-music-file').value = '';
-                    document.getElementById('setting-countdown-sound-file').value = '';
+                    supportedCrashGames.forEach(g => {
+                        const bgFileInput = document.getElementById(`setting-bg-music-file-${g}`);
+                        if (bgFileInput) bgFileInput.value = '';
+                        const tickFileInput = document.getElementById(`setting-countdown-sound-file-${g}`);
+                        if (tickFileInput) tickFileInput.value = '';
+                    });
                     loadPlatformSettings();
                 } else {
                     showToast((data.errors || ['Error']).join(' '), true);
                 }
             })
             .catch(() => {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Save Platform Configurations';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save"></i> Save All Platform & Game Configurations';
+                }
                 showToast('Connection error.', true);
             });
         }
@@ -4680,9 +5651,12 @@
         // HELICOPTER PREVIEW MODAL DRAWING LOOP
         // ==============================================
         let previewAnimFrame = null;
+        let currentModalTargetGame = 'helicopterx';
         
-        function openViewHelicoptersModal() {
-            const activeId = document.getElementById('setting-helicopter-design').value;
+        function openViewHelicoptersModal(gameKey = 'helicopterx') {
+            currentModalTargetGame = gameKey;
+            const targetSelect = document.getElementById(`setting-helicopter-design-${gameKey}`) || document.getElementById('setting-helicopter-design');
+            const activeId = targetSelect ? targetSelect.value : '1';
             highlightHelicopterDesignInPreview(activeId);
             document.getElementById('view-helicopters-modal').style.display = 'flex';
             startHelicopterPreviews();
@@ -4708,7 +5682,14 @@
 
         function selectHelicopterDesignInPreview(id) {
             highlightHelicopterDesignInPreview(id);
-            document.getElementById('setting-helicopter-design').value = id;
+            const targetSelect = document.getElementById(`setting-helicopter-design-${currentModalTargetGame}`);
+            if (targetSelect) {
+                targetSelect.value = id;
+            }
+            const fallbackSelect = document.getElementById('setting-helicopter-design');
+            if (fallbackSelect) {
+                fallbackSelect.value = id;
+            }
             // Highlight it first, wait 250ms, then save and close automatically
             setTimeout(() => {
                 submitSelectedHelicopterDesign();
@@ -4718,10 +5699,7 @@
         function submitSelectedHelicopterDesign() {
             closeViewHelicoptersModal();
             // Automatically submit the settings form
-            const btnSave = document.getElementById('btn-save-settings');
-            if (btnSave) {
-                btnSave.click();
-            }
+            savePlatformSettings(new Event('submit'));
         }
 
         document.getElementById('view-helicopters-modal').addEventListener('click', function(e) {
@@ -6177,14 +7155,36 @@
                         }
 
                         let manageBtn = '';
-                        if (game.id === 'boxing-king') {
+                        if (['helicopterx', '1xaero', 'aero', 'crashx', 'crash'].includes(game.id)) {
+                            manageBtn = `<button onclick="openGameTab('${game.id}', document.getElementById('nav-game-${game.id}'))" class="action-btn edit" title="Manage ${game.name}"><i class="fas fa-cog"></i></button>`;
+                        } else if (game.id === 'boxing-king') {
                             manageBtn = `<button onclick="switchTab('boxing-king', document.getElementById('nav-boxing-king'))" class="action-btn edit" title="Manage Boxing King"><i class="fas fa-cog"></i></button>`;
                         } else if (game.id === 'western-vault') {
                             manageBtn = `<button onclick="switchTab('western', document.getElementById('nav-western'))" class="action-btn edit" title="Manage Western Vault"><i class="fas fa-cog"></i></button>`;
                         } else if (game.id === 'olympus') {
                             manageBtn = `<button onclick="switchTab('olympus', document.getElementById('nav-olympus'))" class="action-btn edit" title="Manage Olympus"><i class="fas fa-cog"></i></button>`;
-                        } else if (game.id === 'aviator') {
-                            manageBtn = `<button onclick="switchTab('game', document.getElementById('nav-game'))" class="action-btn edit" title="Manage Aviator"><i class="fas fa-cog"></i></button>`;
+                        } else if (game.id === 'fortune-gems-2') {
+                            manageBtn = `<a href="{{ route('admin.gems.index') }}" class="action-btn edit" title="Manage Fortune Gems 2" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'abyss-of-glory') {
+                            manageBtn = `<a href="{{ route('admin.abyss.index') }}" class="action-btn edit" title="Manage Abyss of Glory" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'heads-or-tails') {
+                            manageBtn = `<a href="{{ route('admin.headstails.index') }}" class="action-btn edit" title="Manage Heads or Tails" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'lucky-joker-100') {
+                            manageBtn = `<a href="{{ route('admin.joker.index') }}" class="action-btn edit" title="Manage Lucky Joker 100" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'bonbon-bonanza') {
+                            manageBtn = `<a href="{{ route('admin.bonbon.index') }}" class="action-btn edit" title="Manage BonBon Bonanza" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'big-bass') {
+                            manageBtn = `<a href="{{ route('admin.bigbass.index') }}" class="action-btn edit" title="Manage Big Bass Splash" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'the-emirate') {
+                            manageBtn = `<a href="{{ route('admin.emirate.index') }}" class="action-btn edit" title="Manage The Emirate" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'royal-emirates') {
+                            manageBtn = `<a href="{{ route('admin.royalemirates.index') }}" class="action-btn edit" title="Manage Royal Emirates" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'wingo') {
+                            manageBtn = `<a href="{{ route('admin.wingo.index') }}" class="action-btn edit" title="Manage WinGo Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'k3') {
+                            manageBtn = `<a href="{{ route('admin.k3.index') }}" class="action-btn edit" title="Manage K3 Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
+                        } else if (game.id === 'trxwingo') {
+                            manageBtn = `<a href="{{ route('admin.trxwingo.index') }}" class="action-btn edit" title="Manage TrxWinGo Lottery" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"><i class="fas fa-cog"></i></a>`;
                         }
 
                         return `
@@ -6247,6 +7247,249 @@
             if (submenu) {
                 submenu.style.display = (submenu.style.display === 'none') ? 'flex' : 'none';
             }
+        }
+
+        /* ==========================================================================
+           SITE BRANDING & GLOBAL DEMO SPINS LIMIT HANDLERS
+           ========================================================================== */
+        function previewLogoFile(input) {
+            const container = document.getElementById('logo-preview-container');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    container.innerHTML = `<img src="${e.target.result}" style="max-height:100%; max-width:100%; object-fit:contain;">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function saveBrandingSettings(e) {
+            e.preventDefault();
+            const form = document.getElementById('branding-settings-form');
+            const submitBtn = document.getElementById('btn-save-branding');
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch('{{ route("admin.settings.branding.update") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Branding &amp; Demo Limit';
+
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    if (data.site_logo) {
+                        document.getElementById('logo-preview-container').innerHTML = `<img src="${data.site_logo}" style="max-height:100%; max-width:100%; object-fit:contain;">`;
+                    } else {
+                        document.getElementById('logo-preview-container').innerHTML = `<span style="font-size:11px; color:#64748b; font-weight:700;">No Image (${data.site_name} Active)</span>`;
+                    }
+                    const removeCb = document.getElementById('setting-remove-logo');
+                    if (removeCb) removeCb.checked = false;
+                    const fileInput = document.getElementById('setting-site-logo-file');
+                    if (fileInput) fileInput.value = '';
+                } else {
+                    showAdminToast(data.message || 'Failed to save branding settings.', 'error');
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-floppy-disk"></i> Save Branding &amp; Demo Limit';
+                showAdminToast('Network connection error.', 'error');
+            });
+        }
+
+        /* ==========================================================================
+           PROMOTIONAL SLIDERS CRUD HANDLERS
+           ========================================================================== */
+        let allSlidersCache = [];
+
+        function loadSlidersTable() {
+            const tbody = document.getElementById('sliders-table-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fas fa-spinner fa-spin"></i> Loading promotional slides...</td></tr>';
+
+            fetch('{{ route("admin.sliders.index") }}', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.sliders) {
+                    allSlidersCache = data.sliders;
+                    if (data.sliders.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#64748b;">No promotional slides configured yet. Click "Add New Slide Banner" above to create one!</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.sliders.map((s, idx) => {
+                        const statusBadge = s.status === 'active' 
+                            ? `<span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; cursor:pointer;" onclick="toggleSliderStatus(${s.id})"><i class="fas fa-circle-check"></i> ACTIVE</span>`
+                            : `<span style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; cursor:pointer;" onclick="toggleSliderStatus(${s.id})"><i class="fas fa-circle-xmark"></i> INACTIVE</span>`;
+
+                        return `
+                            <tr>
+                                <td><strong style="font-family:'JetBrains Mono',monospace; color:var(--accent-gold);">#${s.order || (idx + 1)}</strong></td>
+                                <td>
+                                    <div style="width:100px; height:44px; border-radius:6px; background-image:url('${s.image}'); background-size:cover; background-position:center; border:1px solid var(--border-subtle);"></div>
+                                </td>
+                                <td>
+                                    <div style="font-weight:800; color:#fff; font-size:13px;">${s.title}</div>
+                                    ${s.badge_text ? `<span style="font-size:10px; color:#38bdf8; font-weight:700;">${s.badge_text}</span>` : ''}
+                                </td>
+                                <td>
+                                    <div style="font-size:12px; color:#cbd5e1; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.prize_text || s.subtitle || '-'}</div>
+                                </td>
+                                <td>
+                                    <span style="font-size:11px; background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:4px; color:#cbd5e1; font-weight:700;">${s.button_text} &rarr; ${s.button_url}</span>
+                                </td>
+                                <td style="text-align:center;">
+                                    ${statusBadge}
+                                </td>
+                                <td style="text-align:right;">
+                                    <button class="action-btn edit" onclick="editSliderById(${s.id})" title="Edit Slide" style="margin-right:4px;">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="action-btn delete" onclick="deleteSliderById(${s.id})" title="Delete Slide">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            })
+            .catch(err => {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#f87171;">Failed to load sliders.</td></tr>';
+            });
+        }
+
+        function openSliderModal(slideData = null) {
+            const form = document.getElementById('slider-form');
+            if (!form) return;
+            form.reset();
+
+            const modalTitle = document.getElementById('slider-modal-title');
+            const idInput = document.getElementById('slider-id');
+
+            if (slideData) {
+                modalTitle.innerHTML = '<i class="fas fa-pen" style="color:var(--accent-gold);"></i> Edit Promotional Slide';
+                idInput.value = slideData.id;
+                document.getElementById('slider-title').value = slideData.title || '';
+                document.getElementById('slider-badge').value = slideData.badge_text || slideData.subtitle || '';
+                document.getElementById('slider-prize').value = slideData.prize_text || '';
+                document.getElementById('slider-btn-text').value = slideData.button_text || 'PLAY NOW';
+                document.getElementById('slider-btn-url').value = slideData.button_url || '/play';
+                document.getElementById('slider-img-url').value = slideData.image || '';
+                document.getElementById('slider-order').value = slideData.order || 1;
+                document.getElementById('slider-status').value = slideData.status || 'active';
+            } else {
+                modalTitle.innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-cyan);"></i> Add New Slide Banner';
+                idInput.value = '';
+                document.getElementById('slider-order').value = (allSlidersCache.length + 1);
+                document.getElementById('slider-status').value = 'active';
+            }
+
+            document.getElementById('slider-modal').classList.add('active');
+        }
+
+        function closeSliderModal() {
+            const modal = document.getElementById('slider-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function editSliderById(id) {
+            const found = allSlidersCache.find(s => s.id === id);
+            if (found) {
+                openSliderModal(found);
+            }
+        }
+
+        function saveSlider(e) {
+            e.preventDefault();
+            const form = document.getElementById('slider-form');
+            const id = document.getElementById('slider-id').value;
+            const submitBtn = document.getElementById('btn-save-slider');
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const url = id ? `/admin/sliders/${id}/update` : '{{ route("admin.sliders.store") }}';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Slide Banner';
+
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    closeSliderModal();
+                    loadSlidersTable();
+                } else {
+                    showAdminToast(data.message || 'Failed to save slider.', 'error');
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Slide Banner';
+                showAdminToast('Network connection error.', 'error');
+            });
+        }
+
+        function toggleSliderStatus(id) {
+            fetch(`/admin/sliders/${id}/toggle`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    loadSlidersTable();
+                }
+            });
+        }
+
+        function deleteSliderById(id) {
+            if (!confirm('Are you sure you want to delete this promotional banner slide?')) return;
+
+            fetch(`/admin/sliders/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    loadSlidersTable();
+                }
+            });
         }
     </script>
 </body>

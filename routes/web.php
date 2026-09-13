@@ -33,9 +33,53 @@ Route::post('/blocked/check-in', function () {
 use App\Http\Controllers\DashboardController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-Route::get('/play', function () {
-    return view('customer.game');
+Route::get('/play/{game?}', function ($game = null) {
+    $gameParam = strtolower($game ?? request()->query('game', 'helicopterx'));
+    $validGames = ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'];
+    if (!in_array($gameParam, $validGames)) {
+        $gameParam = 'helicopterx';
+    }
+    return view('customer.game', ['game' => $gameParam]);
 })->middleware('auth')->name('play');
+
+Route::get('/games/{game?}', function ($game = null) {
+    return redirect()->route('play', ['game' => $game]);
+})->where('game', '^(helicopterx|1xaero|aero|crashx|crash)$')->middleware('auth')->name('play.game');
+
+// WinGo Color & Number Prediction Lottery Routes
+Route::get('/wingo', [App\Http\Controllers\WinGoController::class, 'index'])->name('wingo.index');
+Route::prefix('games/wingo')->group(function () {
+    Route::get('/', [App\Http\Controllers\WinGoController::class, 'index'])->name('wingo.games.index');
+    Route::get('/state', [App\Http\Controllers\WinGoController::class, 'getState'])->name('wingo.state');
+    Route::post('/bet', [App\Http\Controllers\WinGoController::class, 'placeBet'])->name('wingo.bet');
+    Route::get('/my-history', [App\Http\Controllers\WinGoController::class, 'getMyHistory'])->name('wingo.myhistory');
+});
+
+// K3 Lottery Dice Game Routes
+Route::get('/k3', [App\Http\Controllers\K3Controller::class, 'index'])->name('k3.index');
+Route::prefix('games/k3')->group(function () {
+    Route::get('/', [App\Http\Controllers\K3Controller::class, 'index'])->name('k3.games.index');
+    Route::get('/state', [App\Http\Controllers\K3Controller::class, 'getState'])->name('k3.state');
+    Route::post('/bet', [App\Http\Controllers\K3Controller::class, 'placeBet'])->name('k3.bet');
+    Route::get('/my-history', [App\Http\Controllers\K3Controller::class, 'myHistory'])->name('k3.myhistory');
+});
+
+// TrxWinGo TRX Block Hash Based Lottery Routes
+Route::get('/trx-wingo', [App\Http\Controllers\TrxWingoController::class, 'index'])->name('trxwingo.index');
+Route::get('/trxwingo', [App\Http\Controllers\TrxWingoController::class, 'index'])->name('trxwingo.direct');
+Route::prefix('games/trx-wingo')->group(function () {
+    Route::get('/', [App\Http\Controllers\TrxWingoController::class, 'index'])->name('trxwingo.games.index');
+    Route::get('/state', [App\Http\Controllers\TrxWingoController::class, 'getState'])->name('trxwingo.state');
+    Route::post('/bet', [App\Http\Controllers\TrxWingoController::class, 'placeBet'])->name('trxwingo.bet');
+    Route::get('/my-history', [App\Http\Controllers\TrxWingoController::class, 'getMyHistory'])->name('trxwingo.myhistory');
+});
+
+// Direct aliases for 5 crash games
+Route::get('/helicopterx', function() { return redirect()->route('play', ['game' => 'helicopterx']); })->name('game.helicopterx');
+Route::get('/1xaero', function() { return redirect()->route('play', ['game' => '1xaero']); })->name('game.1xaero');
+Route::get('/aero', function() { return redirect()->route('play', ['game' => 'aero']); })->name('game.aero');
+Route::get('/crashx', function() { return redirect()->route('play', ['game' => 'crashx']); })->name('game.crashx');
+Route::get('/crash', function() { return redirect()->route('play', ['game' => 'crash']); })->name('game.crash');
 Route::get('/gems-mines', function () {
     return view('customer.gems-mines');
 })->middleware('auth')->name('gems-mines');
@@ -73,9 +117,12 @@ Route::get('/the-emirate', function () {
     return view('customer.the-emirate');
 })->middleware('auth')->name('the-emirate');
 
-Route::get('/royal-emirates', function () {
-    return view('customer.royal-emirates');
-})->middleware('auth')->name('royal-emirates');
+// Royal Emirates Hold and Spin Game Routes
+Route::get('/royal-emirates', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesGameController::class, 'index'])->middleware('auth')->name('royal-emirates');
+Route::prefix('games/royal-emirates')->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesGameController::class, 'index'])->name('royalemirates.index');
+    Route::post('/spin', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesGameController::class, 'spin'])->name('royalemirates.spin');
+});
 
 Route::get('/elves-kingdom', function () {
     return view('customer.elves-kingdom');
@@ -198,6 +245,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 
     // Force Crash (admin triggers instant game crash)
     Route::post('/force-crash', [AdminController::class, 'forceCrash'])->name('force-crash');
+    Route::post('/game/force-crash', [AdminController::class, 'forceCrash'])->name('game.force-crash');
 
     // Platform settings config
     Route::get('/settings', [AdminController::class, 'getSettings'])->name('settings.get');
@@ -271,6 +319,38 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/modules/the-emirate', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'index'])->name('emirate.index');
     Route::post('/modules/the-emirate/settings', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'updateSettings'])->name('emirate.settings');
     Route::post('/modules/the-emirate/upload-audio', [App\Http\Controllers\TheEmirate\EmirateAdminController::class, 'uploadAudio'])->name('emirate.audio');
+
+    // Royal Emirates Hold and Spin Casino Game Management Module
+    Route::get('/modules/royal-emirates', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesAdminController::class, 'index'])->name('royalemirates.index');
+    Route::post('/modules/royal-emirates/settings', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesAdminController::class, 'updateSettings'])->name('royalemirates.settings');
+    Route::post('/modules/royal-emirates/upload-audio', [App\Http\Controllers\RoyalEmirates\RoyalEmiratesAdminController::class, 'uploadAudio'])->name('royalemirates.audio');
+
+    // WinGo Lottery Game Management Module
+    Route::get('/modules/wingo', [App\Http\Controllers\Admin\WingoAdminController::class, 'index'])->name('wingo.index');
+    Route::post('/modules/wingo/settings', [App\Http\Controllers\Admin\WingoAdminController::class, 'updateSettings'])->name('wingo.settings');
+    Route::post('/modules/wingo/{id}/force-settle', [App\Http\Controllers\Admin\WingoAdminController::class, 'forceSettle'])->name('wingo.settle');
+
+    // K3 Lottery Game Management Module
+    Route::get('/modules/k3', [App\Http\Controllers\Admin\K3AdminController::class, 'index'])->name('k3.index');
+    Route::post('/modules/k3/settings', [App\Http\Controllers\Admin\K3AdminController::class, 'updateSettings'])->name('k3.settings');
+    Route::post('/modules/k3/audio', [App\Http\Controllers\Admin\K3AdminController::class, 'uploadAudio'])->name('k3.audio');
+    Route::post('/modules/k3/{id}/force-settle', [App\Http\Controllers\Admin\K3AdminController::class, 'forceSettle'])->name('k3.settle');
+
+    // TrxWinGo Lottery Game Management Module
+    Route::get('/modules/trx-wingo', [App\Http\Controllers\Admin\TrxWingoAdminController::class, 'index'])->name('trxwingo.index');
+    Route::post('/modules/trx-wingo/settings', [App\Http\Controllers\Admin\TrxWingoAdminController::class, 'updateSettings'])->name('trxwingo.settings');
+    Route::post('/modules/trx-wingo/{id}/force-settle', [App\Http\Controllers\Admin\TrxWingoAdminController::class, 'forceSettle'])->name('trxwingo.settle');
+
+    // Site Branding & Global Demo Limit Settings
+    Route::get('/settings/branding', [App\Http\Controllers\AdminController::class, 'getBrandingSettings'])->name('settings.branding.get');
+    Route::post('/settings/branding', [App\Http\Controllers\AdminController::class, 'updateBrandingSettings'])->name('settings.branding.update');
+
+    // Promotional Slider Banner Management
+    Route::get('/sliders', [App\Http\Controllers\Admin\SliderAdminController::class, 'index'])->name('sliders.index');
+    Route::post('/sliders/store', [App\Http\Controllers\Admin\SliderAdminController::class, 'store'])->name('sliders.store');
+    Route::post('/sliders/{id}/update', [App\Http\Controllers\Admin\SliderAdminController::class, 'update'])->name('sliders.update');
+    Route::post('/sliders/{id}/toggle', [App\Http\Controllers\Admin\SliderAdminController::class, 'toggleStatus'])->name('sliders.toggle');
+    Route::delete('/sliders/{id}', [App\Http\Controllers\Admin\SliderAdminController::class, 'destroy'])->name('sliders.destroy');
 });
 
 // Game engine: fetch next crash point (auth required - players only)

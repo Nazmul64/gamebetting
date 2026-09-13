@@ -66,38 +66,41 @@
 
             <!-- Promotion Slider Banner -->
             <div class="lobby-banner-slider">
-                <!-- Slide 1: SpinoLeague -->
-                <div class="banner-slide slide-active" id="slide-0">
-                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop');"></div>
-                    <div class="banner-content">
-                        <span class="banner-date">05.03.2026 - 01.03.2027</span>
-                        <h2 class="banner-title">SPINOLEAGUE TOURNAMENT</h2>
-                        <p class="banner-prize">STAND BY THE CHAMPIONS | PRIZE POOL: <span>€12,000,000</span></p>
-                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
-                    </div>
-                </div>
+                @php
+                    $activeSliders = \App\Models\Slider::active()->get();
+                    if($activeSliders->isEmpty()) {
+                        $activeSliders = collect([
+                            (object)[
+                                'title' => 'SPINOLEAGUE TOURNAMENT',
+                                'subtitle' => '05.03.2026 - 01.03.2027',
+                                'badge_text' => '05.03.2026 - 01.03.2027',
+                                'prize_text' => 'STAND BY THE CHAMPIONS | PRIZE POOL: <span>€12,000,000</span>',
+                                'button_text' => 'PLAY NOW',
+                                'button_url' => route('play'),
+                                'image' => 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop',
+                                'bg_gradient' => 'linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%)'
+                            ]
+                        ]);
+                    }
+                @endphp
 
-                <!-- Slide 2: Playcognito -->
-                <div class="banner-slide" id="slide-1">
-                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');"></div>
-                    <div class="banner-content">
-                        <span class="banner-date">Exclusive Release</span>
-                        <h2 class="banner-title">NEW PROVIDER LAUNCH</h2>
-                        <p class="banner-prize">EXPERIENCE THE THRILL OF <span>PLAYCOGNITO</span> SLOTS</p>
-                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
+                @foreach($activeSliders as $idx => $slide)
+                    <div class="banner-slide {{ $idx === 0 ? 'slide-active' : '' }}" id="slide-{{ $idx }}">
+                        <div class="banner-slide-bg" style="background-image: {{ $slide->bg_gradient ?? 'linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%)' }}, url('{{ $slide->image }}');"></div>
+                        <div class="banner-content">
+                            @if(!empty($slide->badge_text ?? $slide->subtitle))
+                                <span class="banner-date">{{ $slide->badge_text ?? $slide->subtitle }}</span>
+                            @endif
+                            <h2 class="banner-title">{{ $slide->title }}</h2>
+                            @if(!empty($slide->prize_text))
+                                <p class="banner-prize">{!! $slide->prize_text !!}</p>
+                            @endif
+                            <a href="{{ $slide->button_url ?? route('play') }}" class="banner-play-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                {{ $slide->button_text ?? 'PLAY NOW' }}
+                            </a>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Slide 3: Golden Dragon -->
-                <div class="banner-slide" id="slide-2">
-                    <div class="banner-slide-bg" style="background-image: linear-gradient(to right, rgba(10,17,30,0.95) 35%, rgba(10,17,30,0.1) 100%), url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop');"></div>
-                    <div class="banner-content">
-                        <span class="banner-date">Limited Time Only</span>
-                        <h2 class="banner-title">GOLDEN DRAGON CHALLENGE</h2>
-                        <p class="banner-prize">MULTIPLY YOUR WINNINGS UP TO <span>500,000 BDT</span></p>
-                        <button onclick="launchDroneGame(event)" class="banner-play-btn">PLAY NOW</button>
-                    </div>
-                </div>
+                @endforeach
 
                 <!-- Arrows -->
                 <button class="slider-arrow arrow-left" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
@@ -105,15 +108,16 @@
 
                 <!-- Dots navigation -->
                 <div class="slide-dots">
-                    <span class="slide-dot active" onclick="setSlide(0)"></span>
-                    <span class="slide-dot" onclick="setSlide(1)"></span>
-                    <span class="slide-dot" onclick="setSlide(2)"></span>
+                    @foreach($activeSliders as $idx => $slide)
+                        <span class="slide-dot {{ $idx === 0 ? 'active' : '' }}" onclick="setSlide({{ $idx }})"></span>
+                    @endforeach
                 </div>
             </div>
 
             <!-- Categories Horizontal Filter Navbar -->
             <div class="lobby-categories-navbar">
                 <button class="lobby-category-btn active" onclick="filterCategory('all', this)"><i class="fas fa-fire"></i> Popular</button>
+                <button class="lobby-category-btn" onclick="filterCategory('lottery', this)"><i class="fas fa-ticket-alt text-emerald-400"></i> Lottery</button>
                 <button class="lobby-category-btn" onclick="filterCategory('quick', this)"><i class="fas fa-bolt"></i> Quick Play</button>
                 <button class="lobby-category-btn" onclick="filterCategory('chicken', this)"><i class="fas fa-egg"></i> Chicken Profit</button>
                 <button class="lobby-category-btn" onclick="filterCategory('new', this)"><i class="fas fa-star-of-david"></i> New</button>
@@ -126,2247 +130,405 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
-                <!-- Game: Fortune Gems 2 -->
-                <div class="slot-card" data-category="bangladesh popular new" data-name="fortune gems 2 jili">
+                <!-- Game 1: TrxWinGo Lottery (TRON Blockchain Provably Fair) -->
+                <a href="{{ route('trxwingo.index') }}" class="slot-card" data-category="lottery bangladesh popular new quick exclusive all" data-name="trxwingo trx win go tron lottery amar club color number prediction block hash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background:#00b977; color:#fff;">TRX</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/trxwingo.webp') }}" class="slot-card-img" alt="TrxWinGo" onerror="this.src='{{ asset('assets/image/trxwingo.png') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #00b977 0%, #047857 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-cube" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">TrxWinGo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play TrxWinGo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">TRON Public Chain</span>
+                        <div class="slot-card-title">TrxWinGo Lottery</div>
+                    </div>
+                </a>
+
+                <!-- Game 2: WinGo Lottery -->
+                <a href="{{ route('wingo.index') }}" class="slot-card" data-category="lottery bangladesh popular new quick exclusive all" data-name="wingo lottery amar club tiranga color number prediction" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background:#00b977; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/wingo.webp') }}" class="slot-card-img" alt="WinGo" onerror="this.src='{{ asset('assets/image/wingo.png') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #059669 0%, #10b981 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-dice" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">WinGo Lottery</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play WinGo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amar Club</span>
+                        <div class="slot-card-title">WinGo Lottery</div>
+                    </div>
+                </a>
+
+                <!-- Game 2: Olympus Gold -->
+                <a href="{{ route('gates-of-olympus') }}" class="slot-card" data-category="popular exclusive new quick bangladesh bonus all" data-name="olympus gold gates of olympus pragmatic play" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/fortunegems2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="{{ asset('assets/image/GatesofOlympus.webp') }}" class="slot-card-img" alt="Olympus Gold" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-bolt" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Olympus Gold</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Olympus Gold™</div>
+                    </div>
+                </a>
+
+                <!-- Game 3: Western Vault -->
+                <a href="{{ route('western-vault') }}" class="slot-card" data-category="popular exclusive new quick bangladesh all" data-name="western vault pvp duel pragmatic play" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#f97316; color:#fff;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/western.webp') }}" class="slot-card-img" alt="Western Vault" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-vault" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Vault</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">PVP Vault Duel</span>
+                        <div class="slot-card-title">Western Vault™</div>
+                    </div>
+                </a>
+
+                <!-- Game 4: HelicopterX -->
+                <a href="{{ route('play', ['game' => 'helicopterx']) }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="helicopterx 1xgames exclusive crash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/HelicopterX.webp') }}" class="slot-card-img" alt="HelicopterX" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-helicopter" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">HelicopterX</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play HelicopterX</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">HelicopterX</div>
+                    </div>
+                </a>
+
+                <!-- Game 5: 1xAero -->
+                <a href="{{ route('play', ['game' => '1xaero']) }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="1xaero 1xgames exclusive crash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#00f2fe; color:#000;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/1xaero.webp') }}" class="slot-card-img" alt="1xAero" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #00838f 0%, #00e5ff 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-jet-fighter" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">1xAero</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play 1xAero</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">1xAero</div>
+                    </div>
+                </a>
+
+                <!-- Game 6: Aero -->
+                <a href="{{ route('play', ['game' => 'aero']) }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="aero 1xgames exclusive crash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#ef4444; color:#fff;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/Aero.webp') }}" class="slot-card-img" alt="Aero" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #ef4444 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-plane" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Aero</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Aero</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">Aero</div>
+                    </div>
+                </a>
+
+                <!-- Game 7: CrashX -->
+                <a href="{{ route('play', ['game' => 'crashx']) }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="crashx turbo games multiplayer crash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#10b981; color:#000;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/CrashX.webp') }}" class="slot-card-img" alt="CrashX" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #065f46 0%, #10b981 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-rocket" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">CrashX</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play CrashX</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Multiplayer Crash</span>
+                        <div class="slot-card-title">CrashX</div>
+                    </div>
+                </a>
+
+                <!-- Game 8: Crash (1xGames) -->
+                <a href="{{ route('play', ['game' => 'crash']) }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="crash 1xgames exclusive multiplayer crash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#8b5cf6; color:#fff;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/crash.png') }}" class="slot-card-img" alt="Crash" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-meteor" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Crash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Crash</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
+                        <div class="slot-card-title">Crash (1xGames)</div>
+                    </div>
+                </a>
+
+                <!-- Game 9: Fortune Gems 2 -->
+                <a href="{{ route('fortune-gems-2') }}" class="slot-card" data-category="bangladesh popular new chicken all" data-name="fortune gems 2 jili games cascading slot" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/fortunegems2.webp') }}" class="slot-card-img" alt="Fortune Gems 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #d9a443 0%, #8a5e1f 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-gem" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fortune Gems 2</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Fortune Gems 2')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Fortune Gems 2'); return false;" class="slot-demo-link">Play Demo</a>
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Jili Games</span>
-                        <div class="slot-card-title">Fortune Gems 2</div>
+                        <div class="slot-card-title">Fortune Gems 2™</div>
                     </div>
-                </div>
+                </a>
 
-                <!-- Game: Super Ace Deluxe -->
-                <div class="slot-card" data-category="bangladesh popular new" data-name="super ace deluxe jili">
+                <!-- Game 10: Boxing King -->
+                <a href="{{ route('boxing-king') }}" class="slot-card" data-category="bangladesh popular new exclusive all" data-name="boxing king jili games fighting slot" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/SuperAceDeluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #16a085 0%, #2c3e50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Super Ace Deluxe</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Super Ace Deluxe')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Super Ace Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili Games</span>
-                        <div class="slot-card-title">Super Ace Deluxe</div>
-                    </div>
-                </div>
-
-                <!-- Game: Gates of Olympus -->
-                <div class="slot-card" data-category="bangladesh popular new" data-name="gates of olympus pragmatic play">
-                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/GatesofOlympus.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-bolt" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Gates of Olympus</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Gates of Olympus')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Gates of Olympus'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">Gates of Olympus</div>
-                    </div>
-                </div>
-
-                <!-- Game: Boxing King -->
-                <div class="slot-card" data-category="bangladesh popular new" data-name="boxing king jili">
-                    <span class="slot-badge slot-badge-hot" style="background:#ff3d00; color:#fff;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/BoxingKing.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="{{ asset('assets/image/BoxingKing.webp') }}" class="slot-card-img" alt="Boxing King" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b81f2e 0%, #f5c542 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
+                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Boxing King</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Boxing King')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Boxing King'); return false;" class="slot-demo-link">Play Demo</a>
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Jili Games</span>
-                        <div class="slot-card-title">Boxing King</div>
+                        <div class="slot-card-title">Boxing King™</div>
                     </div>
-                </div>
+                </a>
 
-                <!-- Game 1: Heads or Tails -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="heads or tails 1xgames exclusive">
+                <!-- Game 11: Abyss of Glory -->
+                <a href="{{ route('temple-of-fortune') }}" class="slot-card" data-category="popular exclusive new quick bangladesh all" data-name="abyss of glory temple of fortune golden ways original" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background: linear-gradient(135deg, #d9a443, #8a5e1f); color:#fff3cf;">NEW</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/Abyss of Glory.webp') }}" class="slot-card-img" alt="Abyss of Glory" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-landmark" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Abyss of Glory</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Original · 243 Ways</span>
+                        <div class="slot-card-title">Abyss of Glory™</div>
+                    </div>
+                </a>
+
+                <!-- Game 12: Heads or Tails -->
+                <a href="{{ route('heads-or-tails') }}" class="slot-card" data-category="exclusive quick bangladesh popular all" data-name="heads or tails 1xgames exclusive coin toss" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/HeadsorTails.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="{{ asset('assets/image/HeadsorTails.webp') }}" class="slot-card-img" alt="Heads or Tails" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #caa24f 0%, #7a4e12 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Heads or Tails</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Heads or Tails')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Heads or Tails'); return false;" class="slot-demo-link">Play Demo</a>
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">Heads or Tails</div>
+                        <div class="slot-card-title">Heads or Tails™</div>
                     </div>
-                </div>
+                </a>
 
-                <!-- Game 2: HelicopterX -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="helicopterx 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
+                <!-- Game 13: Lucky Joker 100 -->
+                <a href="{{ route('lucky-joker-100') }}" class="slot-card" data-category="popular quick bangladesh new bonus all" data-name="lucky joker 100 amusnet spinomenal" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#f43f5e; color:#fff;">ACTIVE</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/HelicopterX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">HelicopterX</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">HelicopterX</div>
-                    </div>
-                </div>
-
-                <!-- Game 3: 1xaero -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="1xaero 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/1xaero.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">1xaero</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">1xaero</div>
-                    </div>
-                </div>
-
-                <!-- Game 2: 20 Extra Crown -->
-                <div class="slot-card" data-category="quick new" data-name="20 extra crown amusnet interactive">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/20 Extra Crown.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">20 Extra Crown</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('20 Extra Crown')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('20 Extra Crown'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">20 Extra Crown</div>
-                    </div>
-                </div>
-
-                <!-- Game 3: 3superacc -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="3superacc egt">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/3superacc.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">3superacc</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('3superacc')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('3superacc'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">3superacc</div>
-                    </div>
-                </div>
-
-                <!-- Game 4: 40 Shining Crown Bell Link -->
-                <div class="slot-card" data-category="new exclusive" data-name="40 shining crown bell link jili">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/40 Shining Crown Bell Link.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">40 Shining Crown Bell Link</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('40 Shining Crown Bell Link')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('40 Shining Crown Bell Link'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">40 Shining Crown Bell Link</div>
-                    </div>
-                </div>
-
-                <!-- Game 5: 9 Masks of Voodoo -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="9 masks of voodoo netent">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/9 Masks of Voodoo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">9 Masks of Voodoo</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('9 Masks of Voodoo')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('9 Masks of Voodoo'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">9 Masks of Voodoo</div>
-                    </div>
-                </div>
-
-                <!-- Game: Temple of Fortune (Custom) -->
-                <div class="slot-card" data-category="popular exclusive new" data-name="temple of fortune golden ways original">
-                    <span class="slot-badge slot-badge-promo" style="background: linear-gradient(135deg, #d9a443, #8a5e1f); color:#fff3cf;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Abyss of Glory.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-award" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Temple of Fortune</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Temple of Fortune')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Temple of Fortune'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Original · 243 Ways</span>
-                        <div class="slot-card-title">Temple of Fortune</div>
-                    </div>
-                </div>
-
-
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="aero 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Aero.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Aero</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">Aero</div>
-                    </div>
-                </div>
-
-                <!-- Game 8: All Ways Hot Fruits -->
-                <div class="slot-card" data-category="popular chicken" data-name="all ways hot fruits playson">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/All Ways Hot Fruits.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">All Ways Hot Fruits</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('All Ways Hot Fruits')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('All Ways Hot Fruits'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">All Ways Hot Fruits</div>
-                    </div>
-                </div>
-
-                <!-- Game 9: Angry Birds -->
-                <div class="slot-card" data-category="quick new" data-name="angry birds evoplay">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Angry Birds.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Angry Birds</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Angry Birds')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Angry Birds'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">Angry Birds</div>
-                    </div>
-                </div>
-
-                <!-- Game 10: BaBayiagatales -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="babayiagatales betsoft">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/BaBayiagatales.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">BaBayiagatales</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('BaBayiagatales')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('BaBayiagatales'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">BaBayiagatales</div>
-                    </div>
-                </div>
-
-                <!-- Game 11: Bazaarhold&wun -->
-                <div class="slot-card" data-category="new exclusive" data-name="bazaarhold&wun smartsoft gaming">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Bazaarhold&wun.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Bazaarhold&wun</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Bazaarhold&wun')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Bazaarhold&wun'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">Bazaarhold&wun</div>
-                    </div>
-                </div>
-
-                <!-- Game 12: Best Gold Miner -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="best gold miner fazi">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Best Gold Miner.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Best Gold Miner</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Best Gold Miner')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Best Gold Miner'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Best Gold Miner</div>
-                    </div>
-                </div>
-
-                <!-- Game 13: Bonsai Spins -->
-                <div class="slot-card" data-category="exclusive popular" data-name="bonsai spins pg soft">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Bonsai Spins.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Bonsai Spins</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Bonsai Spins')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Bonsai Spins'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">Bonsai Spins</div>
-                    </div>
-                </div>
-
-                <!-- Game 14: Book of Sheba -->
-                <div class="slot-card" data-category="bonus quick" data-name="book of sheba pragmatic play">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Book of Sheba.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Book of Sheba</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Book of Sheba')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Book of Sheba'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">Book of Sheba</div>
-                    </div>
-                </div>
-
-                <!-- Game 15: Buffalo Goes Wild -->
-                <div class="slot-card" data-category="popular chicken" data-name="buffalo goes wild amusnet interactive">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Buffalo Goes Wild.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Buffalo Goes Wild</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Buffalo Goes Wild')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Buffalo Goes Wild'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">Buffalo Goes Wild</div>
-                    </div>
-                </div>
-
-                <!-- Game 16: Burning Eye -->
-                <div class="slot-card" data-category="quick new" data-name="burning eye egt">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Burning Eye.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Eye</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Eye')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Burning Eye'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">Burning Eye</div>
-                    </div>
-                </div>
-
-                <!-- Game 17: Burning Hot Clover Chance -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="burning hot clover chance jili">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Burning Hot Clover Chance.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Hot Clover Chance</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Hot Clover Chance')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Burning Hot Clover Chance'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">Burning Hot Clover Chance</div>
-                    </div>
-                </div>
-
-                <!-- Game 18: Burning Slots 100 -->
-                <div class="slot-card" data-category="new exclusive" data-name="burning slots 100 netent">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Burning Slots 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Slots 100</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Burning Slots 100')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Burning Slots 100'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">Burning Slots 100</div>
-                    </div>
-                </div>
-
-                <!-- Game 19: Cabaretroyialeholdandearyi -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="cabaretroyialeholdandearyi spinomenal">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Cabaretroyialeholdandearyi.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Cabaretroyialeholdandearyi</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Cabaretroyialeholdandearyi')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Cabaretroyialeholdandearyi'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">Cabaretroyialeholdandearyi</div>
-                    </div>
-                </div>
-
-                <!-- Game 20: Catch 'n Cash -->
-                <div class="slot-card" data-category="exclusive popular" data-name="catch 'n cash hacksaw gaming">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Catch 'n Cash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Catch 'n Cash</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Catch \'n Cash')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Catch \'n Cash'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">Catch 'n Cash</div>
-                    </div>
-                </div>
-
-                <!-- Game 21: Chickenroad -->
-                <div class="slot-card" data-category="bonus quick" data-name="chickenroad playson">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Chickenroad.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Chickenroad</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Chickenroad')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Chickenroad'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">Chickenroad</div>
-                    </div>
-                </div>
-
-                <!-- Game 22: Clover Coin Combo -->
-                <div class="slot-card" data-category="popular chicken" data-name="clover coin combo evoplay">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Clover Coin Combo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Clover Coin Combo</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Clover Coin Combo')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Clover Coin Combo'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">Clover Coin Combo</div>
-                    </div>
-                </div>
-
-                <!-- Game 23: CoinSpin Fever -->
-                <div class="slot-card" data-category="quick new" data-name="coinspin fever betsoft">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/CoinSpin Fever.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">CoinSpin Fever</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('CoinSpin Fever')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('CoinSpin Fever'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">CoinSpin Fever</div>
-                    </div>
-                </div>
-
-                <!-- Game 24: CrashX -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="crashx 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/CrashX.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">CrashX</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">CrashX</div>
-                    </div>
-                </div>
-
-                <!-- Game 25: Crazy 777 2 -->
-                <div class="slot-card" data-category="new exclusive" data-name="crazy 777 2 fazi">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Crazy 777 2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Crazy 777 2</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Crazy 777 2')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Crazy 777 2'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Crazy 777 2</div>
-                    </div>
-                </div>
-
-                <!-- Game 26: Deigodsv -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="deigodsv pg soft">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Deigodsv.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Deigodsv</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Deigodsv')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Deigodsv'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">Deigodsv</div>
-                    </div>
-                </div>
-
-                <!-- Game 27: Demigods -->
-                <div class="slot-card" data-category="exclusive popular" data-name="demigods pragmatic play">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Demigods.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Demigods</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Demigods')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Demigods'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">Demigods</div>
-                    </div>
-                </div>
-
-                <!-- Game 28: Dracosgold -->
-                <div class="slot-card" data-category="bonus quick" data-name="dracosgold amusnet interactive">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Dracosgold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Dracosgold</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Dracosgold')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Dracosgold'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">Dracosgold</div>
-                    </div>
-                </div>
-
-                <!-- Game 29: Dragonmagic -->
-                <div class="slot-card" data-category="popular chicken" data-name="dragonmagic egt">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Dragonmagic.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Dragonmagic</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Dragonmagic')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Dragonmagic'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">Dragonmagic</div>
-                    </div>
-                </div>
-
-                <!-- Game 30: Egg Hunter -->
-                <div class="slot-card" data-category="quick new" data-name="egg hunter jili">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Egg Hunter.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Egg Hunter</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Egg Hunter')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Egg Hunter'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">Egg Hunter</div>
-                    </div>
-                </div>
-
-                <!-- Game 31: Fairy Fortune Deluxe -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="fairy fortune deluxe netent">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Fairy Fortune Deluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fairy Fortune Deluxe</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Fairy Fortune Deluxe')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Fairy Fortune Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">Fairy Fortune Deluxe</div>
-                    </div>
-                </div>
-
-                <!-- Game 32: FalconCashHoldandWin -->
-                <div class="slot-card" data-category="new exclusive" data-name="falconcashholdandwin spinomenal">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/FalconCashHoldandWin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">FalconCashHoldandWin</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('FalconCashHoldandWin')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('FalconCashHoldandWin'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">FalconCashHoldandWin</div>
-                    </div>
-                </div>
-
-                <!-- Game 33: Firestorm 7 -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="firestorm 7 hacksaw gaming">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Firestorm 7.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Firestorm 7</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Firestorm 7')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Firestorm 7'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">Firestorm 7</div>
-                    </div>
-                </div>
-
-                <!-- Game 34: Football -->
-                <div class="slot-card" data-category="exclusive popular" data-name="football playson">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Football.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-futbol" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Football</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Football')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Football'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">Football</div>
-                    </div>
-                </div>
-
-                <!-- Game 35: Frog's Ball Lock 2 Spin -->
-                <div class="slot-card" data-category="bonus quick" data-name="frog's ball lock 2 spin evoplay">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Frog's Ball Lock 2 Spin™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-futbol" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Frog's Ball Lock 2 Spin</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Frog\'s Ball Lock 2 Spin')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Frog\'s Ball Lock 2 Spin'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">Frog's Ball Lock 2 Spin</div>
-                    </div>
-                </div>
-
-                <!-- Game 36: Fruit Scapes Pull Tabs -->
-                <div class="slot-card" data-category="popular chicken" data-name="fruit scapes pull tabs betsoft">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Fruit Scapes Pull Tabs.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Fruit Scapes Pull Tabs</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Fruit Scapes Pull Tabs')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Fruit Scapes Pull Tabs'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">Fruit Scapes Pull Tabs</div>
-                    </div>
-                </div>
-
-                <!-- Game 37: GemBlitz Bonanza -->
-                <div class="slot-card" data-category="quick new" data-name="gemblitz bonanza smartsoft gaming">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/GemBlitz Bonanza.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">GemBlitz Bonanza</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('GemBlitz Bonanza')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('GemBlitz Bonanza'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">GemBlitz Bonanza</div>
-                    </div>
-                </div>
-
-                <!-- Game 38: Goldenmine -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="goldenmine fazi">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Goldenmine.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Goldenmine</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Goldenmine')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Goldenmine'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Goldenmine</div>
-                    </div>
-                </div>
-
-                <!-- Game 39: Gonzo's Quest -->
-                <div class="slot-card" data-category="new exclusive" data-name="gonzo's quest pg soft">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Gonzo's Quest™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Gonzo's Quest</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Gonzo\'s Quest')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Gonzo\'s Quest'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">Gonzo's Quest</div>
-                    </div>
-                </div>
-
-                <!-- Old HelicopterX card slot removed (moved to Game 2 position) -->
-
-                <!-- Game 41: Hot Slot 777 Hold the Jackpot -->
-                <div class="slot-card" data-category="exclusive popular" data-name="hot slot 777 hold the jackpot amusnet interactive">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Hot Slot™ 777 Hold the Jackpot™.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Hot Slot 777 Hold the Jackpot</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Hot Slot 777 Hold the Jackpot')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Hot Slot 777 Hold the Jackpot'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">Hot Slot 777 Hold the Jackpot</div>
-                    </div>
-                </div>
-
-                <!-- Game 42: Indian Gold -->
-                <div class="slot-card" data-category="bonus quick" data-name="indian gold egt">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Indian Gold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Indian Gold</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Indian Gold')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Indian Gold'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">Indian Gold</div>
-                    </div>
-                </div>
-
-                <!-- Game 43: Joker Poker -->
-                <div class="slot-card" data-category="popular chicken" data-name="joker poker jili">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Joker Poker.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Joker Poker</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Joker Poker')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Joker Poker'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">Joker Poker</div>
-                    </div>
-                </div>
-
-                <!-- Game 44: Joker's Jewels Cash -->
-                <div class="slot-card" data-category="quick new" data-name="joker's jewels cash netent">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Joker's Jewels Cash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Joker's Jewels Cash</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Joker\'s Jewels Cash')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Joker\'s Jewels Cash'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">Joker's Jewels Cash</div>
-                    </div>
-                </div>
-
-                <!-- Game 45: Juicywinsx10000 -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="juicywinsx10000 spinomenal">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Juicywinsx10000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Juicywinsx10000</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Juicywinsx10000')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Juicywinsx10000'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">Juicywinsx10000</div>
-                    </div>
-                </div>
-
-                <!-- Game 46: King Of Vikingso -->
-                <div class="slot-card" data-category="new exclusive" data-name="king of vikingso hacksaw gaming">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/King Of Vikingso.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-shield-halved" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">King Of Vikingso</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('King Of Vikingso')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('King Of Vikingso'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">King Of Vikingso</div>
-                    </div>
-                </div>
-
-                <!-- Game 47: Lucky Joker 10 -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="lucky joker 10 playson">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Lucky Joker 10.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Lucky Joker 10</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Lucky Joker 10')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Lucky Joker 10'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">Lucky Joker 10</div>
-                    </div>
-                </div>
-
-                <!-- Game 48: Lucky Joker 100 -->
-                <div class="slot-card" data-category="exclusive popular" data-name="lucky joker 100 evoplay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
-                        <img src="{{ asset("assets/image/Lucky Joker 100.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-face-laugh-wink" style="font-size:28px; margin-bottom:8px;"></i>
+                        <img src="{{ asset('assets/image/Lucky Joker 100.webp') }}" class="slot-card-img" alt="Lucky Joker 100" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #be123c 0%, #fb7185 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy-side" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Lucky Joker 100</span>
                         </div>
                     </div>
-                    <div class="slot-card-overlay" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Lucky Joker 100')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Lucky Joker 100'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info" style="cursor: pointer;" onclick="demoGameRedirect('Lucky Joker 100')">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">Lucky Joker 100</div>
-                    </div>
-                </div>
-
-                <!-- Game 49: Luxe 555 -->
-                <div class="slot-card" data-category="bonus quick" data-name="luxe 555 betsoft">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Luxe 555.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Luxe 555</span>
-                        </div>
-                    </div>
                     <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Luxe 555')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Luxe 555'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">Luxe 555</div>
-                    </div>
-                </div>
-
-                <!-- Game 50: Magic Of The Ring -->
-                <div class="slot-card" data-category="popular chicken" data-name="magic of the ring smartsoft gaming">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Magic Of The Ring.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-wand-magic-sparkles" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Magic Of The Ring</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Magic Of The Ring')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Magic Of The Ring'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">Magic Of The Ring</div>
-                    </div>
-                </div>
-
-                <!-- Game 51: Mio and Neko Rock -->
-                <div class="slot-card" data-category="quick new" data-name="mio and neko rock fazi">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Mio and Neko Rock.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Mio and Neko Rock</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Mio and Neko Rock')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Mio and Neko Rock'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Mio and Neko Rock</div>
-                    </div>
-                </div>
-
-                <!-- Game 52: Mystic Spin -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="mystic spin pg soft">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Mystic Spin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Mystic Spin</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Mystic Spin')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Mystic Spin'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">Mystic Spin</div>
-                    </div>
-                </div>
-
-                <!-- Game 53: Ocean Legacy -->
-                <div class="slot-card" data-category="new exclusive" data-name="ocean legacy pragmatic play">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Ocean Legacy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Ocean Legacy</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Ocean Legacy')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Ocean Legacy'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">Ocean Legacy</div>
-                    </div>
-                </div>
-
-                <!-- Game 54: Oliver's Bar Deluxe -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="oliver's bar deluxe amusnet interactive">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Oliver's Bar Deluxe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Oliver's Bar Deluxe</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Oliver\'s Bar Deluxe')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Oliver\'s Bar Deluxe'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">Oliver's Bar Deluxe</div>
-                    </div>
-                </div>
-
-                <!-- Game 55: Olympus Rivals -->
-                <div class="slot-card" data-category="exclusive popular" data-name="olympus rivals egt">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Olympus Rivals.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Olympus Rivals</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Olympus Rivals')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Olympus Rivals'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">Olympus Rivals</div>
-                    </div>
-                </div>
-
-                <!-- Game 56: Primate King -->
-                <div class="slot-card" data-category="bonus quick" data-name="primate king jili">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Primate King.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Primate King</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Primate King')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Primate King'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">Primate King</div>
-                    </div>
-                </div>
-
-                <!-- Game 57: Pure Ecstasy -->
-                <div class="slot-card" data-category="popular chicken" data-name="pure ecstasy netent">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Pure Ecstasy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Pure Ecstasy</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Pure Ecstasy')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Pure Ecstasy'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">Pure Ecstasy</div>
-                    </div>
-                </div>
-
-                <!-- Game 58: Roulette Royal -->
-                <div class="slot-card" data-category="quick new" data-name="roulette royal spinomenal">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Roulette Royal.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-circle-dot" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Roulette Royal</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Roulette Royal')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Roulette Royal'); return false;" class="slot-demo-link">Play Demo</a>
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">Roulette Royal</div>
+                        <div class="slot-card-title">Lucky Joker 100™</div>
                     </div>
-                </div>
+                </a>
 
-                <!-- Game 59: Royaltyofolympus -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="royaltyofolympus hacksaw gaming">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Royaltyofolympus.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Royaltyofolympus</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Royaltyofolympus')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Royaltyofolympus'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">Royaltyofolympus</div>
-                    </div>
-                </div>
-
-                <!-- Game 60: SBonanza2500 -->
-                <div class="slot-card" data-category="new exclusive" data-name="sbonanza2500 playson">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/SBonanza2500.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">SBonanza2500</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('SBonanza2500')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('SBonanza2500'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">SBonanza2500</div>
-                    </div>
-                </div>
-
-                <!-- Game 61: Simply the Best -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="simply the best evoplay">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Simply the Best.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Simply the Best</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Simply the Best')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Simply the Best'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">Simply the Best</div>
-                    </div>
-                </div>
-
-                <!-- Game 62: Sugar Monster -->
-                <div class="slot-card" data-category="exclusive popular" data-name="sugar monster betsoft">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Sugar Monster.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-ghost" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Sugar Monster</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Sugar Monster')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Sugar Monster'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">Sugar Monster</div>
-                    </div>
-                </div>
-
-                <!-- Game 63: SugrRush1000 -->
-                <div class="slot-card" data-category="bonus quick" data-name="sugrrush1000 smartsoft gaming">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/SugrRush1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">SugrRush1000</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('SugrRush1000')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('SugrRush1000'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">SugrRush1000</div>
-                    </div>
-                </div>
-
-                <!-- Game 64: Sumo -->
-                <div class="slot-card" data-category="popular chicken" data-name="sumo fazi">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Sumo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-child-combatant" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Sumo</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Sumo')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Sumo'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Sumo</div>
-                    </div>
-                </div>
-
-                <!-- Game 65: Tlesofcamelotmoonlitquest -->
-                <div class="slot-card" data-category="quick new" data-name="tlesofcamelotmoonlitquest pg soft">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Tlesofcamelotmoonlitquest.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Tlesofcamelotmoonlitquest</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Tlesofcamelotmoonlitquest')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Tlesofcamelotmoonlitquest'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">Tlesofcamelotmoonlitquest</div>
-                    </div>
-                </div>
-
-                <!-- Game 66: Wild West -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="wild west pragmatic play">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Wild West.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Wild West</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Wild West')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Wild West'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">Wild West</div>
-                    </div>
-                </div>
-
-                <!-- Game 67: Wood Luck -->
-                <div class="slot-card" data-category="new exclusive" data-name="wood luck amusnet interactive">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Wood Luck.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Wood Luck</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Wood Luck')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Wood Luck'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">Wood Luck</div>
-                    </div>
-                </div>
-
-                <!-- Game 68: Zeus Lightning Megaways -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="zeus lightning megaways egt">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/Zeus Lightning Megaways.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Zeus Lightning Megaways</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('Zeus Lightning Megaways')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('Zeus Lightning Megaways'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">Zeus Lightning Megaways</div>
-                    </div>
-                </div>
-
-                <!-- Game 69: bigbass -->
-                <div class="slot-card" data-category="exclusive popular" data-name="bigbass jili">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/bigbass.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">bigbass</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="window.location.href='{{ route('big-bass-splash') }}'"><i class="fas fa-play"></i></button>
-                        <a href="{{ route('big-bass-splash') }}?demo=1" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">bigbass</div>
-                    </div>
-                </div>
-
-                <!-- Game 70: bonusmainadelixe -->
-                <div class="slot-card" data-category="bonus quick" data-name="bonusmainadelixe netent">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/bonusmainadelixe.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">bonusmainadelixe</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('bonusmainadelixe')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('bonusmainadelixe'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">bonusmainadelixe</div>
-                    </div>
-                </div>
-
-                <!-- Game 71: brainrotmaina -->
-                <div class="slot-card" data-category="popular chicken" data-name="brainrotmaina spinomenal">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/brainrotmaina.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">brainrotmaina</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('brainrotmaina')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('brainrotmaina'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">brainrotmaina</div>
-                    </div>
-                </div>
-
-                <!-- Game 72: caishengold -->
-                <div class="slot-card" data-category="quick new" data-name="caishengold hacksaw gaming">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/caishengold.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">caishengold</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('caishengold')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('caishengold'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">caishengold</div>
-                    </div>
-                </div>
-
-                <!-- Game 73: cashme -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="cashme playson">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/cashme.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Cash Me If You Can</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('cashme')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('cashme'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">Cash Me If You Can</div>
-                    </div>
-                </div>
-
-                <!-- Game 74: coinodysseyi -->
-                <div class="slot-card" data-category="new exclusive" data-name="coinodysseyi evoplay">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/coinodysseyi.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">coinodysseyi</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('coinodysseyi')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('coinodysseyi'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">coinodysseyi</div>
-                    </div>
-                </div>
-
-                <!-- Game 75: crash -->
-                <div class="slot-card" data-category="exclusive quick bangladesh" data-name="crash 1xgames exclusive">
-                    <span class="slot-badge slot-badge-promo" style="background:#ffbe1a; color:#000;">EXCLUSIVE</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/crash.png") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-plane-departure" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">crash</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="launchDroneGame(event)"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="launchDroneGame(event); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
-                        <div class="slot-card-title">crash</div>
-                    </div>
-                </div>
-
-                <!-- Game 76: elementalfusion -->
-                <div class="slot-card" data-category="exclusive popular" data-name="elementalfusion smartsoft gaming">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/elementalfusion.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">elementalfusion</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('elementalfusion')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('elementalfusion'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">elementalfusion</div>
-                    </div>
-                </div>
-
-                <!-- Game 77: elveskirgoodr -->
-                <div class="slot-card" data-category="bonus quick" data-name="elveskirgoodr fazi">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/elveskirgoodr.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Elves' Kingdom</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('elveskirgoodr')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('elveskirgoodr'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">Elves' Kingdom</div>
-                    </div>
-                </div>
-
-                <!-- Game 78: fortunegems2 -->
-                <div class="slot-card" data-category="popular chicken" data-name="fortunegems2 pg soft">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/fortunegems2.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">fortunegems2</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('fortunegems2')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('fortunegems2'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">fortunegems2</div>
-                    </div>
-                </div>
-
-                <!-- Game 79: fortunenumbers -->
-                <div class="slot-card" data-category="quick new" data-name="fortunenumbers pragmatic play">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/fortunenumbers.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">fortunenumbers</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('fortunenumbers')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('fortunenumbers'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">fortunenumbers</div>
-                    </div>
-                </div>
-
-                <!-- Game 80: gatesofmerlyn -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="gatesofmerlyn amusnet interactive">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/gatesofmerlyn.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">gatesofmerlyn</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('gatesofmerlyn')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('gatesofmerlyn'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">gatesofmerlyn</div>
-                    </div>
-                </div>
-
-                <!-- Game 81: godslovegoldhold&win -->
-                <div class="slot-card" data-category="new exclusive" data-name="godslovegoldhold&win egt">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/godslovegoldhold&win.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">godslovegoldhold&win</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('godslovegoldhold&win')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('godslovegoldhold&win'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">godslovegoldhold&win</div>
-                    </div>
-                </div>
-
-                <!-- Game 82: gueens&diamonds -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="gueens&diamonds jili">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/gueens&diamonds.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">gueens&diamonds</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('gueens&diamonds')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('gueens&diamonds'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">gueens&diamonds</div>
-                    </div>
-                </div>
-
-                <!-- Game 83: holdandearn -->
-                <div class="slot-card" data-category="exclusive popular" data-name="holdandearn netent">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/holdandearn.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">holdandearn</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('holdandearn')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('holdandearn'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">holdandearn</div>
-                    </div>
-                </div>
-
-                <!-- Game 84: holdandspin -->
-                <div class="slot-card" data-category="bonus quick" data-name="holdandspin spinomenal">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/holdandspin.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">holdandspin</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('holdandspin')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('holdandspin'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">holdandspin</div>
-                    </div>
-                </div>
-
-                <!-- Game 85: hotfruitsonfire -->
-                <div class="slot-card" data-category="popular chicken" data-name="hotfruitsonfire hacksaw gaming">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/hotfruitsonfire.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-leaf" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">hotfruitsonfire</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('hotfruitsonfire')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('hotfruitsonfire'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">hotfruitsonfire</div>
-                    </div>
-                </div>
-
-                <!-- Game 86: lepharaoh -->
-                <div class="slot-card" data-category="quick new" data-name="lepharaoh playson">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/lepharaoh.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">lepharaoh</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('lepharaoh')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('lepharaoh'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">lepharaoh</div>
-                    </div>
-                </div>
-
-                <!-- Game 87: luckyace -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="luckyace evoplay">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/luckyace.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-dice" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">luckyace</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('luckyace')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('luckyace'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">luckyace</div>
-                    </div>
-                </div>
-
-                <!-- Game 88: majesticclaws -->
-                <div class="slot-card" data-category="new exclusive" data-name="majesticclaws betsoft">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/majesticclaws.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">majesticclaws</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('majesticclaws')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('majesticclaws'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">majesticclaws</div>
-                    </div>
-                </div>
-
-                <!-- Game 89: majesticwildbuffalo -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="majesticwildbuffalo smartsoft gaming">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/majesticwildbuffalo.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">majesticwildbuffalo</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('majesticwildbuffalo')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('majesticwildbuffalo'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">majesticwildbuffalo</div>
-                    </div>
-                </div>
-
-                <!-- Game 90: megablock -->
-                <div class="slot-card" data-category="exclusive popular" data-name="megablock fazi">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/megablock.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">megablock</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('megablock')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('megablock'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">megablock</div>
-                    </div>
-                </div>
-
-                <!-- Game 91: moenycoming -->
-                <div class="slot-card" data-category="bonus quick" data-name="moenycoming pg soft">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/moenycoming.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">moenycoming</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('moenycoming')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('moenycoming'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">moenycoming</div>
-                    </div>
-                </div>
-
-                <!-- Game 92: multihot5 -->
-                <div class="slot-card" data-category="popular chicken" data-name="multihot5 pragmatic play">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/multihot5.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">multihot5</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('multihot5')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('multihot5'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">multihot5</div>
-                    </div>
-                </div>
-
-                <!-- Game 93: phoenik -->
-                <div class="slot-card" data-category="quick new" data-name="phoenik amusnet interactive">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/phoenik.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">phoenik</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('phoenik')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('phoenik'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">phoenik</div>
-                    </div>
-                </div>
-
-                <!-- Game 94: piggycash -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="piggycash egt">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/piggycash.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">piggycash</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('piggycash')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('piggycash'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">EGT</span>
-                        <div class="slot-card-title">piggycash</div>
-                    </div>
-                </div>
-
-                <!-- Game 95: royal&emirates -->
-                <div class="slot-card" data-category="new exclusive" data-name="royal&emirates jili">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/royal&emirates.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">royal&emirates</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('royal&emirates')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('royal&emirates'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Jili</span>
-                        <div class="slot-card-title">royal&emirates</div>
-                    </div>
-                </div>
-
-                <!-- Game 96: seetboonaza1000 -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="seetboonaza1000 netent">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/seetboonaza1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">seetboonaza1000</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('seetboonaza1000')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('seetboonaza1000'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">NetEnt</span>
-                        <div class="slot-card-title">seetboonaza1000</div>
-                    </div>
-                </div>
-
-                <!-- Game 97: shakib75cricketlegacy -->
-                <div class="slot-card" data-category="exclusive popular" data-name="shakib75cricketlegacy spinomenal">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/shakib75cricketlegacy.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">shakib75cricketlegacy</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('shakib75cricketlegacy')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('shakib75cricketlegacy'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Spinomenal</span>
-                        <div class="slot-card-title">shakib75cricketlegacy</div>
-                    </div>
-                </div>
-
-                <!-- Game 98: starlightprincess1000 -->
-                <div class="slot-card" data-category="bonus quick" data-name="starlightprincess1000 hacksaw gaming">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/starlightprincess1000.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-person-dress" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">starlightprincess1000</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('starlightprincess1000')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('starlightprincess1000'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Hacksaw Gaming</span>
-                        <div class="slot-card-title">starlightprincess1000</div>
-                    </div>
-                </div>
-
-                <!-- Game 99: stormforged -->
-                <div class="slot-card" data-category="popular chicken" data-name="stormforged playson">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/stormforged.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">stormforged</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('stormforged')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('stormforged'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Playson</span>
-                        <div class="slot-card-title">stormforged</div>
-                    </div>
-                </div>
-
-                <!-- Game 100: sunshinerichwebp -->
-                <div class="slot-card" data-category="quick new" data-name="sunshinerichwebp evoplay">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/sunshinerichwebp.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sunshinerichwebp</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('sunshinerichwebp')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('sunshinerichwebp'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Evoplay</span>
-                        <div class="slot-card-title">sunshinerichwebp</div>
-                    </div>
-                </div>
-
-                <!-- Game 101: sweetbonazaxmas -->
-                <div class="slot-card" data-category="chicken bangladesh" data-name="sweetbonazaxmas betsoft">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/sweetbonazaxmas.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4a148c 0%, #9c27b0 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sweetbonazaxmas</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('sweetbonazaxmas')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('sweetbonazaxmas'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Betsoft</span>
-                        <div class="slot-card-title">sweetbonazaxmas</div>
-                    </div>
-                </div>
-
-                <!-- Game 102: sweetdreambonaaz -->
-                <div class="slot-card" data-category="new exclusive" data-name="sweetdreambonaaz smartsoft gaming">
-                    <span class="slot-badge slot-badge-drops">Drops & Wins</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/sweetdreambonaaz.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #006064 0%, #00acc1 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">sweetdreambonaaz</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('sweetdreambonaaz')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('sweetdreambonaaz'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Smartsoft Gaming</span>
-                        <div class="slot-card-title">sweetdreambonaaz</div>
-                    </div>
-                </div>
-
-                <!-- Game 103: theemirate -->
-                <div class="slot-card" data-category="bangladesh bonus" data-name="theemirate fazi">
-                    <span class="slot-badge slot-badge-promo" style="background:#f44336;">HOT</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/theemirate.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">theemirate</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('theemirate')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('theemirate'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Fazi</span>
-                        <div class="slot-card-title">theemirate</div>
-                    </div>
-                </div>
-
-                <!-- Game 104: veryhot5 -->
-                <div class="slot-card" data-category="exclusive popular" data-name="veryhot5 pg soft">
-                    <span class="slot-badge slot-badge-promo" style="background:#007bff;">NEW</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/veryhot5.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0d47a1 0%, #1e88e5 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-gamepad" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">veryhot5</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('veryhot5')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('veryhot5'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">PG Soft</span>
-                        <div class="slot-card-title">veryhot5</div>
-                    </div>
-                </div>
-
-                <!-- Game 105: western -->
-                <div class="slot-card" data-category="bonus quick" data-name="western pragmatic play">
-                    
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/western.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Heist</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('western')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('western'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">western</div>
-                    </div>
-                </div>
-
-                <!-- Game 106: wildtrailscasino -->
-                <div class="slot-card" data-category="popular chicken" data-name="wildtrailscasino amusnet interactive">
-                    <span class="slot-badge slot-badge-promo">PROMO</span>
-                    <div class="slot-card-image-wrapper">
-                        <img src="{{ asset("assets/image/wildtrailscasino.webp") }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #e65100 0%, #ff9800 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">wildtrailscasino</span>
-                        </div>
-                    </div>
-                    <div class="slot-card-overlay">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('wildtrailscasino')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('wildtrailscasino'); return false;" class="slot-demo-link">Play Demo</a>
-                    </div>
-                    <div class="slot-card-info">
-                        <span class="slot-card-provider">Amusnet Interactive</span>
-                        <div class="slot-card-title">wildtrailscasino</div>
-                    </div>
-                </div>
-
-                <!-- Game: BonBon Bonanza (New) -->
-                <div class="slot-card" onclick="demoGameRedirect('bonbonbonanza')" data-category="new popular bonus" data-name="bonbon bonanza pragmatic play">
+                <!-- Game 14: BonBon Bonanza -->
+                <a href="{{ route('bonbon-bonanza') }}" class="slot-card" data-category="new popular bonus bangladesh all" data-name="bonbon bonanza pragmatic play candy cascade" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-drops" style="background: linear-gradient(135deg,#e91e8c,#f06292); color:#fff;">NEW</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset('assets/image/BonBon Bonanza.webp') }}" class="slot-card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="{{ asset('assets/image/BonBon Bonanza.webp') }}" class="slot-card-img" alt="BonBon Bonanza" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #880e4f 0%, #e91e8c 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
                             <i class="fas fa-candy-cane" style="font-size:28px; margin-bottom:8px;"></i>
                             <span style="font-size:10px; font-weight:800; text-transform:uppercase;">BonBon Bonanza</span>
                         </div>
                     </div>
-                    <div class="slot-card-overlay" onclick="event.stopPropagation();">
-                        <button class="slot-play-btn" onclick="demoGameRedirect('bonbonbonanza')"><i class="fas fa-play"></i></button>
-                        <a href="#" onclick="demoGameRedirect('bonbonbonanza'); return false;" class="slot-demo-link">Play Demo</a>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
                     </div>
                     <div class="slot-card-info">
                         <span class="slot-card-provider">Pragmatic Play</span>
-                        <div class="slot-card-title">BonBon Bonanza</div>
+                        <div class="slot-card-title">BonBon Bonanza™</div>
                     </div>
-                </div>
+                </a>
+
+                <!-- Game 15: Big Bass Splash -->
+                <a href="{{ route('big-bass-splash') }}" class="slot-card" data-category="popular chicken new bangladesh all" data-name="big bass splash pragmatic play fishing slot" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background:#0ea5e9; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/bigbass.webp') }}" class="slot-card-img" alt="Big Bass Splash" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-fish" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Big Bass Splash</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Pragmatic Play</span>
+                        <div class="slot-card-title">Big Bass Splash™</div>
+                    </div>
+                </a>
+
+                <!-- Game 16: The Emirate -->
+                <a href="{{ route('the-emirate') }}" class="slot-card" data-category="popular exclusive new bangladesh all" data-name="the emirate endorphina fazi luxury slot" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background:#f59e0b; color:#000;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/theemirate.webp') }}" class="slot-card-img" alt="The Emirate" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b45309 0%, #fbbf24 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gem" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">The Emirate</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Endorphina</span>
+                        <div class="slot-card-title">The Emirate™</div>
+                    </div>
+                </a>
+
+                <!-- Game 17: Royal Emirates -->
+                <a href="{{ route('royal-emirates') }}" class="slot-card" data-category="popular exclusive new quick bangladesh all" data-name="royal emirates hold and spin slot" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#fbbf24; color:#000;">ACTIVE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/royal&emirates.webp') }}" class="slot-card-img" alt="Royal Emirates" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #d97706 0%, #fcd34d 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-coins" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Royal Emirates</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Demo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Hold & Spin</span>
+                        <div class="slot-card-title">Royal Emirates™</div>
+                    </div>
+                </a>
+
+                <!-- Game 18: K3 Lottery -->
+                <a href="{{ route('k3.index') }}" class="slot-card" data-category="popular exclusive new quick lottery bangladesh all" data-name="k3 lottery fast 3 dice game" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#10b981; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/k3.webp') }}" class="slot-card-img" alt="K3 Lottery" onerror="this.src='{{ asset('assets/image/k3.png') }}';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #059669 0%, #34d399 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-cubes" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">K3 Lottery</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play K3</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Amar Club / Fast 3</span>
+                        <div class="slot-card-title">K3 Lottery™</div>
+                    </div>
+                </a>
+
+                <!-- Game 19: WinGo Lottery -->
+                <a href="{{ route('wingo.index') }}" class="slot-card" data-category="popular exclusive new quick lottery bangladesh all" data-name="wingo lottery color prediction" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-promo" style="background:#00b977; color:#fff;">HOT</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/wingo.webp') }}" class="slot-card-img" alt="WinGo Lottery" onerror="this.src='{{ asset('assets/image/wingo.png') }}';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #00b977 0%, #10b981 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-dice" style="font-size:28px; margin-bottom:8px;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">WinGo</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play WinGo</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">Color & Number</span>
+                        <div class="slot-card-title">WinGo Lottery™</div>
+                    </div>
+                </a>
 
             </div>
 
@@ -3070,18 +1232,31 @@
             showToast("Filtered category: " + btn.textContent.trim() + " 🎰");
         }
 
-        // Drone / Aviator game redirect launcher
+        // Multi-crash game launcher
         const IS_LOGGED_IN = {{ auth()->check() ? "true" : "false" }};
-        window.launchDroneGame = function(e) {
+        window.launchCrashGame = function(gameKey, e) {
             if (!IS_LOGGED_IN) {
                 openAuthModal("login");
                 return;
             }
             if (e) e.preventDefault();
-            showToast("Launching 1xAERO (Crash Flight)... ✈️");
+            const gameTitles = {
+                'helicopterx': 'HelicopterX (1xGames Exclusive)... 🚁',
+                '1xaero': '1xAero (Supersonic Flight)... ✈️',
+                'aero': 'Aero (Vintage Flight)... 🛩️',
+                'crashx': 'CrashX (Cyber Multiplier)... 🚀',
+                'crash': 'Crash (1xGames Exclusive)... 💥'
+            };
+            const title = gameTitles[gameKey] || 'Crash Game... ✈️';
+            showToast("Launching " + title);
             setTimeout(() => {
-                window.location.href = "{{ route('play') }}";
-            }, 800);
+                window.location.href = "/play/" + (gameKey || 'helicopterx');
+            }, 600);
+        }
+
+        // Drone / Aviator game redirect launcher
+        window.launchDroneGame = function(e) {
+            window.launchCrashGame('helicopterx', e);
         }
 
         // Demo redirect alert for slots
@@ -3092,12 +1267,16 @@
             }
             showToast("Demo Mode for " + gameName + " is loading... 🎰");
             setTimeout(() => {
-                if (gameName === 'Fortune Gems 2') {
+                if (gameName === 'WinGo' || gameName === 'wingo' || gameName === 'WinGo Lottery') {
+                    window.location.href = "{{ route('wingo.index') }}";
+                } else if (gameName === 'Fortune Gems 2') {
                     window.location.href = "{{ route('fortune-gems-2') }}";
                 } else if (gameName === 'Super Ace Deluxe') {
                     window.location.href = "{{ route('super-ace-deluxe') }}";
                 } else if (gameName === 'Gates of Olympus') {
                     window.location.href = "{{ route('gates-of-olympus') }}";
+                } else if (gameName === 'Boxing King') {
+                    window.location.href = "{{ route('boxing-king') }}";
                 } else if (gameName === 'bonbonbonanza' || gameName === 'BonBon Bonanza') {
                     window.location.href = "{{ route('bonbon-bonanza') }}";
                 } else if (gameName === 'Lucky Joker 100') {
@@ -3106,10 +1285,6 @@
                     window.location.href = "{{ route('the-emirate') }}";
                 } else if (gameName === 'royal&emirates') {
                     window.location.href = "{{ route('royal-emirates') }}";
-                } else if (gameName === 'Gates of Olympus') {
-                    window.location.href = "{{ route('gates-of-olympus') }}";
-                } else if (gameName === 'Boxing King') {
-                    window.location.href = "{{ route('boxing-king') }}";
                 } else if (gameName === 'elveskirgoodr' || gameName === 'Elves\' Kingdom') {
                     window.location.href = "{{ route('elves-kingdom') }}";
                 } else if (gameName === 'cashme' || gameName === 'Cash Me If You Can') {
@@ -3120,6 +1295,16 @@
                     window.location.href = "{{ route('temple-of-fortune') }}";
                 } else if (gameName === 'heads-or-tails' || gameName === 'Heads or Tails') {
                     window.location.href = "{{ route('heads-or-tails') }}";
+                } else if (gameName === 'HelicopterX' || gameName === 'helicopterx') {
+                    window.location.href = "{{ route('play', ['game' => 'helicopterx']) }}";
+                } else if (gameName === '1xaero' || gameName === '1xAero') {
+                    window.location.href = "{{ route('play', ['game' => '1xaero']) }}";
+                } else if (gameName === 'Aero' || gameName === 'aero') {
+                    window.location.href = "{{ route('play', ['game' => 'aero']) }}";
+                } else if (gameName === 'CrashX' || gameName === 'crashx') {
+                    window.location.href = "{{ route('play', ['game' => 'crashx']) }}";
+                } else if (gameName === 'crash' || gameName === 'Crash') {
+                    window.location.href = "{{ route('play', ['game' => 'crash']) }}";
                 } else {
                     window.location.href = "{{ route('play') }}";
                 }

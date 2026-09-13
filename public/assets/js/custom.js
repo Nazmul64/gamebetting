@@ -920,7 +920,8 @@ function calculateRoundCrashPoint() {
     // Fetch crash point from server (admin-defined sequence ONLY).
     // No random fallback — game waits and retries if no points are configured.
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    return fetch('/game/next-crash-point', {
+    const currentGame = window.currentGameKey || 'helicopterx';
+    return fetch('/game/next-crash-point?game=' + encodeURIComponent(currentGame), {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
