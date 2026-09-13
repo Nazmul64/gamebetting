@@ -257,7 +257,7 @@
                     <div class="flex justify-around items-center px-1 pb-1 pt-4" id="hash-balls-container">
                         <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
                         <img src="{{ asset('assets/image/trxwin/num3-DV8hFrzX.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
-                        <img src="{{ asset('assets/image/trxwin/ball_1-DBPuytL4.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        <img src="{{ asset('assets/image/trxwin/num1-Dvmdd51j.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
                         <img src="{{ asset('assets/image/trxwin/num5-D4gkhTiS.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
                         <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
                     </div>
@@ -1004,7 +1004,7 @@
 
         const tronBallMap = {
             '0': '{{ asset('assets/image/trxwin/num0-DIDNb33N.png') }}',
-            '1': '{{ asset('assets/image/trxwin/ball_1-DBPuytL4.png') }}',
+            '1': '{{ asset('assets/image/trxwin/num1-Dvmdd51j.png') }}',
             '2': '{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}',
             '3': '{{ asset('assets/image/trxwin/num3-DV8hFrzX.png') }}',
             '4': '{{ asset('assets/image/trxwin/num4-Bv6i1rtS.png') }}',
@@ -1181,48 +1181,6 @@
             }, 50);
         }
 
-        function fetchMyHistory() {
-            const list = document.getElementById('my-history-list');
-            list.innerHTML = '<div class="text-center py-6 text-gray-400 text-xs">লোড হচ্ছে...</div>';
-
-            fetch(`{{ route('trxwingo.myhistory') }}?is_demo=${isDemoMode ? 1 : 0}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.bets || data.bets.length === 0) {
-                        list.innerHTML = `
-                            <div class="text-center py-10">
-                                <i class="fa-regular fa-file-lines text-gray-300 text-4xl mb-2"></i>
-                                <p class="text-xs text-gray-400">কোনো হিস্ট্রি পাওয়া যায়নি</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    list.innerHTML = '';
-                    data.bets.forEach(bet => {
-                        const isWon = bet.status === 'won';
-                        const isPending = bet.status === 'pending';
-
-                        const card = document.createElement('div');
-                        card.className = 'bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-xs space-y-1';
-                        card.innerHTML = `
-                            <div class="flex justify-between items-center font-bold">
-                                <span class="font-mono text-gray-700">Period: ${bet.period_number}</span>
-                                <span class="${isWon ? 'text-[#00b977]' : (isPending ? 'text-amber-500' : 'text-red-500')} uppercase">
-                                    ${isWon ? '+৳ ' + bet.win_amount.toFixed(2) : (isPending ? 'Pending' : '-৳ ' + bet.total_amount.toFixed(2))}
-                                </span>
-                            </div>
-                            <div class="flex justify-between items-center text-gray-500 text-[11px]">
-                                <span>Select: <strong class="text-gray-800 uppercase">${bet.bet_type} (${bet.selected_value})</strong></span>
-                                <span>Total: ৳${bet.total_amount.toFixed(2)}</span>
-                            </div>
-                            <div class="text-[10px] text-gray-400">${bet.date} ${bet.time}</div>
-                        `;
-                        list.appendChild(card);
-                    });
-                });
-        }
-
         function submitTrxBet() {
             if (!selectedBetType || selectedValue === null) return;
 
@@ -1282,8 +1240,8 @@
                 syncState();
             })
             .catch(err => {
-                confirmBtn.disabled = false;
-                confirmBtn.innerText = 'Confirm Bet';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origText;
                 alert('সার্ভার এরর, পুনরায় চেষ্টা করুন');
             });
         }

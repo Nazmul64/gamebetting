@@ -31,7 +31,58 @@ class TrxWingoService {
         );
     }
 
+    public function seedInitialPeriods(string $timeType): void {
+        $existing = TrxWingoPeriod::where('time_type', $timeType)->where('status', 'completed')->count();
+        if ($existing >= 30) {
+            return;
+        }
+
+        $duration = match($timeType) {
+            '3m' => 180,
+            '5m' => 300,
+            default => 60
+        };
+
+        $now = Carbon::now();
+        $hexPool = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+        for ($i = (30 - $existing); $i >= 1; $i--) {
+            $pastTime = $now->copy()->subSeconds($i * $duration);
+            $winNum = rand(0, 9);
+            $color = $this->getColorForNumber($winNum);
+            $size = ($winNum >= 5) ? 'big' : 'small';
+            $tailFive = [
+                $hexPool[array_rand($hexPool)],
+                $hexPool[array_rand($hexPool)],
+                $hexPool[array_rand($hexPool)],
+                $hexPool[array_rand($hexPool)],
+                (string)$winNum
+            ];
+            $simulatedHash = '000000000' . dechex(rand(10000000, 99999999)) . strtolower(implode('', $tailFive));
+
+            TrxWingoPeriod::create([
+                'period_number' => $pastTime->format('YmdHi') . rand(10000, 99999),
+                'time_type' => $timeType,
+                'block_height' => 86198000 + ($duration * 5) - ($i * max(1, (int)($duration / 3))),
+                'block_time' => $pastTime->format('H:i:s'),
+                'hash_value' => $simulatedHash,
+                'hash_tail_chars' => $tailFive,
+                'winning_number' => $winNum,
+                'winning_color' => $color,
+                'winning_size' => $size,
+                'total_real_bets' => rand(100, 2000),
+                'total_payout' => rand(50, 1500),
+                'admin_profit' => rand(10, 500),
+                'status' => 'completed',
+                'starts_at' => $pastTime->copy()->subSeconds($duration),
+                'ends_at' => $pastTime
+            ]);
+        }
+    }
+
     public function getOrCreatePeriod(string $timeType = '1m'): TrxWingoPeriod {
+        $this->seedInitialPeriods($timeType);
+
         $now = Carbon::now();
         $period = TrxWingoPeriod::where('time_type', $timeType)
             ->where('status', '!=', 'completed')
