@@ -205,15 +205,15 @@
             <div class="px-4 mt-3">
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="changeTimeType('1m')" id="tab-time-1m" class="time-tab-btn bg-[#00b977] text-white p-2.5 rounded-2xl flex flex-col items-center justify-center shadow-md transition">
-                        <i class="fa-solid fa-clock text-lg mb-1"></i>
+                        <img src="{{ asset('assets/image/trxwin/time_active.png') }}" class="w-7 h-7 object-contain mb-1 drop-shadow-xs" id="clock-img-1m" alt="1 Min">
                         <span class="text-xs font-black leading-tight text-center">TrxWinGo<br>1 Min</span>
                     </button>
                     <button onclick="changeTimeType('3m')" id="tab-time-3m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
-                        <i class="fa-regular fa-clock text-lg mb-1"></i>
+                        <img src="{{ asset('assets/image/trxwin/time_inactive.png') }}" class="w-7 h-7 object-contain mb-1 opacity-90" id="clock-img-3m" alt="3 Min">
                         <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>3 Min</span>
                     </button>
                     <button onclick="changeTimeType('5m')" id="tab-time-5m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
-                        <i class="fa-regular fa-clock text-lg mb-1"></i>
+                        <img src="{{ asset('assets/image/trxwin/time_inactive.png') }}" class="w-7 h-7 object-contain mb-1 opacity-90" id="clock-img-5m" alt="5 Min">
                         <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>5 Min</span>
                     </button>
                 </div>
@@ -650,17 +650,27 @@
             }
         }
 
+        const activeClockSrc = "{{ asset('assets/image/trxwin/time_active.png') }}";
+        const inactiveClockSrc = "{{ asset('assets/image/trxwin/time_inactive.png') }}";
+
         function changeTimeType(type) {
             currentTimeType = type;
             ['1m', '3m', '5m'].forEach(t => {
                 const btn = document.getElementById(`tab-time-${t}`);
+                const clockImg = document.getElementById(`clock-img-${t}`);
                 if (t === type) {
                     btn.className = 'time-tab-btn bg-[#00b977] text-white p-2.5 rounded-2xl flex flex-col items-center justify-center shadow-md transition';
-                    btn.querySelector('i').className = 'fa-solid fa-clock text-lg mb-1';
+                    if (clockImg) {
+                        clockImg.src = activeClockSrc;
+                        clockImg.className = 'w-7 h-7 object-contain mb-1 drop-shadow-xs';
+                    }
                     btn.querySelector('span').className = 'text-xs font-black leading-tight text-center';
                 } else {
                     btn.className = 'time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition';
-                    btn.querySelector('i').className = 'fa-regular fa-clock text-lg mb-1';
+                    if (clockImg) {
+                        clockImg.src = inactiveClockSrc;
+                        clockImg.className = 'w-7 h-7 object-contain mb-1 opacity-90';
+                    }
                     btn.querySelector('span').className = 'text-xs font-bold leading-tight text-center';
                 }
             });
