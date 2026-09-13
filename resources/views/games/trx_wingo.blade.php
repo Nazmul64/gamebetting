@@ -137,6 +137,15 @@
             border-color: #ff5252 !important;
         }
 
+        @keyframes ballShuffle {
+            0% { transform: scale(0.6) rotate(-180deg); opacity: 0.5; }
+            50% { transform: scale(1.2) rotate(90deg); opacity: 0.85; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .ball-anim {
+            animation: ballShuffle 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
         /* Digital Timer Digits */
         .time-box {
             background: #ffffff;
@@ -701,7 +710,22 @@
                 }
             });
             document.getElementById('modal-time-label').innerText = type === '1m' ? '1 Min' : (type === '3m' ? '3 Min' : '5 Min');
-            syncState();
+            
+            // Instant visual roll feedback
+            triggerInstantBallRoll();
+            syncState(true);
+        }
+
+        function triggerInstantBallRoll() {
+            const hexPool = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+            const rollSet = [
+                hexPool[Math.floor(Math.random() * hexPool.length)],
+                hexPool[Math.floor(Math.random() * hexPool.length)],
+                hexPool[Math.floor(Math.random() * hexPool.length)],
+                hexPool[Math.floor(Math.random() * hexPool.length)],
+                hexPool[Math.floor(Math.random() * hexPool.length)]
+            ];
+            renderHashBalls(rollSet, true);
         }
 
         let currentThemeColor = '#00b977';
@@ -980,10 +1004,13 @@
             alert("Welcome to AMAR CLUB! Enjoy 100% fair and transparent TrxWinGo lottery.");
         }
 
-        function syncState() {
+        function syncState(animateBalls = false) {
             fetch(`{{ route('trxwingo.state') }}?type=${currentTimeType}`)
                 .then(res => res.json())
                 .then(data => {
+                    const periodChanged = (lastPeriodNumber && lastPeriodNumber !== data.period_number);
+                    lastPeriodNumber = data.period_number;
+
                     document.getElementById('period-number').innerText = data.period_number;
                     renderTimer(data.time_remaining);
 
@@ -1003,14 +1030,15 @@
                         overlay.classList.add('hidden');
                     }
 
-                    // টপ ৫টি হ্যাশ বল রেন্ডার
+                    // টপ ৫টি হ্যাশ বল রেন্ডার (with animation if changed or requested)
+                    const shouldAnimate = animateBalls || periodChanged;
                     if (data.last_completed && data.last_completed.hash_tail_chars) {
-                        renderHashBalls(data.last_completed.hash_tail_chars);
+                        renderHashBalls(data.last_completed.hash_tail_chars, shouldAnimate);
                         document.getElementById('chain-block-height').innerText = data.last_completed.block_height || '---';
                         document.getElementById('chain-block-time').innerText = data.last_completed.block_time || '--:--:--';
                         document.getElementById('chain-hash').innerText = data.last_completed.hash_value || '---';
                     } else if (data.history && data.history.length > 0 && data.history[0].hash_tail_chars) {
-                        renderHashBalls(data.history[0].hash_tail_chars);
+                        renderHashBalls(data.history[0].hash_tail_chars, shouldAnimate);
                         document.getElementById('chain-block-height').innerText = data.history[0].block_height || '---';
                         document.getElementById('chain-block-time').innerText = data.history[0].block_time || '--:--:--';
                         document.getElementById('chain-hash').innerText = data.history[0].hash_value || '---';
@@ -1062,7 +1090,7 @@
             'F': '{{ asset('assets/image/trxwin/numF-CcJTPBGF.png') }}'
         };
 
-        function renderHashBalls(chars) {
+        function renderHashBalls(chars, addAnimation = false) {
             const container = document.getElementById('hash-balls-container');
             if (!container || !chars) return;
 
@@ -1088,7 +1116,7 @@
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = key;
-                img.className = 'w-11 h-11 object-contain drop-shadow-md';
+                img.className = 'w-11 h-11 object-contain drop-shadow-md' + (addAnimation ? ' ball-anim' : '');
                 container.appendChild(img);
             });
         }
