@@ -255,11 +255,37 @@
 
                     <!-- Bottom Section: ট্রন ব্লক হ্যাশের শেষ ৫টি বল (Exact 3D Images) -->
                     <div class="flex justify-around items-center px-1 pb-1 pt-4" id="hash-balls-container">
-                        <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
-                        <img src="{{ asset('assets/image/trxwin/num3-DV8hFrzX.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
-                        <img src="{{ asset('assets/image/trxwin/num1-Dvmdd51j.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
-                        <img src="{{ asset('assets/image/trxwin/num5-D4gkhTiS.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
-                        <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        @php
+                            $initBalls = ($initialLastCompleted && is_array($initialLastCompleted->hash_tail_chars) && count($initialLastCompleted->hash_tail_chars) === 5)
+                                ? $initialLastCompleted->hash_tail_chars
+                                : ['5', 'B', '8', '8', '4'];
+                            
+                            $tronBallMapPHP = [
+                                '0' => 'num0-DIDNb33N.png',
+                                '1' => 'num1-Dvmdd51j.png',
+                                '2' => 'num2-Bvv5rn-G.png',
+                                '3' => 'num3-DV8hFrzX.png',
+                                '4' => 'num4-Bv6i1rtS.png',
+                                '5' => 'num5-D4gkhTiS.png',
+                                '6' => 'num6-C7DgXQ8W.png',
+                                '7' => 'num7-BtV1JOs8.png',
+                                '8' => 'num8-Bk5W04gi.png',
+                                '9' => 'num9-Bqb7hgWB.png',
+                                'A' => 'numA-BA1gzjEH.png',
+                                'B' => 'numB-C86DFk0W.png',
+                                'C' => 'numC-CFMIBL8C.png',
+                                'D' => 'numD-CxyPDNfa.png',
+                                'E' => 'numE-Jh_F8mIJ.png',
+                                'F' => 'numF-CcJTPBGF.png'
+                            ];
+                        @endphp
+                        @foreach($initBalls as $bChar)
+                            @php
+                                $uChar = strtoupper((string)$bChar);
+                                $imgName = $tronBallMapPHP[$uChar] ?? 'num0-DIDNb33N.png';
+                            @endphp
+                            <img src="{{ asset('assets/image/trxwin/' . $imgName) }}" alt="{{ $uChar }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -983,6 +1009,11 @@
                         document.getElementById('chain-block-height').innerText = data.last_completed.block_height || '---';
                         document.getElementById('chain-block-time').innerText = data.last_completed.block_time || '--:--:--';
                         document.getElementById('chain-hash').innerText = data.last_completed.hash_value || '---';
+                    } else if (data.history && data.history.length > 0 && data.history[0].hash_tail_chars) {
+                        renderHashBalls(data.history[0].hash_tail_chars);
+                        document.getElementById('chain-block-height').innerText = data.history[0].block_height || '---';
+                        document.getElementById('chain-block-time').innerText = data.history[0].block_time || '--:--:--';
+                        document.getElementById('chain-hash').innerText = data.history[0].hash_value || '---';
                     }
 
                     if (data.how_to_play) {
@@ -1033,9 +1064,25 @@
 
         function renderHashBalls(chars) {
             const container = document.getElementById('hash-balls-container');
-            if (!container || !chars || chars.length === 0) return;
+            if (!container || !chars) return;
+
+            let charList = chars;
+            if (typeof charList === 'string') {
+                try {
+                    if (charList.startsWith('[')) {
+                        charList = JSON.parse(charList);
+                    } else {
+                        charList = charList.split('');
+                    }
+                } catch(e) {
+                    charList = charList.split('');
+                }
+            }
+
+            if (!Array.isArray(charList) || charList.length === 0) return;
+
             container.innerHTML = '';
-            chars.forEach(char => {
+            charList.forEach(char => {
                 const key = String(char).toUpperCase();
                 const src = tronBallMap[key] || tronBallMap['0'];
                 const img = document.createElement('img');

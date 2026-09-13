@@ -20,7 +20,12 @@ class TrxWingoController extends Controller {
     public function index() {
         $settings = $this->service->getSettings();
         $user = Auth::user();
-        return view('games.trx_wingo', compact('settings', 'user'));
+        $initialPeriod = $this->service->getOrCreatePeriod('1m');
+        $initialLastCompleted = TrxWingoPeriod::where('time_type', '1m')
+            ->where('status', 'completed')
+            ->orderBy('id', 'desc')
+            ->first();
+        return view('games.trx_wingo', compact('settings', 'user', 'initialPeriod', 'initialLastCompleted'));
     }
 
     public function getState(Request $request) {
