@@ -21,10 +21,11 @@
         }
 
         body {
-            background-color: #92a4b8;
+            background-color: #091322;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
 
         .game-wrapper {
@@ -32,10 +33,12 @@
             max-width: 430px;
             min-height: 100vh;
             background: #ffffff;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             padding-bottom: 30px;
             overflow-x: hidden;
+            margin: 16px 0 40px 0;
+            border-radius: 20px;
         }
 
         /* 3D Glossy Tron Hash Result Balls */
@@ -158,20 +161,24 @@
         }
     </style>
 </head>
-<body>
+<body class="landing-body theme-Bettingsite-active {{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 
-    <div class="game-wrapper">
-        
-        <!-- গ্রিন টপ বার -->
-        <div class="bg-gradient-to-b from-[#00b977] to-[#00ab6e] px-4 pt-3 pb-8 text-white">
-            <div class="flex items-center justify-between mb-4">
-                <a href="{{ route('dashboard') }}" class="text-white text-lg w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition">
+    <!-- 1xBet / Platform Top Navigation Header -->
+    @include('customer.header')
+
+    <div class="w-full flex justify-center py-4 px-2">
+        <div class="game-wrapper shadow-2xl">
+            
+            <!-- TrxWinGo Mini Header Bar (Back button, Title, Mute audio, Support) -->
+            <div class="bg-gradient-to-r from-[#00b977] to-[#009e66] px-4 py-3 text-white flex items-center justify-between shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-white text-base w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 active:scale-95 transition">
                     <i class="fa-solid fa-chevron-left"></i>
                 </a>
-                <div class="flex items-center gap-1.5 font-black text-xl tracking-wider">
-                    <i class="fa-solid fa-crown text-yellow-300"></i> AMAR CLUB
+                <div class="flex items-center gap-2 font-black text-lg tracking-wider">
+                    <i class="fa-solid fa-crown text-yellow-300"></i>
+                    <span>TrxWinGo</span>
                 </div>
-                <div class="flex items-center gap-3 text-lg">
+                <div class="flex items-center gap-2 text-base">
                     <button onclick="toggleAudio()" id="audio-btn" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/90">
                         <i class="fa-solid fa-volume-high" id="audio-icon"></i>
                     </button>
@@ -181,137 +188,115 @@
                 </div>
             </div>
 
-            <!-- ব্যালেন্স কার্ড -->
-            <div class="bg-white rounded-2xl p-4 text-gray-800 shadow-xl border border-gray-100">
-                <div class="flex justify-between items-center mb-1">
-                    <div class="flex items-center gap-2 text-xs font-bold text-gray-500">
-                        <i class="fa-solid fa-wallet text-[#00b977]"></i> Wallet balance
+            <!-- নোটিশ বার -->
+            <div class="px-4 mt-2.5">
+                <div class="bg-white rounded-xl px-3 py-2 flex items-center justify-between shadow-sm text-xs text-gray-600 border border-gray-100">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <i class="fa-solid fa-volume-high text-[#00b977] shrink-0"></i>
+                        <span class="truncate text-[11px] font-medium">1. Welcome to TrxWinGo on AMAR CLUB! 100% Fair TRON public chain lottery.</span>
                     </div>
-                    <button onclick="syncState()" class="text-gray-400 hover:text-gray-600 transition p-1">
-                        <i class="fa-solid fa-rotate" id="refresh-spin"></i>
+                    <button onclick="openNoticeModal()" class="bg-[#00b977] hover:bg-[#00a368] text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm flex items-center gap-1">
+                        <i class="fa-solid fa-fire"></i> Detail
                     </button>
                 </div>
-                <div class="text-2xl font-black text-gray-900 mb-3 tracking-tight" id="wallet-balance">
-                    ৳ {{ number_format($user->balance ?? 0.00, 2) }}
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <a href="{{ route('dashboard') }}?tab=withdraw" class="bg-[#ff5252] hover:bg-[#ff3838] text-white font-black py-2.5 rounded-full text-xs shadow-md text-center transition active:scale-95">
-                        Withdraw
-                    </a>
-                    <a href="{{ route('dashboard') }}?tab=deposit" class="bg-[#00b977] hover:bg-[#00a368] text-white font-black py-2.5 rounded-full text-xs shadow-md text-center transition active:scale-95">
-                        Deposit
-                    </a>
+            </div>
+
+            <!-- TrxWinGo টাইম টাইপ ট্যাবস (1m, 3m, 5m) -->
+            <div class="px-4 mt-3">
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="changeTimeType('1m')" id="tab-time-1m" class="time-tab-btn bg-[#00b977] text-white p-2.5 rounded-2xl flex flex-col items-center justify-center shadow-md transition">
+                        <i class="fa-solid fa-clock text-lg mb-1"></i>
+                        <span class="text-xs font-black leading-tight text-center">TrxWinGo<br>1 Min</span>
+                    </button>
+                    <button onclick="changeTimeType('3m')" id="tab-time-3m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
+                        <i class="fa-regular fa-clock text-lg mb-1"></i>
+                        <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>3 Min</span>
+                    </button>
+                    <button onclick="changeTimeType('5m')" id="tab-time-5m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
+                        <i class="fa-regular fa-clock text-lg mb-1"></i>
+                        <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>5 Min</span>
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- নোটিশ বার -->
-        <div class="px-4 -mt-4">
-            <div class="bg-white rounded-xl px-3 py-2 flex items-center justify-between shadow-sm text-xs text-gray-600 border border-gray-100">
-                <div class="flex items-center gap-2 overflow-hidden">
-                    <i class="fa-solid fa-volume-high text-[#00b977] shrink-0"></i>
-                    <span class="truncate text-[11px] font-medium">1. Welcome to become a member of the AMAR CLUB family! We sincerely invite y...</span>
-                </div>
-                <button onclick="openNoticeModal()" class="bg-[#00b977] hover:bg-[#00a368] text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm flex items-center gap-1">
-                    <i class="fa-solid fa-fire"></i> Detail
-                </button>
-            </div>
-        </div>
-
-        <!-- TrxWinGo টাইম টাইপ ট্যাবস (1m, 3m, 5m) -->
-        <div class="px-4 mt-3">
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="changeTimeType('1m')" id="tab-time-1m" class="time-tab-btn bg-[#00b977] text-white p-2.5 rounded-2xl flex flex-col items-center justify-center shadow-md transition">
-                    <i class="fa-solid fa-clock text-lg mb-1"></i>
-                    <span class="text-xs font-black leading-tight text-center">TrxWinGo<br>1 Min</span>
-                </button>
-                <button onclick="changeTimeType('3m')" id="tab-time-3m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
-                    <i class="fa-regular fa-clock text-lg mb-1"></i>
-                    <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>3 Min</span>
-                </button>
-                <button onclick="changeTimeType('5m')" id="tab-time-5m" class="time-tab-btn bg-[#f1f3f8] text-gray-600 p-2.5 rounded-2xl flex flex-col items-center justify-center border border-gray-200 transition">
-                    <i class="fa-regular fa-clock text-lg mb-1"></i>
-                    <span class="text-xs font-bold leading-tight text-center">TrxWinGo<br>5 Min</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- ট্রন হ্যাশ ও কাউন্টডাউন টিকেট কার্ড (Ticket Tear Effect) -->
-        <!-- ট্রন হ্যাশ ও কাউন্টডাউন টিকেট কার্ড (Ticket Tear Effect with Image Background) -->
-        <div class="px-4 mt-3">
-            <div class="ticket-card text-white">
-                <!-- Top Section -->
-                <div>
-                    <!-- Top row buttons -->
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center gap-1.5">
-                            <button class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">Period</button>
-                            <button onclick="openHowToPlayModal()" class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold flex items-center gap-1 hover:bg-white/20 transition">
-                                <i class="fa-solid fa-book-open"></i> How to play
+            <!-- ট্রন হ্যাশ ও কাউন্টডাউন টিকেট কার্ড (Ticket Tear Effect with Image Background) -->
+            <div class="px-4 mt-3">
+                <div class="ticket-card text-white">
+                    <!-- Top Section -->
+                    <div>
+                        <!-- Top row buttons -->
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center gap-1.5">
+                                <button class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">Period</button>
+                                <button onclick="openHowToPlayModal()" class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold flex items-center gap-1 hover:bg-white/20 transition">
+                                    <i class="fa-solid fa-book-open"></i> How to play
+                                </button>
+                            </div>
+                            <button onclick="openPublicChainModal()" class="bg-white text-[#00b977] hover:bg-gray-50 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold flex items-center gap-1 shadow transition">
+                                <i class="fa-solid fa-magnifying-glass"></i> Public Chain Query
                             </button>
                         </div>
-                        <button onclick="openPublicChainModal()" class="bg-white text-[#00b977] hover:bg-gray-50 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold flex items-center gap-1 shadow transition">
-                            <i class="fa-solid fa-magnifying-glass"></i> Public Chain Query
-                        </button>
-                    </div>
 
-                    <!-- Period Number & Draw Time -->
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-black tracking-wider font-mono text-white/95" id="period-number">20260913103010158</span>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[11px] font-bold text-white/90 mr-1">Draw time</span>
+                        <!-- Period Number & Draw Time -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black tracking-wider font-mono text-white/95" id="period-number">20260913103010158</span>
                             <div class="flex items-center gap-1">
-                                <span class="time-box" id="timer-m1">0</span>
-                                <span class="time-box" id="timer-m2">0</span>
-                                <span class="text-white font-bold text-sm">:</span>
-                                <span class="time-box" id="timer-s1">2</span>
-                                <span class="time-box" id="timer-s2">5</span>
+                                <span class="text-[11px] font-bold text-white/90 mr-1">Draw time</span>
+                                <div class="flex items-center gap-1">
+                                    <span class="time-box" id="timer-m1">0</span>
+                                    <span class="time-box" id="timer-m2">0</span>
+                                    <span class="text-white font-bold text-sm">:</span>
+                                    <span class="time-box" id="timer-s1">2</span>
+                                    <span class="time-box" id="timer-s2">5</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Bottom Section: ট্রন ব্লক হ্যাশের শেষ ৫টি বল -->
-                <div class="flex justify-around items-center px-1 pb-1 pt-4" id="hash-balls-container">
-                    <div class="ball-tron-hash"><div class="ball-inner">2</div></div>
-                    <div class="ball-tron-hash"><div class="ball-inner">4</div></div>
-                    <div class="ball-tron-hash"><div class="ball-inner">B</div></div>
-                    <div class="ball-tron-hash"><div class="ball-inner">E</div></div>
-                    <div class="ball-tron-hash"><div class="ball-inner">8</div></div>
+                    <!-- Bottom Section: ট্রন ব্লক হ্যাশের শেষ ৫টি বল (Exact 3D Images) -->
+                    <div class="flex justify-around items-center px-1 pb-1 pt-4" id="hash-balls-container">
+                        <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        <img src="{{ asset('assets/image/trxwin/num3-DV8hFrzX.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        <img src="{{ asset('assets/image/trxwin/ball_1-DBPuytL4.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        <img src="{{ asset('assets/image/trxwin/num5-D4gkhTiS.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                        <img src="{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}" class="w-11 h-11 object-contain drop-shadow-md">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- কালার বাটন (Green, Violet, Red) -->
-        <div class="grid grid-cols-3 gap-3 px-4 mt-3">
-            <button onclick="openBetModal('color', 'green')" class="bg-[#00b977] hover:bg-[#00a368] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Green</button>
-            <button onclick="openBetModal('color', 'violet')" class="bg-[#b55fe6] hover:bg-[#a24ed3] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Violet</button>
-            <button onclick="openBetModal('color', 'red')" class="bg-[#ff4757] hover:bg-[#e84118] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Red</button>
-        </div>
+            <!-- কালার বাটন (Green, Violet, Red) -->
+            <div class="grid grid-cols-3 gap-3 px-4 mt-3">
+                <button onclick="openBetModal('color', 'green')" class="bg-[#00b977] hover:bg-[#00a368] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Green</button>
+                <button onclick="openBetModal('color', 'violet')" class="bg-[#b55fe6] hover:bg-[#a24ed3] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Violet</button>
+                <button onclick="openBetModal('color', 'red')" class="bg-[#ff4757] hover:bg-[#e84118] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Red</button>
+            </div>
 
-        <!-- ০ থেকে ৯ নম্বর গ্রিড (Amar Club 3D Ball Assets with CSS Fallback) -->
-        <div class="px-4 mt-3">
-            <div class="bg-[#f8f9fd] rounded-2xl p-3.5 border border-gray-100 shadow-inner">
-                <div class="grid grid-cols-5 gap-y-3.5 justify-items-center">
-                    @for($i = 0; $i <= 9; $i++)
+            <!-- ০ থেকে ৯ নম্বর গ্রিড (Exact Amar Club 3D Ball Assets from trxwin/) -->
+            <div class="px-4 mt-3">
+                <div class="bg-[#f8f9fd] rounded-2xl p-3.5 border border-gray-100 shadow-inner">
+                    <div class="grid grid-cols-5 gap-y-3.5 justify-items-center">
                         @php
-                            $ballClass = 'ball-red';
-                            if (in_array($i, [1, 3, 7, 9])) {
-                                $ballClass = 'ball-green';
-                            } elseif ($i === 0) {
-                                $ballClass = 'ball-split-0';
-                            } elseif ($i === 5) {
-                                $ballClass = 'ball-split-5';
-                            }
+                            $bettingBallImgs = [
+                                0 => 'n0-CZn09L9_.png',
+                                1 => 'n1-DQoihf6M.png',
+                                2 => 'n2-BQEJsjCG.png',
+                                3 => 'n3-CL6BSoCp.png',
+                                4 => 'n4-Bcu83fVD.png',
+                                5 => 'n5-DcVy1j2M.png',
+                                6 => 'n6-Bn7RijZz.png',
+                                7 => 'n7-DEr_Nr5_.png',
+                                8 => 'n8-CycLBQmW.png',
+                                9 => 'n9-BWcCmBZJ.png',
+                            ];
                         @endphp
-                        <button onclick="openBetModal('number', '{{ $i }}')" class="transition transform hover:scale-105 active:scale-95 focus:outline-none">
-                            <img src="{{ asset('assets/image/wingo/n' . $i . '.png') }}" alt="{{ $i }}" class="w-12 h-12 object-contain drop-shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-                            <div class="ball-3d {{ $ballClass }} w-12 h-12 text-xl font-black" style="display:none;">{{ $i }}</div>
-                        </button>
-                    @endfor
+                        @for($i = 0; $i <= 9; $i++)
+                            <button onclick="openBetModal('number', '{{ $i }}')" class="transition transform hover:scale-105 active:scale-95 focus:outline-none">
+                                <img src="{{ asset('assets/image/trxwin/' . $bettingBallImgs[$i]) }}" alt="{{ $i }}" class="w-12 h-12 object-contain drop-shadow-md">
+                            </button>
+                        @endfor
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- মাল্টিপ্লায়ার ও র‍্যান্ডম বাটন -->
         <div class="px-4 mt-3">
@@ -722,9 +707,9 @@
                         document.getElementById('wallet-balance').innerText = '৳ ' + parseFloat(data.user_balance).toFixed(2);
                     }
 
-                    // শেষ ৫ সেকেন্ডে কাউন্টডাউন লক ওভারলে
+                    // শেষ ১০ সেকেন্ডে কাউন্টডাউন লক ওভারলে (10, 9, 8, ... 00)
                     const overlay = document.getElementById('countdown-overlay');
-                    if (data.time_remaining <= 5 && data.time_remaining > 0) {
+                    if (data.time_remaining <= 10 && data.time_remaining >= 0) {
                         overlay.classList.remove('hidden');
                         const sStr = String(data.time_remaining).padStart(2, '0');
                         document.getElementById('overlay-d1').innerText = sStr[0];
@@ -769,18 +754,37 @@
             document.getElementById('timer-s2').innerText = strS[1];
         }
 
+        const tronBallMap = {
+            '0': '{{ asset('assets/image/trxwin/num0-DIDNb33N.png') }}',
+            '1': '{{ asset('assets/image/trxwin/ball_1-DBPuytL4.png') }}',
+            '2': '{{ asset('assets/image/trxwin/num2-Bvv5rn-G.png') }}',
+            '3': '{{ asset('assets/image/trxwin/num3-DV8hFrzX.png') }}',
+            '4': '{{ asset('assets/image/trxwin/num4-Bv6i1rtS.png') }}',
+            '5': '{{ asset('assets/image/trxwin/num5-D4gkhTiS.png') }}',
+            '6': '{{ asset('assets/image/trxwin/num6-C7DgXQ8W.png') }}',
+            '7': '{{ asset('assets/image/trxwin/num7-BtV1JOs8.png') }}',
+            '8': '{{ asset('assets/image/trxwin/num8-Bk5W04gi.png') }}',
+            '9': '{{ asset('assets/image/trxwin/num9-Bqb7hgWB.png') }}',
+            'A': '{{ asset('assets/image/trxwin/numA-BA1gzjEH.png') }}',
+            'B': '{{ asset('assets/image/trxwin/numB-C86DFk0W.png') }}',
+            'C': '{{ asset('assets/image/trxwin/numC-CFMIBL8C.png') }}',
+            'D': '{{ asset('assets/image/trxwin/numD-CxyPDNfa.png') }}',
+            'E': '{{ asset('assets/image/trxwin/numE-Jh_F8mIJ.png') }}',
+            'F': '{{ asset('assets/image/trxwin/numF-CcJTPBGF.png') }}'
+        };
+
         function renderHashBalls(chars) {
             const container = document.getElementById('hash-balls-container');
             if (!container || !chars || chars.length === 0) return;
             container.innerHTML = '';
             chars.forEach(char => {
-                const ball = document.createElement('div');
-                ball.className = 'ball-tron-hash';
-                const inner = document.createElement('div');
-                inner.className = 'ball-inner';
-                inner.innerText = char;
-                ball.appendChild(inner);
-                container.appendChild(ball);
+                const key = String(char).toUpperCase();
+                const src = tronBallMap[key] || tronBallMap['0'];
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = key;
+                img.className = 'w-11 h-11 object-contain drop-shadow-md';
+                container.appendChild(img);
             });
         }
 
