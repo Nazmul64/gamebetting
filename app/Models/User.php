@@ -29,6 +29,10 @@ class User extends Authenticatable
         'balance',
         'is_admin',
         'is_blocked',
+        'block_reason',
+        'deposit_hold',
+        'hold_reason',
+        'game_rig_mode',
         'referred_by',
         'theme',
     ];
@@ -55,6 +59,7 @@ class User extends Authenticatable
             'password'          => 'hashed',
             'is_admin'          => 'boolean',
             'is_blocked'        => 'boolean',
+            'deposit_hold'      => 'boolean',
         ];
     }
 }

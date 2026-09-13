@@ -40,24 +40,41 @@ class BoxingKingService {
             $lockedUser = null;
 
             // ২. রিয়েল ইউজার ওয়ালেট লক ও ডেবিট
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
             if (!$isDemo) {
                 if (!$user) throw new Exception('লগইন করুন!');
 
                 $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-                if ($lockedUser->balance < $betAmount) {
+                if (!$lockedUser || $lockedUser->balance < $betAmount) {
                     throw new Exception('পর্যাপ্ত ব্যালেন্স নেই! ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = $lockedUser->balance;
                 $lockedUser->decrement('balance', $betAmount);
             }
 
             // ৩. এডমিন কন্ট্রোল উইন/লস ডিসিশন
             $isWinningSpin = false;
-            if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                $isWinningSpin = (rand(1, 100) <= $settings->win_chance_percentage);
+            if (!$isDemo && $lockedUser) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $isWinningSpin = true;
+                } elseif ($rigAction === 'lose') {
+                    $isWinningSpin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                        $isWinningSpin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $isWinningSpin = (rand(1, 100) <= 40);
+                    }
+                }
             } else {
-                $isWinningSpin = (rand(1, 100) <= 40);
+                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                    $isWinningSpin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $isWinningSpin = (rand(1, 100) <= 40);
+                }
             }
 
             // ৪. ৫x৩ গ্রিড ও আগুনের উইনিং সেলস জেনারেট

@@ -301,11 +301,14 @@ class AdminController extends Controller
     /**
      * Get all users as JSON for admin dashboard data tables.
      */
+    /**
+     * Get all users as JSON for admin dashboard data tables.
+     */
     public function getUsers()
     {
         $users = User::where('is_admin', false)
                      ->orderBy('created_at', 'desc')
-                     ->get(['id', 'name', 'email', 'mobile', 'country', 'currency', 'balance', 'is_blocked', 'created_at']);
+                     ->get(['id', 'name', 'email', 'mobile', 'country', 'currency', 'balance', 'is_blocked', 'block_reason', 'deposit_hold', 'hold_reason', 'game_rig_mode', 'created_at']);
 
         return response()->json(['success' => true, 'users' => $users]);
     }
@@ -332,8 +335,22 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
         }
 
+        $oldBal = (float)$user->balance;
         $user->balance = $request->balance;
         $user->save();
+
+        Transaction::create([
+            'user_id' => $user->id,
+            'type' => 'Admin Balance Set',
+            'gateway' => 'Admin Direct',
+            'amount' => abs($user->balance - $oldBal),
+            'status' => 'Completed',
+            'metadata' => [
+                'old_balance' => $oldBal,
+                'new_balance' => (float)$user->balance,
+                'admin_id' => Auth::id()
+            ]
+        ]);
 
         return response()->json([
             'success' => true,
@@ -343,8 +360,162 @@ class AdminController extends Controller
     }
 
     /**
+     * ADMIN: Add or Deduct Balance with Ledger Tracking.
+     */
+    public function addOrDeductBalance(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'action' => 'required|in:add,deduct',
+            'amount' => 'required|numeric|min:0.01',
+            'note'   => 'nullable|string|max:255'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        $user = User::where('id', $id)->where('is_admin', false)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
+        }
+
+        $action = $request->input('action');
+        $amount = (float)$request->input('amount');
+        $note = $request->input('note', 'Admin adjustment');
+
+        if ($action === 'deduct' && $user->balance < $amount) {
+            return response()->json(['success' => false, 'errors' => ['Cannot deduct more than user current balance (' . number_format($user->balance, 2) . ').']], 422);
+        }
+
+        $oldBal = (float)$user->balance;
+        if ($action === 'add') {
+            $user->balance += $amount;
+            $txType = 'Admin Credit';
+        } else {
+            $user->balance -= $amount;
+            $txType = 'Admin Debit';
+        }
+        $user->save();
+
+        Transaction::create([
+            'user_id' => $user->id,
+            'type' => $txType,
+            'gateway' => 'Admin Panel',
+            'amount' => $amount,
+            'status' => 'Completed',
+            'metadata' => [
+                'note' => $note,
+                'old_balance' => $oldBal,
+                'new_balance' => (float)$user->balance,
+                'admin_id' => Auth::id()
+            ]
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => ucfirst($action) . 'ed ৳ ' . number_format($amount, 2) . ' successfully.',
+            'balance' => number_format($user->balance, 2, '.', ''),
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * ADMIN: Set Game Rigging Mode for a User (normal, always_win, always_lose).
+     */
+    public function setRigMode(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'game_rig_mode' => 'required|in:normal,always_win,always_lose'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        $user = User::where('id', $id)->where('is_admin', false)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
+        }
+
+        $mode = $request->input('game_rig_mode');
+        $user->game_rig_mode = $mode;
+        $user->save();
+
+        $labels = [
+            'normal' => 'Normal Fair Play',
+            'always_win' => 'Forced Always WIN (100% Win Rate)',
+            'always_lose' => 'Forced Always LOSE (100% Loss Rate)'
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Game control for ' . $user->name . ' updated to: ' . ($labels[$mode] ?? $mode),
+            'game_rig_mode' => $user->game_rig_mode
+        ]);
+    }
+
+    /**
+     * ADMIN: Toggle or Set Deposit Hold with Custom Reason.
+     */
+    public function toggleDepositHold(Request $request, $id)
+    {
+        $user = User::where('id', $id)->where('is_admin', false)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
+        }
+
+        $hold = $request->has('deposit_hold') ? (bool)$request->input('deposit_hold') : !$user->deposit_hold;
+        $reason = $request->input('hold_reason', $user->hold_reason);
+
+        $user->deposit_hold = $hold;
+        if ($hold && $reason) {
+            $user->hold_reason = $reason;
+        } elseif (!$hold) {
+            $user->hold_reason = null;
+        }
+        $user->save();
+
+        $statusText = $user->deposit_hold ? 'HOLD (Frozen)' : 'ACTIVE (Allowed)';
+        return response()->json([
+            'success' => true,
+            'deposit_hold' => (bool)$user->deposit_hold,
+            'hold_reason' => $user->hold_reason,
+            'message' => 'Deposit status for ' . $user->name . ' is now: ' . $statusText
+        ]);
+    }
+
+    /**
+     * ADMIN: Block / Unblock User with Custom Reason.
+     */
+    public function blockWithReason(Request $request, $id)
+    {
+        $user = User::where('id', $id)->where('is_admin', false)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
+        }
+
+        $isBlocked = $request->has('is_blocked') ? (bool)$request->input('is_blocked') : !$user->is_blocked;
+        $reason = $request->input('block_reason', $user->block_reason);
+
+        $user->is_blocked = $isBlocked;
+        if ($isBlocked && $reason) {
+            $user->block_reason = $reason;
+        } elseif (!$isBlocked) {
+            $user->block_reason = null;
+        }
+        $user->save();
+
+        $action = $user->is_blocked ? 'blocked' : 'unblocked';
+        return response()->json([
+            'success' => true,
+            'is_blocked' => (bool)$user->is_blocked,
+            'block_reason' => $user->block_reason,
+            'message' => 'User ' . $user->name . ' has been ' . $action . ' successfully.'
+        ]);
+    }
+
+    /**
      * Toggle ban/unban a user account by resetting balance or blocking access.
-     * For simplicity, we toggle balance to 0 as a "freeze" action.
      */
     public function deleteUser(Request $request, $id)
     {
@@ -374,14 +545,191 @@ class AdminController extends Controller
         }
 
         $user->is_blocked = !$user->is_blocked;
+        if (!$user->is_blocked) {
+            $user->block_reason = null;
+        }
         $user->save();
 
         $action = $user->is_blocked ? 'blocked' : 'unblocked';
 
         return response()->json([
-            'success'    => true,
-            'is_blocked' => $user->is_blocked,
-            'message'    => 'User ' . $user->name . ' has been ' . $action . ' successfully.'
+            'success'      => true,
+            'is_blocked'   => (bool)$user->is_blocked,
+            'block_reason' => $user->block_reason,
+            'message'      => 'User ' . $user->name . ' has been ' . $action . ' successfully.'
+        ]);
+    }
+
+    /**
+     * ADMIN: Live Real-time Bets Feed across all 19 Games.
+     */
+    public function getLiveBetsFeed(Request $request)
+    {
+        $feed = [];
+
+        // 1. Crash Games Bets (GameBet)
+        try {
+            $gameBets = \App\Models\GameBet::with('user')->latest('id')->limit(20)->get();
+            foreach ($gameBets as $gb) {
+                $feed[] = [
+                    'id' => 'CRASH-' . $gb->id,
+                    'game' => 'Crash Game (' . ($gb->round_id ?: 'Live') . ')',
+                    'user_name' => $gb->user->name ?? 'Guest/Player',
+                    'user_id' => $gb->user_id,
+                    'user_rig_mode' => $gb->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$gb->bet_amount,
+                    'win_amount' => (float)$gb->winnings,
+                    'result' => $gb->result,
+                    'created_at' => $gb->created_at ? $gb->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $gb->created_at ? $gb->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 2. WinGo Bets
+        try {
+            $wingoBets = \App\Models\WingoBet::with('user')->where('is_bot', false)->latest('id')->limit(20)->get();
+            foreach ($wingoBets as $wb) {
+                $feed[] = [
+                    'id' => 'WINGO-' . $wb->id,
+                    'game' => 'WinGo Lottery (' . strtoupper($wb->bet_type) . ': ' . $wb->selected_value . ')',
+                    'user_name' => $wb->user->name ?? ($wb->bot_name ?? 'Player'),
+                    'user_id' => $wb->user_id,
+                    'user_rig_mode' => $wb->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$wb->total_amount,
+                    'win_amount' => (float)$wb->win_amount,
+                    'result' => $wb->status,
+                    'created_at' => $wb->created_at ? $wb->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $wb->created_at ? $wb->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 3. TrxWinGo Bets
+        try {
+            $trxBets = \App\Models\TrxWingoBet::with('user')->where('is_bot', false)->latest('id')->limit(20)->get();
+            foreach ($trxBets as $tb) {
+                $feed[] = [
+                    'id' => 'TRX-' . $tb->id,
+                    'game' => 'TrxWinGo (' . strtoupper($tb->bet_type) . ': ' . $tb->selected_value . ')',
+                    'user_name' => $tb->user->name ?? ($tb->bot_name ?? 'Player'),
+                    'user_id' => $tb->user_id,
+                    'user_rig_mode' => $tb->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$tb->total_amount,
+                    'win_amount' => (float)$tb->win_amount,
+                    'result' => $tb->status,
+                    'created_at' => $tb->created_at ? $tb->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $tb->created_at ? $tb->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 4. K3 Dice Bets
+        try {
+            $k3Bets = \App\Models\K3Bet::with('user')->where('is_bot', false)->latest('id')->limit(20)->get();
+            foreach ($k3Bets as $kb) {
+                $feed[] = [
+                    'id' => 'K3-' . $kb->id,
+                    'game' => 'K3 Dice (' . strtoupper($kb->bet_type) . ': ' . $kb->selected_value . ')',
+                    'user_name' => $kb->user->name ?? ($kb->bot_name ?? 'Player'),
+                    'user_id' => $kb->user_id,
+                    'user_rig_mode' => $kb->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$kb->total_amount,
+                    'win_amount' => (float)$kb->win_amount,
+                    'result' => $kb->status,
+                    'created_at' => $kb->created_at ? $kb->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $kb->created_at ? $kb->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 5. Fortune Gems 2
+        try {
+            $gemsSpins = \App\Models\FortuneGemsSpin::with('user')->where('is_demo', false)->latest('id')->limit(15)->get();
+            foreach ($gemsSpins as $gs) {
+                $feed[] = [
+                    'id' => 'GEMS-' . $gs->id,
+                    'game' => 'Fortune Gems 2',
+                    'user_name' => $gs->user->name ?? 'Player',
+                    'user_id' => $gs->user_id,
+                    'user_rig_mode' => $gs->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$gs->bet_amount,
+                    'win_amount' => (float)$gs->win_amount,
+                    'result' => $gs->win_amount > 0 ? 'win' : 'lose',
+                    'created_at' => $gs->created_at ? $gs->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $gs->created_at ? $gs->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 6. Bonbon Bonanza
+        try {
+            $bonbonSpins = \App\Models\BonbonSpin::with('user')->where('is_demo', false)->latest('id')->limit(15)->get();
+            foreach ($bonbonSpins as $bs) {
+                $feed[] = [
+                    'id' => 'BONBON-' . $bs->id,
+                    'game' => 'BonBon Bonanza',
+                    'user_name' => $bs->user->name ?? 'Player',
+                    'user_id' => $bs->user_id,
+                    'user_rig_mode' => $bs->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$bs->bet_amount,
+                    'win_amount' => (float)$bs->win_amount,
+                    'result' => $bs->win_amount > 0 ? 'win' : 'lose',
+                    'created_at' => $bs->created_at ? $bs->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $bs->created_at ? $bs->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 7. Gates of Olympus
+        try {
+            $olyRounds = \App\Models\OlympusRound::with('user')->where('mode', 'real')->latest('id')->limit(15)->get();
+            foreach ($olyRounds as $or) {
+                $feed[] = [
+                    'id' => 'OLY-' . $or->id,
+                    'game' => 'Gates of Olympus',
+                    'user_name' => $or->user->name ?? 'Player',
+                    'user_id' => $or->user_id,
+                    'user_rig_mode' => $or->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$or->total_deducted,
+                    'win_amount' => (float)$or->final_win,
+                    'result' => $or->final_win > 0 ? 'win' : 'lose',
+                    'created_at' => $or->created_at ? $or->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $or->created_at ? $or->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // 8. Heads or Tails
+        try {
+            $htBets = \App\Models\HeadsTailsBet::with('user')->where('is_bot', false)->where('is_demo', false)->latest('id')->limit(15)->get();
+            foreach ($htBets as $hb) {
+                $feed[] = [
+                    'id' => 'HT-' . $hb->id,
+                    'game' => 'Heads or Tails (' . strtoupper($hb->chosen_side) . ')',
+                    'user_name' => $hb->user->name ?? 'Player',
+                    'user_id' => $hb->user_id,
+                    'user_rig_mode' => $hb->user->game_rig_mode ?? 'normal',
+                    'bet_amount' => (float)$hb->bet_amount,
+                    'win_amount' => (float)$hb->win_amount,
+                    'result' => $hb->status,
+                    'created_at' => $hb->created_at ? $hb->created_at->toIso8601String() : now()->toIso8601String(),
+                    'time_ago' => $hb->created_at ? $hb->created_at->diffForHumans() : 'Just now'
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // Sort descending by created_at
+        usort($feed, function ($a, $b) {
+            return strcmp($b['created_at'], $a['created_at']);
+        });
+
+        $feed = array_slice($feed, 0, 50);
+
+        return response()->json([
+            'success' => true,
+            'bets' => $feed,
+            'count' => count($feed)
         ]);
     }
 

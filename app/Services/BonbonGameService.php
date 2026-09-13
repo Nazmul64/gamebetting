@@ -62,6 +62,7 @@ class BonbonGameService {
             $lockedUser = null;
 
             // ৪. রিয়েল মোড ওয়ালেট লক ও ডাবল-স্পেন্ড প্রটেকশন
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
             if (!$isDemo) {
                 if (!$user) {
                     throw new Exception('অনুগ্রহ করে প্রথমে লগইন করুন!');
@@ -72,19 +73,38 @@ class BonbonGameService {
                     throw new Exception('পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $totalCharged);
             }
 
             // ৫. এডমিন হাউজ প্রফিট ও আরটিপি ক্যালকুলেশন
             $shouldWin = false;
-            if ($settings->control_mode === 'house_profit') {
-                $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                $shouldWin = (rand(1, 100) <= $chance);
-            } elseif ($settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+            if (!$isDemo && $lockedUser) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit') {
+                        $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                        $shouldWin = (rand(1, 100) <= $chance);
+                    } elseif ($settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 38);
+                    }
+                }
             } else {
-                $shouldWin = (rand(1, 100) <= 38);
+                if ($settings->control_mode === 'house_profit') {
+                    $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                    $shouldWin = (rand(1, 100) <= $chance);
+                } elseif ($settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 38);
+                }
             }
 
             // ৬. ৬ কলাম x ৫ রো গ্রিড জেনারেশন ও পে-এনিহোয়ার ক্লাস্টার ক্যালকুলেশন

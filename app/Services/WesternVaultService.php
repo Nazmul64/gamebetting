@@ -95,9 +95,11 @@ class WesternVaultService {
                 // Race-Condition প্রতিরোধে ব্যালেন্স লক
                 $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
 
-                if ($lockedUser->balance < $amount) {
+                if (!$lockedUser || $lockedUser->balance < $amount) {
                     throw new Exception('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!');
                 }
+
+                app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
 
                 $openingBalance = $lockedUser->balance;
                 $lockedUser->decrement('balance', $amount);
@@ -159,8 +161,27 @@ class WesternVaultService {
 
             $winningSide = 'side_a';
 
-            // House Profit অ্যালগরিদম (কম টাকার সাইড জিতবে)
-            if ($settings->control_mode === 'house_profit') {
+            // Check if any real player in this round has active rigging
+            $realBets = WesternVaultBet::where('round_id', $round->id)->where('is_bot', false)->where('is_demo', false)->whereNotNull('user_id')->get();
+            $rigForcedSide = null;
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+            foreach ($realBets as $rBet) {
+                $rUser = User::find($rBet->user_id);
+                if ($rUser) {
+                    $mode = $rigService->getUserRigMode($rUser);
+                    if ($mode === 'always_win') {
+                        $rigForcedSide = $rBet->selected_side;
+                        break;
+                    } elseif ($mode === 'always_lose') {
+                        $rigForcedSide = ($rBet->selected_side === 'side_a') ? 'side_b' : 'side_a';
+                        break;
+                    }
+                }
+            }
+
+            if ($rigForcedSide !== null) {
+                $winningSide = $rigForcedSide;
+            } elseif ($settings->control_mode === 'house_profit') {
                 if ($realA < $realB) {
                     $winningSide = 'side_a';
                 } elseif ($realB < $realA) {

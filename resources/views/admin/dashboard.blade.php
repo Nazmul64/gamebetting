@@ -1339,6 +1339,11 @@
                     <i class="fas fa-users"></i>
                     <span>User Management</span>
                 </button>
+                <button class="sidebar-nav-link" id="nav-live-bets" onclick="switchTab('live-bets', this)">
+                    <i class="fas fa-tower-broadcast" style="color:var(--accent-cyan);"></i>
+                    <span>Live Bets Stream</span>
+                    <span style="font-size: 9px; background: #00f2fe; color: #000; padding: 1px 6px; border-radius: 4px; margin-left: auto; font-weight: 800;">LIVE</span>
+                </button>
                 <button class="sidebar-nav-link" id="nav-withdrawals" onclick="switchTab('withdrawals', this)">
                     <i class="fas fa-money-bill-transfer"></i>
                     <span>Withdrawal Requests</span>
@@ -1960,11 +1965,77 @@
                     </div>
                 </div>
 
+                <!-- ========== TAB: LIVE BETS STREAM (ALL 19 GAMES) ========== -->
+                <div class="tab-pane" id="tab-live-bets">
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                        <div>
+                            <h2>Live Bets Stream — All 19 Platform Games</h2>
+                            <p>Real-time stream of player bets across Crash, Lottery (WinGo, K3, TrxWinGo), and Casino Slots/Arcades with outcome status & rig audits.</p>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <button class="btn-primary" onclick="loadLiveBetsFeed()" style="width:auto; padding:8px 16px; font-size:12px; background:rgba(0,242,254,0.15); border:1px solid rgba(0,242,254,0.4); color:var(--accent-cyan); display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-arrows-rotate" id="live-bets-refresh-icon"></i> Refresh Now
+                            </button>
+                            <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                                <input type="checkbox" id="live-bets-auto-poll" checked style="accent-color:var(--accent-cyan);"> Auto-poll (4s)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                            <div class="panel-title"><i class="fas fa-tower-broadcast" style="color:var(--accent-cyan);"></i> Incoming Player Bets & Outcomes</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <select class="form-input" id="live-bets-filter-game" onchange="renderFilteredLiveBets()" style="width:auto; padding:6px 12px; font-size:12px; cursor:pointer;">
+                                    <option value="all">All 19 Platform Games</option>
+                                    <option value="crash">Crash Games (5)</option>
+                                    <option value="wingo">WinGo Lottery</option>
+                                    <option value="trx_wingo">TrxWinGo Lottery</option>
+                                    <option value="k3">K3 Lottery</option>
+                                    <option value="olympus">Gates of Olympus</option>
+                                    <option value="fortune_gems">Fortune Gems 2</option>
+                                    <option value="boxing_king">Boxing King</option>
+                                    <option value="bonbon">Bonbon Bonanza</option>
+                                    <option value="big_bass">Big Bass Splash</option>
+                                    <option value="lucky_joker">Lucky Joker 100</option>
+                                    <option value="abyss">Abyss of Glory</option>
+                                    <option value="the_emirate">The Emirate</option>
+                                    <option value="royal_emirates">Royal Emirates</option>
+                                    <option value="western_vault">Western Vault</option>
+                                    <option value="heads_tails">Heads or Tails</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>TIME</th>
+                                        <th>PLAYER</th>
+                                        <th>GAME</th>
+                                        <th>ROUND / DETAILS</th>
+                                        <th>BET AMOUNT</th>
+                                        <th>MULTIPLIER / RESULT</th>
+                                        <th>PAYOUT</th>
+                                        <th style="text-align:center;">STATUS</th>
+                                        <th style="text-align:center;">RIG OVERRIDE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="live-bets-table-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="9"><i class="fas fa-spinner fa-spin"></i> Loading live bets stream...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ========== TAB: USER MANAGEMENT ========== -->
                 <div class="tab-pane" id="tab-users">
                     <div class="page-header">
-                        <h2>User Management</h2>
-                        <p>View, search, edit balances, and manage all registered user accounts.</p>
+                        <h2>User Management & Game Controls</h2>
+                        <p>Configure Win/Loss Rigging, Deposit Holds, Security Blocks, and Direct Ledger Balance adjustments.</p>
                     </div>
 
                     <div class="panel">
@@ -1972,7 +2043,7 @@
                             <div class="panel-title"><i class="fas fa-users"></i> All Registered Users</div>
                             <div class="search-bar">
                                 <i class="fas fa-search"></i>
-                                <input type="text" class="search-input" id="user-search-input" placeholder="Search name, email..." oninput="filterUsers()">
+                                <input type="text" class="search-input" id="user-search-input" placeholder="Search name, email, mobile..." oninput="filterUsers()">
                             </div>
                         </div>
                         <div class="table-wrap">
@@ -1980,19 +2051,20 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>NAME</th>
-                                        <th>EMAIL / MOBILE</th>
-                                        <th>COUNTRY</th>
+                                        <th>CUSTOMER</th>
+                                        <th>CONTACT</th>
                                         <th>CURRENCY</th>
                                         <th>BALANCE</th>
-                                        <th>STATUS</th>
+                                        <th style="text-align:center;">RIG MODE (OVERRIDE)</th>
+                                        <th style="text-align:center;">DEPOSIT STATUS</th>
+                                        <th style="text-align:center;">ACCOUNT STATUS</th>
                                         <th>JOINED</th>
-                                        <th>ACTIONS</th>
+                                        <th style="text-align:right;">ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-table-tbody">
                                     <tr class="loading-row">
-                                        <td colspan="9"><i class="fas fa-spinner fa-spin"></i> Loading users...</td>
+                                        <td colspan="10"><i class="fas fa-spinner fa-spin"></i> Loading users...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -3866,22 +3938,111 @@
         </div>
     </div>
 
-    <!-- ==================== EDIT BALANCE MODAL ==================== -->
+    <!-- ==================== DIRECT EDIT BALANCE MODAL ==================== -->
     <div class="modal-overlay" id="edit-balance-modal">
         <div class="modal-box">
             <button class="modal-close" onclick="closeBalanceModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-title"><i class="fas fa-pen-to-square"></i> Edit User Balance</div>
+            <div class="modal-title"><i class="fas fa-pen-to-square"></i> Set Exact User Balance</div>
             <input type="hidden" id="edit-user-id">
             <div class="form-group">
                 <label class="form-label">User Name</label>
                 <input type="text" class="form-input" id="edit-user-name" disabled>
             </div>
             <div class="form-group">
-                <label class="form-label">New Balance</label>
+                <label class="form-label">New Exact Balance</label>
                 <input type="number" class="form-input" id="edit-user-balance" min="0" step="0.01" placeholder="Enter new balance">
             </div>
             <button class="btn-primary" id="btn-save-balance" onclick="saveUserBalance()">
                 <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== ADD / DEDUCT BALANCE (LEDGER) MODAL ==================== -->
+    <div class="modal-overlay" id="adjust-balance-modal">
+        <div class="modal-box" style="max-width:480px;">
+            <button class="modal-close" onclick="closeAdjustBalanceModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title"><i class="fas fa-money-bill-transfer" style="color:var(--accent-cyan);"></i> Add / Deduct User Balance</div>
+            <input type="hidden" id="adj-user-id">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Customer</label>
+                <input type="text" class="form-input" id="adj-user-name" disabled style="opacity:0.85;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Current Balance</label>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:800; color:var(--accent-gold);" id="adj-current-balance">৳ 0.00</div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Action</label>
+                <select class="form-input" id="adj-action-type" style="cursor:pointer;">
+                    <option value="add">➕ Add Balance (Credit Ledger)</option>
+                    <option value="deduct">➖ Deduct Balance (Debit Ledger)</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Amount</label>
+                <input type="number" class="form-input" id="adj-amount" min="0.01" step="0.01" placeholder="Enter amount (e.g. 500.00)">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">Reason / Remarks (Recorded in Ledger)</label>
+                <input type="text" class="form-input" id="adj-remarks" placeholder="e.g. Bonus Credit, Deposit Adjustment, Dispute Settlement">
+            </div>
+            <button class="btn-primary" id="btn-save-adjust-balance" onclick="submitAdjustBalance()" style="width:100%;">
+                <i class="fas fa-check"></i> Execute Balance Adjustment
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== DEPOSIT HOLD MODAL ==================== -->
+    <div class="modal-overlay" id="deposit-hold-modal">
+        <div class="modal-box" style="max-width:460px;">
+            <button class="modal-close" onclick="closeDepositHoldModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title"><i class="fas fa-hand" style="color:var(--accent-orange);"></i> Manage Deposit Hold Status</div>
+            <input type="hidden" id="hold-user-id">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Customer</label>
+                <input type="text" class="form-input" id="hold-user-name" disabled style="opacity:0.85;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Deposit Access</label>
+                <select class="form-input" id="hold-status-select" style="cursor:pointer;">
+                    <option value="0">✅ Allowed (Normal Deposits & Transfers)</option>
+                    <option value="1">⚠️ Hold / Restrict (Block Deposits & Cash Transfers)</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">Hold Reason (Shown to user on blocked actions)</label>
+                <textarea class="form-input" id="hold-reason-input" rows="3" placeholder="e.g. Account verification required before further deposits..." style="resize:vertical;"></textarea>
+            </div>
+            <button class="btn-primary" id="btn-save-deposit-hold" onclick="submitDepositHold()" style="width:100%;">
+                <i class="fas fa-save"></i> Update Deposit Status
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== BLOCK USER WITH REASON MODAL ==================== -->
+    <div class="modal-overlay" id="block-user-modal">
+        <div class="modal-box" style="max-width:460px;">
+            <button class="modal-close" onclick="closeBlockUserModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title"><i class="fas fa-user-shield" style="color:var(--accent-red);"></i> Account Security & Block Controls</div>
+            <input type="hidden" id="block-user-id">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Customer</label>
+                <input type="text" class="form-input" id="block-user-name" disabled style="opacity:0.85;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Account Status</label>
+                <select class="form-input" id="block-status-select" style="cursor:pointer;">
+                    <option value="0">✅ Active (Full Access)</option>
+                    <option value="1">🚫 Block Account (Terminate Game & Financial Access)</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">Block Reason (Logged and returned to client)</label>
+                <textarea class="form-input" id="block-reason-input" rows="3" placeholder="e.g. Suspicious activity detected or policy violation..." style="resize:vertical;"></textarea>
+            </div>
+            <button class="btn-primary" id="btn-save-block-user" onclick="submitBlockUserWithReason()" style="width:100%; background:var(--accent-red);">
+                <i class="fas fa-shield-halved"></i> Save Account Status
             </button>
         </div>
     </div>
@@ -4238,9 +4399,10 @@
 
             const titles = {
                 overview: 'Overview <span>/ Admin Dashboard</span>',
+                'live-bets': 'Live Bets Stream <span>/ All 19 Games Real-Time Feed</span>',
                 branding: 'Site Branding & Demo <span>/ Platform Customization</span>',
                 sliders:  'Promotional Sliders <span>/ Banner Management</span>',
-                users:    'User Management <span>/ All Accounts</span>',
+                users:    'User Management & Controls <span>/ All Accounts</span>',
                 withdrawals: 'Withdrawal Requests <span>/ Operational Requests</span>',
                 deposits: 'Deposit Requests <span>/ Operational Requests</span>',
                 game:     'Game Settings <span>/ Crash Point Sequence</span>',
@@ -4256,6 +4418,14 @@
 
             // Stop live monitor first (will be started if active)
             stopLiveMonitor();
+
+            // Handle live bets polling
+            if (tabId === 'live-bets') {
+                loadLiveBetsFeed();
+                startLiveBetsPolling();
+            } else {
+                stopLiveBetsPolling();
+            }
 
             // Load sliders table when sliders tab is opened
             if (tabId === 'sliders') {
@@ -4624,10 +4794,18 @@
         function renderUsersTable(users) {
             const tbody = document.getElementById('users-table-tbody');
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-users-slash"></i><p>No users found.</p></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-users-slash"></i><p>No users found.</p></div></td></tr>`;
                 return;
             }
-            tbody.innerHTML = users.map(u => `
+            tbody.innerHTML = users.map(u => {
+                const rigMode = u.game_rig_mode || 'normal';
+                const isWin = rigMode === 'always_win';
+                const isLose = rigMode === 'always_lose';
+                const rigBg = isWin ? 'rgba(16,185,129,0.2)' : (isLose ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)');
+                const rigColor = isWin ? '#34d399' : (isLose ? '#f87171' : '#94a3b8');
+                const rigBorder = isWin ? '#10b981' : (isLose ? '#ef4444' : 'rgba(255,255,255,0.12)');
+
+                return `
                 <tr id="user-row-${u.id}" class="${u.is_blocked ? 'user-row-blocked' : ''}">
                     <td><span style="color:var(--text-muted);font-family:'Roboto Mono',monospace;font-size:11px;">#${50000 + u.id}</span></td>
                     <td><strong style="color:var(--text-primary);">${escHtml(u.name)}</strong></td>
@@ -4635,23 +4813,33 @@
                         <div style="font-size:12.5px;">${escHtml(u.email)}</div>
                         <div style="font-size:11px;color:var(--text-muted);">${u.mobile || '—'}</div>
                     </td>
-                    <td>${u.country || '—'}</td>
-                    <td><span class="currency-pill">${u.currency}</span></td>
-                    <td><span class="balance-val" id="bal-${u.id}">${parseFloat(u.balance).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
-                    <td>
-                        <span id="status-${u.id}" class="user-status-badge ${u.is_blocked ? 'blocked' : 'active'}">
-                            <i class="fas ${u.is_blocked ? 'fa-ban' : 'fa-circle-check'}"></i>
-                            ${u.is_blocked ? 'Blocked' : 'Active'}
-                        </span>
+                    <td><span class="currency-pill">${u.currency || 'BDT'}</span></td>
+                    <td><span class="balance-val" id="bal-${u.id}">৳ ${parseFloat(u.balance).toLocaleString('en-US', {minimumFractionDigits: 2})}</span></td>
+                    <td style="text-align:center;">
+                        <select id="rig-select-${u.id}" class="form-input" style="padding:4px 8px; font-size:11.5px; border-radius:6px; font-weight:700; width:135px; cursor:pointer; background:${rigBg}; color:${rigColor}; border:1px solid ${rigBorder};" onchange="setUserRigMode(${u.id}, this.value)">
+                            <option value="normal" ${rigMode === 'normal' ? 'selected' : ''} style="background:#0d1428; color:#94a3b8;">Normal (Default RTP)</option>
+                            <option value="always_win" ${isWin ? 'selected' : ''} style="background:#0d1428; color:#34d399;">🔥 100% WIN Mode</option>
+                            <option value="always_lose" ${isLose ? 'selected' : ''} style="background:#0d1428; color:#f87171;">💀 100% LOSE Mode</option>
+                        </select>
+                    </td>
+                    <td style="text-align:center;">
+                        <button onclick="openDepositHoldModal(${u.id}, ${u.deposit_hold ? 1 : 0}, '${escHtml(u.hold_reason || '')}', '${escHtml(u.name)}')" class="action-btn" style="width:auto; padding:4px 10px; font-size:11px; font-weight:700; border-radius:6px; background:${u.deposit_hold ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.1)'}; color:${u.deposit_hold ? '#fbbf24' : '#34d399'}; border:1px solid ${u.deposit_hold ? '#f59e0b' : 'rgba(16,185,129,0.3)'};" title="${u.deposit_hold ? 'Deposit Hold: ' + escHtml(u.hold_reason || '') : 'Deposits Allowed'}">
+                            <i class="fas ${u.deposit_hold ? 'fa-hand' : 'fa-check'}"></i> ${u.deposit_hold ? 'On Hold' : 'Allowed'}
+                        </button>
+                    </td>
+                    <td style="text-align:center;">
+                        <button onclick="openBlockUserModal(${u.id}, ${u.is_blocked ? 1 : 0}, '${escHtml(u.block_reason || '')}', '${escHtml(u.name)}')" class="action-btn ${u.is_blocked ? 'del' : 'edit'}" style="width:auto; padding:4px 10px; font-size:11px; font-weight:700; border-radius:6px;" title="${u.is_blocked ? 'Blocked: ' + escHtml(u.block_reason || '') : 'Account Active'}">
+                            <i class="fas ${u.is_blocked ? 'fa-ban' : 'fa-circle-check'}"></i> ${u.is_blocked ? 'Blocked' : 'Active'}
+                        </button>
                     </td>
                     <td style="color:var(--text-muted);font-size:12px;">${formatDate(u.created_at)}</td>
-                    <td>
-                        <div style="display:flex;gap:5px;">
-                            <button class="action-btn edit" title="Edit Balance" onclick="openBalanceModal(${u.id}, '${escHtml(u.name)}', ${u.balance})">
-                                <i class="fas fa-pen"></i>
+                    <td style="text-align:right;">
+                        <div style="display:flex;gap:5px;justify-content:flex-end;">
+                            <button class="action-btn" title="Add / Deduct Balance (Ledger)" onclick="openAdjustBalanceModal(${u.id}, '${escHtml(u.name)}', ${u.balance})" style="background:rgba(0,242,254,0.1); color:var(--accent-cyan); border-color:rgba(0,242,254,0.3);">
+                                <i class="fas fa-plus-minus"></i>
                             </button>
-                            <button id="block-btn-${u.id}" class="action-btn ${u.is_blocked ? 'unblock' : 'block-user'}" title="${u.is_blocked ? 'Unblock User' : 'Block User'}" onclick="toggleBlockUser(${u.id})">
-                                <i class="fas ${u.is_blocked ? 'fa-lock-open' : 'fa-ban'}"></i>
+                            <button class="action-btn edit" title="Set Exact Balance" onclick="openBalanceModal(${u.id}, '${escHtml(u.name)}', ${u.balance})">
+                                <i class="fas fa-pen"></i>
                             </button>
                             <button class="action-btn del" title="Delete User" onclick="deleteUser(${u.id})">
                                 <i class="fas fa-trash"></i>
@@ -4659,7 +4847,7 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         // Filter users by search
@@ -4673,7 +4861,205 @@
             renderUsersTable(filtered);
         }
 
-        // Edit balance modal
+        // Set User Rigging Mode (100% Win / 100% Lose / Normal across all 19 games)
+        function setUserRigMode(userId, rigMode) {
+            const sel = document.getElementById(`rig-select-${userId}`);
+            if (sel) sel.disabled = true;
+
+            fetch(`/admin/users/${userId}/rig-mode`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ game_rig_mode: rigMode })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (sel) sel.disabled = false;
+                if (data.success) {
+                    const u = allUsers.find(u => u.id == userId);
+                    if (u) u.game_rig_mode = rigMode;
+                    renderUsersTable(allUsers);
+                    showToast(data.message, false);
+                } else {
+                    showToast((data.errors || ['Error updating rig mode']).join(' '), true);
+                    if (sel) sel.value = u ? (u.game_rig_mode || 'normal') : 'normal';
+                }
+            })
+            .catch(() => {
+                if (sel) sel.disabled = false;
+                showToast('Connection error setting rig mode.', true);
+            });
+        }
+
+        // Deposit Hold Modal
+        function openDepositHoldModal(id, isHold, reason, name) {
+            document.getElementById('hold-user-id').value = id;
+            document.getElementById('hold-user-name').value = name;
+            document.getElementById('hold-status-select').value = isHold ? '1' : '0';
+            document.getElementById('hold-reason-input').value = reason || '';
+            document.getElementById('deposit-hold-modal').classList.add('open');
+        }
+        function closeDepositHoldModal() {
+            document.getElementById('deposit-hold-modal').classList.remove('open');
+        }
+        function submitDepositHold() {
+            const id = document.getElementById('hold-user-id').value;
+            const hold = parseInt(document.getElementById('hold-status-select').value);
+            const reason = document.getElementById('hold-reason-input').value;
+            const btn = document.getElementById('btn-save-deposit-hold');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch(`/admin/users/${id}/deposit-hold`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ deposit_hold: hold, hold_reason: reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Update Deposit Status';
+                if (data.success) {
+                    closeDepositHoldModal();
+                    const u = allUsers.find(u => u.id == id);
+                    if (u) {
+                        u.deposit_hold = data.deposit_hold;
+                        u.hold_reason = data.hold_reason;
+                    }
+                    renderUsersTable(allUsers);
+                    showToast(data.message, false);
+                } else {
+                    showToast((data.errors || ['Error saving deposit hold status']).join(' '), true);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Update Deposit Status';
+                showToast('Connection error updating deposit hold.', true);
+            });
+        }
+
+        // Block User with Reason Modal
+        function openBlockUserModal(id, isBlocked, reason, name) {
+            document.getElementById('block-user-id').value = id;
+            document.getElementById('block-user-name').value = name;
+            document.getElementById('block-status-select').value = isBlocked ? '1' : '0';
+            document.getElementById('block-reason-input').value = reason || '';
+            document.getElementById('block-user-modal').classList.add('open');
+        }
+        function closeBlockUserModal() {
+            document.getElementById('block-user-modal').classList.remove('open');
+        }
+        function submitBlockUserWithReason() {
+            const id = document.getElementById('block-user-id').value;
+            const blocked = parseInt(document.getElementById('block-status-select').value);
+            const reason = document.getElementById('block-reason-input').value;
+            const btn = document.getElementById('btn-save-block-user');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch(`/admin/users/${id}/block-reason`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ is_blocked: blocked, block_reason: reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shield-halved"></i> Save Account Status';
+                if (data.success) {
+                    closeBlockUserModal();
+                    const u = allUsers.find(u => u.id == id);
+                    if (u) {
+                        u.is_blocked = data.is_blocked;
+                        u.block_reason = data.block_reason;
+                    }
+                    renderUsersTable(allUsers);
+                    showToast(data.message, false);
+                } else {
+                    showToast((data.errors || ['Error saving block status']).join(' '), true);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shield-halved"></i> Save Account Status';
+                showToast('Connection error updating block status.', true);
+            });
+        }
+
+        // Adjust Balance (Ledger Tracking) Modal
+        function openAdjustBalanceModal(id, name, balance) {
+            document.getElementById('adj-user-id').value = id;
+            document.getElementById('adj-user-name').value = name;
+            document.getElementById('adj-current-balance').textContent = '৳ ' + parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('adj-amount').value = '';
+            document.getElementById('adj-remarks').value = '';
+            document.getElementById('adjust-balance-modal').classList.add('open');
+        }
+        function closeAdjustBalanceModal() {
+            document.getElementById('adjust-balance-modal').classList.remove('open');
+        }
+        function submitAdjustBalance() {
+            const id = document.getElementById('adj-user-id').value;
+            const type = document.getElementById('adj-action-type').value;
+            const amount = parseFloat(document.getElementById('adj-amount').value);
+            const reason = document.getElementById('adj-remarks').value;
+            const btn = document.getElementById('btn-save-adjust-balance');
+
+            if (!amount || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid positive amount.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            fetch(`/admin/users/${id}/adjust-balance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ type, amount, reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Execute Balance Adjustment';
+                if (data.success) {
+                    closeAdjustBalanceModal();
+                    const u = allUsers.find(u => u.id == id);
+                    if (u) u.balance = data.balance;
+                    const balEl = document.getElementById(`bal-${id}`);
+                    if (balEl) balEl.textContent = '৳ ' + parseFloat(data.balance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    showToast(data.message, false);
+                    loadStats();
+                } else {
+                    showToast((data.errors || ['Error adjusting balance']).join(' '), true);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Execute Balance Adjustment';
+                showToast('Connection error adjusting balance.', true);
+            });
+        }
+
+        // Edit balance modal (Direct)
         function openBalanceModal(id, name, balance) {
             document.getElementById('edit-user-id').value = id;
             document.getElementById('edit-user-name').value = name;
@@ -4708,11 +5094,11 @@
                 if (data.success) {
                     closeBalanceModal();
                     showToast(data.message, false);
-                    // Update in-memory data
                     const u = allUsers.find(u => u.id == id);
                     if (u) u.balance = parseFloat(balance);
                     const balEl = document.getElementById(`bal-${id}`);
-                    if (balEl) balEl.textContent = parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    if (balEl) balEl.textContent = '৳ ' + parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    loadStats();
                 } else {
                     showToast((data.errors || ['Error']).join(' '), true);
                 }
@@ -4724,50 +5110,11 @@
             });
         }
 
-        // Toggle block / unblock user
+        // Toggle block / unblock user legacy
         function toggleBlockUser(id) {
             const u = allUsers.find(u => u.id == id);
             if (!u) return;
-            const action = u.is_blocked ? 'unblock' : 'block';
-            if (!confirm(`Are you sure you want to ${action} this user (${u.name})?`)) return;
-
-            const btn = document.getElementById(`block-btn-${id}`);
-            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
-
-            fetch(`/admin/users/${id}/toggle-block`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json', 'Content-Type': 'application/json' }
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    u.is_blocked = data.is_blocked;
-                    // Update status badge
-                    const badge = document.getElementById(`status-${id}`);
-                    if (badge) {
-                        badge.className = `user-status-badge ${data.is_blocked ? 'blocked' : 'active'}`;
-                        badge.innerHTML = `<i class="fas ${data.is_blocked ? 'fa-ban' : 'fa-circle-check'}"></i> ${data.is_blocked ? 'Blocked' : 'Active'}`;
-                    }
-                    // Update block button
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.className = `action-btn ${data.is_blocked ? 'unblock' : 'block-user'}`;
-                        btn.title = data.is_blocked ? 'Unblock User' : 'Block User';
-                        btn.innerHTML = `<i class="fas ${data.is_blocked ? 'fa-lock-open' : 'fa-ban'}"></i>`;
-                    }
-                    // Update row style
-                    const row = document.getElementById(`user-row-${id}`);
-                    if (row) { row.className = data.is_blocked ? 'user-row-blocked' : ''; }
-                    showToast(data.message, false);
-                } else {
-                    if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas ${u.is_blocked ? 'fa-lock-open' : 'fa-ban'}"></i>`; }
-                    showToast((data.errors || ['Error']).join(' '), true);
-                }
-            })
-            .catch(() => {
-                if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas ${u.is_blocked ? 'fa-lock-open' : 'fa-ban'}"></i>`; }
-                showToast('Connection error.', true);
-            });
+            openBlockUserModal(id, u.is_blocked ? 1 : 0, u.block_reason || '', u.name);
         }
 
         // Delete user
@@ -4791,6 +5138,110 @@
                 }
             })
             .catch(() => showToast('Connection error.', true));
+        }
+
+        // ==================== LIVE BETS FEED (ALL 19 GAMES) ====================
+        let allLiveBets = [];
+        let liveBetsPollingInterval = null;
+
+        function loadLiveBetsFeed() {
+            const icon = document.getElementById('live-bets-refresh-icon');
+            if (icon) icon.classList.add('fa-spin');
+
+            fetch('{{ route('admin.live-bets') }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (icon) icon.classList.remove('fa-spin');
+                if (data.success) {
+                    allLiveBets = data.bets || [];
+                    renderFilteredLiveBets();
+                }
+            })
+            .catch(() => {
+                if (icon) icon.classList.remove('fa-spin');
+            });
+        }
+
+        function renderFilteredLiveBets() {
+            const filter = document.getElementById('live-bets-filter-game') ? document.getElementById('live-bets-filter-game').value : 'all';
+            let filtered = allLiveBets;
+
+            if (filter === 'crash') {
+                filtered = allLiveBets.filter(b => ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'].includes(b.game_id));
+            } else if (filter !== 'all') {
+                filtered = allLiveBets.filter(b => b.game_id === filter);
+            }
+
+            renderLiveBetsTable(filtered);
+        }
+
+        function renderLiveBetsTable(bets) {
+            const tbody = document.getElementById('live-bets-table-tbody');
+            if (!tbody) return;
+
+            if (!bets || bets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-tower-broadcast"></i><p>No recent live bets recorded yet.</p></div></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = bets.map(b => {
+                const isWon = b.status === 'won';
+                const isLost = b.status === 'lost';
+                const statusBadge = isWon ? 
+                    `<span class="status-badge" style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); font-weight:800; font-size:11px;"><i class="fas fa-circle-check"></i> WON</span>` :
+                    (isLost ? 
+                        `<span class="status-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); font-weight:800; font-size:11px;"><i class="fas fa-circle-xmark"></i> LOST</span>` :
+                        `<span class="status-badge" style="background:rgba(0,242,254,0.15); color:var(--accent-cyan); border:1px solid rgba(0,242,254,0.3); font-weight:800; font-size:11px;"><i class="fas fa-spinner fa-spin"></i> ACTIVE</span>`
+                    );
+
+                const rigMode = b.rig_mode || 'normal';
+                const rigBadge = rigMode === 'always_win' ? 
+                    `<span style="font-size:10px; font-weight:800; color:#34d399; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); padding:2px 6px; border-radius:4px;">🔥 WIN RIG</span>` :
+                    (rigMode === 'always_lose' ?
+                        `<span style="font-size:10px; font-weight:800; color:#f87171; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); padding:2px 6px; border-radius:4px;">💀 LOSE RIG</span>` :
+                        `<span style="font-size:10px; font-weight:700; color:var(--text-muted); background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">RTP Default</span>`
+                    );
+
+                return `
+                <tr>
+                    <td style="font-family:'Roboto Mono',monospace; font-size:11px; color:var(--text-muted);">${b.created_at || 'Just now'}</td>
+                    <td>
+                        <strong style="color:var(--text-primary); font-size:13px;">${escHtml(b.user_name)}</strong>
+                        <div style="font-size:10.5px; color:var(--text-muted); font-family:'Roboto Mono',monospace;">#${50000 + (b.user_id || 0)}</div>
+                    </td>
+                    <td>
+                        <span style="font-weight:700; font-size:12px; color:var(--accent-gold); display:inline-flex; align-items:center; gap:5px;">
+                            <i class="fas fa-gamepad" style="font-size:11px;"></i> ${escHtml(b.game_name)}
+                        </span>
+                    </td>
+                    <td><span style="font-size:12px; color:var(--text-secondary);">${escHtml(b.details || '—')}</span></td>
+                    <td><strong style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">৳ ${parseFloat(b.bet_amount).toFixed(2)}</strong></td>
+                    <td><span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; color:var(--accent-cyan);">${b.multiplier ? b.multiplier + 'x' : (b.payout_rate ? b.payout_rate + 'x' : '—')}</span></td>
+                    <td><strong style="font-family:'JetBrains Mono',monospace; font-size:13px; color:${isWon ? '#34d399' : (isLost ? '#f87171' : 'var(--text-muted)')};">${isWon ? '+' : ''}৳ ${parseFloat(b.win_amount || 0).toFixed(2)}</strong></td>
+                    <td style="text-align:center;">${statusBadge}</td>
+                    <td style="text-align:center;">${rigBadge}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function startLiveBetsPolling() {
+            stopLiveBetsPolling();
+            liveBetsPollingInterval = setInterval(() => {
+                const autoPoll = document.getElementById('live-bets-auto-poll');
+                if (autoPoll && autoPoll.checked) {
+                    loadLiveBetsFeed();
+                }
+            }, 4000);
+        }
+
+        function stopLiveBetsPolling() {
+            if (liveBetsPollingInterval) {
+                clearInterval(liveBetsPollingInterval);
+                liveBetsPollingInterval = null;
+            }
         }
 
         // Toast notification

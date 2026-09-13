@@ -128,6 +128,8 @@ class WingoService {
                 throw new Exception('আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!');
             }
 
+            app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
+
             $opening = $lockedUser->balance;
             $lockedUser->decrement('balance', $totalCharged);
             $closing = $lockedUser->fresh()->balance;
@@ -176,7 +178,43 @@ class WingoService {
             }
 
             $winningNumber = 0;
-            if ($settings->control_mode === 'house_profit') {
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+            $realBets = WingoBet::where('period_id', $period->id)->where('is_bot', false)->where('is_demo', false)->whereNotNull('user_id')->get();
+            $forcedNumber = null;
+
+            foreach ($realBets as $rBet) {
+                $rUser = User::find($rBet->user_id);
+                if ($rUser) {
+                    $mode = $rigService->getUserRigMode($rUser);
+                    if ($mode === 'always_win') {
+                        // Find a number where this bet wins
+                        for ($checkNum = 0; $checkNum <= 9; $checkNum++) {
+                            $checkColor = $this->getColorForNumber($checkNum);
+                            $checkSize = ($checkNum >= 5) ? 'big' : 'small';
+                            if ($this->evaluateBetOutcome($rBet, $checkNum, $checkColor, $checkSize) > 0) {
+                                $forcedNumber = $checkNum;
+                                break;
+                            }
+                        }
+                        if ($forcedNumber !== null) break;
+                    } elseif ($mode === 'always_lose') {
+                        // Find a number where this bet loses
+                        for ($checkNum = 0; $checkNum <= 9; $checkNum++) {
+                            $checkColor = $this->getColorForNumber($checkNum);
+                            $checkSize = ($checkNum >= 5) ? 'big' : 'small';
+                            if ($this->evaluateBetOutcome($rBet, $checkNum, $checkColor, $checkSize) == 0) {
+                                $forcedNumber = $checkNum;
+                                break;
+                            }
+                        }
+                        if ($forcedNumber !== null) break;
+                    }
+                }
+            }
+
+            if ($forcedNumber !== null) {
+                $winningNumber = $forcedNumber;
+            } elseif ($settings->control_mode === 'house_profit') {
                 // যে নম্বরে মোট পে-আউট সবচেয়ে কম দিতে হবে
                 asort($numberPayouts);
                 $winningNumber = array_key_first($numberPayouts);

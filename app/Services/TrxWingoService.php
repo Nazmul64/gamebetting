@@ -217,9 +217,11 @@ class TrxWingoService {
 
         return DB::transaction(function () use ($user, $totalCharged, $unitAmount, $multiplier, $data, $period) {
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-            if ($lockedUser->balance < $totalCharged) {
+            if (!$lockedUser || $lockedUser->balance < $totalCharged) {
                 throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! ডিপোজিট করুন।');
             }
+
+            app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
 
             $opening = (float)$lockedUser->balance;
             $lockedUser->decrement('balance', $totalCharged);
@@ -275,34 +277,71 @@ class TrxWingoService {
                 $winningNumber = (int)$settings->next_force_number;
                 $settings->update(['next_force_number' => null]);
             } else {
-                // Calculate payouts for all 10 outcomes
-                $numberPayouts = [];
-                for ($num = 0; $num <= 9; $num++) {
-                    $numberPayouts[$num] = $this->calculatePotentialPayout($period->id, $num);
+                // Check if any real player in this period has rigging mode
+                $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+                $realBets = TrxWingoBet::where('period_id', $period->id)->where('is_bot', false)->where('is_demo', false)->whereNotNull('user_id')->get();
+                $forcedNumber = null;
+
+                foreach ($realBets as $rBet) {
+                    $rUser = User::find($rBet->user_id);
+                    if ($rUser) {
+                        $mode = $rigService->getUserRigMode($rUser);
+                        if ($mode === 'always_win') {
+                            for ($num = 0; $num <= 9; $num++) {
+                                $c = $this->getColorForNumber($num);
+                                $s = ($num >= 5) ? 'big' : 'small';
+                                if ($this->evaluateBetOutcome($rBet, $num, $c, $s) > 0) {
+                                    $forcedNumber = $num;
+                                    break;
+                                }
+                            }
+                            if ($forcedNumber !== null) break;
+                        } elseif ($mode === 'always_lose') {
+                            for ($num = 0; $num <= 9; $num++) {
+                                $c = $this->getColorForNumber($num);
+                                $s = ($num >= 5) ? 'big' : 'small';
+                                if ($this->evaluateBetOutcome($rBet, $num, $c, $s) == 0) {
+                                    $forcedNumber = $num;
+                                    break;
+                                }
+                            }
+                            if ($forcedNumber !== null) break;
+                        }
+                    }
                 }
 
-                if ($settings->control_mode === 'house_profit') {
-                    // Choose number with least payout for house profit
-                    asort($numberPayouts);
-                    $minPayout = reset($numberPayouts);
-                    $bestCandidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $minPayout));
-                    $winningNumber = $bestCandidates[array_rand($bestCandidates)];
-                } elseif ($settings->control_mode === 'fixed_percentage') {
-                    // Win chance percentage
-                    $shouldWin = rand(1, 100) <= $settings->win_chance_percentage;
-                    if ($shouldWin) {
-                        arsort($numberPayouts);
-                        $maxPayout = reset($numberPayouts);
-                        $candidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $maxPayout));
-                        $winningNumber = $candidates[array_rand($candidates)];
-                    } else {
+                if ($forcedNumber !== null) {
+                    $winningNumber = $forcedNumber;
+                } else {
+                    // Calculate payouts for all 10 outcomes
+                    $numberPayouts = [];
+                    for ($num = 0; $num <= 9; $num++) {
+                        $numberPayouts[$num] = $this->calculatePotentialPayout($period->id, $num);
+                    }
+
+                    if ($settings->control_mode === 'house_profit') {
+                        // Choose number with least payout for house profit
                         asort($numberPayouts);
                         $minPayout = reset($numberPayouts);
-                        $candidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $minPayout));
-                        $winningNumber = $candidates[array_rand($candidates)];
+                        $bestCandidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $minPayout));
+                        $winningNumber = $bestCandidates[array_rand($bestCandidates)];
+                    } elseif ($settings->control_mode === 'fixed_percentage') {
+                        // Win chance percentage
+                        $shouldWin = rand(1, 100) <= $settings->win_chance_percentage;
+                        if ($shouldWin) {
+                            arsort($numberPayouts);
+                            $maxPayout = reset($numberPayouts);
+                            $candidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $maxPayout));
+                            $winningNumber = $candidates[array_rand($candidates)];
+                        } else {
+                            asort($numberPayouts);
+                            $minPayout = reset($numberPayouts);
+                            $candidates = array_keys(array_filter($numberPayouts, fn($v) => $v == $minPayout));
+                            $winningNumber = $candidates[array_rand($candidates)];
+                        }
+                    } else {
+                        $winningNumber = rand(0, 9);
                     }
-                } else {
-                    $winningNumber = rand(0, 9);
                 }
             }
 

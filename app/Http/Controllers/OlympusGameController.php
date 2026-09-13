@@ -306,16 +306,45 @@ class OlympusGameController extends Controller
                 // Lock user record for atomic balance update
                 $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
 
-                if ((float) $lockedUser->balance < $totalDeducted) {
+                if (!$lockedUser || (float) $lockedUser->balance < $totalDeducted) {
                     throw new \Exception('INSUFFICIENT_BALANCE');
                 }
+
+                $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+                $rigService->validatePlayerCanPlay($lockedUser, false);
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
 
                 $balanceBefore = (float) $lockedUser->balance;
                 $lockedUser->balance -= $totalDeducted;
 
-                // Generate RNG & Calculate Round
-                $grid = $this->engine->generateGrid($config, $isDoubleChance, $isBuyFeature);
+                // Generate RNG & Calculate Round with Rigging Support
+                $grid = $this->engine->generateGrid($config, $isDoubleChance, $isBuyFeature || ($rigAction === 'win'));
                 $eval = $this->engine->evaluateRound($grid, $betAmount, $config);
+
+                // If always_lose, retry until 0 payout
+                if ($rigAction === 'lose') {
+                    $attempts = 0;
+                    while ($eval['final_win'] > 0 && $attempts < 15) {
+                        $grid = $this->engine->generateGrid($config, false, false);
+                        $eval = $this->engine->evaluateRound($grid, $betAmount, $config);
+                        $attempts++;
+                    }
+                    if ($eval['final_win'] > 0) {
+                        // Force 0
+                        $eval['final_win'] = 0.00;
+                        $eval['base_win'] = 0.00;
+                        $eval['winning_shapes'] = [];
+                        $eval['winning_cells'] = [];
+                    }
+                } elseif ($rigAction === 'win') {
+                    // If always_win, retry until win
+                    $attempts = 0;
+                    while ($eval['final_win'] <= 0 && $attempts < 15) {
+                        $grid = $this->engine->generateGrid($config, true, true);
+                        $eval = $this->engine->evaluateRound($grid, $betAmount, $config);
+                        $attempts++;
+                    }
+                }
 
                 $finalWin = (float) $eval['final_win'];
                 $lockedUser->balance += $finalWin;

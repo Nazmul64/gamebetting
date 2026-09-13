@@ -63,6 +63,7 @@ class BigBassGameService {
             $lockedUser = null;
 
             // ৪. রিয়েল মোড ওয়ালেট লক ও ডিডাকশন
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
             if (!$isDemo) {
                 if (!$user) {
                     throw new Exception('অনুগ্রহ করে প্রথমে লগইন করুন!');
@@ -73,21 +74,42 @@ class BigBassGameService {
                     throw new Exception('পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $chargeAmount);
             }
 
             // ৫. এডমিন হাউজ প্রফিট ও আরটিপি সিদ্ধান্ত
             $shouldWin = false;
-            if ($isBuyBonus) {
-                $shouldWin = true;
-            } elseif ($settings->control_mode === 'house_profit') {
-                $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                $shouldWin = (rand(1, 100) <= $chance);
-            } elseif ($settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+            if (!$isDemo && $lockedUser) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($isBuyBonus) {
+                        $shouldWin = true;
+                    } elseif ($settings->control_mode === 'house_profit') {
+                        $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                        $shouldWin = (rand(1, 100) <= $chance);
+                    } elseif ($settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 35);
+                    }
+                }
             } else {
-                $shouldWin = (rand(1, 100) <= 35);
+                if ($isBuyBonus) {
+                    $shouldWin = true;
+                } elseif ($settings->control_mode === 'house_profit') {
+                    $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                    $shouldWin = (rand(1, 100) <= $chance);
+                } elseif ($settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 35);
+                }
             }
 
             // ৬. ৫x৩ গ্রিড, ফিশ মানি এবং ফিশারম্যান হুক কালেক্ট জেনারেশন

@@ -49,24 +49,41 @@ class EmirateGameService {
             $balanceAfter = 0.00;
 
             // রিয়েল মোড ওয়ালেট ভ্যালিডেশন
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
             if (!$isDemo) {
                 if (!$user) throw new Exception('অনুগ্রহ করে প্রথমে লগইন করুন!');
 
                 $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-                if ($lockedUser->balance < $betAmount) {
+                if (!$lockedUser || $lockedUser->balance < $betAmount) {
                     throw new Exception('পর্যাপ্ত ব্যালেন্স নেই! ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $betAmount);
             }
 
             // এডমিন উইন ডিসিশন
             $shouldWin = false;
-            if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+            if (!$isDemo && isset($lockedUser)) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 35);
+                    }
+                }
             } else {
-                $shouldWin = (rand(1, 100) <= 35);
+                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 35);
+                }
             }
 
             // ৫টি পে-লাইন এবং স্ক্যাটার রেজাল্ট তৈরি

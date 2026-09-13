@@ -34,25 +34,40 @@ class RoyalEmiratesService {
 
             // রিয়েল মোড ব্যালেন্স লক ও ডিডাকশন
             if (!$isDemo) {
-                if (!$user) {
-                    throw new Exception('অনুগ্রহ করে প্রথমে লগইন করুন!');
-                }
+                $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+                if (!$user) throw new Exception('অনুগ্রহ করে প্রথমে লগইন করুন!');
 
                 $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-                if ($lockedUser->balance < $betAmount) {
+                if (!$lockedUser || $lockedUser->balance < $betAmount) {
                     throw new Exception('পর্যাপ্ত ব্যালেন্স নেই! ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $betAmount);
             }
 
             // এডমিন প্রফিট ডিসিশন
             $shouldWin = false;
-            if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= (int)$settings->win_chance_percentage);
+            if (!$isDemo && $lockedUser) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= (int)$settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 35);
+                    }
+                }
             } else {
-                $shouldWin = (rand(1, 100) <= 35);
+                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= (int)$settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 35);
+                }
             }
 
             // ৫x৩ গ্রিড ও হোল্ড অ্যান্ড স্পিন বোনাস ক্যালকুলেশন

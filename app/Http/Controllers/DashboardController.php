@@ -84,6 +84,20 @@ class DashboardController extends Controller
         $amount = (float)$request->amount;
         $user = Auth::user();
 
+        if ($user->is_blocked) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Your account is blocked: ' . ($user->block_reason ?: 'Contact support.')]
+            ], 403);
+        }
+
+        if ($user->deposit_hold) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Deposit is temporarily on hold for your account: ' . ($user->hold_reason ?: 'Contact support.')]
+            ], 403);
+        }
+
         // Create transaction with status 'Pending'
         Transaction::create([
             'user_id' => $user->id,
@@ -109,6 +123,20 @@ class DashboardController extends Controller
     public function withdraw(Request $request)
     {
         $user = Auth::user();
+
+        if ($user->is_blocked) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Your account is blocked: ' . ($user->block_reason ?: 'Contact support.')]
+            ], 403);
+        }
+
+        if ($user->deposit_hold) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Withdrawal is temporarily on hold for your account: ' . ($user->hold_reason ?: 'Contact support.')]
+            ], 403);
+        }
         
         $validator = Validator::make($request->all(), [
             'gateway_id' => 'required|integer',
@@ -178,6 +206,20 @@ class DashboardController extends Controller
     public function transfer(Request $request)
     {
         $user = Auth::user();
+
+        if ($user->is_blocked) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Your account is blocked: ' . ($user->block_reason ?: 'Contact support.')]
+            ], 403);
+        }
+
+        if ($user->deposit_hold) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Transfer is temporarily on hold for your account: ' . ($user->hold_reason ?: 'Contact support.')]
+            ], 403);
+        }
 
         $validator = Validator::make($request->all(), [
             'recipient' => 'required|string',
@@ -570,6 +612,15 @@ class DashboardController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['Please login to place bets.']], 401);
+        }
+
+        try {
+            app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($user, false);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'errors' => [$e->getMessage()]], 403);
+        }
         
         // Create the game bet record
         \App\Models\GameBet::create([
@@ -598,6 +649,28 @@ class DashboardController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user) {
+            return response()->json(['success' => false, 'errors' => ['Unauthorized']], 401);
+        }
+
+        $rigMode = app(\App\Services\GameOutcomeRiggingService::class)->getUserRigMode($user);
+        if ($rigMode === 'always_lose') {
+            // Bet loses because round crashed before cashout was permitted
+            $bet = \App\Models\GameBet::where('user_id', $user->id)
+                ->where('round_id', $request->round_id)
+                ->where('result', 'pending')
+                ->first();
+
+            if ($bet) {
+                $bet->update([
+                    'cashout_odds' => 1.00,
+                    'winnings'     => 0.00,
+                    'result'       => 'lose',
+                ]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Crashed before cashout was confirmed!'], 400);
+        }
 
         // Update the bet to win
         $bet = \App\Models\GameBet::where('user_id', $user->id)

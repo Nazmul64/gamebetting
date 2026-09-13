@@ -74,14 +74,34 @@ class FortuneGemsService {
 
             // ৪. এডমিন হাউজ প্রফিট ও আরটিপি ক্যালকুলেশন
             $shouldWin = false;
-            if ($settings->control_mode === 'house_profit') {
-                $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                $shouldWin = (rand(1, 100) <= $chance);
-            } elseif ($settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+
+            if (!$isDemo && $lockedUser) {
+                $rigService->validatePlayerCanPlay($lockedUser, false);
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit') {
+                        $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                        $shouldWin = (rand(1, 100) <= $chance);
+                    } elseif ($settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 38);
+                    }
+                }
             } else {
-                // Random natural RTP ~38%
-                $shouldWin = (rand(1, 100) <= 38);
+                if ($settings->control_mode === 'house_profit') {
+                    $chance = max(10, min(80, (int)$settings->win_chance_percentage));
+                    $shouldWin = (rand(1, 100) <= $chance);
+                } elseif ($settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 38);
+                }
             }
 
             // ৫. ৩x৩ গ্রিড ও ৪র্থ স্পেশাল মাল্টিপ্লায়ার রিল জেনারেশন

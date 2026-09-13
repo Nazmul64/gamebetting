@@ -234,8 +234,13 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/chats/{userId}', [AdminController::class, 'getUserChat'])->name('chats.user');
     Route::post('/chats/send', [AdminController::class, 'sendAdminMessage'])->name('chats.send');
     Route::post('/users/{id}/balance', [AdminController::class, 'updateUserBalance'])->name('users.balance');
+    Route::post('/users/{id}/adjust-balance', [AdminController::class, 'addOrDeductBalance'])->name('users.adjust-balance');
+    Route::post('/users/{id}/rig-mode', [AdminController::class, 'setRigMode'])->name('users.rig-mode');
+    Route::post('/users/{id}/deposit-hold', [AdminController::class, 'toggleDepositHold'])->name('users.deposit-hold');
+    Route::post('/users/{id}/block-reason', [AdminController::class, 'blockWithReason'])->name('users.block-reason');
     Route::post('/users/{id}/toggle-block', [AdminController::class, 'toggleBlockUser'])->name('users.toggle-block');
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
+    Route::get('/live-bets', [AdminController::class, 'getLiveBetsFeed'])->name('live-bets');
 
     // Crash Game Points CRUD
     Route::get('/crash-points', [AdminController::class, 'getCrashPoints'])->name('crash-points.index');

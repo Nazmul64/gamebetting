@@ -186,9 +186,11 @@ class K3Service {
             }
 
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-            if ($lockedUser->balance < $totalCharged) {
+            if (!$lockedUser || $lockedUser->balance < $totalCharged) {
                 throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!');
             }
+
+            app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
 
             $opening = $lockedUser->balance;
             $lockedUser->decrement('balance', $totalCharged);
@@ -244,7 +246,46 @@ class K3Service {
             } else {
                 $bestDice = [rand(1, 6), rand(1, 6), rand(1, 6)];
 
-                if ($settings->control_mode === 'house_profit') {
+                // Check for user rigging
+                $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+                $realBets = K3Bet::where('period_id', $period->id)->where('is_bot', false)->where('is_demo', false)->whereNotNull('user_id')->get();
+                $rigForcedDice = null;
+
+                foreach ($realBets as $rBet) {
+                    $rUser = User::find($rBet->user_id);
+                    if ($rUser) {
+                        $mode = $rigService->getUserRigMode($rUser);
+                        if ($mode === 'always_win') {
+                            shuffle($possibleCombos);
+                            foreach ($possibleCombos as $combo) {
+                                $cSum = $combo[0] + $combo[1] + $combo[2];
+                                $cSize = ($cSum >= 11) ? 'big' : 'small';
+                                $cParity = ($cSum % 2 !== 0) ? 'odd' : 'even';
+                                if ($this->evaluateBetOutcome($rBet, $combo[0], $combo[1], $combo[2], $cSum, $cSize, $cParity) > 0) {
+                                    $rigForcedDice = $combo;
+                                    break;
+                                }
+                            }
+                            if ($rigForcedDice !== null) break;
+                        } elseif ($mode === 'always_lose') {
+                            shuffle($possibleCombos);
+                            foreach ($possibleCombos as $combo) {
+                                $cSum = $combo[0] + $combo[1] + $combo[2];
+                                $cSize = ($cSum >= 11) ? 'big' : 'small';
+                                $cParity = ($cSum % 2 !== 0) ? 'odd' : 'even';
+                                if ($this->evaluateBetOutcome($rBet, $combo[0], $combo[1], $combo[2], $cSum, $cSize, $cParity) == 0) {
+                                    $rigForcedDice = $combo;
+                                    break;
+                                }
+                            }
+                            if ($rigForcedDice !== null) break;
+                        }
+                    }
+                }
+
+                if ($rigForcedDice !== null) {
+                    $bestDice = $rigForcedDice;
+                } elseif ($settings->control_mode === 'house_profit') {
                     $minPayout = PHP_INT_MAX;
                     $bestCandidates = [];
                     shuffle($possibleCombos);

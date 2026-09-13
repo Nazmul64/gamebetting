@@ -41,6 +41,7 @@ class LuckyJokerService {
             $balanceAfter = 0.00;
 
             // রিয়েল মোড ওয়ালেট ভ্যালিডেশন
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
             if (!$isDemo) {
                 if (!$user) throw new Exception('দয়া করে প্রথমে লগইন করুন!');
 
@@ -49,16 +50,32 @@ class LuckyJokerService {
                     throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
                 }
 
+                $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $betAmount);
             }
 
             // এডমিন উইন ডিসিশন
             $shouldWin = false;
-            if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+            if (!$isDemo && isset($lockedUser)) {
+                $rigAction = $rigService->determineSpinRigAction($lockedUser);
+                if ($rigAction === 'win') {
+                    $shouldWin = true;
+                } elseif ($rigAction === 'lose') {
+                    $shouldWin = false;
+                } else {
+                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                    } else {
+                        $shouldWin = (rand(1, 100) <= 40); // ন্যাচারাল আরটিপি
+                    }
+                }
             } else {
-                $shouldWin = (rand(1, 100) <= 40); // ন্যাচারাল আরটিপি
+                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
+                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
+                } else {
+                    $shouldWin = (rand(1, 100) <= 40); // ন্যাচারাল আরটিপি
+                }
             }
 
             // ৫x৪ গ্রিড এবং এক্সপান্ডিং জোকার ওয়াইল্ড লজিক
