@@ -465,51 +465,70 @@
         </div>
     </div>
 
-    <!-- বেটিং কনফার্মেশন বটম শিট মডাল -->
+    <!-- বেটিং কনফার্মেশন বটম শিট মডাল (Screenshots 1, 2, 3 Match) -->
     <div id="bet-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-xs">
-        <div class="bg-white w-full max-w-[430px] rounded-t-3xl p-5 shadow-2xl animate-in slide-in-from-bottom duration-200">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-black text-base text-gray-800 flex items-center gap-1.5">
-                    <i class="fa-solid fa-cube text-[#00b977]"></i> TrxWinGo <span id="modal-time-label">1 Min</span>
-                </h3>
-                <button onclick="closeBetModal()" class="text-gray-400 hover:text-gray-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+        <div class="bg-white w-full max-w-[430px] rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom duration-200 overflow-hidden flex flex-col">
             
-            <div class="bg-[#f8f9fd] p-3 rounded-xl mb-3 flex items-center justify-between border border-gray-100">
-                <span class="text-xs text-gray-500 font-bold">Selection:</span>
-                <span class="text-base font-black uppercase text-[#00b977] tracking-wider" id="modal-selection">GREEN</span>
-            </div>
-
-            <!-- Base Bet Selector Chips -->
-            <div class="flex justify-between items-center gap-2 mb-3">
-                <span class="text-xs font-bold text-gray-500">Balance:</span>
-                <div class="flex gap-1.5">
-                    <button onclick="setBaseAmount(1)" class="amt-chip bg-[#00b977] text-white px-3 py-1 rounded-lg text-xs font-bold">1</button>
-                    <button onclick="setBaseAmount(10)" class="amt-chip bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold">10</button>
-                    <button onclick="setBaseAmount(100)" class="amt-chip bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold">100</button>
-                    <button onclick="setBaseAmount(1000)" class="amt-chip bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold">1000</button>
+            <!-- Modal Themed Header (Green / Violet / Red / Amber / Blue) -->
+            <div id="modal-header-bg" class="bg-[#00b977] pt-5 pb-6 px-4 text-white text-center relative transition-colors duration-200" style="clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);">
+                <h3 class="font-black text-lg tracking-wider mb-2.5 drop-shadow-sm">
+                    TrxWinGo <span id="modal-time-label">1 Min</span>
+                </h3>
+                <div class="bg-white text-gray-800 font-black text-xs py-2 px-8 rounded-md shadow-md inline-block min-w-[210px]" id="modal-selection-badge">
+                    Select Green
                 </div>
             </div>
 
-            <!-- Multiplier Selector -->
-            <div class="flex justify-between items-center gap-2 mb-4">
-                <span class="text-xs font-bold text-gray-500">Multiplier:</span>
-                <div class="flex items-center gap-1">
-                    <button onclick="changeModalMult(-1)" class="w-7 h-7 bg-gray-100 rounded-lg text-gray-700 font-black text-xs">-</button>
-                    <input type="number" id="modal-mult-input" value="1" min="1" max="1000" onchange="onModalMultChange(this.value)" class="w-14 text-center text-xs font-black bg-gray-50 border rounded-lg py-1">
-                    <button onclick="changeModalMult(1)" class="w-7 h-7 bg-gray-100 rounded-lg text-gray-700 font-black text-xs">+</button>
+            <!-- Modal Content Form -->
+            <div class="p-5 pt-4 space-y-4">
+                
+                <!-- Balance Row (1, 10, 100, 1K) -->
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-800">Balance</span>
+                    <div class="flex gap-2" id="modal-amt-chips">
+                        <button onclick="setBaseAmount(1)" class="amt-chip font-bold text-xs px-3.5 py-1.5 rounded-md transition bg-[#00b977] text-white">1</button>
+                        <button onclick="setBaseAmount(10)" class="amt-chip font-bold text-xs px-3.5 py-1.5 rounded-md transition bg-[#f1f3f8] text-gray-700">10</button>
+                        <button onclick="setBaseAmount(100)" class="amt-chip font-bold text-xs px-3.5 py-1.5 rounded-md transition bg-[#f1f3f8] text-gray-700">100</button>
+                        <button onclick="setBaseAmount(1000)" class="amt-chip font-bold text-xs px-3.5 py-1.5 rounded-md transition bg-[#f1f3f8] text-gray-700">1K</button>
+                    </div>
+                </div>
+
+                <!-- Quantity Counter Row ([-] 1 [+]) -->
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-800">Quantity</span>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="changeModalQuantity(-1)" id="btn-qty-minus" class="w-8 h-8 rounded-md bg-[#00b977] text-white font-black text-sm flex items-center justify-center transition active:scale-95">-</button>
+                        <input type="number" id="modal-qty-input" value="1" min="1" max="1000" onchange="onModalQtyChange(this.value)" class="w-20 text-center text-xs font-black bg-[#f1f3f8] border border-gray-100 rounded-md py-1.5 text-gray-800">
+                        <button onclick="changeModalQuantity(1)" id="btn-qty-plus" class="w-8 h-8 rounded-md bg-[#00b977] text-white font-black text-sm flex items-center justify-center transition active:scale-95">+</button>
+                    </div>
+                </div>
+
+                <!-- Multipliers Row (X1, X5, X10, X20, X50, X100) -->
+                <div class="flex justify-between items-center gap-1.5" id="modal-mult-chips">
+                    <button onclick="setModalMult(1)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#00b977] text-white">X1</button>
+                    <button onclick="setModalMult(5)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#f1f3f8] text-gray-700">X5</button>
+                    <button onclick="setModalMult(10)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#f1f3f8] text-gray-700">X10</button>
+                    <button onclick="setModalMult(20)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#f1f3f8] text-gray-700">X20</button>
+                    <button onclick="setModalMult(50)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#f1f3f8] text-gray-700">X50</button>
+                    <button onclick="setModalMult(100)" class="mult-chip px-2.5 py-1.5 rounded-md text-xs font-bold transition flex-1 text-center bg-[#f1f3f8] text-gray-700">X100</button>
+                </div>
+
+                <!-- Pre-sale Rules Agreement -->
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-600 pt-1">
+                    <span class="w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">✓</span>
+                    <span>I agree <span class="text-red-500 cursor-pointer hover:underline">《Pre-sale rules》</span></span>
                 </div>
             </div>
 
-            <!-- Total Calculation & Agree Checkbox -->
-            <div class="flex justify-between items-center text-xs font-bold text-gray-600 mb-4 bg-gray-50 p-2.5 rounded-xl">
-                <span>Total Amount:</span>
-                <span class="text-lg text-red-500 font-black">৳ <span id="total-bet-display">1.00</span></span>
+            <!-- Footer Action Buttons (Cancel / Total Amount) -->
+            <div class="grid grid-cols-2 mt-2">
+                <button onclick="closeBetModal()" class="bg-[#f1f3f8] hover:bg-gray-200 text-gray-600 font-bold py-3.5 text-xs transition text-center">
+                    Cancel
+                </button>
+                <button onclick="submitTrxBet()" id="btn-total-submit" class="bg-[#00b977] text-white font-black py-3.5 text-xs transition text-center active:scale-98 shadow-md">
+                    Total amount ৳<span id="total-bet-display">1.00</span>
+                </button>
             </div>
-
-            <button onclick="submitTrxBet()" id="confirm-bet-btn" class="w-full bg-[#00b977] hover:bg-[#00a368] active:scale-98 text-white py-3.5 rounded-full font-black text-sm shadow-lg transition">
-                Confirm Bet
-            </button>
         </div>
     </div>
 
@@ -649,55 +668,117 @@
             syncState();
         }
 
-        function setMultiplier(val) {
-            currentMultiplier = parseInt(val);
-            document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('mult-active'));
-            const activeBtn = document.getElementById(`m-${val}`);
-            if (activeBtn) activeBtn.classList.add('mult-active');
-            document.getElementById('modal-mult-input').value = currentMultiplier;
-            updateTotalBet();
-        }
+        let currentThemeColor = '#00b977';
+        let currentQuantity = 1;
 
-        function setBaseAmount(val) {
-            baseAmount = parseFloat(val);
-            document.querySelectorAll('.amt-chip').forEach(b => {
-                b.classList.remove('bg-[#00b977]', 'text-white');
-                b.classList.add('bg-gray-100', 'text-gray-700');
-            });
-            event.target.classList.remove('bg-gray-100', 'text-gray-700');
-            event.target.classList.add('bg-[#00b977]', 'text-white');
-            updateTotalBet();
-        }
-
-        function changeModalMult(delta) {
-            let val = parseInt(document.getElementById('modal-mult-input').value) || 1;
-            val = Math.max(1, val + delta);
-            document.getElementById('modal-mult-input').value = val;
-            currentMultiplier = val;
-            updateTotalBet();
-        }
-
-        function onModalMultChange(val) {
-            let num = parseInt(val) || 1;
-            currentMultiplier = Math.max(1, num);
-            updateTotalBet();
-        }
-
-        function updateTotalBet() {
-            const total = (baseAmount * currentMultiplier).toFixed(2);
-            document.getElementById('total-bet-display').innerText = total;
+        function getThemeForSelection(type, val) {
+            if (type === 'color') {
+                if (val.toLowerCase() === 'green') return { color: '#00b977', label: 'Select Green' };
+                if (val.toLowerCase() === 'violet') return { color: '#b55fe6', label: 'Select Violet' };
+                if (val.toLowerCase() === 'red') return { color: '#ff4757', label: 'Select Red' };
+            }
+            if (type === 'size') {
+                if (val.toLowerCase() === 'big') return { color: '#ffa502', label: 'Select Big' };
+                if (val.toLowerCase() === 'small') return { color: '#5352ed', label: 'Select Small' };
+            }
+            if (type === 'number') {
+                const n = parseInt(val);
+                if ([1, 3, 7, 9].includes(n)) return { color: '#00b977', label: `Select ${n}` };
+                if ([2, 4, 6, 8].includes(n)) return { color: '#ff4757', label: `Select ${n}` };
+                if (n === 0) return { color: '#b55fe6', label: `Select 0` };
+                if (n === 5) return { color: '#00b977', label: `Select 5` };
+            }
+            return { color: '#00b977', label: `Select ${val}` };
         }
 
         function openBetModal(type, val) {
             selectedBetType = type;
             selectedValue = val;
-            document.getElementById('modal-selection').innerText = `${type.toUpperCase()}: ${val.toUpperCase()}`;
-            document.getElementById('bet-modal').classList.remove('hidden');
+
+            const theme = getThemeForSelection(type, val);
+            currentThemeColor = theme.color;
+
+            document.getElementById('modal-header-bg').style.backgroundColor = currentThemeColor;
+            document.getElementById('modal-selection-badge').innerText = theme.label;
+            document.getElementById('btn-qty-minus').style.backgroundColor = currentThemeColor;
+            document.getElementById('btn-qty-plus').style.backgroundColor = currentThemeColor;
+            document.getElementById('btn-total-submit').style.backgroundColor = currentThemeColor;
+
+            currentQuantity = 1;
+            document.getElementById('modal-qty-input').value = currentQuantity;
+
+            updateChipsTheme();
             updateTotalBet();
+
+            document.getElementById('bet-modal').classList.remove('hidden');
         }
 
         function closeBetModal() {
             document.getElementById('bet-modal').classList.add('hidden');
+        }
+
+        function setBaseAmount(val) {
+            baseAmount = parseFloat(val);
+            updateChipsTheme();
+            updateTotalBet();
+        }
+
+        function setModalMult(val) {
+            currentMultiplier = parseInt(val);
+            updateChipsTheme();
+            updateTotalBet();
+        }
+
+        function setMultiplier(val) {
+            currentMultiplier = parseInt(val);
+            document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('mult-active'));
+            const activeBtn = document.getElementById(`m-${val}`);
+            if (activeBtn) activeBtn.classList.add('mult-active');
+            updateChipsTheme();
+            updateTotalBet();
+        }
+
+        function changeModalQuantity(delta) {
+            currentQuantity = Math.max(1, currentQuantity + delta);
+            document.getElementById('modal-qty-input').value = currentQuantity;
+            updateTotalBet();
+        }
+
+        function onModalQtyChange(val) {
+            currentQuantity = Math.max(1, parseInt(val) || 1);
+            document.getElementById('modal-qty-input').value = currentQuantity;
+            updateTotalBet();
+        }
+
+        function updateChipsTheme() {
+            // Balance chips
+            document.querySelectorAll('#modal-amt-chips .amt-chip').forEach(chip => {
+                const amt = parseFloat(chip.innerText.replace('K', '000'));
+                if (amt === baseAmount) {
+                    chip.style.backgroundColor = currentThemeColor;
+                    chip.style.color = '#ffffff';
+                } else {
+                    chip.style.backgroundColor = '#f1f3f8';
+                    chip.style.color = '#374151';
+                }
+            });
+
+            // Multiplier chips
+            document.querySelectorAll('#modal-mult-chips .mult-chip').forEach(chip => {
+                const mult = parseInt(chip.innerText.replace('X', ''));
+                if (mult === currentMultiplier) {
+                    chip.style.backgroundColor = currentThemeColor;
+                    chip.style.color = '#ffffff';
+                } else {
+                    chip.style.backgroundColor = '#f1f3f8';
+                    chip.style.color = '#374151';
+                }
+            });
+        }
+
+        function updateTotalBet() {
+            const total = (baseAmount * currentMultiplier * currentQuantity).toFixed(2);
+            document.getElementById('total-bet-display').innerText = total;
         }
 
         function selectRandomNumber() {
@@ -1145,9 +1226,12 @@
         function submitTrxBet() {
             if (!selectedBetType || selectedValue === null) return;
 
-            const confirmBtn = document.getElementById('confirm-bet-btn');
-            confirmBtn.disabled = true;
-            confirmBtn.innerText = 'সাবমিট হচ্ছে...';
+            const submitBtn = document.getElementById('btn-total-submit');
+            submitBtn.disabled = true;
+            const origText = submitBtn.innerHTML;
+            submitBtn.innerText = 'সাবমিট হচ্ছে...';
+
+            const effectiveMultiplier = currentMultiplier * currentQuantity;
 
             fetch("{{ route('trxwingo.bet') }}", {
                 method: "POST",
@@ -1160,15 +1244,15 @@
                     bet_type: selectedBetType,
                     selected_value: selectedValue,
                     amount: baseAmount,
-                    multiplier: currentMultiplier,
+                    multiplier: effectiveMultiplier,
                     is_demo: isDemoMode,
                     demo_bets_count: demoBetsCount
                 })
             })
             .then(res => res.json())
             .then(data => {
-                confirmBtn.disabled = false;
-                confirmBtn.innerText = 'Confirm Bet';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origText;
 
                 if (data.deposit_required) {
                     closeBetModal();
