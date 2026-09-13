@@ -112,27 +112,20 @@
             box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3), inset 2px 2px 6px rgba(255,255,255,0.7), 0 3px 6px rgba(0,0,0,0.15);
         }
 
-        /* Tear ticket card */
+        /* Tear ticket card using exact uploaded background image */
         .ticket-card {
-            background: linear-gradient(145deg, #00b977 0%, #009e66 100%);
+            background-image: url('{{ asset('assets/image/trxwin/ticket-bg.png') }}');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
             position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px -3px rgba(0, 185, 119, 0.3);
+            padding: 12px 16px 20px 16px;
+            width: 100%;
+            min-height: 185px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .ticket-card::before, .ticket-card::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #ffffff;
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 5;
-        }
-        .ticket-card::before { left: -10px; }
-        .ticket-card::after { right: -10px; }
 
         /* Multiplier active pill */
         .mult-active {
@@ -244,41 +237,42 @@
         </div>
 
         <!-- ট্রন হ্যাশ ও কাউন্টডাউন টিকেট কার্ড (Ticket Tear Effect) -->
+        <!-- ট্রন হ্যাশ ও কাউন্টডাউন টিকেট কার্ড (Ticket Tear Effect with Image Background) -->
         <div class="px-4 mt-3">
-            <div class="ticket-card p-4 text-white">
-                <!-- Top row buttons -->
-                <div class="flex justify-between items-center mb-2.5">
-                    <div class="flex items-center gap-1.5">
-                        <button class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">Period</button>
-                        <button onclick="openHowToPlayModal()" class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold flex items-center gap-1 hover:bg-white/20 transition">
-                            <i class="fa-solid fa-book-open"></i> How to play
+            <div class="ticket-card text-white">
+                <!-- Top Section -->
+                <div>
+                    <!-- Top row buttons -->
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-1.5">
+                            <button class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">Period</button>
+                            <button onclick="openHowToPlayModal()" class="border border-white/70 text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold flex items-center gap-1 hover:bg-white/20 transition">
+                                <i class="fa-solid fa-book-open"></i> How to play
+                            </button>
+                        </div>
+                        <button onclick="openPublicChainModal()" class="bg-white text-[#00b977] hover:bg-gray-50 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold flex items-center gap-1 shadow transition">
+                            <i class="fa-solid fa-magnifying-glass"></i> Public Chain Query
                         </button>
                     </div>
-                    <button onclick="openPublicChainModal()" class="bg-white text-[#00b977] hover:bg-gray-50 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold flex items-center gap-1 shadow transition">
-                        <i class="fa-solid fa-magnifying-glass"></i> Public Chain Query
-                    </button>
-                </div>
 
-                <!-- Period Number & Draw Time -->
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-black tracking-wider font-mono text-white/95" id="period-number">20260913103010158</span>
-                    <div class="flex items-center gap-1">
-                        <span class="text-[11px] font-bold text-white/90 mr-1">Draw time</span>
+                    <!-- Period Number & Draw Time -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black tracking-wider font-mono text-white/95" id="period-number">20260913103010158</span>
                         <div class="flex items-center gap-1">
-                            <span class="time-box" id="timer-m1">0</span>
-                            <span class="time-box" id="timer-m2">0</span>
-                            <span class="text-white font-bold text-sm">:</span>
-                            <span class="time-box" id="timer-s1">2</span>
-                            <span class="time-box" id="timer-s2">5</span>
+                            <span class="text-[11px] font-bold text-white/90 mr-1">Draw time</span>
+                            <div class="flex items-center gap-1">
+                                <span class="time-box" id="timer-m1">0</span>
+                                <span class="time-box" id="timer-m2">0</span>
+                                <span class="text-white font-bold text-sm">:</span>
+                                <span class="time-box" id="timer-s1">2</span>
+                                <span class="time-box" id="timer-s2">5</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ড্যাশড ডিভাইডার -->
-                <div class="border-t border-dashed border-white/50 pt-3"></div>
-
-                <!-- ট্রন ব্লক হ্যাশের শেষ ৫টি বল -->
-                <div class="flex justify-around items-center px-1 pt-1" id="hash-balls-container">
+                <!-- Bottom Section: ট্রন ব্লক হ্যাশের শেষ ৫টি বল -->
+                <div class="flex justify-around items-center px-1 pb-1 pt-4" id="hash-balls-container">
                     <div class="ball-tron-hash"><div class="ball-inner">2</div></div>
                     <div class="ball-tron-hash"><div class="ball-inner">4</div></div>
                     <div class="ball-tron-hash"><div class="ball-inner">B</div></div>
