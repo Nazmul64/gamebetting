@@ -38,6 +38,34 @@
             overflow-x: hidden;
         }
 
+        /* 3D Glossy Tron Hash Result Balls */
+        .ball-tron-hash {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff8c8c 0%, #ff4757 45%, #d63031 90%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), inset 0 2px 5px rgba(255, 255, 255, 0.7);
+            position: relative;
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+        .ball-tron-hash .ball-inner {
+            width: 28px;
+            height: 28px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff3b44;
+            font-weight: 900;
+            font-size: 16px;
+            box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, 0.25);
+        }
+
         /* 3D Glossy Ball Styles */
         .ball-3d {
             position: relative;
@@ -72,10 +100,6 @@
         }
         .ball-blue {
             background: radial-gradient(circle at 35% 30%, #70a1ff 0%, #5352ed 45%, #3742fa 90%);
-        }
-        .ball-hash {
-            background: radial-gradient(circle at 35% 30%, #ff8585 0%, #ff4d4f 50%, #d92027 95%);
-            border: 2px solid rgba(255, 255, 255, 0.85);
         }
 
         /* Two-tone split balls for 0 and 5 */
@@ -255,11 +279,11 @@
 
                 <!-- ট্রন ব্লক হ্যাশের শেষ ৫টি বল -->
                 <div class="flex justify-around items-center px-1 pt-1" id="hash-balls-container">
-                    <div class="ball-3d ball-hash w-12 h-12 text-xl font-black">3</div>
-                    <div class="ball-3d ball-hash w-12 h-12 text-xl font-black">0</div>
-                    <div class="ball-3d ball-hash w-12 h-12 text-xl font-black">6</div>
-                    <div class="ball-3d ball-hash w-12 h-12 text-xl font-black">C</div>
-                    <div class="ball-3d ball-hash w-12 h-12 text-xl font-black">B</div>
+                    <div class="ball-tron-hash"><div class="ball-inner">2</div></div>
+                    <div class="ball-tron-hash"><div class="ball-inner">4</div></div>
+                    <div class="ball-tron-hash"><div class="ball-inner">B</div></div>
+                    <div class="ball-tron-hash"><div class="ball-inner">E</div></div>
+                    <div class="ball-tron-hash"><div class="ball-inner">8</div></div>
                 </div>
             </div>
         </div>
@@ -271,20 +295,15 @@
             <button onclick="openBetModal('color', 'red')" class="bg-[#ff4757] hover:bg-[#e84118] text-white py-2.5 rounded-xl font-black text-sm shadow-md transition active:scale-95">Red</button>
         </div>
 
-        <!-- ০ থেকে ৯ নম্বর গ্রিড (3D Spheres) -->
+        <!-- ০ থেকে ৯ নম্বর গ্রিড (Amar Club 3D Ball Assets with CSS Fallback) -->
         <div class="px-4 mt-3">
             <div class="bg-[#f8f9fd] rounded-2xl p-3.5 border border-gray-100 shadow-inner">
                 <div class="grid grid-cols-5 gap-y-3.5 justify-items-center">
-                    <button onclick="openBetModal('number', '0')" class="ball-3d ball-split-0 w-12 h-12 text-xl">0</button>
-                    <button onclick="openBetModal('number', '1')" class="ball-3d ball-green w-12 h-12 text-xl">1</button>
-                    <button onclick="openBetModal('number', '2')" class="ball-3d ball-red w-12 h-12 text-xl">2</button>
-                    <button onclick="openBetModal('number', '3')" class="ball-3d ball-green w-12 h-12 text-xl">3</button>
-                    <button onclick="openBetModal('number', '4')" class="ball-3d ball-red w-12 h-12 text-xl">4</button>
-                    <button onclick="openBetModal('number', '5')" class="ball-3d ball-split-5 w-12 h-12 text-xl">5</button>
-                    <button onclick="openBetModal('number', '6')" class="ball-3d ball-red w-12 h-12 text-xl">6</button>
-                    <button onclick="openBetModal('number', '7')" class="ball-3d ball-green w-12 h-12 text-xl">7</button>
-                    <button onclick="openBetModal('number', '8')" class="ball-3d ball-red w-12 h-12 text-xl">8</button>
-                    <button onclick="openBetModal('number', '9')" class="ball-3d ball-green w-12 h-12 text-xl">9</button>
+                    @for($i = 0; $i <= 9; $i++)
+                        <button onclick="openBetModal('number', '{{ $i }}')" class="transition transform hover:scale-105 active:scale-95 focus:outline-none">
+                            <img src="{{ asset('assets/image/wingo/n' . $i . '.png') }}" alt="{{ $i }}" class="w-12 h-12 object-contain drop-shadow-md" onerror="this.outerHTML='<div class=\'ball-3d {{ $i == 0 ? \'ball-split-0\' : ($i == 5 ? \'ball-split-5\' : (in_array($i, [1,3,7,9]) ? \'ball-green\' : \'ball-red\')) }} w-12 h-12 text-xl font-black\'>{{ $i }}</div>'">
+                        </button>
+                    @endfor
                 </div>
             </div>
         </div>
@@ -412,11 +431,11 @@
 
     </div>
 
-    <!-- শেষ ৫ সেকেন্ডের কাউন্টডাউন ফুল-কার্ড লক ওভারলে -->
-    <div id="countdown-overlay" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center hidden backdrop-blur-sm">
+    <!-- শেষ ৫ সেকেন্ডের কাউন্টডাউন ফুল-কার্ড লক ওভারলে (Screenshot 2 Match) -->
+    <div id="countdown-overlay" class="fixed inset-0 bg-black/40 z-40 flex items-center justify-center hidden backdrop-blur-[2px]">
         <div class="flex gap-4 animate-pulse">
-            <div class="w-24 h-36 bg-white rounded-3xl shadow-2xl flex items-center justify-center text-7xl font-black text-[#00b977] border-4 border-[#00b977]" id="overlay-d1">0</div>
-            <div class="w-24 h-36 bg-white rounded-3xl shadow-2xl flex items-center justify-center text-7xl font-black text-[#00b977] border-4 border-[#00b977]" id="overlay-d2">5</div>
+            <div class="w-32 h-44 bg-white rounded-[32px] shadow-2xl flex items-center justify-center text-[100px] font-black text-[#00b977] leading-none" id="overlay-d1">0</div>
+            <div class="w-32 h-44 bg-white rounded-[32px] shadow-2xl flex items-center justify-center text-[100px] font-black text-[#00b977] leading-none" id="overlay-d2">5</div>
         </div>
     </div>
 
@@ -751,8 +770,11 @@
             container.innerHTML = '';
             chars.forEach(char => {
                 const ball = document.createElement('div');
-                ball.className = 'ball-3d ball-hash w-12 h-12 text-xl font-black';
-                ball.innerText = char;
+                ball.className = 'ball-tron-hash';
+                const inner = document.createElement('div');
+                inner.className = 'ball-inner';
+                inner.innerText = char;
+                ball.appendChild(inner);
                 container.appendChild(ball);
             });
         }
