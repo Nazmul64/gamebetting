@@ -300,8 +300,19 @@
             <div class="bg-[#f8f9fd] rounded-2xl p-3.5 border border-gray-100 shadow-inner">
                 <div class="grid grid-cols-5 gap-y-3.5 justify-items-center">
                     @for($i = 0; $i <= 9; $i++)
+                        @php
+                            $ballClass = 'ball-red';
+                            if (in_array($i, [1, 3, 7, 9])) {
+                                $ballClass = 'ball-green';
+                            } elseif ($i === 0) {
+                                $ballClass = 'ball-split-0';
+                            } elseif ($i === 5) {
+                                $ballClass = 'ball-split-5';
+                            }
+                        @endphp
                         <button onclick="openBetModal('number', '{{ $i }}')" class="transition transform hover:scale-105 active:scale-95 focus:outline-none">
-                            <img src="{{ asset('assets/image/wingo/n' . $i . '.png') }}" alt="{{ $i }}" class="w-12 h-12 object-contain drop-shadow-md" onerror="this.outerHTML='<div class=\'ball-3d {{ $i == 0 ? \'ball-split-0\' : ($i == 5 ? \'ball-split-5\' : (in_array($i, [1,3,7,9]) ? \'ball-green\' : \'ball-red\')) }} w-12 h-12 text-xl font-black\'>{{ $i }}</div>'">
+                            <img src="{{ asset('assets/image/wingo/n' . $i . '.png') }}" alt="{{ $i }}" class="w-12 h-12 object-contain drop-shadow-md" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                            <div class="ball-3d {{ $ballClass }} w-12 h-12 text-xl font-black" style="display:none;">{{ $i }}</div>
                         </button>
                     @endfor
                 </div>
