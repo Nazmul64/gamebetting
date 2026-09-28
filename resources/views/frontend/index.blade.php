@@ -130,6 +130,46 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
+                <!-- Game: Crystal (1xBet Cascading Slot) -->
+                <a href="{{ route('crystal') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="crystal slots gems jewels 1xbet king 1xgames cascade avalanche" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%); color:#fff; font-weight:800;">CRYSTAL</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/crystal.png') }}" class="slot-card-img" alt="Crystal" onerror="this.src='{{ asset('assets/image/crystal.jpg') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #4c1d95 0%, #1e3a8a 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-gem" style="font-size:28px; margin-bottom:8px; color:#38bdf8;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Crystal</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Crystal</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Crystal&trade;</div>
+                    </div>
+                </a>
+
+                <!-- Game 0: Burning Hot (Realistic 1xBet Slot) -->
+                <a href="{{ route('burning-hot') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="burning hot burninghot slot 1xbet dragon euro games egt" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%); color:#fff; font-weight:800;">BURNING</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/burning_hot.png') }}" class="slot-card-img" alt="Burning Hot" onerror="this.src='{{ asset('assets/image/burning_hot.webp') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b91c1c 0%, #f97316 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-fire" style="font-size:28px; margin-bottom:8px; color:#fde047;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Burning Hot</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Burning Hot</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Burning Hot&trade;</div>
+                    </div>
+                </a>
+
                 <!-- Game 1: TrxWinGo Lottery (TRON Blockchain Provably Fair) -->
                 <a href="{{ route('trxwingo.index') }}" class="slot-card" data-category="lottery bangladesh popular new quick exclusive all" data-name="trxwingo trx win go tron lottery amar club color number prediction block hash" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-hot" style="background:#00b977; color:#fff;">TRX</span>
@@ -190,23 +230,23 @@
                     </div>
                 </a>
 
-                <!-- Game 3: Western Vault -->
-                <a href="{{ route('western-vault') }}" class="slot-card" data-category="popular exclusive new quick bangladesh all" data-name="western vault pvp duel pragmatic play" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
-                    <span class="slot-badge slot-badge-promo" style="background:#f97316; color:#fff;">ACTIVE</span>
+                <!-- Game 3: Western Slot (Wild West Gold) -->
+                <a href="{{ route('western-slot') }}" class="slot-card" data-category="popular exclusive new quick bangladesh all" data-name="western slot wild west gold 1xbet 1xgames sheriff cowboy" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color:#fff; font-weight:800;">WESTERN</span>
                     <div class="slot-card-image-wrapper">
-                        <img src="{{ asset('assets/image/western.webp') }}" class="slot-card-img" alt="Western Vault" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #b71c1c 0%, #e53935 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
-                            <i class="fas fa-vault" style="font-size:28px; margin-bottom:8px;"></i>
-                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Vault</span>
+                        <img src="{{ asset('assets/image/western.webp') }}" class="slot-card-img" alt="Western Slot" onerror="this.src='{{ asset('assets/image/western_slot.jpg') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #78350f 0%, #d97706 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-hat-cowboy" style="font-size:28px; margin-bottom:8px; color:#ffd76a;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Western Slot</span>
                         </div>
                     </div>
                     <div class="slot-card-overlay">
                         <span class="slot-play-btn"><i class="fas fa-play"></i></span>
-                        <span class="slot-demo-link">Play Demo</span>
+                        <span class="slot-demo-link">Play Western Slot</span>
                     </div>
                     <div class="slot-card-info">
-                        <span class="slot-card-provider">PVP Vault Duel</span>
-                        <div class="slot-card-title">Western Vault™</div>
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Western Slot™</div>
                     </div>
                 </a>
 

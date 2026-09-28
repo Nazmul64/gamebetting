@@ -132,10 +132,23 @@ Route::get('/treasure-climb', function () {
     return view('customer.treasure-climb');
 })->middleware('auth')->name('treasure-climb');
 
-Route::get('/western', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western');
-Route::get('/western-vault', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western-vault');
+Route::get('/western-slot', function () {
+    return view('customer.western-slot');
+})->name('western-slot');
+Route::get('/games/western-slot', function () {
+    return redirect()->route('western-slot');
+});
+
+Route::get('/western', function () {
+    return view('customer.western-slot');
+})->name('western');
+Route::get('/western-vault', function () {
+    return view('customer.western-slot');
+})->name('western-vault');
 Route::prefix('games/western-vault')->group(function () {
-    Route::get('/', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'index'])->name('western.index');
+    Route::get('/', function () {
+        return view('customer.western-slot');
+    })->name('western.index');
     Route::get('/state', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'getGameState'])->name('western.state');
     Route::post('/bet', [App\Http\Controllers\WesternVault\WesternVaultGameController::class, 'placeBet'])->name('western.bet');
 });
@@ -146,6 +159,20 @@ Route::prefix('games/temple-of-fortune')->group(function () {
     Route::get('/', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'index'])->name('abyss.index');
     Route::get('/state', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'getGameState'])->name('abyss.state');
     Route::post('/bet', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'placeBet'])->name('abyss.bet');
+});
+
+Route::get('/burning-hot', function () {
+    return view('customer.burning-hot');
+})->name('burning-hot');
+Route::get('/games/burning-hot', function () {
+    return redirect()->route('burning-hot');
+});
+
+Route::get('/crystal', function () {
+    return view('customer.crystal');
+})->name('crystal');
+Route::get('/games/crystal', function () {
+    return redirect()->route('crystal');
 });
 
 Route::get('/super-ace-deluxe', function () {

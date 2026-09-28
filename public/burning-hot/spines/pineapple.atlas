@@ -1,0 +1,16 @@
+pineapple@1x.59a26fbb6e93.png
+size:447,171
+filter:Linear,Linear
+scale:0.4609
+pineapple
+bounds:178,32,121,137
+offsets:1,1,122,139
+pineapple_stone_icon
+bounds:2,2,167,174
+rotate:90
+teeth1
+bounds:301,88,144,81
+offsets:2,2,147,83
+teeth2
+bounds:301,5,138,81
+offsets:1,0,141,84

@@ -1,0 +1,825 @@
+{
+  "$schema": "../../../../../libs/pixi-scene-parser-handlers/schemas/scene.schema.json",
+  "fonts": {
+    "infoFont": {
+      "fontFamily": "Montserrat, sans-serif",
+      "fontWeight": "600",
+      "fontSize": 20,
+      "fill": "0xFFFFFF",
+      "align": "center",
+      "lineHeight": 24
+    }
+  },
+  "scene": [
+    {
+      "type": "bitmapLabel",
+      "font": "WinBitmapFont",
+      "name": "default_win_label",
+      "origin": 0.5,
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "type": "bitmapLabel",
+      "font": "BigWinBitmapFont",
+      "name": "big_win_label",
+      "origin": 0.5,
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "type": "adaptiveContainer",
+      "name": "backgroundLayer",
+      "visible": true,
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          },
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "visible": true
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "background",
+          "texture": "background",
+          "x": -302,
+          "y": -206.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "columnsRight",
+          "texture": "columns_right",
+          "x": 1217,
+          "y": -89,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "columnsLeft",
+          "texture": "columns_left",
+          "x": -99.5,
+          "y": -88.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "backgroundCenter",
+          "texture": "background_center",
+          "x": 144.5,
+          "y": 176,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "lavaRight",
+          "texture": "lava_right",
+          "x": 1462,
+          "y": 406.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "lavaLeft",
+          "texture": "lava_left",
+          "x": -142,
+          "y": 408.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "stonesRight",
+          "texture": "stones_right",
+          "x": 1796,
+          "y": 190,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "stonesLeft",
+          "texture": "stones_left",
+          "x": -141.5,
+          "y": 164,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "stalagmites",
+          "texture": "stalagmites",
+          "x": 628,
+          "y": -88.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "spine",
+          "name": "backgroundVfx",
+          "texture": "background_1",
+          "animationName": "idle",
+          "visible": true,
+          "loop": true,
+          "x": 949.5,
+          "y": 453.5,
+          "depth": 1
+        },
+        {
+          "type": "spine",
+          "name": "fallingStone",
+          "texture": "fallingstone",
+          "animationName": "megawin",
+          "visible": false,
+          "loop": false,
+          "x": 1500,
+          "y": 400,
+          "depth": 1
+        },
+        {
+          "type": "sprite",
+          "name": "stonesDown",
+          "texture": "stones_down",
+          "x": -145,
+          "y": 666.5,
+          "depth": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "visible": true,
+      "name": "reelsContainer",
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "visible": true,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          }
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "field",
+          "texture": "field",
+          "x": 458.5,
+          "y": 0,
+          "depth": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "name": "gameLayer",
+      "visible": true,
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          },
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "visible": true
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "stoneLeft",
+          "texture": "stone_left",
+          "x": 384.5,
+          "y": -53,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "stoneRight",
+          "texture": "stone_right",
+          "x": 1261,
+          "y": -43,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "glow",
+          "texture": "blue_light",
+          "scale": 2,
+          "x": 447,
+          "y": -53,
+          "depth": 1,
+          "visible": true,
+          "alpha": 0
+        },
+        {
+          "type": "spine",
+          "name": "teeth",
+          "texture": "teeth",
+          "visible": true,
+          "x": 924,
+          "y": 435,
+          "depth": 1
+        },
+        {
+          "type": "spine",
+          "name": "logo",
+          "texture": "logo",
+          "animationName": "idle",
+          "visible": true,
+          "loop": true,
+          "x": 1607.5,
+          "y": 128.5,
+          "depth": 1
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "visible": true,
+      "name": "frontTop",
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "visible": true,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          }
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "teethUpRight",
+          "texture": "teeth_up_right",
+          "x": 1424,
+          "y": -84,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "teethUpLeft",
+          "texture": "teeth_up_left",
+          "x": 3.5,
+          "y": -84,
+          "depth": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "visible": true,
+      "name": "infoBlockLayer",
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "visible": true,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          }
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "textField",
+          "texture": "text_field",
+          "x": 679,
+          "y": -90.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "container",
+          "name": "infoBlock",
+          "visible": true,
+          "x": 754,
+          "y": 62,
+          "items": []
+        },
+        {
+          "type": "label",
+          "x": 918,
+          "y": 87,
+          "name": "infoLabel",
+          "depth": 10,
+          "font": "infoFont",
+          "origin": 0.5,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "name": "frontBottom",
+      "visible": true,
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          },
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "visible": true
+        }
+      },
+      "items": [
+        {
+          "type": "spine",
+          "name": "knight",
+          "texture": "knight",
+          "animationName": "idle",
+          "visible": true,
+          "loop": true,
+          "x": 1612,
+          "y": 593,
+          "depth": 1
+        },
+        {
+          "type": "spine",
+          "name": "dragon",
+          "texture": "dragon",
+          "animationName": "idle",
+          "visible": true,
+          "loop": true,
+          "x": 329.5,
+          "y": 589,
+          "depth": 1
+        },
+        {
+          "type": "sprite",
+          "name": "ui",
+          "texture": "ui_stone",
+          "x": 417,
+          "y": 714.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "spine",
+          "name": "fireVfx",
+          "texture": "fire",
+          "animationName": "idle",
+          "visible": true,
+          "loop": true,
+          "x": 901.5,
+          "y": 937,
+          "depth": 1
+        },
+        {
+          "type": "sprite",
+          "name": "teethDownBackLeft",
+          "texture": "teeth_down_back_left",
+          "x": 295,
+          "y": 808,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "teethDownBackRight",
+          "texture": "teeth_down_back_right",
+          "x": 1413,
+          "y": 786.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "animation",
+          "name": "sparks_left",
+          "x": -296,
+          "y": 581,
+          "started": true,
+          "visible": true,
+          "loop": true,
+          "config": {
+            "fps": 30
+          },
+          "frames": [
+            "sparks_1",
+            "sparks_2",
+            "sparks_3",
+            "sparks_4",
+            "sparks_5",
+            "sparks_6",
+            "sparks_7",
+            "sparks_8",
+            "sparks_9",
+            "sparks_10",
+            "sparks_11",
+            "sparks_12",
+            "sparks_13",
+            "sparks_14",
+            "sparks_15",
+            "sparks_16",
+            "sparks_17",
+            "sparks_18",
+            "sparks_19",
+            "sparks_20",
+            "sparks_21",
+            "sparks_22",
+            "sparks_23",
+            "sparks_24",
+            "sparks_25",
+            "sparks_26",
+            "sparks_27",
+            "sparks_28",
+            "sparks_29",
+            "sparks_30",
+            "sparks_31",
+            "sparks_32",
+            "sparks_33",
+            "sparks_34",
+            "sparks_35",
+            "sparks_36",
+            "sparks_37",
+            "sparks_38",
+            "sparks_39",
+            "sparks_40",
+            "sparks_41",
+            "sparks_42",
+            "sparks_43",
+            "sparks_44",
+            "sparks_45"
+          ]
+        },
+        {
+          "type": "animation",
+          "name": "sparks_right",
+          "x": 2266,
+          "y": 581,
+          "started": true,
+          "visible": true,
+          "loop": true,
+          "scale": {
+            "x": -1,
+            "y": 1
+          },
+          "config": {
+            "fps": 30
+          },
+          "frames": [
+            "sparks_1",
+            "sparks_2",
+            "sparks_3",
+            "sparks_4",
+            "sparks_5",
+            "sparks_6",
+            "sparks_7",
+            "sparks_8",
+            "sparks_9",
+            "sparks_10",
+            "sparks_11",
+            "sparks_12",
+            "sparks_13",
+            "sparks_14",
+            "sparks_15",
+            "sparks_16",
+            "sparks_17",
+            "sparks_18",
+            "sparks_19",
+            "sparks_20",
+            "sparks_21",
+            "sparks_22",
+            "sparks_23",
+            "sparks_24",
+            "sparks_25",
+            "sparks_26",
+            "sparks_27",
+            "sparks_28",
+            "sparks_29",
+            "sparks_30",
+            "sparks_31",
+            "sparks_32",
+            "sparks_33",
+            "sparks_34",
+            "sparks_35",
+            "sparks_36",
+            "sparks_37",
+            "sparks_38",
+            "sparks_39",
+            "sparks_40",
+            "sparks_41",
+            "sparks_42",
+            "sparks_43",
+            "sparks_44",
+            "sparks_45"
+          ]
+        },
+        {
+          "type": "sprite",
+          "name": "stones",
+          "texture": "stones",
+          "x": 276,
+          "y": 861.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "teethDownFrontLeft",
+          "texture": "teeth_down_front_left",
+          "x": 60.5,
+          "y": 798.5,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "teethDownFrontCenter",
+          "texture": "teeth_down_front_center",
+          "x": 480,
+          "y": 858,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "teethDownFrontRight",
+          "texture": "teeth_down_front_right",
+          "x": 1642,
+          "y": 767.5,
+          "depth": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "visible": true,
+      "name": "bubble",
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "visible": true,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          },
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          }
+        }
+      },
+      "items": [
+        {
+          "type": "animation",
+          "name": "small_burn",
+          "x": 364.5,
+          "y": 142.5,
+          "scale": 1.6,
+          "started": false,
+          "visible": false,
+          "loop": false,
+          "config": {
+            "fps": 60
+          },
+          "frames": [
+            "sw_1",
+            "sw_2",
+            "sw_3",
+            "sw_4",
+            "sw_5",
+            "sw_6",
+            "sw_7",
+            "sw_8",
+            "sw_9",
+            "sw_10",
+            "sw_11",
+            "sw_12",
+            "sw_13",
+            "sw_14",
+            "sw_15",
+            "sw_16",
+            "sw_17",
+            "sw_18",
+            "sw_19",
+            "sw_20",
+            "sw_21",
+            "sw_22",
+            "sw_23",
+            "sw_24"
+          ]
+        },
+        {
+          "type": "animation",
+          "name": "big_burn",
+          "x": 463.5,
+          "y": -20,
+          "scale": 1.6,
+          "started": false,
+          "visible": false,
+          "loop": false,
+          "config": {
+            "fps": 60
+          },
+          "frames": [
+            "w_1",
+            "w_2",
+            "w_3",
+            "w_4",
+            "w_5",
+            "w_6",
+            "w_7",
+            "w_8",
+            "w_9",
+            "w_10",
+            "w_11",
+            "w_12",
+            "w_13",
+            "w_14",
+            "w_15",
+            "w_16",
+            "w_17",
+            "w_18",
+            "w_19",
+            "w_20",
+            "w_21",
+            "w_22",
+            "w_23",
+            "w_24",
+            "w_25",
+            "w_26",
+            "w_27",
+            "w_28",
+            "w_29",
+            "w_30",
+            "w_31",
+            "w_32",
+            "w_33",
+            "w_34",
+            "w_35",
+            "w_36",
+            "w_37",
+            "w_38",
+            "w_39",
+            "w_40",
+            "w_41",
+            "w_42",
+            "w_43",
+            "w_44",
+            "w_45",
+            "w_46",
+            "w_47",
+            "w_48",
+            "w_49",
+            "w_50"
+          ]
+        },
+        {
+          "type": "container",
+          "name": "labelContainer",
+          "visible": true,
+          "x": 960,
+          "y": 426.5,
+          "items": []
+        }
+      ]
+    },
+    {
+      "type": "adaptiveContainer",
+      "name": "frame",
+      "visible": true,
+      "sizeMap": {
+        "default": {
+          "depth": 1,
+          "alignHorizontal": 1,
+          "alignVertical": 1,
+          "visible": true,
+          "targetArea": {
+            "x": 0,
+            "y": 0,
+            "height": 1,
+            "width": 1
+          },
+          "sourceArea": {
+            "width": 1920,
+            "height": 893
+          }
+        }
+      },
+      "items": [
+        {
+          "type": "sprite",
+          "name": "frame",
+          "texture": "frame",
+          "x": -290,
+          "y": -210,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "borderTop",
+          "texture": "frame_border",
+          "x": -290,
+          "y": -710,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "borderBottom",
+          "texture": "frame_border",
+          "x": -290,
+          "y": 1135,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "borderLeft",
+          "texture": "frame_border",
+          "angle": 90,
+          "x": -290,
+          "y": -500,
+          "depth": 1,
+          "visible": true
+        },
+        {
+          "type": "sprite",
+          "name": "borderRight",
+          "texture": "frame_border",
+          "angle": 90,
+          "x": 2705,
+          "y": -500,
+          "depth": 1,
+          "visible": true
+        }
+      ]
+    }
+  ]
+}

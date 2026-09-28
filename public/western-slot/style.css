@@ -1,0 +1,1586 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root {
+  --wood-brown: #3e2716;
+  --gold-highlight: #ffcc00;
+  --gold-glow: #e67e22;
+  --panel-copper: #ab6828;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0b0704;
+  font-family: 'Montserrat', sans-serif;
+  color: #fff;
+}
+
+/* Master Viewport scaling */
+.game-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #2c1a0e 0%, #0d0703 100%);
+}
+
+/* Full Background Scene */
+.background-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.main-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: brightness(0.92) contrast(1.05);
+}
+
+/* Flying Eagle Sprite Animation - Flies from right to left */
+.eagle-wrapper {
+  position: absolute;
+  top: 8%;
+  right: -250px;
+  left: auto;
+  width: 230px;
+  height: 290px;
+  pointer-events: none;
+  z-index: 2;
+  transform: scale(0.38) scaleX(-1);
+  opacity: 0;
+}
+
+.eagle-sprite {
+  width: 230px;
+  height: 290px;
+  background: url('eagle@1x.91c921b646a6.png') 0 0 no-repeat;
+  animation: eagleFlap 0.9s steps(10) infinite;
+}
+
+@keyframes eagleFlap {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -2300px 0;
+  }
+}
+
+@keyframes eagleFlyAcross {
+  0% {
+    right: -250px;
+    top: 6%;
+    opacity: 0;
+    transform: scale(0.35) scaleX(-1) rotate(3deg);
+  }
+
+  5% {
+    opacity: 0.9;
+  }
+
+  50% {
+    top: 13%;
+    transform: scale(0.42) scaleX(-1) rotate(-2deg);
+  }
+
+  95% {
+    opacity: 0.9;
+  }
+
+  100% {
+    right: 110vw;
+    top: 4%;
+    opacity: 0;
+    transform: scale(0.38) scaleX(-1) rotate(4deg);
+  }
+}
+
+.eagle-flying {
+  animation: eagleFlyAcross 14s linear forwards;
+}
+
+/* Unified Game Stage: Holds Cowboy, Slot Cabinet, Cowgirl, & Jackpot in fixed aspect ratio */
+.game-stage {
+  position: relative;
+  width: 1600px;
+  height: 760px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  z-index: 10;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+/* Cowboy on Left - Clean elegant size & position */
+.character-cowboy {
+  position: absolute;
+  top: 40px;
+  left: 45px;
+  width: 290px;
+  height: auto;
+  z-index: 2;
+  pointer-events: auto;
+  animation: cowboyBreathe 5s ease-in-out infinite;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.85));
+}
+
+.cowboy-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes cowboyBreathe {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(0.4deg);
+  }
+}
+
+/* Cowgirl on Right - Clean elegant size & position */
+.character-cowgirl {
+  position: absolute;
+  top: 40px;
+  right: 45px;
+  width: 310px;
+  height: auto;
+  z-index: 2;
+  pointer-events: auto;
+  animation: girlBreathe 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.85));
+}
+
+.cowgirl-body {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Exact anatomical attachment from elbow socket at blouse sleeve (Anchored directly on the elbow stump) */
+.cowgirl-arm-wrapper {
+  position: absolute;
+  top: 14.6%;
+  left: 22.2%;
+  width: 12.3%;
+  height: 19.0%;
+  transform-origin: 50% 98%;
+  animation: gunHandAim 6s ease-in-out infinite;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+}
+
+.cowgirl-hand {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(2px 5px 10px rgba(0, 0, 0, 0.6));
+  margin-top: 18px;
+  margin-left: -16px;
+}
+
+/* Arm Movement Keyframes - Subtle realistic revolver aim around elbow joint */
+@keyframes gunHandAim {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-3deg);
+  }
+
+  50% {
+    transform: rotate(2deg);
+  }
+
+  75% {
+    transform: rotate(-4deg);
+  }
+}
+
+.cowgirl-arm-wrapper.cocking {
+  animation: gunCock 0.5s ease-in-out;
+}
+
+@keyframes gunCock {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(-24deg) scale(1.05);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.cowgirl-arm-wrapper.shooting {
+  animation: gunShoot 0.4s ease-out;
+}
+
+@keyframes gunShoot {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-32deg);
+  }
+
+  60% {
+    transform: rotate(8deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Gun Smoke Effect */
+.gun-smoke {
+  position: absolute;
+  top: -15px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(200, 200, 200, 0) 70%);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gun-smoke.active {
+  animation: smokePuff 1s ease-out forwards;
+}
+
+@keyframes smokePuff {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.4) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.2) translateY(-40px);
+  }
+}
+
+/* Top Left Jackpot Sign */
+.top-jackpot-sign {
+  position: absolute;
+  top: 15px;
+  left: 350px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jackpot-header-img {
+  width: 170px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(255, 204, 0, 0.4));
+}
+
+.jackpot-sign-text {
+  position: absolute;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  color: #ffde59;
+  letter-spacing: 2px;
+  font-size: 15px;
+  text-shadow: 0 0 8px #ff9900, 0 2px 4px #000;
+}
+
+/* Demo Mode Floating Panel (As in Reference Screenshot) */
+.demo-mode-panel {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  width: 235px;
+  background: linear-gradient(180deg, #1b2838 0%, #0d1722 100%);
+  border: 1px solid #2a475e;
+  border-radius: 6px;
+  padding: 14px;
+  z-index: 999;
+  pointer-events: auto;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.25s ease;
+}
+
+.demo-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.demo-status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #2ecc71;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #2ecc71;
+  display: inline-block;
+}
+
+.demo-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.demo-panel-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.demo-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: #8f98a0;
+}
+
+.demo-stat-val {
+  font-weight: 800;
+  color: #fff;
+}
+
+.demo-stat-val.val-green {
+  color: #2ecc71;
+}
+
+.demo-disclaimer {
+  font-size: 9px;
+  line-height: 1.35;
+  color: #62768a;
+  margin-bottom: 12px;
+}
+
+.btn-exit-demo {
+  width: 100%;
+  padding: 8px 0;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;
+}
+
+.btn-exit-demo:hover {
+  background: #1565c0;
+}
+
+.btn-collapse-demo {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #42a5f5;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px 0;
+}
+
+.btn-collapse-demo:hover {
+  text-decoration: underline;
+}
+
+/* Collapsed Demo Pill */
+.demo-trigger-pill {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  z-index: 999;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #1b2838 0%, #0d1722 100%);
+  border: 1px solid #2a475e;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #42a5f5;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: filter 0.2s;
+}
+
+.demo-trigger-pill:hover {
+  filter: brightness(1.2);
+}
+
+/* ==========================================================
+   MAIN SLOT MACHINE CABINET
+   ========================================================== */
+.slot-machine-container {
+  position: relative;
+  z-index: 10;
+  width: 980px;
+  max-width: 95vw;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wood-cabinet {
+  position: relative;
+  width: 980px;
+  height: 640px;
+  border-radius: 12px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 14px 10px 14px;
+}
+
+.cabinet-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  z-index: -1;
+  object-fit: cover;
+}
+
+/* Cabinet Header */
+.cabinet-header {
+  position: relative;
+  width: 100%;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+/* Jackpot Box */
+.jackpot-counter-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 5px;
+}
+
+.jp-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(255, 200, 0, 0.8), 0 2px 3px #000;
+}
+
+.jp-star {
+  width: 16px;
+  height: 16px;
+  filter: drop-shadow(0 0 5px #ffcc00);
+  animation: starTwinkle 2s infinite alternate ease-in-out;
+}
+
+.jp-star.right {
+  animation-delay: 1s;
+}
+
+@keyframes starTwinkle {
+  0% {
+    transform: scale(0.85) rotate(0deg);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1.15) rotate(20deg);
+    opacity: 1;
+  }
+}
+
+.jp-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 6px #000, 0 0 12px rgba(255, 230, 0, 0.8);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Western Slot Parchment Sign */
+.logo-sign-box {
+  position: relative;
+  width: 340px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -4px;
+}
+
+.logo-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+}
+
+.logo-text {
+  position: relative;
+  z-index: 2;
+  width: 250px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+/* Top Buttons */
+.top-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.top-btn {
+  background: linear-gradient(180deg, #443224 0%, #20150d 100%);
+  border: 1px solid #7c5836;
+  border-radius: 4px;
+  width: 36px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 6px rgba(0, 0, 0, 0.6);
+  transition: all 0.15s ease;
+}
+
+.top-btn:hover {
+  filter: brightness(1.25);
+  transform: translateY(-1px);
+}
+
+.top-btn:active {
+  transform: translateY(1px);
+  filter: brightness(0.9);
+}
+
+.top-btn img {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+/* Cabinet Center (Side Panels + Reels) */
+.cabinet-center {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Side Copper Panels */
+.side-panel {
+  position: relative;
+  width: 120px;
+  height: 375px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sb-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Left Panel: 9 Payline Pins - Single Vertical Column (1-9) */
+.payline-pins-vertical,
+.payline-pins-grid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 94%;
+  width: 100%;
+  padding: 6px 0;
+}
+
+.pin-btn {
+  position: relative;
+  width: 34px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.2s;
+}
+
+.pin-btn:hover {
+  transform: scale(1.18);
+  filter: brightness(1.35);
+}
+
+.pin-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+}
+
+.pin-num {
+  position: relative;
+  z-index: 3;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  color: #d1b89d;
+  text-shadow: 0 1px 3px #000, 0 0 2px #000;
+  margin-left: -7px;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+/* Active / Lit Payline Pin */
+.pin-btn.active .pin-num {
+  color: #ff2222;
+  text-shadow: 0 0 8px #ff0000, 0 0 12px #ff4444, 0 1px 2px #000;
+}
+
+.pin-btn.active .pin-bg {
+  filter: drop-shadow(0 0 8px rgba(255, 50, 50, 0.95)) brightness(1.2);
+}
+
+/* Right Panel: Mechanical Lever */
+.lever-track {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-slot {
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  width: 6px;
+  background: #110b06;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px #000, 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.track-dots {
+  position: absolute;
+  top: 55px;
+  bottom: 55px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.sb-dot {
+  width: 10px;
+  height: 10px;
+  opacity: 0.85;
+}
+
+.lever-handle {
+  position: absolute;
+  top: 50px;
+  left: calc(50% - 68px);
+  width: 136px;
+  height: 48px;
+  cursor: grab;
+  z-index: 5;
+  transition: top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.15s;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.85));
+}
+
+.lever-handle:hover {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.95)) brightness(1.1);
+}
+
+.lever-handle:active {
+  cursor: grabbing;
+}
+
+.lever-handle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lever-handle.pulled {
+  top: 260px;
+  transform: rotate(5deg) scale(0.96);
+}
+
+/* Main Reels Window (5 Reels x 3 Rows) */
+.reels-stage {
+  position: relative;
+  width: 630px;
+  height: 375px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.9), 0 5px 15px rgba(0, 0, 0, 0.8);
+}
+
+.reels-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.drum-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+}
+
+.reels-container {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.reel-column {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  margin: 0 3px;
+  overflow: hidden;
+  background: rgba(18, 12, 8, 0.45);
+  border-radius: 4px;
+}
+
+.reel-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.1s linear;
+}
+
+.symbol-cell {
+  position: relative;
+  width: 100%;
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.symbol-bg {
+  position: absolute;
+  width: 94%;
+  height: 94%;
+  top: 3%;
+  left: 3%;
+  object-fit: fill;
+  border-radius: 8px;
+  opacity: 0.85;
+}
+
+.symbol-icon {
+  position: relative;
+  z-index: 2;
+  max-width: 86%;
+  max-height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+/* Blur effect during fast spin */
+.reel-column.spinning .symbol-cell {
+  filter: blur(2.5px) brightness(1.1);
+}
+
+/* Winning Symbol Glow & Pulse */
+.symbol-cell.winning .symbol-icon {
+  animation: winPulse 0.8s infinite alternate ease-in-out;
+  filter: drop-shadow(0 0 12px #ffcc00) brightness(1.2);
+}
+
+.symbol-cell.winning .symbol-bg {
+  box-shadow: inset 0 0 15px #ffcc00, 0 0 10px #ff9900;
+  border: 2px solid #ffcc00;
+}
+
+@keyframes winPulse {
+  0% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+/* Paylines Visual Overlay */
+.paylines-overlay {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.line-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  filter: drop-shadow(0 0 6px #ffcc00);
+}
+
+.line-overlay.active {
+  opacity: 1;
+  animation: lineGlow 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes lineGlow {
+  0% {
+    filter: drop-shadow(0 0 4px #ff9900);
+  }
+
+  100% {
+    filter: drop-shadow(0 0 12px #ffff33) brightness(1.3);
+  }
+}
+
+/* Win Announcement Overlay */
+.win-animation-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win-banner-text {
+  font-family: 'Rye', serif;
+  font-size: 38px;
+  color: #fffb00;
+  text-shadow: 0 0 15px #ff6600, 0 4px 8px #000;
+  background: rgba(20, 10, 5, 0.85);
+  border: 3px solid #ffcc00;
+  border-radius: 10px;
+  padding: 12px 30px;
+  animation: bigWinPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bigWinPop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  80% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================
+   BOTTOM DASHBOARD CONTROLS
+   ========================================================== */
+.cabinet-footer {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 6px;
+}
+
+/* Status Message Box on Left */
+.msg-box {
+  position: relative;
+  width: 145px;
+  height: 64px;
+  background: #080402;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  text-align: center;
+  box-shadow: inset 0 2px 8px #000, 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.msg-box::before,
+.msg-box::after {
+  content: '✦';
+  position: absolute;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.msg-box::before {
+  top: 2px;
+  left: 4px;
+}
+
+.msg-box::after {
+  bottom: 2px;
+  right: 4px;
+}
+
+.msg-box span {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 10px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px #000;
+}
+
+/* Sound Button */
+.sound-btn {
+  position: relative;
+  width: 44px;
+  height: 48px;
+  background: linear-gradient(180deg, #44301f 0%, #201309 100%);
+  border: 2px solid #6b4c30;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 6px rgba(0, 0, 0, 0.7);
+  transition: all 0.15s;
+}
+
+.sound-btn:hover {
+  filter: brightness(1.2);
+}
+
+.sound-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.sound-slash {
+  position: absolute;
+  width: 30px;
+  height: 3px;
+  background: #ff3333;
+  transform: rotate(45deg);
+  display: none;
+  border-radius: 2px;
+  box-shadow: 0 0 4px #000;
+}
+
+.sound-btn.muted .sound-slash {
+  display: block;
+}
+
+/* Control Cards (Stake, Paylines, Total Stake) */
+.control-card {
+  position: relative;
+  background: linear-gradient(180deg, #18100a 0%, #0d0805 100%);
+  border: 2px solid #4a3320;
+  border-radius: 4px;
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 5px 8px;
+  box-shadow: inset 0 2px 6px #000, 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.card-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #aa8866;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 1px #000;
+}
+
+/* Stake Box */
+.stake-card {
+  width: 145px;
+}
+
+.stake-input-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #090503;
+  border: 1px solid #332012;
+  border-radius: 3px;
+  padding: 2px 4px;
+  height: 32px;
+}
+
+.stake-step-btn {
+  background: #2b1a0e;
+  border: 1px solid #5a381e;
+  color: #ffcc00;
+  font-size: 14px;
+  font-weight: 900;
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stake-step-btn:hover {
+  background: #462c19;
+}
+
+#stake-input {
+  width: 45px;
+  background: transparent;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  outline: none;
+}
+
+.stake-clear-btn {
+  background: #cc2222;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Paylines Box */
+.paylines-card {
+  width: 135px;
+  align-items: center;
+}
+
+.lines-counter-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.lines-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: #ffcc00;
+  line-height: 1;
+}
+
+.lines-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.arrow-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-btn img {
+  width: 15px;
+  height: 10px;
+}
+
+.left-arr img {
+  transform: rotate(180deg);
+}
+
+.pip-bar {
+  display: flex;
+  gap: 2px;
+}
+
+.pip {
+  width: 4px;
+  height: 12px;
+  background: #3a2617;
+  border-radius: 1px;
+}
+
+.pip.active {
+  background: #ffcc00;
+  box-shadow: 0 0 4px #ff9900;
+}
+
+/* Total Stake Box */
+.total-stake-card {
+  width: 110px;
+}
+
+.total-stake-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  line-height: 32px;
+  letter-spacing: 1px;
+}
+
+/* Turbo Button */
+.turbo-btn {
+  width: 78px;
+  height: 48px;
+  background: linear-gradient(180deg, #44301f 0%, #201309 100%);
+  border: 2px solid #6b4c30;
+  border-radius: 4px;
+  color: #caa07a;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 6px rgba(0, 0, 0, 0.7);
+  transition: all 0.15s;
+}
+
+.turbo-btn.active {
+  background: linear-gradient(180deg, #f39c12 0%, #b85d06 100%);
+  border-color: #ffcc00;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(243, 156, 18, 0.8);
+}
+
+.turbo-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* Autoplay Button */
+.autoplay-btn {
+  width: 90px;
+  height: 48px;
+  background: linear-gradient(180deg, #44301f 0%, #201309 100%);
+  border: 2px solid #6b4c30;
+  border-radius: 4px;
+  color: #caa07a;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10.5px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 6px rgba(0, 0, 0, 0.7);
+  transition: all 0.15s;
+}
+
+.autoplay-btn.active {
+  background: linear-gradient(180deg, #e74c3c 0%, #92170c 100%);
+  border-color: #ff7675;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(231, 76, 60, 0.8);
+}
+
+.autoplay-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* Main Glowing Green Spin Button */
+.spin-btn {
+  width: 100px;
+  height: 64px;
+  background: url('btn-bg-green@1x.bce448e41133.jpg') center/cover no-repeat;
+  border: 2px solid #68d844;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(68, 216, 68, 0.5), 0 4px 10px rgba(0, 0, 0, 0.8);
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.spin-btn:hover {
+  filter: brightness(1.25);
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(68, 216, 68, 0.8), 0 6px 12px rgba(0, 0, 0, 0.9);
+}
+
+.spin-btn:active,
+.spin-btn.active {
+  background-image: url('btn-bg-agreen@1x.dc2c7f796ed0.jpg');
+  transform: translateY(2px);
+  filter: brightness(1.1);
+}
+
+.spin-btn:disabled {
+  filter: grayscale(0.7) brightness(0.6);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spin-text {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: #fff;
+  text-shadow: 0 2px 4px #000, 0 0 8px #2ecc71;
+  letter-spacing: 1.5px;
+}
+
+/* Balance Bottom Bar */
+.balance-bar {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 16px 0 16px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #bb9977;
+}
+
+.balance-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.balance-item .val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.balance-item .val.win-highlight {
+  color: #2ecc71;
+  text-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+}
+
+/* ==========================================================
+   MODALS (RULES & COMBINATIONS)
+   ========================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-backdrop.open {
+  display: flex;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-box {
+  position: relative;
+  width: 680px;
+  max-width: 92vw;
+  max-height: 85vh;
+  background: url('western-rule@1x.ba037ab7d72f.png') center/100% 100% no-repeat, #1f140c;
+  border-radius: 12px;
+  border: 3px solid #845729;
+  padding: 30px 24px 20px 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.modal-close-btn:hover {
+  transform: scale(1.2);
+}
+
+.modal-header-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: #ffde59;
+  text-align: center;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px #000;
+}
+
+.modal-content-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 8px;
+}
+
+.modal-content-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content-scroll::-webkit-scrollbar-thumb {
+  background: #6b4522;
+  border-radius: 3px;
+}
+
+/* Paytable Grid */
+.paytable-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.paytable-card {
+  background: rgba(15, 9, 5, 0.75);
+  border: 1px solid #4a301a;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 12px;
+}
+
+.paytable-card.wild-card {
+  border-color: #ffcc00;
+  background: rgba(40, 25, 10, 0.85);
+}
+
+.paytable-card.jackpot-card {
+  border-color: #e74c3c;
+  background: rgba(45, 15, 15, 0.85);
+}
+
+.pt-sym {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.pt-info h4 {
+  font-size: 13px;
+  color: #ffcc00;
+  margin-bottom: 4px;
+}
+
+.pt-info p {
+  font-size: 10.5px;
+  color: #d1b89d;
+  margin-bottom: 4px;
+}
+
+.pt-payouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #2ecc71;
+}
+
+/* Paylines diagram in modal */
+.lines-diagram-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.line-demo-card {
+  background: rgba(15, 9, 5, 0.8);
+  border: 1px solid #5a381e;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.line-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffcc00;
+  margin-bottom: 8px;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+  background: #000;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.mini-grid span {
+  width: 14px;
+  height: 14px;
+  background: #2b1b11;
+  border-radius: 2px;
+}
+
+.mini-grid span.hit {
+  background: #ffcc00;
+  box-shadow: 0 0 4px #ff9900;
+}
+
+/* Responsive Unified Stage Scaling (Keeps Characters & Cabinet 100% visible on Mobile & Desktop) */
+@media (max-width: 1540px) {
+  .game-stage {
+    transform: scale(calc(100vw / 1540));
+  }
+}
+
+@media (max-height: 720px) {
+  .game-stage {
+    transform: scale(calc(100vh / 720));
+  }
+}
+
+@media (max-width: 600px) {
+  .demo-mode-panel {
+    transform: scale(0.85);
+    transform-origin: bottom right;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .demo-trigger-pill {
+    right: 10px;
+    bottom: 10px;
+  }
+}

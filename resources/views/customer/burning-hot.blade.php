@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Burning Hot - 1xBet Realistic Slot Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ asset('burning-hot/css/styles.css') }}">
+  <style>
+    body {
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+    #game-wrapper {
+      height: calc(100vh - 70px) !important;
+      min-height: 600px;
+    }
+  </style>
+  <script>
+    window.BURNING_HOT_BASE = "{{ asset('burning-hot') }}/";
+  </script>
+  <script src="{{ asset('burning-hot/js/lib/pixi.min.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/lib/pixi-spine.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/lib/gsap.min.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/lib/PixiPlugin.min.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/lib/howler.min.js') }}"></script>
+</head>
+<body>
+
+  @include('customer.header')
+
+  <div id="game-wrapper">
+    <div id="game-canvas-container">
+      <canvas id="game-canvas" width="1920" height="1080"></canvas>
+
+      <!-- Top Breadcrumb Navigation -->
+      <div id="top-breadcrumbs">
+        <a href="{{ route('home') }}" class="bc-link" style="color:inherit; text-decoration:none;">1XGAMES</a>
+        <span class="bc-sep">/</span>
+        <a href="{{ route('dashboard') }}" class="bc-link" style="color:inherit; text-decoration:none;">SLOTS</a>
+        <span class="bc-sep">/</span>
+        <span class="bc-current">BURNING HOT</span>
+      </div>
+
+      <!-- Top-Left Interactive Jackpot Dropdown Widget -->
+      <div id="jackpot-widget">
+        <div class="jackpot-header-btn" onclick="toggleJackpotDropdown()">
+          <span class="jackpot-header-title">JACKPOT</span>
+        </div>
+        <div class="jackpot-dropdown-panel" id="jackpot-dropdown">
+          <div class="jackpot-row">
+            <span>HOURLY</span>
+            <div class="jackpot-digits-wrap" id="digits-hourly">
+              <span class="jackpot-digit">7</span>
+              <span class="jackpot-digit">0</span>
+              <span class="jackpot-digit">7</span>
+            </div>
+          </div>
+          <div class="jackpot-row">
+            <span>DAILY</span>
+            <div class="jackpot-digits-wrap" id="digits-daily">
+              <span class="jackpot-digit">1</span>
+              <span class="jackpot-digit">6</span>
+              <span class="jackpot-digit">5</span>
+              <span class="jackpot-digit">5</span>
+              <span class="jackpot-digit">4</span>
+              <span class="jackpot-digit">4</span>
+              <span class="jackpot-digit">2</span>
+            </div>
+          </div>
+          <div class="jackpot-row">
+            <span>WEEKLY</span>
+            <div class="jackpot-digits-wrap" id="digits-weekly">
+              <span class="jackpot-digit">1</span>
+              <span class="jackpot-digit">9</span>
+              <span class="jackpot-digit">9</span>
+              <span class="jackpot-digit">8</span>
+              <span class="jackpot-digit">0</span>
+              <span class="jackpot-digit">7</span>
+              <span class="jackpot-digit">3</span>
+              <span class="jackpot-digit">1</span>
+            </div>
+          </div>
+          <div class="jackpot-row">
+            <span>MONTHLY</span>
+            <div class="jackpot-digits-wrap" id="digits-monthly">
+              <span class="jackpot-digit">5</span>
+              <span class="jackpot-digit">9</span>
+              <span class="jackpot-digit">6</span>
+              <span class="jackpot-digit">9</span>
+              <span class="jackpot-digit">4</span>
+              <span class="jackpot-digit">6</span>
+              <span class="jackpot-digit">4</span>
+              <span class="jackpot-digit">3</span>
+            </div>
+          </div>
+          <div class="jackpot-bottom-bar">
+            <button class="jackpot-rules-btn" onclick="openModal()">RULES</button>
+            <span class="jackpot-currency-tag">BDT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom-Right Demo Mode Drawer Widget -->
+      <div id="demo-widget">
+        <!-- Collapsed Pill Button -->
+        <div class="demo-pill-btn" id="demo-pill" onclick="openDemoDrawer()">
+          <span class="demo-pill-dot"></span>
+          <span>DEMO MODE</span>
+          <span class="demo-arrow">&rarr;</span>
+        </div>
+
+        <!-- Expanded Drawer Card -->
+        <div class="demo-drawer-card" id="demo-drawer">
+          <div class="demo-drawer-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="demo-pill-dot"></span>
+              <span>DEMO MODE</span>
+            </div>
+            <span class="demo-drawer-minimize" onclick="closeDemoDrawer()" title="Minimize">&minus;</span>
+          </div>
+          <div class="demo-drawer-row">
+            <span>Balance</span>
+            <span class="demo-drawer-val" id="demo-card-balance">10,000.00 BDT</span>
+          </div>
+          <div class="demo-drawer-row">
+            <span>Total winnings</span>
+            <span class="demo-drawer-val" id="demo-card-winnings">0.00 BDT</span>
+          </div>
+          <p class="demo-drawer-desc">
+            Demo mode lets you get to grips with a game using a demo account. Demo account balance is updated every 24 hours.
+          </p>
+          <button class="demo-btn-enable" onclick="resetDemoBalance()">RESET DEMO BALANCE</button>
+          <button class="demo-btn-collapse" onclick="closeDemoDrawer()">EXIT DEMO MODE &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Loader Screen -->
+      <div id="loading-overlay">
+        <div class="loader-title">BURNING HOT</div>
+        <div class="loader-bar-bg">
+          <div class="loader-bar-fill" id="loader-fill"></div>
+        </div>
+        <div class="loader-status" id="loader-text">Loading 1xBet Assets & Reels (0%)...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Portrait Rotate Advisory Overlay -->
+  <div id="rotate-device-overlay">
+    <div class="rotate-phone-container">
+      <div class="rotate-phone-glow"></div>
+      <div class="rotate-phone-icon">&#128241;</div>
+      <div class="rotate-arrow-anim">&#10530;</div>
+    </div>
+    <div class="rotate-text-title">ROTATE YOUR DEVICE</div>
+    <div class="rotate-text-sub">For the best full-screen slot experience, please rotate your screen to Landscape.</div>
+    <button class="rotate-dismiss-btn" onclick="dismissRotateNotice()">CONTINUE IN PORTRAIT</button>
+  </div>
+
+  <!-- Authentic 1xBet Rules Hanging Stone Modal -->
+  <div id="info-modal" onclick="if(event.target === this) closeModal()">
+    <div class="rules-board-wrapper">
+      <div class="rules-chains-left"></div>
+      <div class="rules-chains-right"></div>
+      
+      <div class="rules-close-btn" onclick="closeModal()" title="Close Rules">
+        <div class="rules-close-horn-bg"></div>
+        <div class="rules-close-inner">&times;</div>
+      </div>
+
+      <div class="rules-stone-tablet">
+        <h2 class="rules-title">RULES</h2>
+        <div class="rules-content-scroll">
+          <p class="rules-item"><b>1.</b> This is a 5-reel game with 5 paylines.</p>
+          <p class="rules-item"><b>2.</b> Place a bet. The initial stake is determined before the start of a game.</p>
+          <p class="rules-item"><b>3.</b> The maximum stake is 77116.4 BDT and the minimum stake is 20 BDT.</p>
+          <p class="rules-item"><b>4.</b> You win if three to five identical symbols land on one payline (or at least two 7 symbols), starting from the first reel. For the combination to win, the symbols must land on adjacent reels forming a row from left to right (with the exception of the $ and the Star symbols).</p>
+          <p class="rules-item"><b>5.</b> The $ and Star symbols award additional winnings, which are added to your winnings from the paylines.</p>
+          <p class="rules-item"><b>6.</b> The $ symbol can land on any reel, but the Star can only land on the 1st, 3rd, and 5th reels.</p>
+          <p class="rules-item"><b>7.</b> The Wild symbol replaces all symbols on the 2nd, 3rd, and 4th reels (with the exception of the $ and Star symbols). When expanding, it occupies the entire reel.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ asset('burning-hot/js/audio.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/rules.js') }}"></script>
+  <script src="{{ asset('burning-hot/js/game.js') }}"></script>
+</body>
+</html>

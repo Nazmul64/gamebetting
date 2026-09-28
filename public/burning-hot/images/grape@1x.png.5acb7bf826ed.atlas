@@ -1,0 +1,17 @@
+grape@1x.ecbffc8991cd.png
+size:176,392
+filter:Linear,Linear
+scale:0.4609
+dragon_claws
+bounds:2,2,75,122
+rotate:90
+dragon_claws2
+bounds:126,19,58,34
+rotate:90
+grape
+bounds:2,79,143,138
+offsets:5,5,154,143
+grape_stone_icon
+bounds:2,219,171,172
+offsets:0,0,172,174
+rotate:90
