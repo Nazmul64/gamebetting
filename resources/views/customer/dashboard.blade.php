@@ -130,6 +130,26 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
+                <!-- Game: Indian Poker -->
+                <a href="{{ route('indian-poker') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="indian poker indian-poker cards 3 card poker 1xbet 1xgames" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); color:#fff; font-weight:900;">POKER</span>
+                    <div class="slot-card-image-wrapper" style="background: radial-gradient(circle, #0e2a38 0%, #03141c 100%); display:flex; align-items:center; justify-content:center;">
+                        <img src="{{ asset('assets/image/indian-poker.png') }}" class="slot-card-img" alt="Indian Poker" onerror="this.src='{{ asset('assets/image/indian-poker.jpg') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0b3b35 0%, #061e1b 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-crown" style="font-size:28px; margin-bottom:8px; color:#ffd76a;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Indian Poker</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Indian Poker</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Indian Poker™</div>
+                    </div>
+                </a>
+
                 <!-- Game: Card Games 21 -->
                 <a href="{{ route('card-games-21') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="card games 21 card game 21 blackjack 1xbet 1xgames twenty one 21" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#000; font-weight:900;">21 CARD</span>

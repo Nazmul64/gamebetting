@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150">
+  <rect x="2" y="2" width="96" height="146" rx="6" fill="#ffffff" stroke="#cfd3dc" stroke-width="1.5"/>
+  <g fill="#111827" font-family="'Trebuchet MS', Arial, sans-serif">
+    <!-- Top Left -->
+    <text x="11" y="19" font-size="15" font-weight="bold" text-anchor="middle">5</text>
+    <text x="11" y="32" font-size="14" text-anchor="middle">♠</text>
+    
+    <!-- Bottom Right (Rotated) -->
+    <g transform="rotate(180 50 75)">
+      <text x="11" y="19" font-size="15" font-weight="bold" text-anchor="middle">5</text>
+      <text x="11" y="32" font-size="14" text-anchor="middle">♠</text>
+    </g>
+
+    <!-- Center Pips -->
+    <g font-family="'Segoe UI Emoji', 'Apple Color Emoji', 'Segoe UI Symbol', sans-serif">
+      <text x="32" y="38" font-size="19" text-anchor="middle" dominant-baseline="central">♠</text><text x="68" y="38" font-size="19" text-anchor="middle" dominant-baseline="central">♠</text><text x="50" y="75" font-size="19" text-anchor="middle" dominant-baseline="central">♠</text><text x="32" y="112" font-size="19" text-anchor="middle" dominant-baseline="central" transform="rotate(180 32 112)">♠</text><text x="68" y="112" font-size="19" text-anchor="middle" dominant-baseline="central" transform="rotate(180 68 112)">♠</text>
+    </g>
+  </g>
+</svg>

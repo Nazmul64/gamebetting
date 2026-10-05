@@ -275,6 +275,20 @@ Route::get('/games/card-games-21', function () {
     return redirect()->route('card-games-21');
 });
 
+// Indian Poker Game Routes
+Route::get('/indian-poker', function () {
+    return view('customer.indian-poker');
+})->name('indian-poker');
+Route::get('/indian_poker', function () {
+    return redirect()->route('indian-poker');
+})->name('indian_poker');
+Route::get('/indianpoker', function () {
+    return redirect()->route('indian-poker');
+});
+Route::get('/games/indian-poker', function () {
+    return redirect()->route('indian-poker');
+});
+
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
 
 Route::post('/dashboard/withdraw', [DashboardController::class, 'withdraw'])->middleware('auth')->name('dashboard.withdraw');

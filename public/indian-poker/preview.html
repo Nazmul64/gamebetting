@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Indian Poker - 1XGAMES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Indian Poker card game with multipliers, 3-card poker hands, progressive jackpot and authentic Indian palace theme.">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #06040a;
+  overflow: hidden;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#wrap {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #15091e 0%, #050208 100%);
+  overflow: hidden;
+}
+
+#stage {
+  position: relative;
+  width: 1024px;
+  height: 438px;
+  flex: none;
+  background: #0d0614 url('../images/clean_bg.png') no-repeat center center;
+  background-size: 1024px 438px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(212, 175, 55, 0.2);
+  border-radius: 4px;
+}
+
+.a {
+  position: absolute;
+}
+
+/* Canvas overlay for particle petals and lantern glows */
+#fx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1024px;
+  height: 438px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Breadcrumbs Top Left */
+.breadcrumb {
+  left: 14px;
+  top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #9ea4b5;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumb .item {
+  color: #c4cbdb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.breadcrumb .item:hover {
+  color: #fff;
+}
+.breadcrumb .current {
+  color: #d1d5db;
+  text-decoration: none;
+}
+
+/* Balance Box */
+#bal-box {
+  left: 14px;
+  top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 8, 20, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fce79a;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+#bal-box span {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Top Right Jackpot Button */
+.jp-btn {
+  right: 54px;
+  top: 22px;
+  width: 154px;
+  height: 28px;
+  background: #000;
+  border: 2px solid #deb841;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(222, 184, 65, 0.3), inset 0 0 6px rgba(0, 0, 0, 0.9);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.jp-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.6);
+}
+.jp-btn span {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #f7e07c;
+  text-shadow: 0 1px 2px #000, 0 0 8px rgba(247, 224, 124, 0.5);
+}
+
+/* Info Icon */
+.info-btn {
+  left: 362px;
+  top: 74px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #46b8ff, #1a7ec4 70%, #0d5487);
+  border: 1.5px solid #ffde6b;
+  color: #fff;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(70, 184, 255, 0.6);
+  z-index: 10;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.info-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(70, 184, 255, 0.9);
+}
+
+/* Status / Win Message */
+#msg-wrap {
+  left: 340px;
+  top: 106px;
+  width: 344px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+#msg {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffa185;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255, 100, 80, 0.4);
+  letter-spacing: 0.5px;
+  text-align: center;
+  transition: transform 0.25s, color 0.25s, text-shadow 0.25s;
+}
+#msg.win {
+  color: #6eff8f;
+  text-shadow: 0 0 12px rgba(110, 255, 143, 0.8), 0 2px 4px #000;
+  transform: scale(1.1);
+}
+#msg.bigwin {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 2px 4px #000;
+  transform: scale(1.18);
+}
+
+/* Cards Playing Area */
+#cards-container {
+  left: 380px;
+  top: 146px;
+  width: 264px;
+  height: 120px;
+  z-index: 5;
+  pointer-events: none;
+}
+.card-slot {
+  position: absolute;
+  top: 0;
+  width: 76px;
+  height: 115px;
+  perspective: 600px;
+}
+.card-slot:nth-child(1) { left: 4px; }
+.card-slot:nth-child(2) { left: 94px; }
+.card-slot:nth-child(3) { left: 184px; }
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.card-slot.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+.card-face.front {
+  transform: rotateY(180deg);
+  background: #fff;
+}
+.card-face.back {
+  background: #112a4d;
+}
+.card-face img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Win pulse on winning card */
+.card-slot.winning .card-inner {
+  filter: drop-shadow(0 0 10px #ffe570) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  animation: cardWinBounce 0.6s ease-in-out infinite alternate;
+}
+@keyframes cardWinBounce {
+  from { transform: rotateY(180deg) translateY(0); }
+  to { transform: rotateY(180deg) translateY(-8px); }
+}
+
+/* Multiplier Badges Area */
+#badges-container {
+  left: 356px;
+  top: 275px;
+  width: 312px;
+  height: 66px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+}
+.badge-item {
+  width: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+.badge-item:hover {
+  transform: translateY(-2px);
+}
+.badge-top {
+  width: 44px;
+  height: 22px;
+  background: linear-gradient(180deg, #2b7ce6 0%, #154c9c 100%);
+  clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0% 100%, 0% 30%);
+  border-top: 1.5px solid #ffe175;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  transition: background 0.2s;
+}
+.badge-top span {
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+.badge-bottom {
+  width: 100%;
+  min-height: 24px;
+  background: linear-gradient(180deg, #781c3d 0%, #460f22 100%);
+  border: 1.5px solid #d4af37;
+  border-radius: 4px;
+  margin-top: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2px 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  transition: all 0.2s;
+}
+.badge-bottom span {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #f7ced7;
+  line-height: 10.5px;
+  letter-spacing: -0.1px;
+}
+
+/* Badge winning highlight */
+.badge-item.active-win {
+  transform: scale(1.15) translateY(-4px);
+  filter: drop-shadow(0 0 10px #ffe570);
+}
+.badge-item.active-win .badge-top {
+  background: linear-gradient(180deg, #2fd870 0%, #0d8a3d 100%);
+  border-top-color: #fff;
+}
+.badge-item.active-win .badge-bottom {
+  background: linear-gradient(180deg, #24b85c 0%, #0c692c 100%);
+  border-color: #ffe680;
+  box-shadow: 0 0 12px rgba(46, 216, 112, 0.8);
+}
+.badge-item.active-win .badge-bottom span {
+  color: #fff;
+  font-weight: 800;
+}
+
+/* Bottom Controls Bar */
+#bottom-controls {
+  left: 154px;
+  top: 382px;
+  width: 716px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+/* Bet Display Pill */
+#bet-input-pill {
+  width: 124px;
+  height: 28px;
+  background: linear-gradient(180deg, #0d2847 0%, #061527 100%);
+  border: 2px solid #deb841;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.4);
+}
+#bet-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+#bet-clr {
+  font-size: 13px;
+  font-weight: 800;
+  color: #8fa0bd;
+  cursor: pointer;
+  transition: color 0.15s, transform 0.15s;
+}
+#bet-clr:hover {
+  color: #ff6b6b;
+  transform: scale(1.2);
+}
+
+/* Quick Bet Buttons */
+.chip-btn {
+  width: 66px;
+  height: 28px;
+  background: linear-gradient(180deg, #8a2046 0%, #521028 100%);
+  border: 2px solid #deb841;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.25), 0 2px 5px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.chip-btn:hover {
+  background: linear-gradient(180deg, #ab2857 0%, #681534 100%);
+  border-color: #ffe175;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(222, 184, 65, 0.4);
+}
+.chip-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+.chip-btn.selected {
+  background: linear-gradient(180deg, #c43366 0%, #7d1a40 100%);
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 225, 117, 0.7);
+}
+.chip-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* "Place a Bet" Action Button */
+#btn-place-bet {
+  width: 104px;
+  height: 28px;
+  background: linear-gradient(180deg, #32b5e8 0%, #157cb5 50%, #0c5685 100%);
+  border: 1.5px solid #82e0ff;
+  border-radius: 20px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(50, 181, 232, 0.5), inset 0 1px 1px rgba(255,255,255,0.4);
+  transition: all 0.18s ease;
+}
+#btn-place-bet:hover {
+  background: linear-gradient(180deg, #4ed0ff 0%, #1a92d4 50%, #0e6399 100%);
+  box-shadow: 0 0 16px rgba(78, 208, 255, 0.8), inset 0 1px 2px #fff;
+  transform: scale(1.03);
+}
+#btn-place-bet:active {
+  transform: scale(0.97);
+}
+#btn-place-bet:disabled {
+  background: linear-gradient(180deg, #3d5669 0%, #20313e 100%);
+  border-color: #556e82;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+/* Right Side Panel / DEMO Badge */
+.demo-badge {
+  right: 68px;
+  top: 288px;
+  background: linear-gradient(90deg, #0c3b68 0%, #072644 100%);
+  border: 1px solid #1c72b8;
+  border-radius: 3px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #4dc2ff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.demo-badge:hover {
+  transform: scale(1.04);
+  border-color: #38bdf8;
+}
+.demo-badge .dot {
+  width: 5px;
+  height: 5px;
+  background: #2dd4bf;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 5px #2dd4bf;
+}
+
+/* Right Toolbar Interactive Hitboxes */
+#right-toolbar {
+  right: 0;
+  top: 135px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+.tool-hitbox {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.tool-hitbox:hover {
+  background: rgba(255, 215, 0, 0.15);
+}
+
+/* Right Points Tab Hitbox */
+#points-tab-hitbox {
+  right: 0;
+  top: 278px;
+  width: 30px;
+  height: 44px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Modals (Rules / Settings / Jackpot) */
+.modal-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1024px;
+  height: 438px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(5px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-overlay.show {
+  display: flex;
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content {
+  background: linear-gradient(180deg, #1f112c 0%, #0d0615 100%);
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  padding: 20px 24px;
+  width: 480px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 20px rgba(212, 175, 55, 0.3);
+  position: relative;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 8px;
+}
+.modal-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+.modal-close {
+  font-size: 20px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.15s, transform 0.15s;
+}
+.modal-close:hover {
+  color: #ff6b6b;
+  transform: scale(1.15);
+}
+.modal-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #ddd;
+}
+.payout-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.payout-table th, .payout-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.payout-table th {
+  color: #f7e07c;
+  font-weight: 700;
+  font-size: 12px;
+}
+.payout-table td.mult {
+  color: #4ade80;
+  font-weight: 800;
+  text-align: right;
+}
+
+</style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="stage">
+      <!-- Breadcrumbs -->
+      <div class="a breadcrumb">
+        <span class="item">1XGAMES</span> / 
+        <span class="item">CARD GAMES</span> / 
+        <span class="current">INDIAN POKER</span>
+      </div>
+
+      <!-- Balance Box -->
+      <div id="bal-box" class="a">
+        BALANCE <span id="bal-val">1000.00</span>
+      </div>
+
+      <!-- Jackpot Button -->
+      <div id="btn-jackpot" class="a jp-btn" title="View Jackpot">
+        <span>JACKPOT</span>
+      </div>
+
+      <!-- Info Button -->
+      <div id="btn-info" class="a info-btn" title="Game Rules & Payouts">i</div>
+
+      <!-- Center Status / Win Message -->
+      <div id="msg-wrap" class="a">
+        <div id="msg">Place a bet!</div>
+      </div>
+
+      <!-- 3-Card Playing Area on Marble Pedestal -->
+      <div id="cards-container" class="a">
+        <!-- Card Slot 1 -->
+        <div class="card-slot" data-index="0">
+          <div class="card-inner">
+            <div class="card-face back">
+              <img src="assets/images/cards/back.svg" alt="Card Back">
+            </div>
+            <div class="card-face front">
+              <img src="assets/images/cards/8D.svg" alt="Card 1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Slot 2 -->
+        <div class="card-slot" data-index="1">
+          <div class="card-inner">
+            <div class="card-face back">
+              <img src="assets/images/cards/back.svg" alt="Card Back">
+            </div>
+            <div class="card-face front">
+              <img src="assets/images/cards/7C.svg" alt="Card 2">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Slot 3 -->
+        <div class="card-slot" data-index="2">
+          <div class="card-inner">
+            <div class="card-face back">
+              <img src="assets/images/cards/back.svg" alt="Card Back">
+            </div>
+            <div class="card-face front">
+              <img src="assets/images/cards/10C.svg" alt="Card 3">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiplier Badges -->
+      <div id="badges-container" class="a">
+        <div class="badge-item" data-id="pair">
+          <div class="badge-top"><span>x1</span></div>
+          <div class="badge-bottom"><span>Pair</span></div>
+        </div>
+        <div class="badge-item" data-id="flush">
+          <div class="badge-top"><span>x5</span></div>
+          <div class="badge-bottom"><span>Flush</span></div>
+        </div>
+        <div class="badge-item" data-id="straight">
+          <div class="badge-top"><span>x10</span></div>
+          <div class="badge-bottom"><span>Straight</span></div>
+        </div>
+        <div class="badge-item" data-id="three">
+          <div class="badge-top"><span>x50</span></div>
+          <div class="badge-bottom"><span>3 of a Kind</span></div>
+        </div>
+        <div class="badge-item" data-id="sf">
+          <div class="badge-top"><span>x75</span></div>
+          <div class="badge-bottom"><span>Straight Flush</span></div>
+        </div>
+      </div>
+
+      <!-- Particle FX Canvas (Rose petals & glows) -->
+      <canvas id="fx" class="a"></canvas>
+
+      <!-- Bottom Betting Control Panel -->
+      <div id="bottom-controls" class="a">
+        <!-- Bet Input Pill -->
+        <div id="bet-input-pill">
+          <span id="bet-val">1</span>
+          <span id="bet-clr" title="Reset Bet">✕</span>
+        </div>
+
+        <!-- Quick Bet Chips -->
+        <button class="chip-btn selected" data-val="1">1</button>
+        <button class="chip-btn" data-val="2">2</button>
+        <button class="chip-btn" data-val="3">3</button>
+        <button class="chip-btn" data-val="5">5</button>
+        <button class="chip-btn" data-val="10">10</button>
+        <button class="chip-btn" data-val="25">25</button>
+
+        <!-- Action Button -->
+        <button id="btn-place-bet">Place a bet</button>
+      </div>
+
+      <!-- Right Side Indicators -->
+      <div id="demo-badge" class="a demo-badge" title="Click to reset Demo balance">
+        <span class="dot"></span> DEMO MODE &#x2303;
+      </div>
+
+      <!-- Invisible Interactive Hotspots over Right Toolbar Icons -->
+      <div id="right-toolbar" class="a">
+        <div id="tool-settings" class="tool-hitbox" title="Settings"></div>
+        <div class="tool-hitbox" title="Bonus Gift"></div>
+        <div class="tool-hitbox" title="Lucky 7"></div>
+        <div class="tool-hitbox" title="Game Hub"></div>
+        <div id="tool-sound" class="tool-hitbox" title="Toggle Sound"></div>
+      </div>
+      <div id="points-tab-hitbox" class="a" title="Loyalty Points"></div>
+
+      <!-- Rules & Info Modal -->
+      <div id="modal-info" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Indian Poker Rules</h3>
+            <span class="modal-close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <p>Place your bet and receive 3 cards dealt from a standard 52-card deck. Win payouts for winning hand combinations:</p>
+            <table class="payout-table">
+              <thead>
+                <tr>
+                  <th>Combination</th>
+                  <th>Description</th>
+                  <th style="text-align:right">Payout</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Straight Flush</strong></td>
+                  <td>3 sequential cards of the same suit</td>
+                  <td class="mult">x75</td>
+                </tr>
+                <tr>
+                  <td><strong>3 of a Kind</strong></td>
+                  <td>3 cards of identical rank</td>
+                  <td class="mult">x50</td>
+                </tr>
+                <tr>
+                  <td><strong>Straight</strong></td>
+                  <td>3 sequential cards of any suit</td>
+                  <td class="mult">x10</td>
+                </tr>
+                <tr>
+                  <td><strong>Flush</strong></td>
+                  <td>3 cards of the same suit</td>
+                  <td class="mult">x5</td>
+                </tr>
+                <tr>
+                  <td><strong>Pair</strong></td>
+                  <td>2 cards of the same rank</td>
+                  <td class="mult">x1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jackpot Modal -->
+      <div id="modal-jackpot" class="modal-overlay">
+        <div class="modal-content" style="text-align:center">
+          <div class="modal-header">
+            <h3 class="modal-title">&#10024; Progressive Jackpot &#10024;</h3>
+            <span class="modal-close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <p style="font-size:15px;margin-bottom:12px">Current Grand Jackpot:</p>
+            <div style="font-size:32px;font-weight:900;color:#ffd700;font-family:'Cinzel',serif;text-shadow:0 0 15px rgba(255,215,0,0.8)">
+              $ 148,920.55
+            </div>
+            <p style="margin-top:14px;color:#bbb;font-size:12px">
+              Hit a royal Straight Flush (A-K-Q of same suit) on max bet to trigger the Jackpot pool!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Modal -->
+      <div id="modal-settings" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Settings</h3>
+            <span class="modal-close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #333">
+              <span>Sound Effects</span>
+              <button id="btn-toggle-sound" style="padding:4px 12px;background:#1a7ec4;color:#fff;border:none;border-radius:4px;cursor:pointer">Enabled</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #333">
+              <span>Fast Animation Mode</span>
+              <button id="btn-toggle-speed" style="padding:4px 12px;background:#333;color:#fff;border:none;border-radius:4px;cursor:pointer">Disabled</button>
+            </div>
+            <div style="margin-top:14px;text-align:center">
+              <button id="btn-reset-demo" style="padding:6px 16px;background:#8a2046;border:1px solid #d4af37;color:#fff;border-radius:4px;cursor:pointer;font-weight:bold">Reset Demo Balance ($1000)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <script>
+/* Indian Poker Engine: Sound Synth, Rose Petals Particle System, Auto-Scaler */
+const AudioFX = {
+  ctx: null,
+  enabled: true,
+
+  init() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        this.ctx = new AudioContext();
+      }
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  },
+
+  playTone(freq, type, duration, delay = 0, gainVal = 0.15) {
+    if (!this.enabled || !this.ctx) return;
+    try {
+      setTimeout(() => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }, delay * 1000);
+    } catch(e) {}
+  },
+
+  chip() {
+    this.init();
+    if (!this.enabled || !this.ctx) return;
+    this.playTone(1200, 'triangle', 0.08, 0, 0.2);
+    this.playTone(2400, 'sine', 0.05, 0.02, 0.15);
+  },
+
+  deal() {
+    this.init();
+    if (!this.enabled || !this.ctx) return;
+    try {
+      // Noise buffer for card swoosh
+      const bufferSize = this.ctx.sampleRate * 0.12;
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(900, this.ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.12);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+      noise.start();
+    } catch(e) {
+      this.playTone(400, 'sine', 0.1, 0, 0.1);
+    }
+  },
+
+  flip() {
+    this.init();
+    if (!this.enabled || !this.ctx) return;
+    this.playTone(600, 'triangle', 0.06, 0, 0.2);
+    this.playTone(1800, 'sine', 0.04, 0.01, 0.15);
+  },
+
+  win(type) {
+    this.init();
+    if (!this.enabled || !this.ctx) return;
+    if (type === 'three' || type === 'sf') {
+      // Grand Fanfare
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+      notes.forEach((f, i) => {
+        this.playTone(f, 'triangle', 0.35, i * 0.09, 0.25);
+        this.playTone(f * 1.5, 'sine', 0.4, i * 0.09 + 0.02, 0.12);
+      });
+    } else {
+      // Nice Win
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((f, i) => {
+        this.playTone(f, 'triangle', 0.25, i * 0.08, 0.2);
+      });
+    }
+  },
+
+  lose() {
+    this.init();
+    if (!this.enabled || !this.ctx) return;
+    this.playTone(320, 'sine', 0.18, 0, 0.12);
+    this.playTone(260, 'sine', 0.22, 0.1, 0.15);
+  }
+};
+
+/* Rose Petals and Ambient Sparks Particle System */
+class ParticleFX {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.W = canvas.width;
+    this.H = canvas.height;
+    this.petals = [];
+    this.lanterns = [
+      { x: 310, y: 80, color: '#38bdf8' },
+      { x: 730, y: 90, color: '#38bdf8' }
+    ];
+
+    for (let i = 0; i < 35; i++) {
+      this.petals.push(this.createPetal(true));
+    }
+  }
+
+  createPetal(randomY = false) {
+    return {
+      x: Math.random() * this.W,
+      y: randomY ? Math.random() * this.H : -15,
+      size: 4 + Math.random() * 6,
+      vx: (Math.random() - 0.4) * 15,
+      vy: 20 + Math.random() * 30,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 2,
+      phase: Math.random() * Math.PI * 2,
+      color: Math.random() > 0.3 ? 'rgba(215, 25, 60, 0.75)' : 'rgba(240, 70, 100, 0.85)'
+    };
+  }
+
+  update(dt) {
+    this.petals.forEach(p => {
+      p.y += p.vy * dt;
+      p.phase += dt * 2;
+      p.x += Math.sin(p.phase) * 18 * dt + p.vx * dt;
+      p.rotation += p.rotSpeed * dt;
+
+      if (p.y > this.H + 20) {
+        Object.assign(p, this.createPetal(false));
+      }
+    });
+  }
+
+  draw(t) {
+    this.ctx.clearRect(0, 0, this.W, this.H);
+
+    // Lantern subtle ambient glow pulsing
+    this.lanterns.forEach((l, idx) => {
+      const pulse = 0.5 + 0.3 * Math.sin(t * 3 + idx * 2);
+      const radGrad = this.ctx.createRadialGradient(l.x, l.y, 2, l.x, l.y, 35);
+      radGrad.addColorStop(0, `rgba(56, 189, 248, ${0.4 * pulse})`);
+      radGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      this.ctx.fillStyle = radGrad;
+      this.ctx.beginPath();
+      this.ctx.arc(l.x, l.y, 35, 0, Math.PI * 2);
+      this.ctx.fill();
+    });
+
+    // Draw floating rose petals
+    this.petals.forEach(p => {
+      this.ctx.save();
+      this.ctx.translate(p.x, p.y);
+      this.ctx.rotate(p.rotation);
+      this.ctx.fillStyle = p.color;
+      this.ctx.beginPath();
+      this.ctx.ellipse(0, 0, p.size, p.size * 0.55, 0, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+    });
+  }
+}
+
+const Engine = {
+  canvas: null,
+  fx: null,
+  lastTime: 0,
+
+  init(canvasId, W = 1024, H = 438) {
+    this.canvas = document.getElementById(canvasId);
+    this.canvas.width = W;
+    this.canvas.height = H;
+    this.fx = new ParticleFX(this.canvas);
+
+    const resize = () => {
+      const scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+      document.getElementById('stage').style.transform = `scale(${scale})`;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    this.lastTime = performance.now();
+    requestAnimationFrame(this.loop.bind(this));
+  },
+
+  loop(currentTime) {
+    const dt = Math.min(0.05, (currentTime - this.lastTime) / 1000 || 0);
+    this.lastTime = currentTime;
+
+    this.fx.update(dt);
+    this.fx.draw(currentTime / 1000);
+
+    requestAnimationFrame(this.loop.bind(this));
+  }
+};
+
+/**
+ * Indian Poker Game Logic
+ */
+const State = {
+  balance: 1000.00,
+  bet: 1,
+  busy: false,
+  deck: [],
+  demoMode: true,
+  fastPlay: false,
+  soundOn: true
+};
+
+const HAND_CONFIG = [
+  { id: 'pair', name: 'Pair', mult: 1 },
+  { id: 'flush', name: 'Flush', mult: 5 },
+  { id: 'straight', name: 'Straight', mult: 10 },
+  { id: 'three', name: '3 of a Kind', mult: 50 },
+  { id: 'sf', name: 'Straight Flush', mult: 75 }
+];
+
+const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+const SUITS = ['S', 'H', 'D', 'C'];
+
+function initDeck() {
+  State.deck = [];
+  for (const s of SUITS) {
+    for (const r of RANKS) {
+      State.deck.push(r + s);
+    }
+  }
+  // Fisher-Yates Shuffle
+  for (let i = State.deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [State.deck[i], State.deck[j]] = [State.deck[j], State.deck[i]];
+  }
+}
+
+function getRankVal(card) {
+  const r = card.slice(0, -1);
+  if (r === 'A') return 14;
+  if (r === 'K') return 13;
+  if (r === 'Q') return 12;
+  if (r === 'J') return 11;
+  return parseInt(r, 10);
+}
+
+function evaluateHand(cards) {
+  const values = cards.map(getRankVal).sort((a, b) => a - b);
+  const suits = cards.map(c => c.slice(-1));
+
+  const isFlush = suits[0] === suits[1] && suits[1] === suits[2];
+  
+  // Straight: e.g. [2,3,4] or [12,13,14] (Q,K,A) or [2,3,14] (A-2-3 low ace)
+  const isNormalStraight = (values[1] === values[0] + 1) && (values[2] === values[1] + 1);
+  const isLowAceStraight = (values[0] === 2 && values[1] === 3 && values[2] === 14);
+  const isStraight = isNormalStraight || isLowAceStraight;
+
+  const isThreeOfAKind = (values[0] === values[1]) && (values[1] === values[2]);
+  const isPair = (values[0] === values[1]) || (values[1] === values[2]) || (values[0] === values[2]);
+
+  if (isStraight && isFlush) return 'sf';
+  if (isThreeOfAKind) return 'three';
+  if (isStraight) return 'straight';
+  if (isFlush) return 'flush';
+  if (isPair) return 'pair';
+  return null;
+}
+
+function updateUI() {
+  document.getElementById('bal-val').textContent = State.balance.toFixed(2);
+  document.getElementById('bet-val').textContent = State.bet;
+
+  // Highlight active bet button
+  document.querySelectorAll('.chip-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.val, 10);
+    btn.classList.toggle('selected', val === State.bet);
+  });
+}
+
+function setBet(amount) {
+  if (State.busy) return;
+  AudioFX.chip();
+  State.bet = amount;
+  updateUI();
+}
+
+function showModal(modalId) {
+  document.getElementById(modalId).classList.add('show');
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('show');
+}
+
+function setMessage(text, type = '') {
+  const msgEl = document.getElementById('msg');
+  msgEl.className = '';
+  if (type) msgEl.classList.add(type);
+  msgEl.textContent = text;
+}
+
+async function playRound() {
+  if (State.busy) return;
+  if (State.balance < State.bet) {
+    setMessage('Not enough balance!');
+    return;
+  }
+
+  State.busy = true;
+  State.balance -= State.bet;
+  updateUI();
+
+  // Disable controls
+  document.getElementById('btn-place-bet').disabled = true;
+  document.querySelectorAll('.chip-btn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.badge-item').forEach(b => b.classList.remove('active-win'));
+  document.querySelectorAll('.card-slot').forEach(slot => {
+    slot.classList.remove('winning', 'flipped');
+  });
+
+  setMessage('Good luck!');
+
+  if (State.deck.length < 6) {
+    initDeck();
+  }
+
+  const dealtHand = [State.deck.pop(), State.deck.pop(), State.deck.pop()];
+
+  // Update card front images
+  dealtHand.forEach((card, i) => {
+    const frontImg = document.querySelector(`.card-slot[data-index="${i}"] .card-face.front img`);
+    frontImg.src = `assets/images/cards/${card}.svg`;
+  });
+
+  const speedMultiplier = State.fastPlay ? 0.5 : 1.0;
+
+  // Step 1: Deal sound
+  AudioFX.deal();
+
+  // Step 2: Flip cards one by one
+  for (let i = 0; i < 3; i++) {
+    await new Promise(res => setTimeout(res, (350 * speedMultiplier)));
+    const slot = document.querySelector(`.card-slot[data-index="${i}"]`);
+    slot.classList.add('flipped');
+    AudioFX.flip();
+  }
+
+  // Step 3: Evaluate Hand and payout
+  await new Promise(res => setTimeout(res, (500 * speedMultiplier)));
+  const winHandId = evaluateHand(dealtHand);
+
+  if (winHandId) {
+    const config = HAND_CONFIG.find(h => h.id === winHandId);
+    // Payout: Original bet * (multiplier + 1)
+    const winAmount = State.bet * (config.mult + 1);
+    State.balance += winAmount;
+
+    // Highlight badge
+    const badgeEl = document.querySelector(`.badge-item[data-id="${winHandId}"]`);
+    if (badgeEl) badgeEl.classList.add('active-win');
+
+    // Highlight winning cards
+    document.querySelectorAll('.card-slot').forEach(slot => slot.classList.add('winning'));
+
+    // Sound and message
+    AudioFX.win(winHandId);
+    if (winHandId === 'three' || winHandId === 'sf') {
+      setMessage(`${config.name}! You win ${winAmount.toFixed(2)}`, 'bigwin');
+    } else {
+      setMessage(`${config.name}! You win ${winAmount.toFixed(2)}`, 'win');
+    }
+  } else {
+    AudioFX.lose();
+    setMessage('Try again!');
+  }
+
+  updateUI();
+  State.busy = false;
+  document.getElementById('btn-place-bet').disabled = false;
+  document.querySelectorAll('.chip-btn').forEach(b => b.disabled = false);
+}
+
+// Event Listeners initialization
+document.addEventListener('DOMContentLoaded', () => {
+  initDeck();
+  Engine.init('fx', 1024, 438);
+
+  // Setup Chips
+  document.querySelectorAll('.chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setBet(parseInt(btn.dataset.val, 10));
+    });
+  });
+
+  // Clear Bet button
+  document.getElementById('bet-clr').addEventListener('click', () => {
+    setBet(1);
+  });
+
+  // Place Bet Button
+  document.getElementById('btn-place-bet').addEventListener('click', playRound);
+
+  // Info Button
+  document.getElementById('btn-info').addEventListener('click', () => {
+    showModal('modal-info');
+  });
+
+  // Jackpot Button
+  document.getElementById('btn-jackpot').addEventListener('click', () => {
+    showModal('modal-jackpot');
+  });
+
+  // Close modals
+  document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target === el || el.classList.contains('modal-close')) {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+      }
+    });
+  });
+
+  // Right side icons
+  document.getElementById('tool-settings')?.addEventListener('click', () => {
+    showModal('modal-settings');
+  });
+
+  document.getElementById('tool-sound')?.addEventListener('click', () => {
+    State.soundOn = !State.soundOn;
+    AudioFX.enabled = State.soundOn;
+    setMessage(State.soundOn ? 'Sound: ON' : 'Sound: OFF');
+  });
+
+  // Demo badge toggle
+  document.getElementById('demo-badge')?.addEventListener('click', () => {
+    State.balance = 1000.00;
+    updateUI();
+    setMessage('Balance reset to 1000.00');
+  });
+
+  updateUI();
+});
+
+</script>
+  <script>
+    // Settings modal interactions
+    document.getElementById('btn-toggle-sound')?.addEventListener('click', function() {
+      State.soundOn = !State.soundOn;
+      AudioFX.enabled = State.soundOn;
+      this.textContent = State.soundOn ? 'Enabled' : 'Disabled';
+      this.style.background = State.soundOn ? '#1a7ec4' : '#333';
+    });
+
+    document.getElementById('btn-toggle-speed')?.addEventListener('click', function() {
+      State.fastPlay = !State.fastPlay;
+      this.textContent = State.fastPlay ? 'Enabled' : 'Disabled';
+      this.style.background = State.fastPlay ? '#1a7ec4' : '#333';
+    });
+
+    document.getElementById('btn-reset-demo')?.addEventListener('click', function() {
+      State.balance = 1000.00;
+      updateUI();
+      document.getElementById('modal-settings').classList.remove('show');
+      setMessage('Balance reset to 1000.00');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 150">
+  <defs>
+    <radialGradient id="cardbg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e4d8c"/>
+      <stop offset="100%" stop-color="#081830"/>
+    </radialGradient>
+    <pattern id="cardpat" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M5 0L10 5L5 10L0 5Z" fill="none" stroke="#d4af37" stroke-width="0.8" opacity="0.6"/>
+      <circle cx="5" cy="5" r="1.2" fill="#d4af37" opacity="0.8"/>
+    </pattern>
+  </defs>
+  <rect x="2" y="2" width="96" height="146" rx="6" fill="#ffffff" stroke="#cfd4dc" stroke-width="1.5"/>
+  <rect x="5" y="5" width="90" height="140" rx="4" fill="url(#cardbg)"/>
+  <rect x="5" y="5" width="90" height="140" rx="4" fill="url(#cardpat)"/>
+  <rect x="8" y="8" width="84" height="134" rx="3" fill="none" stroke="#e5c158" stroke-width="1.5"/>
+  <circle cx="50" cy="75" r="22" fill="#081830" stroke="#e5c158" stroke-width="2"/>
+  <polygon points="50,58 54,71 67,75 54,79 50,92 46,79 33,75 46,71" fill="#e5c158"/>
+</svg>

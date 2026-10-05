@@ -1,0 +1,1 @@
+{"game":"Indian Poker","mode":"demo","startBalance":1000,"bets":[1,2,3,5,10,25],"payouts":{"pair":1,"flush":5,"straight":10,"three":50,"sf":75},"note":"win returns bet*(multiplier+1)"}
