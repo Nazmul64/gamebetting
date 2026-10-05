@@ -127,10 +127,14 @@ async function playRound() {
 
   const dealtHand = [State.deck.pop(), State.deck.pop(), State.deck.pop()];
 
+  const basePath = window.INDIAN_POKER_BASE || '/indian-poker/';
+
   // Update card front images
   dealtHand.forEach((card, i) => {
     const frontImg = document.querySelector(`.card-slot[data-index="${i}"] .card-face.front img`);
-    frontImg.src = `assets/images/cards/${card}.svg`;
+    if (frontImg) {
+      frontImg.src = `${basePath}assets/images/cards/${card}.svg`;
+    }
   });
 
   const speedMultiplier = State.fastPlay ? 0.5 : 1.0;
