@@ -24,6 +24,7 @@
       background: #06040a;
       overflow: hidden !important;
       font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: block !important;
     }
     #wrap {
       width: 100vw;
