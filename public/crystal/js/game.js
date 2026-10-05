@@ -29,9 +29,9 @@ const GEMS = [
 
 const COLS = 7;
 const ROWS = 7;
-const CELL_SIZE = 70;
-const GRID_X = 530;
-const GRID_Y = 210;
+const CELL_SIZE = 79.5;
+const GRID_X = 654;
+const GRID_Y = 188;
 
 let balance = 10000;
 let totalWinnings = 0;
@@ -121,12 +121,18 @@ function highlightPaytableRow(gemId) {
 
 // --- HELPER: PLAY SPINE ANIMATIONS SAFELY ---
 function playSpine(spineObj, animNames, loop = false, trackIndex = 0) {
-  if (!spineObj || !spineObj.state || !spineObj.spineData) return;
-  const availableAnims = spineObj.spineData.animations.map(a => a.name);
-  const found = animNames.find(name => availableAnims.includes(name));
+  if (!spineObj || !spineObj.state) return;
+  const anims = Array.isArray(animNames) ? animNames : [animNames];
+  let availableAnims = [];
+  if (spineObj.skeleton && spineObj.skeleton.data && spineObj.skeleton.data.animations) {
+    availableAnims = spineObj.skeleton.data.animations.map(a => a.name);
+  } else if (spineObj.spineData && spineObj.spineData.animations) {
+    availableAnims = spineObj.spineData.animations.map(a => a.name);
+  }
+  const found = anims.find(name => availableAnims.includes(name));
   if (found) {
     try {
-      spineObj.state.setAnimation(trackIndex, found, loop);
+      return spineObj.state.setAnimation(trackIndex, found, loop);
     } catch (e) {
       console.warn('Spine animation error:', e);
     }
@@ -145,17 +151,22 @@ function startKingSleepAnimation() {
 
 function playKingWinCelebration() {
   if (kingSpine) {
-    playSpine(kingSpine, ['win', 'action', 'idle'], false);
+    // Play win celebration immediately (legs down, eyes open, cheerful reaction)
+    playSpine(kingSpine, ['win', 'action'], false);
+    // Queue returning back to idle sleep pose
+    try {
+      kingSpine.state.addAnimation(0, 'idle', true, 2.5);
+    } catch (e) {
+      setTimeout(() => {
+        if (!isSpinning) startKingSleepAnimation();
+      }, 2600);
+    }
   }
   if (bubbleSpine) {
-    bubbleSpine.visible = false;
+    playSpine(bubbleSpine, ['win', 'win_total'], false);
+    bubbleSpine.visible = true;
   }
   spawnKingAuraSparkles();
-  gsap.delayedCall(2.8, () => {
-    if (!isSpinning) {
-      startKingSleepAnimation();
-    }
-  });
 }
 
 function spawnKingAuraSparkles() {
@@ -198,7 +209,7 @@ function spawnGoldCoinShower() {
     coin.lineStyle(1.5, 0xffa500, 0.9);
     coin.drawEllipse(0, 0, 8 + Math.random() * 4, 6 + Math.random() * 3);
     coin.endFill();
-    coin.x = 775 + (Math.random() - 0.5) * 400;
+    coin.x = 932 + (Math.random() - 0.5) * 400;
     coin.y = 150 + Math.random() * 50;
     particlesContainer.addChild(coin);
 
@@ -342,6 +353,92 @@ function createGemSprite(gemData, r, c) {
   return sprite;
 }
 
+function renderWinCards(clusters) {
+  if (!window.crystalWinCards) return;
+  window.crystalWinCards.removeChildren();
+
+  clusters.forEach((cl, idx) => {
+    const card = new PIXI.Container();
+    card.x = 0;
+    card.y = idx * 64;
+    card.alpha = 0;
+
+    // Background banner (Width: 308px, Height: 56px to perfectly fit the Right Chamber)
+    const bgTex = PIXI.Assets.get('assets/images/ui/payout_background_color.png') || PIXI.Assets.get('assets/images/ui/flag_background.png');
+    if (bgTex) {
+      const bgSprite = new PIXI.Sprite(bgTex);
+      bgSprite.width = 308;
+      bgSprite.height = 56;
+      bgSprite.anchor.set(0, 0.5);
+      card.addChild(bgSprite);
+    } else {
+      const bgG = new PIXI.Graphics();
+      bgG.beginFill(0x280b4d, 0.88);
+      bgG.lineStyle(1.5, 0xd4af37, 0.8);
+      bgG.drawRoundedRect(0, -28, 308, 56, 10);
+      bgG.endFill();
+      card.addChild(bgG);
+    }
+
+    // Flag Frame
+    const frTex = PIXI.Assets.get('assets/images/ui/flag_frame.png');
+    if (frTex) {
+      const frSprite = new PIXI.Sprite(frTex);
+      frSprite.x = 6;
+      frSprite.y = 0;
+      frSprite.anchor.set(0, 0.5);
+      frSprite.scale.set(0.72);
+      card.addChild(frSprite);
+    }
+
+    // Gem Icon
+    const gemTex = PIXI.Assets.get(cl.gem.file);
+    if (gemTex) {
+      const gemSprite = new PIXI.Sprite(gemTex);
+      gemSprite.anchor.set(0.5);
+      gemSprite.x = 28;
+      gemSprite.y = 0;
+      gemSprite.width = 38;
+      gemSprite.height = 38;
+      card.addChild(gemSprite);
+    }
+
+    // Count text: "x5", "x7"
+    const countTxt = new PIXI.Text(`x${cl.count}`, {
+      fontFamily: 'Montserrat',
+      fontSize: 18,
+      fontWeight: '900',
+      fill: 0xffd700
+    });
+    countTxt.anchor.set(0, 0.5);
+    countTxt.x = 56;
+    countTxt.y = 0;
+    card.addChild(countTxt);
+
+    // Payout amount: "+120.00 BDT"
+    const winForCluster = betAmount * cl.gem.mult * (1 + (cl.count - 5) * 0.2);
+    const payoutTxt = new PIXI.Text(`+${winForCluster.toFixed(1)} BDT`, {
+      fontFamily: 'Montserrat',
+      fontSize: 17,
+      fontWeight: '900',
+      fill: 0xffffff
+    });
+    payoutTxt.anchor.set(1, 0.5);
+    payoutTxt.x = 296;
+    payoutTxt.y = 0;
+    card.addChild(payoutTxt);
+
+    window.crystalWinCards.addChild(card);
+
+    gsap.to(card, {
+      alpha: 1,
+      duration: 0.3,
+      delay: idx * 0.08,
+      ease: 'back.out(1.4)'
+    });
+  });
+}
+
 // --- SPIN ACTION & CASCADING STEPPER ---
 async function startSpin() {
   if (isSpinning) return;
@@ -349,6 +446,10 @@ async function startSpin() {
   if (balance < betAmount) {
     if (messageText) messageText.text = '⚠️ Insufficient Balance!';
     return;
+  }
+
+  if (window.crystalWinCards) {
+    window.crystalWinCards.removeChildren();
   }
 
   isSpinning = true;
@@ -422,6 +523,8 @@ async function startSpin() {
 
     cascadeStep++;
     let stepWin = 0;
+
+    renderWinCards(clusters);
 
     clusters.forEach(cl => {
       const winForCluster = betAmount * cl.gem.mult * (1 + (cl.count - 5) * 0.2);
@@ -589,12 +692,24 @@ window.addEventListener('DOMContentLoaded', async () => {
       'assets/images/symbols/yellow_b.png',
       'assets/images/symbols/wild.png',
       'assets/images/symbols/wild_b.png',
-      // Official UI
+      // Official UI Assets
+      'assets/images/ui/bet_btn_normal.png',
+      'assets/images/ui/bet_btn_hover.png',
+      'assets/images/ui/bet_btn_pressed.png',
+      'assets/images/ui/btn_round_skip_normal.png',
+      'assets/images/ui/btn_round_skip_hover.png',
+      'assets/images/ui/skip_icon.png',
+      'assets/images/ui/btn_play_normal.png',
+      'assets/images/ui/btn_play_hover.png',
+      'assets/images/ui/btn_auto_normal.png',
+      'assets/images/ui/btn_auto_hover.png',
+      'assets/images/ui/autoplay_icon.png',
       'assets/images/ui/reels_desktop_background.png',
       'assets/images/ui/ribbon_background.png',
       'assets/images/ui/flag_frame.png',
       'assets/images/ui/flag_background.png',
       'assets/images/ui/payout_background_color.png',
+      'assets/images/ui/payout_background_glow.png',
       'assets/images/ui/logo.png'
     ];
 
@@ -607,20 +722,54 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     updateProgress(50, 'Loading Animated Spine Characters...');
 
-    // Load Spine models
+    // Load Spine 4.2 models
+    async function loadSpine42(skelRelative, atlasRelative, scale = 1) {
+      try {
+        const SpineClass = (window.spine && window.spine.Spine) || (PIXI.spine && PIXI.spine.Spine);
+        if (!SpineClass) return null;
+        const atlasUrl = getAssetPath(atlasRelative);
+        const skelUrl = getAssetPath(skelRelative);
+
+        const [atlasRes, skelRes] = await Promise.all([
+          fetch(atlasUrl).then(r => r.text()),
+          fetch(skelUrl).then(r => r.arrayBuffer())
+        ]);
+
+        const atlas = new window.spine.TextureAtlas(atlasRes);
+        const texPromises = atlas.pages.map(async (page) => {
+          const pageTexPath = getAssetPath('assets/spines/' + page.name);
+          let pTex = PIXI.Assets.get(pageTexPath);
+          if (!pTex) {
+            try {
+              pTex = await PIXI.Assets.load(pageTexPath);
+            } catch (e) {
+              pTex = PIXI.Texture.from(pageTexPath);
+            }
+          }
+          page.setTexture(window.spine.SpineTexture.from(pTex.baseTexture || pTex));
+        });
+        await Promise.all(texPromises);
+
+        const attachmentLoader = new window.spine.AtlasAttachmentLoader(atlas);
+        const parser = new window.spine.SkeletonBinary(attachmentLoader);
+        if (scale && scale !== 1) parser.scale = scale;
+        const skeletonData = parser.readSkeletonData(new Uint8Array(skelRes));
+        return new SpineClass({ skeletonData, autoUpdate: true });
+      } catch (err) {
+        console.warn('Spine load warning for ' + skelRelative + ':', err);
+        return null;
+      }
+    }
+
     let kingRes = null, bgFxRes = null, bubbleRes = null;
     try {
-      PIXI.Assets.add({ alias: 'kingSkel', src: getAssetPath('assets/spines/king.skel'), data: { spineAtlasFile: getAssetPath('assets/spines/king@1x.atlas') } });
-      PIXI.Assets.add({ alias: 'bgFxSkel', src: getAssetPath('assets/spines/bg_fx.skel'), data: { spineAtlasFile: getAssetPath('assets/spines/bg_fx@1x.atlas') } });
-      PIXI.Assets.add({ alias: 'bubbleSkel', src: getAssetPath('assets/spines/bubble.skel'), data: { spineAtlasFile: getAssetPath('assets/spines/bubble@1x.atlas') } });
-
       [kingRes, bgFxRes, bubbleRes] = await Promise.all([
-        PIXI.Assets.load('kingSkel').catch(e => null),
-        PIXI.Assets.load('bgFxSkel').catch(e => null),
-        PIXI.Assets.load('bubbleSkel').catch(e => null)
+        loadSpine42('assets/spines/king.skel', 'assets/spines/king@1x.atlas'),
+        loadSpine42('assets/spines/bg_fx.skel', 'assets/spines/bg_fx@1x.atlas'),
+        loadSpine42('assets/spines/bubble.skel', 'assets/spines/bubble@1x.atlas')
       ]);
     } catch (spineErr) {
-      console.warn('Spine loading fallback:', spineErr);
+      console.warn('Spine models loading fallback:', spineErr);
     }
 
     updateProgress(85, 'Assembling Royal Throne Room...');
@@ -647,47 +796,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     bgSprite.height = 1080;
     bgLayer.addChild(bgSprite);
 
-    // Wall Torch Spines (Left Pillar & Right Door)
-    if (bgFxRes && bgFxRes.spineData) {
-      const torchL = new PIXI.spine.Spine(bgFxRes.spineData);
-      torchL.x = 320;
-      torchL.y = 360;
-      torchL.scale.set(0.85);
-      playSpine(torchL, ['idle', 'loop'], true);
-      bgLayer.addChild(torchL);
-
-      const torchR1 = new PIXI.spine.Spine(bgFxRes.spineData);
-      torchR1.x = 1585;
-      torchR1.y = 295;
-      torchR1.scale.set(0.85);
-      playSpine(torchR1, ['idle', 'loop'], true);
-      bgLayer.addChild(torchR1);
-
-      const torchR2 = new PIXI.spine.Spine(bgFxRes.spineData);
-      torchR2.x = 1585;
-      torchR2.y = 610;
-      torchR2.scale.set(0.85);
-      playSpine(torchR2, ['idle', 'loop'], true);
-      bgLayer.addChild(torchR2);
+    // Wall Torches & Sparkling Diamonds Spine (Full Screen Overlay at 960, 540)
+    if (bgFxRes) {
+      const bgFxSpine = bgFxRes;
+      bgFxSpine.x = 960;
+      bgFxSpine.y = 540;
+      bgFxSpine.scale.set(1.0);
+      playSpine(bgFxSpine, ['idle', 'loop'], true);
+      bgLayer.addChild(bgFxSpine);
     }
 
-    // --- LAYER 1: ANIMATED KING CHARACTER (LOWER LEFT) ---
+    // --- LAYER 1: ANIMATED KING CHARACTER (SITTING ON THRONE CHAIR) ---
     const kingLayer = new PIXI.Container();
     app.stage.addChild(kingLayer);
 
-    if (kingRes && kingRes.spineData) {
-      kingSpine = new PIXI.spine.Spine(kingRes.spineData);
-      kingSpine.x = 290;
-      kingSpine.y = 760;
-      kingSpine.scale.set(0.78);
+    if (kingRes) {
+      kingSpine = kingRes;
+      kingSpine.x = 960;
+      kingSpine.y = 540;
+      kingSpine.scale.set(1.0);
       playSpine(kingSpine, ['idle', 'sleep', 'loop'], true);
       kingLayer.addChild(kingSpine);
 
-      if (bubbleRes && bubbleRes.spineData) {
-        bubbleSpine = new PIXI.spine.Spine(bubbleRes.spineData);
-        bubbleSpine.x = 320;
-        bubbleSpine.y = 640;
-        bubbleSpine.scale.set(0.75);
+      if (bubbleRes) {
+        bubbleSpine = bubbleRes;
+        bubbleSpine.x = 960;
+        bubbleSpine.y = 540;
+        bubbleSpine.scale.set(1.0);
         playSpine(bubbleSpine, ['idle', 'loop', 'win'], true);
         kingLayer.addChild(bubbleSpine);
       }
@@ -695,44 +830,31 @@ window.addEventListener('DOMContentLoaded', async () => {
       // Fallback Sprite
       const kingSprite = PIXI.Sprite.from(PIXI.Assets.get('assets/images/king_sleep.png') || PIXI.Assets.get('assets/images/king.png'));
       kingSprite.anchor.set(0.5);
-      kingSprite.x = 290;
-      kingSprite.y = 680;
-      kingSprite.scale.set(0.55);
+      kingSprite.x = 240;
+      kingSprite.y = 740;
+      kingSprite.scale.set(0.75);
       kingLayer.addChild(kingSprite);
     }
 
-    // --- LAYER 2: 3D CRYSTAL LOGO EMBLEM (TOP RIGHT ABOVE CARPET) ---
-    const logoLayer = new PIXI.Container();
-    app.stage.addChild(logoLayer);
-
-    const logoTex = PIXI.Assets.get('assets/images/ui/logo.png') || PIXI.Assets.get('assets/images/logo_crystal.png');
-    if (logoTex) {
-      const logoEmblem = new PIXI.Sprite(logoTex);
-      logoEmblem.anchor.set(0.5);
-      logoEmblem.x = 1275;
-      logoEmblem.y = 155;
-      logoEmblem.scale.set(0.76);
-      logoLayer.addChild(logoEmblem);
-
-      gsap.to(logoEmblem.scale, {
-        x: 0.79,
-        y: 0.79,
-        duration: 2.0,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      });
-    }
-
-    // --- LAYER 3: 7x7 CASCADING BOARD & OUTER GOLD FRAME ---
+    // --- LAYER 2 & 3: AUTHENTIC REELS FRAME, 7x7 CASCADING BOARD & DYNAMIC WIN CHAMBER ---
     const boardLayer = new PIXI.Container();
     app.stage.addChild(boardLayer);
 
-    // Dark semi-transparent grid background
+    // 1. Authentic 1xBet Golden Double Frame & Built-in Control Bar Panel
+    const frameTex = PIXI.Assets.get('assets/images/ui/reels_desktop_background.png');
+    if (frameTex) {
+      const frameSprite = new PIXI.Sprite(frameTex);
+      frameSprite.x = 480;
+      frameSprite.y = 110;
+      frameSprite.width = 1237;
+      frameSprite.height = 817;
+      boardLayer.addChild(frameSprite);
+    }
+
+    // 2. Left Chamber: Dark semi-transparent 7x7 grid backing
     const gridBg = new PIXI.Graphics();
-    gridBg.beginFill(0x130724, 0.88);
-    gridBg.lineStyle(4, 0xd4af37, 1);
-    gridBg.drawRoundedRect(GRID_X - 14, GRID_Y - 14, COLS * CELL_SIZE + 28, ROWS * CELL_SIZE + 28, 14);
+    gridBg.beginFill(0x130724, 0.85);
+    gridBg.drawRoundedRect(GRID_X - 4, GRID_Y - 4, COLS * CELL_SIZE + 8, ROWS * CELL_SIZE + 8, 8);
     gridBg.endFill();
     boardLayer.addChild(gridBg);
 
@@ -740,9 +862,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         const tile = new PIXI.Graphics();
-        tile.beginFill(0x220e3d, 0.45);
-        tile.lineStyle(1, 0x5a2d8a, 0.3);
-        tile.drawRoundedRect(GRID_X + c * CELL_SIZE + 3, GRID_Y + r * CELL_SIZE + 3, CELL_SIZE - 6, CELL_SIZE - 6, 6);
+        tile.beginFill(0x220e3d, 0.55);
+        tile.lineStyle(1, 0x5a2d8a, 0.35);
+        tile.drawRoundedRect(GRID_X + c * CELL_SIZE + 2, GRID_Y + r * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4, 6);
         tile.endFill();
         boardLayer.addChild(tile);
       }
@@ -754,112 +876,71 @@ window.addEventListener('DOMContentLoaded', async () => {
     particlesContainer = new PIXI.Container();
     boardLayer.addChild(particlesContainer);
 
-    // Top Header Status Banner
+    // 3. Right Chamber: 100% Transparent by default (shows floor/carpet underneath), displays win cards on hit!
+    const winCardsContainer = new PIXI.Container();
+    winCardsContainer.x = 1230;
+    winCardsContainer.y = 196;
+    boardLayer.addChild(winCardsContainer);
+    window.crystalWinCards = winCardsContainer;
+
+    // 4. Top Arch Ribbon Banner ("Press the Play button" / "WIN ...")
     const topBannerC = new PIXI.Container();
-    topBannerC.x = 775;
-    topBannerC.y = 150;
+    topBannerC.x = 932;
+    topBannerC.y = 100;
     boardLayer.addChild(topBannerC);
 
-    const msgPlate = new PIXI.Graphics();
-    msgPlate.beginFill(0xffffff, 0.96);
-    msgPlate.lineStyle(3, 0xd4af37, 1);
-    msgPlate.drawRoundedRect(-220, -20, 440, 40, 20);
-    msgPlate.endFill();
-    topBannerC.addChild(msgPlate);
+    const ribbonTex = PIXI.Assets.get('assets/images/ui/ribbon_background.png');
+    if (ribbonTex) {
+      const ribbonSprite = new PIXI.Sprite(ribbonTex);
+      ribbonSprite.anchor.set(0.5);
+      ribbonSprite.scale.set(1.4, 1.15);
+      topBannerC.addChild(ribbonSprite);
+    } else {
+      const msgPlate = new PIXI.Graphics();
+      msgPlate.beginFill(0xffffff, 0.96);
+      msgPlate.lineStyle(3, 0xd4af37, 1);
+      msgPlate.drawRoundedRect(-200, -18, 400, 36, 18);
+      msgPlate.endFill();
+      topBannerC.addChild(msgPlate);
+    }
 
     messageText = new PIXI.Text('Press the Play button', {
       fontFamily: 'Montserrat',
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: '900',
       fill: 0x1f0b3b
     });
     messageText.anchor.set(0.5);
     topBannerC.addChild(messageText);
 
-    // --- LAYER 4: MULTIPLIER PAYTABLE (RIGHT SIDE) ---
-    paytableContainer = new PIXI.Container();
-    paytableContainer.x = 1060;
-    paytableContainer.y = 440;
-    app.stage.addChild(paytableContainer);
+    // 5. 3D "CRYSTAL" Logo on central arch apex divider
+    const logoTex = PIXI.Assets.get('assets/images/ui/logo.png') || PIXI.Assets.get('assets/images/logo_crystal.png');
+    if (logoTex) {
+      const logoEmblem = new PIXI.Sprite(logoTex);
+      logoEmblem.anchor.set(0.5);
+      logoEmblem.x = 1218;
+      logoEmblem.y = 118;
+      logoEmblem.scale.set(0.85);
+      boardLayer.addChild(logoEmblem);
 
-    const tableBg = new PIXI.Graphics();
-    tableBg.beginFill(0x15072b, 0.90);
-    tableBg.lineStyle(2.5, 0xd4af37, 0.85);
-    tableBg.drawRoundedRect(0, 0, 280, 260, 12);
-    tableBg.endFill();
-    paytableContainer.addChild(tableBg);
-
-    const regularGems = GEMS.filter(g => !g.isWild);
-    regularGems.forEach((gem, idx) => {
-      const rowC = new PIXI.Container();
-      rowC.x = 10;
-      rowC.y = 10 + idx * 40;
-
-      const rowBg = new PIXI.Graphics();
-      rowBg.beginFill(gem.color, 0.25);
-      rowBg.lineStyle(1.2, gem.color, 0.65);
-      rowBg.drawRoundedRect(0, 0, 260, 34, 6);
-      rowBg.endFill();
-      rowC.addChild(rowBg);
-
-      const gemIcon = new PIXI.Sprite(PIXI.Assets.get(gem.file));
-      gemIcon.anchor.set(0.5);
-      gemIcon.x = 22;
-      gemIcon.y = 17;
-      gemIcon.width = 24;
-      gemIcon.height = 24;
-      rowC.addChild(gemIcon);
-
-      const multLabel = new PIXI.Text(`x${gem.mult}`, {
-        fontFamily: 'Montserrat',
-        fontSize: 14,
-        fontWeight: '900',
-        fill: 0xffffff
+      gsap.to(logoEmblem.scale, {
+        x: 0.88,
+        y: 0.88,
+        duration: 2.2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
       });
-      multLabel.anchor.set(0, 0.5);
-      multLabel.x = 44;
-      multLabel.y = 17;
-      rowC.addChild(multLabel);
+    }
 
-      const payoutLabel = new PIXI.Text(`${(betAmount * gem.mult).toFixed(1)} BDT`, {
-        fontFamily: 'Montserrat',
-        fontSize: 13,
-        fontWeight: '800',
-        fill: 0xffe277
-      });
-      payoutLabel.anchor.set(1, 0.5);
-      payoutLabel.x = 250;
-      payoutLabel.y = 17;
-      rowC.addChild(payoutLabel);
-
-      paytableContainer.addChild(rowC);
-      multiplierRows[gem.id] = { container: rowC, bg: rowBg, payoutLabel };
-    });
-
-    // --- LAYER 5: AUTHENTIC 1XBET BOTTOM CONTROL BAR ---
+    // --- LAYER 5: AUTHENTIC 1XBET ROYAL BOTTOM CONTROLS ---
     const uiLayer = new PIXI.Container();
     app.stage.addChild(uiLayer);
 
     const controlPanel = new PIXI.Container();
-    controlPanel.x = 960;
-    controlPanel.y = 890;
     uiLayer.addChild(controlPanel);
 
-    // Royal Purple & Gold Trim Banner Frame
-    const barBg = new PIXI.Graphics();
-    barBg.beginFill(0x310f5c, 0.94);
-    barBg.lineStyle(4, 0xdaa520, 1);
-    barBg.drawRoundedRect(-570, -55, 1140, 110, 24);
-    barBg.endFill();
-    controlPanel.addChild(barBg);
-
-    // Inner subtle gold divider lines
-    const barInner = new PIXI.Graphics();
-    barInner.lineStyle(1.5, 0xffd700, 0.4);
-    barInner.drawRoundedRect(-564, -49, 1128, 98, 20);
-    controlPanel.addChild(barInner);
-
-    // 1. 6 Gold Bet Quick Buttons (Left Side: 2 Rows x 3 Cols)
+    // 1. 6 Gold Bet Quick Buttons (Left Side: 2 Rows x 3 Cols with Real Button Image Backgrounds)
     const betPresets = [
       { val: 20, col: 0, row: 0 },
       { val: 100, col: 1, row: 0 },
@@ -869,26 +950,36 @@ window.addEventListener('DOMContentLoaded', async () => {
       { val: 10000, col: 2, row: 1 }
     ];
 
+    const betBtnNormalTex = PIXI.Assets.get('assets/images/ui/bet_btn_normal.png');
+    const betBtnHoverTex = PIXI.Assets.get('assets/images/ui/bet_btn_hover.png');
+    const betBtnPressedTex = PIXI.Assets.get('assets/images/ui/bet_btn_pressed.png');
+
     betPresets.forEach(p => {
       const btnC = new PIXI.Container();
-      btnC.x = -530 + p.col * 98 + 44;
-      btnC.y = -22 + p.row * 44;
+      btnC.x = 610 + p.col * 110;
+      btnC.y = 808 + p.row * 50;
       btnC.eventMode = 'static';
       btnC.cursor = 'pointer';
 
-      const bg = new PIXI.Graphics();
-      bg.name = 'bg';
-      bg.beginFill(0xd9a74a, 1);
-      bg.lineStyle(2, 0xfff099, 1);
-      bg.drawRoundedRect(-42, -18, 84, 36, 10);
-      bg.endFill();
-      btnC.addChild(bg);
+      let bg;
+      if (betBtnNormalTex) {
+        bg = new PIXI.Sprite(betBtnNormalTex);
+        bg.name = 'bg';
+        bg.anchor.set(0.5);
+        bg.width = 100;
+        bg.height = 44;
+        btnC.addChild(bg);
+      }
 
-      const label = new PIXI.Text(p.val >= 1000 ? `${p.val / 1000}k` : p.val.toString(), {
+      const label = new PIXI.Text(p.val.toString(), {
         fontFamily: 'Montserrat',
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '900',
-        fill: 0xffffff
+        fill: 0xffffff,
+        dropShadow: true,
+        dropShadowColor: 0x000000,
+        dropShadowBlur: 2,
+        dropShadowDistance: 1
       });
       label.name = 'label';
       label.anchor.set(0.5);
@@ -899,10 +990,20 @@ window.addEventListener('DOMContentLoaded', async () => {
           window.audio.init();
           window.audio.playClick();
         }
+        if (betBtnPressedTex && bg) bg.texture = betBtnPressedTex;
         setBet(p.val);
       });
-      btnC.on('pointerover', () => gsap.to(btnC.scale, { x: 1.06, y: 1.06, duration: 0.12 }));
-      btnC.on('pointerout', () => gsap.to(btnC.scale, { x: 1.0, y: 1.0, duration: 0.12 }));
+      btnC.on('pointerup', () => {
+        if (betBtnNormalTex && bg) bg.texture = betBtnNormalTex;
+      });
+      btnC.on('pointerover', () => {
+        if (betBtnHoverTex && bg) bg.texture = betBtnHoverTex;
+        gsap.to(btnC.scale, { x: 1.05, y: 1.05, duration: 0.12 });
+      });
+      btnC.on('pointerout', () => {
+        if (betBtnNormalTex && bg) bg.texture = betBtnNormalTex;
+        gsap.to(btnC.scale, { x: 1.0, y: 1.0, duration: 0.12 });
+      });
 
       controlPanel.addChild(btnC);
       betButtons.push({ btn: btnC, val: p.val });
@@ -910,63 +1011,64 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Turbo Fast-Forward Button (Skip `>>`)
     turboBtnC = new PIXI.Container();
-    turboBtnC.x = -175;
-    turboBtnC.y = 0;
+    turboBtnC.x = 940;
+    turboBtnC.y = 834;
     turboBtnC.eventMode = 'static';
     turboBtnC.cursor = 'pointer';
 
-    const turboBg = new PIXI.Graphics();
-    turboBg.name = 'bg';
-    turboBg.beginFill(0xb8860b, 1);
-    turboBg.lineStyle(3, 0xffd700, 1);
-    turboBg.drawCircle(0, 0, 32);
-    turboBg.endFill();
-    turboBtnC.addChild(turboBg);
-
-    const turboIcon = new PIXI.Text('⏩', { fontSize: 20 });
-    turboIcon.anchor.set(0.5);
-    turboBtnC.addChild(turboIcon);
+    const skipTex = PIXI.Assets.get('assets/images/ui/btn_round_skip_normal.png');
+    const skipHoverTex = PIXI.Assets.get('assets/images/ui/btn_round_skip_hover.png');
+    let skipSprite;
+    if (skipTex) {
+      skipSprite = new PIXI.Sprite(skipTex);
+      skipSprite.name = 'bg';
+      skipSprite.anchor.set(0.5);
+      skipSprite.scale.set(0.88);
+      turboBtnC.addChild(skipSprite);
+    }
+    const skipIcoTex = PIXI.Assets.get('assets/images/ui/skip_icon.png');
+    if (skipIcoTex) {
+      const base = skipIcoTex.baseTexture || skipIcoTex;
+      const singleSkipTex = new PIXI.Texture(base, new PIXI.Rectangle(0, 0, 141, 40));
+      const skipIco = new PIXI.Sprite(singleSkipTex);
+      skipIco.anchor.set(0.5);
+      skipIco.scale.set(0.55);
+      turboBtnC.addChild(skipIco);
+    }
 
     turboBtnC.on('pointerdown', () => {
       if (window.audio) window.audio.playClick();
       isTurbo = !isTurbo;
-      turboBg.tint = isTurbo ? 0x00ff88 : 0xffffff;
+      if (skipSprite) skipSprite.tint = isTurbo ? 0x00ff88 : 0xffffff;
       if (messageText) messageText.text = isTurbo ? '⚡ Turbo Mode: ON' : 'Turbo Mode: OFF';
     });
-    turboBtnC.on('pointerover', () => gsap.to(turboBtnC.scale, { x: 1.08, y: 1.08, duration: 0.12 }));
-    turboBtnC.on('pointerout', () => gsap.to(turboBtnC.scale, { x: 1.0, y: 1.0, duration: 0.12 }));
+    turboBtnC.on('pointerover', () => {
+      if (skipHoverTex && skipSprite) skipSprite.texture = skipHoverTex;
+      gsap.to(turboBtnC.scale, { x: 1.08, y: 1.08, duration: 0.12 });
+    });
+    turboBtnC.on('pointerout', () => {
+      if (skipTex && skipSprite) skipSprite.texture = skipTex;
+      gsap.to(turboBtnC.scale, { x: 1.0, y: 1.0, duration: 0.12 });
+    });
     controlPanel.addChild(turboBtnC);
 
-    // 3. Center Main Spin Play Button (Big Emerald Green Gem)
+    // 3. Center Main Spin Play Button (Big Emerald Green Gem with Dragon Wings Frame)
     playBtnC = new PIXI.Container();
-    playBtnC.x = -80;
-    playBtnC.y = 0;
+    playBtnC.x = 1055;
+    playBtnC.y = 834;
     playBtnC.eventMode = 'static';
     playBtnC.cursor = 'pointer';
 
-    const playOuterRing = new PIXI.Graphics();
-    playOuterRing.beginFill(0xdaa520, 1);
-    playOuterRing.lineStyle(3, 0xffe680, 1);
-    playOuterRing.drawCircle(0, 0, 46);
-    playOuterRing.endFill();
-    playBtnC.addChild(playOuterRing);
-
-    const playInnerGem = new PIXI.Graphics();
-    playInnerGem.beginFill(0x10b981, 1);
-    playInnerGem.lineStyle(2, 0x6ee7b7, 1);
-    playInnerGem.drawCircle(0, 0, 38);
-    playInnerGem.endFill();
-    playBtnC.addChild(playInnerGem);
-
-    const playArrow = new PIXI.Text('▶', {
-      fontFamily: 'Montserrat',
-      fontSize: 32,
-      fontWeight: '900',
-      fill: 0xffffff
-    });
-    playArrow.anchor.set(0.5);
-    playArrow.x = 3;
-    playBtnC.addChild(playArrow);
+    const playTex = PIXI.Assets.get('assets/images/ui/btn_play_normal.png');
+    const playHoverTex = PIXI.Assets.get('assets/images/ui/btn_play_hover.png');
+    let playSprite;
+    if (playTex) {
+      playSprite = new PIXI.Sprite(playTex);
+      playSprite.name = 'bg';
+      playSprite.anchor.set(0.5);
+      playSprite.scale.set(0.96);
+      playBtnC.addChild(playSprite);
+    }
 
     playBtnC.on('pointerdown', () => {
       if (!isSpinning) {
@@ -974,53 +1076,73 @@ window.addEventListener('DOMContentLoaded', async () => {
         gsap.fromTo(playBtnC.scale, { x: 0.92, y: 0.92 }, { x: 1.0, y: 1.0, duration: 0.2, ease: 'back.out(2)' });
       }
     });
-    playBtnC.on('pointerover', () => gsap.to(playBtnC.scale, { x: 1.08, y: 1.08, duration: 0.14 }));
-    playBtnC.on('pointerout', () => gsap.to(playBtnC.scale, { x: 1.0, y: 1.0, duration: 0.14 }));
+    playBtnC.on('pointerover', () => {
+      if (playHoverTex && playSprite) playSprite.texture = playHoverTex;
+      gsap.to(playBtnC.scale, { x: 1.08, y: 1.08, duration: 0.14 });
+    });
+    playBtnC.on('pointerout', () => {
+      if (playTex && playSprite) playSprite.texture = playTex;
+      gsap.to(playBtnC.scale, { x: 1.0, y: 1.0, duration: 0.14 });
+    });
     controlPanel.addChild(playBtnC);
 
     // 4. Circular Auto-Spin Button (`🔄`)
     autoBtnC = new PIXI.Container();
-    autoBtnC.x = 15;
-    autoBtnC.y = 0;
+    autoBtnC.x = 1170;
+    autoBtnC.y = 834;
     autoBtnC.eventMode = 'static';
     autoBtnC.cursor = 'pointer';
 
-    const autoBg = new PIXI.Graphics();
-    autoBg.name = 'bg';
-    autoBg.beginFill(0xb8860b, 1);
-    autoBg.lineStyle(3, 0xffd700, 1);
-    autoBg.drawCircle(0, 0, 32);
-    autoBg.endFill();
-    autoBtnC.addChild(autoBg);
-
-    const autoIcon = new PIXI.Text('🔄', { fontSize: 20 });
-    autoIcon.anchor.set(0.5);
-    autoBtnC.addChild(autoIcon);
+    const autoTex = PIXI.Assets.get('assets/images/ui/btn_auto_normal.png');
+    const autoHoverTex = PIXI.Assets.get('assets/images/ui/btn_auto_hover.png');
+    let autoSprite;
+    if (autoTex) {
+      autoSprite = new PIXI.Sprite(autoTex);
+      autoSprite.name = 'bg';
+      autoSprite.anchor.set(0.5);
+      autoSprite.scale.set(0.88);
+      autoBtnC.addChild(autoSprite);
+    }
+    const autoIcoTex = PIXI.Assets.get('assets/images/ui/autoplay_icon.png');
+    if (autoIcoTex) {
+      const base = autoIcoTex.baseTexture || autoIcoTex;
+      const singleAutoTex = new PIXI.Texture(base, new PIXI.Rectangle(0, 0, 98, 98));
+      const autoIco = new PIXI.Sprite(singleAutoTex);
+      autoIco.anchor.set(0.5);
+      autoIco.scale.set(0.55);
+      autoBtnC.addChild(autoIco);
+    }
 
     autoBtnC.on('pointerdown', () => {
       if (window.audio) window.audio.playClick();
       if (!isAutoPlay) {
         isAutoPlay = true;
         autoSpinsLeft = 20;
-        autoBg.tint = 0x00ff88;
+        if (autoSprite) autoSprite.tint = 0x00ff88;
         if (messageText) messageText.text = '🔄 Auto-Spin: 20 Rounds Started';
         if (!isSpinning) startSpin();
       } else {
         isAutoPlay = false;
         autoSpinsLeft = 0;
-        autoBg.tint = 0xffffff;
+        if (autoSprite) autoSprite.tint = 0xffffff;
         if (messageText) messageText.text = 'Auto-Spin Cancelled';
       }
     });
-    autoBtnC.on('pointerover', () => gsap.to(autoBtnC.scale, { x: 1.08, y: 1.08, duration: 0.12 }));
-    autoBtnC.on('pointerout', () => gsap.to(autoBtnC.scale, { x: 1.0, y: 1.0, duration: 0.12 }));
+    autoBtnC.on('pointerover', () => {
+      if (autoHoverTex && autoSprite) autoSprite.texture = autoHoverTex;
+      gsap.to(autoBtnC.scale, { x: 1.08, y: 1.08, duration: 0.12 });
+    });
+    autoBtnC.on('pointerout', () => {
+      if (autoTex && autoSprite) autoSprite.texture = autoTex;
+      gsap.to(autoBtnC.scale, { x: 1.0, y: 1.0, duration: 0.12 });
+    });
     controlPanel.addChild(autoBtnC);
 
-    // 5. Stake Stepper `[-  20  +]`
+    // 5. Stake Stepper Box `[-  20  +]`
     const stepperBox = new PIXI.Graphics();
-    stepperBox.beginFill(0x1e0738, 0.95);
+    stepperBox.beginFill(0x1c0733, 0.95);
     stepperBox.lineStyle(2, 0xcaa048, 1);
-    stepperBox.drawRoundedRect(95, -22, 230, 44, 22);
+    stepperBox.drawRoundedRect(1225, 810, 190, 48, 24);
     stepperBox.endFill();
     controlPanel.addChild(stepperBox);
 
@@ -1031,8 +1153,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       fill: 0xffd700
     });
     minusBtn.anchor.set(0.5);
-    minusBtn.x = 125;
-    minusBtn.y = 0;
+    minusBtn.x = 1255;
+    minusBtn.y = 834;
     minusBtn.eventMode = 'static';
     minusBtn.cursor = 'pointer';
     minusBtn.on('pointerdown', () => {
@@ -1049,8 +1171,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       fill: 0xffffff
     });
     betInputLabel.anchor.set(0.5);
-    betInputLabel.x = 210;
-    betInputLabel.y = 0;
+    betInputLabel.x = 1320;
+    betInputLabel.y = 834;
     controlPanel.addChild(betInputLabel);
 
     const plusBtn = new PIXI.Text('+', {
@@ -1060,8 +1182,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       fill: 0xffd700
     });
     plusBtn.anchor.set(0.5);
-    plusBtn.x = 295;
-    plusBtn.y = 0;
+    plusBtn.x = 1385;
+    plusBtn.y = 834;
     plusBtn.eventMode = 'static';
     plusBtn.cursor = 'pointer';
     plusBtn.on('pointerdown', () => {
@@ -1071,21 +1193,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     controlPanel.addChild(plusBtn);
 
-    // 6. Sound Toggle & Help Buttons
+    // 6. Sound Toggle & Help Buttons (Stacked Vertically on the Right)
     const soundBtn = new PIXI.Container();
-    soundBtn.x = 410;
-    soundBtn.y = 0;
+    soundBtn.x = 1455;
+    soundBtn.y = 812;
     soundBtn.eventMode = 'static';
     soundBtn.cursor = 'pointer';
 
     const soundBg = new PIXI.Graphics();
-    soundBg.beginFill(0x270b47, 0.9);
-    soundBg.lineStyle(2, 0xd4af37, 0.8);
-    soundBg.drawCircle(0, 0, 20);
+    soundBg.beginFill(0x270b47, 0.95);
+    soundBg.lineStyle(2, 0xd4af37, 0.9);
+    soundBg.drawCircle(0, 0, 16);
     soundBg.endFill();
     soundBtn.addChild(soundBg);
 
-    const soundIco = new PIXI.Text('🔊', { fontSize: 16 });
+    const soundIco = new PIXI.Text('🔊', { fontSize: 13 });
     soundIco.anchor.set(0.5);
     soundBtn.addChild(soundIco);
 
@@ -1098,24 +1220,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     controlPanel.addChild(soundBtn);
 
     const helpBtn = new PIXI.Container();
-    helpBtn.x = 470;
-    helpBtn.y = 0;
+    helpBtn.x = 1455;
+    helpBtn.y = 856;
     helpBtn.eventMode = 'static';
     helpBtn.cursor = 'pointer';
 
     const helpBg = new PIXI.Graphics();
-    helpBg.beginFill(0x270b47, 0.9);
-    helpBg.lineStyle(2, 0xd4af37, 0.8);
-    helpBg.drawCircle(0, 0, 20);
+    helpBg.beginFill(0x270b47, 0.95);
+    helpBg.lineStyle(2, 0xd4af37, 0.9);
+    helpBg.drawCircle(0, 0, 16);
     helpBg.endFill();
     helpBtn.addChild(helpBg);
 
-    const helpIco = new PIXI.Text('❓', { fontSize: 16 });
+    const helpIco = new PIXI.Text('❓', { fontSize: 13 });
     helpIco.anchor.set(0.5);
     helpBtn.addChild(helpIco);
 
     helpBtn.on('pointerdown', () => {
-      if (window.rulesModal) window.rulesModal.open();
+      const modal = document.getElementById('info-modal');
+      if (modal) modal.style.display = 'flex';
     });
     controlPanel.addChild(helpBtn);
 

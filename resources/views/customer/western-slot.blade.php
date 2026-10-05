@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-  <base href="/western-slot/">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Western Slot - Wild West Casino</title>
@@ -12,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rye&family=Sancreek&family=Bebas+Neue&family=Montserrat:wght@600;800;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ asset('western-slot/style.css') }}">
   <style>
     body {
       overflow-y: auto !important;
@@ -23,6 +22,13 @@
       min-height: 760px;
     }
   </style>
+  <script>
+    window.WESTERN_ASSET_BASE = "{{ asset('western-slot') }}/";
+    window.WESTERN_SLOT_BASE = "{{ asset('western-slot') }}/";
+    @if(Auth::check())
+    window.USER_BALANCE = {{ (float)(Auth::user()->balance ?? 5000.00) }};
+    @endif
+  </script>
 </head>
 
 <body>
@@ -33,7 +39,7 @@
   <div class="game-viewport">
     <!-- Background Scene -->
     <div class="background-container">
-      <img src="bg@1x.93f1283b5bd2.jpg" alt="Western Town" class="main-bg">
+      <img src="{{ asset('western-slot/bg@1x.93f1283b5bd2.jpg') }}" alt="Western Town" class="main-bg">
 
       <!-- Flying Eagle Sprite Animation (Flies from right to left) -->
       <div id="eagle-container" class="eagle-wrapper">
@@ -45,46 +51,46 @@
     <div class="game-stage" id="game-stage">
       <!-- Top Left Fixed Jackpot Glow Banner -->
       <div class="top-jackpot-sign">
-        <img src="jackpot-header-bg.1b89dcf9335b.png" alt="Jackpot Sign" class="jackpot-header-img">
+        <img src="{{ asset('western-slot/jackpot-header-bg.1b89dcf9335b.png') }}" alt="Jackpot Sign" class="jackpot-header-img">
         <span class="jackpot-sign-text">JACKPOT</span>
       </div>
 
       <!-- Left Cowboy Character -->
       <div class="character-cowboy">
-        <img src="cowboy@1x.58cf8b4110d1.png" alt="Cowboy" class="cowboy-img">
+        <img src="{{ asset('western-slot/cowboy@1x.58cf8b4110d1.png') }}" alt="Cowboy" class="cowboy-img">
         <div class="cigar-smoke" id="cigar-smoke"></div>
       </div>
 
       <!-- Main Slot Machine Centerpiece -->
       <div class="slot-machine-container">
         <div class="wood-cabinet">
-        <img src="c-bg@1x.22d969ec69ba.jpg" alt="Cabinet Wood" class="cabinet-bg">
+        <img src="{{ asset('western-slot/c-bg@1x.22d969ec69ba.jpg') }}" alt="Cabinet Wood" class="cabinet-bg">
 
         <!-- Top Header Area -->
         <div class="cabinet-header">
           <!-- Jackpot Display with Stars -->
           <div class="jackpot-counter-box">
             <div class="jp-title">
-              <img src="jp-star@1x.70dd0eda94af.png" alt="star" class="jp-star left">
+              <img src="{{ asset('western-slot/jp-star@1x.70dd0eda94af.png') }}" alt="star" class="jp-star left">
               <span>JACKPOT</span>
-              <img src="jp-star@1x.70dd0eda94af.png" alt="star" class="jp-star right">
+              <img src="{{ asset('western-slot/jp-star@1x.70dd0eda94af.png') }}" alt="star" class="jp-star right">
             </div>
             <div class="jp-value" id="jackpot-amount">17,688.37</div>
           </div>
 
           <!-- Western Slot Parchment Sign -->
           <div class="logo-sign-box">
-            <img src="logo-bg@1x.32129dd2924a.png" alt="Logo Scroll" class="logo-bg">
-            <img src="logo@1x.b46570348f37.png" alt="Western Slot" class="logo-text">
+            <img src="{{ asset('western-slot/logo-bg@1x.32129dd2924a.png') }}" alt="Logo Scroll" class="logo-bg">
+            <img src="{{ asset('western-slot/logo@1x.b46570348f37.png') }}" alt="Western Slot" class="logo-text">
           </div>
 
           <!-- Top Action Buttons (Info & Paytable) -->
           <div class="top-buttons">
             <button class="top-btn" id="btn-info" title="Game Rules & Info">
-              <img src="info-icon@1x.beed954d6461.png" alt="Info">
+              <img src="{{ asset('western-slot/info-icon@1x.beed954d6461.png') }}" alt="Info">
             </button>
             <button class="top-btn" id="btn-comb" title="Paylines & Combinations">
-              <img src="comb-icon@1x.6b0e90e4336a.png" alt="Combinations">
+              <img src="{{ asset('western-slot/comb-icon@1x.6b0e90e4336a.png') }}" alt="Combinations">
             </button>
           </div>
         </div>
@@ -93,42 +99,42 @@
         <div class="cabinet-center">
           <!-- Left Copper Plate (Payline Selectors 1-9 Vertical) -->
           <div class="side-panel left-panel">
-            <img src="sb-bg@1x.53bc218467eb.png" alt="Side Panel" class="sb-bg">
+            <img src="{{ asset('western-slot/sb-bg@1x.53bc218467eb.png') }}" alt="Side Panel" class="sb-bg">
             <div class="payline-pins-vertical" id="payline-pins-vertical">
               <div class="pin-btn active" data-line="1" id="pin-1">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">1</span>
               </div>
               <div class="pin-btn" data-line="2" id="pin-2">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">2</span>
               </div>
               <div class="pin-btn" data-line="3" id="pin-3">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">3</span>
               </div>
               <div class="pin-btn" data-line="4" id="pin-4">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">4</span>
               </div>
               <div class="pin-btn" data-line="5" id="pin-5">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">5</span>
               </div>
               <div class="pin-btn" data-line="6" id="pin-6">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">6</span>
               </div>
               <div class="pin-btn" data-line="7" id="pin-7">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">7</span>
               </div>
               <div class="pin-btn" data-line="8" id="pin-8">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">8</span>
               </div>
               <div class="pin-btn" data-line="9" id="pin-9">
-                <img src="sb-num-bg@1x.2e7f98c07c04.png" class="pin-bg" alt="pin">
+                <img src="{{ asset('western-slot/sb-num-bg@1x.2e7f98c07c04.png') }}" class="pin-bg" alt="pin">
                 <span class="pin-num">9</span>
               </div>
             </div>
@@ -136,8 +142,8 @@
 
           <!-- Main Slot Reels Window (5x3) -->
           <div class="reels-stage" id="reels-stage">
-            <img src="center-bg@1x.9e716d851370.png" alt="Frame" class="reels-frame">
-            <img src="drum-bg@1x.db183fc2a722.jpg" alt="Drums Texture" class="drum-texture">
+            <img src="{{ asset('western-slot/center-bg@1x.9e716d851370.png') }}" alt="Frame" class="reels-frame">
+            <img src="{{ asset('western-slot/drum-bg@1x.db183fc2a722.jpg') }}" alt="Drums Texture" class="drum-texture">
 
             <!-- The 5 Reels -->
             <div class="reels-container" id="reels-container">
@@ -160,18 +166,18 @@
 
             <!-- Payline Visual Overlays (Lines 1 to 9) -->
             <div class="paylines-overlay" id="paylines-overlay">
-              <img src="line-one@1x.06e51cf10535.png" class="line-overlay" id="line-img-1" alt="Line 1">
-              <img src="line-two@1x.409a6129777d.png" class="line-overlay" id="line-img-2" alt="Line 2">
-              <img src="line-three@1x.d8e9236e4305.png" class="line-overlay" id="line-img-3" alt="Line 3">
-              <img src="line-four@1x.f1a405895561.png" class="line-overlay" id="line-img-4" alt="Line 4">
+              <img src="{{ asset('western-slot/line-one@1x.06e51cf10535.png') }}" class="line-overlay" id="line-img-1" alt="Line 1">
+              <img src="{{ asset('western-slot/line-two@1x.409a6129777d.png') }}" class="line-overlay" id="line-img-2" alt="Line 2">
+              <img src="{{ asset('western-slot/line-three@1x.d8e9236e4305.png') }}" class="line-overlay" id="line-img-3" alt="Line 3">
+              <img src="{{ asset('western-slot/line-four@1x.f1a405895561.png') }}" class="line-overlay" id="line-img-4" alt="Line 4">
               <svg class="line-overlay svg-line" id="line-img-5" viewBox="0 0 770 195">
                 <path d="M 0 170 L 385 20 L 770 170" stroke="#f1c40f" stroke-width="8" fill="none"
                   filter="drop-shadow(0 0 8px #f39c12)" />
               </svg>
-              <img src="line-six@1x.5e1a040f8676.png" class="line-overlay" id="line-img-6" alt="Line 6">
-              <img src="line-seven@1x.62ef69d4a4d9.png" class="line-overlay" id="line-img-7" alt="Line 7">
-              <img src="line-eight@1x.fbf6c0a0bbcd.png" class="line-overlay" id="line-img-8" alt="Line 8">
-              <img src="line-nine@1x.443e14c2e5b1.png" class="line-overlay" id="line-img-9" alt="Line 9">
+              <img src="{{ asset('western-slot/line-six@1x.5e1a040f8676.png') }}" class="line-overlay" id="line-img-6" alt="Line 6">
+              <img src="{{ asset('western-slot/line-seven@1x.62ef69d4a4d9.png') }}" class="line-overlay" id="line-img-7" alt="Line 7">
+              <img src="{{ asset('western-slot/line-eight@1x.fbf6c0a0bbcd.png') }}" class="line-overlay" id="line-img-8" alt="Line 8">
+              <img src="{{ asset('western-slot/line-nine@1x.443e14c2e5b1.png') }}" class="line-overlay" id="line-img-9" alt="Line 9">
             </div>
 
             <!-- Win Box Animation Layer -->
@@ -180,20 +186,20 @@
 
           <!-- Right Copper Plate with Interactive Mechanical Lever -->
           <div class="side-panel right-panel">
-            <img src="sb-bg@1x.53bc218467eb.png" alt="Side Panel" class="sb-bg">
+            <img src="{{ asset('western-slot/sb-bg@1x.53bc218467eb.png') }}" alt="Side Panel" class="sb-bg">
             <div class="lever-track">
               <div class="track-slot"></div>
               <div class="track-dots">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
-                <img src="sb-dot@1x.44938845ac05.png" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
+                <img src="{{ asset('western-slot/sb-dot@1x.44938845ac05.png') }}" class="sb-dot" alt="dot">
               </div>
               <div class="lever-handle" id="lever-handle" title="Click or Pull Lever to Spin!">
-                <img src="lever@1x.b84366df1158.png" alt="Slot Lever">
+                <img src="{{ asset('western-slot/lever@1x.b84366df1158.png') }}" alt="Slot Lever">
               </div>
             </div>
           </div>
@@ -209,7 +215,7 @@
 
           <!-- Sound Mute/Unmute Button -->
           <button class="sound-btn" id="btn-sound" title="Toggle Sound">
-            <img src="sound-icon@1x.45fbf8e509ad.png" alt="Sound">
+            <img src="{{ asset('western-slot/sound-icon@1x.45fbf8e509ad.png') }}" alt="Sound">
             <div class="sound-slash" id="sound-slash"></div>
           </button>
 
@@ -231,7 +237,7 @@
               <div class="lines-number" id="lines-count-display">1</div>
               <div class="lines-controls">
                 <button class="arrow-btn left-arr" id="btn-line-minus">
-                  <img src="opts-arr@1x.aaadf2c23abf.png" alt="Minus">
+                  <img src="{{ asset('western-slot/opts-arr@1x.aaadf2c23abf.png') }}" alt="Minus">
                 </button>
                 <div class="pip-bar" id="pip-bar">
                   <span class="pip active"></span>
@@ -245,7 +251,7 @@
                   <span class="pip"></span>
                 </div>
                 <button class="arrow-btn right-arr" id="btn-line-plus">
-                  <img src="opts-arr@1x.aaadf2c23abf.png" alt="Plus">
+                  <img src="{{ asset('western-slot/opts-arr@1x.aaadf2c23abf.png') }}" alt="Plus">
                 </button>
               </div>
             </div>
@@ -290,9 +296,9 @@
 
     <!-- Right Cowgirl Character with Animated Gun Arm -->
     <div class="character-cowgirl">
-      <img src="girl@1x.04a7327386ca.png" alt="Cowgirl" class="cowgirl-body">
+      <img src="{{ asset('western-slot/girl@1x.04a7327386ca.png') }}" alt="Cowgirl" class="cowgirl-body">
       <div class="cowgirl-arm-wrapper" id="cowgirl-arm">
-        <img src="girl-hand@1x.e121a611a7cf.png" alt="Gun Hand" class="cowgirl-hand">
+        <img src="{{ asset('western-slot/girl-hand@1x.e121a611a7cf.png') }}" alt="Gun Hand" class="cowgirl-hand">
         <div class="gun-smoke" id="gun-smoke"></div>
       </div>
     </div>
@@ -329,14 +335,14 @@
   <div class="modal-backdrop" id="rules-modal">
     <div class="modal-box rules-box">
       <button class="modal-close-btn" id="btn-close-rules">
-        <img src="modal-close@1x.37d7face8172.png" alt="Close">
+        <img src="{{ asset('western-slot/modal-close@1x.37d7face8172.png') }}" alt="Close">
       </button>
       <div class="modal-header-title">WESTERN SLOT - PAYTABLE & RULES</div>
       <div class="modal-content-scroll">
         <div class="paytable-grid">
           <!-- Symbol 8: WILD -->
           <div class="paytable-card wild-card">
-            <img src="icon-eight-active.a872da2b9449.png" alt="Wild" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-eight-active.a872da2b9449.png') }}" alt="Wild" class="pt-sym">
             <div class="pt-info">
               <h4>GOLDEN STALLION (WILD)</h4>
               <p>Substitutes for all symbols except Jackpot.</p>
@@ -351,7 +357,7 @@
 
           <!-- Symbol 9: JACKPOT -->
           <div class="paytable-card jackpot-card">
-            <img src="icon-nine.108c5d8b1f0b.png" alt="Jackpot" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-nine.108c5d8b1f0b.png') }}" alt="Jackpot" class="pt-sym">
             <div class="pt-info">
               <h4>JACKPOT CARDS & COINS</h4>
               <p>5 on active payline awards Progressive Grand Jackpot!</p>
@@ -365,7 +371,7 @@
 
           <!-- Symbol 7: Bandit Hat -->
           <div class="paytable-card">
-            <img src="icon-seven.ce2db4f391cd.png" alt="Bandit" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-seven.ce2db4f391cd.png') }}" alt="Bandit" class="pt-sym">
             <div class="pt-info">
               <h4>BANDIT HAT</h4>
               <div class="pt-payouts">
@@ -378,7 +384,7 @@
 
           <!-- Symbol 3: Sheriff Star -->
           <div class="paytable-card">
-            <img src="icon-three.af38e95cacd2.png" alt="Sheriff" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-three.af38e95cacd2.png') }}" alt="Sheriff" class="pt-sym">
             <div class="pt-info">
               <h4>SHERIFF STAR</h4>
               <div class="pt-payouts">
@@ -391,7 +397,7 @@
 
           <!-- Symbol 6: Money Bag -->
           <div class="paytable-card">
-            <img src="icon-six.694a7c422b25.png" alt="Money Bag" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-six.694a7c422b25.png') }}" alt="Money Bag" class="pt-sym">
             <div class="pt-info">
               <h4>MONEY BAG</h4>
               <div class="pt-payouts">
@@ -404,7 +410,7 @@
 
           <!-- Symbol 2: Dynamite -->
           <div class="paytable-card">
-            <img src="icon-two.8078b2bd4712.png" alt="Dynamite" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-two.8078b2bd4712.png') }}" alt="Dynamite" class="pt-sym">
             <div class="pt-info">
               <h4>DYNAMITE</h4>
               <div class="pt-payouts">
@@ -417,7 +423,7 @@
 
           <!-- Symbol 5: Longhorn Skull -->
           <div class="paytable-card">
-            <img src="icon-five.407eaf70ce0e.png" alt="Skull" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-five.407eaf70ce0e.png') }}" alt="Skull" class="pt-sym">
             <div class="pt-info">
               <h4>LONGHORN SKULL</h4>
               <div class="pt-payouts">
@@ -430,7 +436,7 @@
 
           <!-- Symbol 4: Horseshoe -->
           <div class="paytable-card">
-            <img src="icon-four.682eece0964c.png" alt="Horseshoe" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-four.682eece0964c.png') }}" alt="Horseshoe" class="pt-sym">
             <div class="pt-info">
               <h4>SILVER HORSESHOE</h4>
               <div class="pt-payouts">
@@ -443,7 +449,7 @@
 
           <!-- Symbol 1: Wagon -->
           <div class="paytable-card">
-            <img src="icon-one.5928412251a7.png" alt="Wagon" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-one.5928412251a7.png') }}" alt="Wagon" class="pt-sym">
             <div class="pt-info">
               <h4>STAGECOACH WAGON</h4>
               <div class="pt-payouts">
@@ -456,7 +462,7 @@
 
           <!-- Symbol 0: Whiskey -->
           <div class="paytable-card">
-            <img src="icon-zero.4885140b0230.png" alt="Whiskey" class="pt-sym">
+            <img src="{{ asset('western-slot/icon-zero.4885140b0230.png') }}" alt="Whiskey" class="pt-sym">
             <div class="pt-info">
               <h4>BOURBON WHISKEY</h4>
               <div class="pt-payouts">
@@ -475,7 +481,7 @@
   <div class="modal-backdrop" id="comb-modal">
     <div class="modal-box comb-box">
       <button class="modal-close-btn" id="btn-close-comb">
-        <img src="modal-close@1x.37d7face8172.png" alt="Close">
+        <img src="{{ asset('western-slot/modal-close@1x.37d7face8172.png') }}" alt="Close">
       </button>
       <div class="modal-header-title">WESTERN SLOT - 9 PAYLINES</div>
       <div class="modal-content-scroll">
@@ -560,7 +566,7 @@
     </div>
   </div>
 
-  <script src="game.js"></script>
+  <script src="{{ asset('western-slot/game.js') }}"></script>
 </body>
 
 </html>

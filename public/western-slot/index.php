@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <base href="/western-slot/">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Western Slot - Wild West Casino</title>
@@ -11,6 +12,10 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rye&family=Sancreek&family=Bebas+Neue&family=Montserrat:wght@600;800;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script>
+    window.WESTERN_ASSET_BASE = '/western-slot/';
+    window.WESTERN_SLOT_BASE = '/western-slot/';
+  </script>
 </head>
 
 <body>

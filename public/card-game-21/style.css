@@ -1,0 +1,1450 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  overflow: hidden;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #ffffff;
+}
+
+#wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: radial-gradient(circle at center, #070a14 0%, #000000 100%);
+}
+
+#stage {
+  position: relative;
+  width: 1200px;
+  height: 675px;
+  flex: none;
+  transform-origin: center center;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+  background-color: #000;
+}
+
+.abs {
+  position: absolute;
+}
+
+/* -------------------------------------------------------------
+   Background Wallpaper (Authentic 1xBet Casino Table & Decor)
+   ------------------------------------------------------------- */
+#casino-bg {
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 675px;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------
+   Dynamic Swaying Velvet Curtains Layer
+   ------------------------------------------------------------- */
+#curtain-anim-layer {
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 675px;
+  pointer-events: none;
+  z-index: 4;
+  overflow: hidden;
+}
+
+.velvet-curtain {
+  position: absolute;
+  top: 0;
+  width: 240px;
+  height: 675px;
+  pointer-events: none;
+}
+
+.velvet-curtain-left {
+  left: 0;
+  transform-origin: top left;
+  animation: velvetCurtainSwayLeft 5.5s ease-in-out infinite alternate;
+  filter: drop-shadow(4px 0 15px rgba(0, 0, 0, 0.85));
+}
+
+.velvet-curtain-right {
+  right: 0;
+  transform-origin: top right;
+  animation: velvetCurtainSwayRight 6.2s ease-in-out infinite alternate;
+  filter: drop-shadow(-4px 0 15px rgba(0, 0, 0, 0.85));
+}
+
+.curtain-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@keyframes velvetCurtainSwayLeft {
+  0% { transform: scaleX(1) skewY(0deg) rotate(0deg); }
+  50% { transform: scaleX(1.05) skewY(-1.2deg) rotate(0.4deg); }
+  100% { transform: scaleX(0.96) skewY(0.9deg) rotate(-0.3deg); }
+}
+
+@keyframes velvetCurtainSwayRight {
+  0% { transform: scaleX(1) skewY(0deg) rotate(0deg); }
+  50% { transform: scaleX(1.05) skewY(1.2deg) rotate(-0.4deg); }
+  100% { transform: scaleX(0.96) skewY(-0.9deg) rotate(0.3deg); }
+}
+
+/* City Night Skyline Twinkles */
+#city-lights-layer {
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 250px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.city-twinkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fff8d6;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #ffd700;
+  opacity: 0.2;
+}
+
+.t1 { left: 95px; top: 185px; animation: twinkleAnim 3.2s infinite ease-in-out; }
+.t2 { left: 140px; top: 210px; animation: twinkleAnim 2.7s infinite 0.8s ease-in-out; }
+.t3 { left: 165px; top: 165px; animation: twinkleAnim 4.1s infinite 1.4s ease-in-out; }
+.t4 { left: 1040px; top: 175px; animation: twinkleAnim 3.5s infinite 0.3s ease-in-out; }
+.t5 { left: 1075px; top: 220px; animation: twinkleAnim 2.9s infinite 1.1s ease-in-out; }
+.t6 { left: 1110px; top: 160px; animation: twinkleAnim 3.8s infinite 1.9s ease-in-out; }
+
+@keyframes twinkleAnim {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.95; transform: scale(1.4); }
+}
+
+/* -------------------------------------------------------------
+   Interactive Animated Side Tables (Left & Right Entrance Animations)
+   ------------------------------------------------------------- */
+#left-table-scene {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  height: 330px;
+  z-index: 10;
+  pointer-events: none;
+  animation: entranceSlideLeft 1.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#right-table-scene {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 270px;
+  height: 330px;
+  z-index: 10;
+  pointer-events: none;
+  animation: entranceSlideRight 1.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.scene-table-assembly {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Champagne Flute Glass Container & SVG */
+.flute-glass-item {
+  position: absolute;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.left-glass-pos {
+  left: 108px;
+  bottom: 128px;
+  width: 36px;
+  height: 102px;
+}
+
+.right-glass-pos {
+  right: 130px;
+  bottom: 128px;
+  width: 36px;
+  height: 102px;
+}
+
+.flute-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.75));
+}
+
+/* Strawberry Bowl Item & SVG */
+.strawberry-bowl-item {
+  position: absolute;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.left-strawberry-pos {
+  left: 142px;
+  bottom: 120px;
+  width: 60px;
+  height: 56px;
+}
+
+.right-strawberry-pos {
+  right: 172px;
+  bottom: 120px;
+  width: 60px;
+  height: 56px;
+}
+
+.strawberry-bowl-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+}
+
+/* Money Stacks Group */
+.money-bundle-group {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.left-money-pos {
+  left: 10px;
+  bottom: 110px;
+  width: 130px;
+  height: 75px;
+}
+
+.right-money-pos {
+  right: 10px;
+  bottom: 110px;
+  width: 130px;
+  height: 75px;
+}
+
+/* Ice Bucket with Champagne Bottle Item */
+.ice-bucket-item {
+  position: absolute;
+  right: 32px;
+  bottom: 120px;
+  width: 100px;
+  height: 135px;
+  pointer-events: none;
+  z-index: 11;
+}
+
+@keyframes entranceSlideLeft {
+  0% {
+    transform: translate3d(-240px, 30px, 0) scale(0.92);
+    opacity: 0;
+  }
+  65% {
+    transform: translate3d(8px, -2px, 0) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes entranceSlideRight {
+  0% {
+    transform: translate3d(240px, 30px, 0) scale(0.92);
+    opacity: 0;
+  }
+  65% {
+    transform: translate3d(-8px, -2px, 0) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Card Deck Drop Entrance on Table Felt */
+#deck-section {
+  position: absolute;
+  left: 920px;
+  top: 185px;
+  width: 145px;
+  height: 165px;
+  z-index: 12;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  animation: deckDropEntrance 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both;
+}
+
+@keyframes deckDropEntrance {
+  0% {
+    transform: translate3d(160px, -60px, 0) scale(0.8) rotate(12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translate3d(-10px, 6px, 0) scale(1.05) rotate(-2deg);
+    opacity: 1;
+  }
+  80% {
+    transform: translate3d(4px, -2px, 0) scale(0.98) rotate(1deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------------
+   Cold Smoke / Ice Vapor Multi-Layer Swirl (Ice Bucket Vapor)
+   ------------------------------------------------------------- */
+.ice-vapor-layer {
+  position: absolute;
+  left: 110px;
+  top: 35px;
+  width: 120px;
+  height: 160px;
+  pointer-events: none;
+  z-index: 12;
+  overflow: visible;
+}
+
+.vapor-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.7) 0%, rgba(220, 240, 255, 0.4) 35%, rgba(200, 230, 255, 0.15) 60%, rgba(255, 255, 255, 0) 80%);
+  filter: blur(7px);
+  pointer-events: none;
+}
+
+.vc-1 {
+  width: 55px;
+  height: 40px;
+  left: 30px;
+  bottom: 25px;
+  animation: vaporRiseCycle1 3.4s ease-out infinite;
+}
+
+.vc-2 {
+  width: 70px;
+  height: 50px;
+  left: 15px;
+  bottom: 30px;
+  animation: vaporRiseCycle2 4.2s ease-out infinite 0.9s;
+}
+
+.vc-3 {
+  width: 60px;
+  height: 45px;
+  left: 45px;
+  bottom: 35px;
+  animation: vaporRiseCycle3 3.8s ease-out infinite 1.8s;
+}
+
+.vc-4 {
+  width: 80px;
+  height: 55px;
+  left: 20px;
+  bottom: 20px;
+  animation: vaporRiseCycle1 4.6s ease-out infinite 2.5s;
+}
+
+@keyframes vaporRiseCycle1 {
+  0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+  18% { opacity: 0.85; }
+  55% { opacity: 0.5; transform: translateY(-40px) scale(1.3) rotate(18deg); }
+  100% { transform: translateY(-85px) scale(2.0) rotate(35deg); opacity: 0; }
+}
+
+@keyframes vaporRiseCycle2 {
+  0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.9; }
+  60% { opacity: 0.55; transform: translateY(-50px) scale(1.4) rotate(-22deg); }
+  100% { transform: translateY(-100px) scale(2.2) rotate(-45deg); opacity: 0; }
+}
+
+@keyframes vaporRiseCycle3 {
+  0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+  22% { opacity: 0.8; }
+  60% { opacity: 0.45; transform: translateY(-35px) scale(1.2) rotate(12deg); }
+  100% { transform: translateY(-75px) scale(1.8) rotate(24deg); opacity: 0; }
+}
+
+/* -------------------------------------------------------------
+   Champagne Flute Sparkling Effervescence & Bubbles
+   ------------------------------------------------------------- */
+.champagne-flute-fx {
+  position: absolute;
+  width: 32px;
+  height: 85px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.flute-bubble {
+  position: absolute;
+  bottom: 6px;
+  width: 3px;
+  height: 3px;
+  background: radial-gradient(circle, #ffffff 30%, #ffeb8a 90%);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 3px #fff8b3;
+}
+
+.fb1 { left: 35%; animation: riseFluteBubble 1.8s infinite ease-in; }
+.fb2 { left: 55%; animation: riseFluteBubble 2.2s infinite 0.4s ease-in; }
+.fb3 { left: 42%; animation: riseFluteBubble 1.6s infinite 0.9s ease-in; }
+.fb4 { left: 65%; animation: riseFluteBubble 2.5s infinite 1.3s ease-in; }
+.fb5 { left: 48%; animation: riseFluteBubble 2.0s infinite 0.6s ease-in; }
+
+@keyframes riseFluteBubble {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  20% { opacity: 0.95; }
+  85% { opacity: 0.9; }
+  100% { transform: translateY(-55px) scale(1.2); opacity: 0; }
+}
+
+/* Sparkle Glints */
+.scene-glint {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,245,180,0.85) 35%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: glintSparkleAnim 2.8s infinite ease-in-out;
+  z-index: 14;
+}
+
+@keyframes glintSparkleAnim {
+  0%, 100% { opacity: 0; transform: scale(0.2) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.35) rotate(90deg); }
+}
+
+/* Money Stacks Light Sheen Sweep */
+.money-sheen-sweep {
+  position: absolute;
+  width: 120px;
+  height: 60px;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,245,180,0.45) 50%, rgba(255,255,255,0) 100%);
+  animation: moneySheenCycle 4.5s infinite ease-in-out;
+  filter: blur(2px);
+  z-index: 10;
+}
+
+@keyframes moneySheenCycle {
+  0%, 65% { opacity: 0; transform: translate3d(-30px, 0, 0) rotate(-15deg); }
+  75% { opacity: 0.9; transform: translate3d(25px, 0, 0) rotate(-15deg); }
+  85%, 100% { opacity: 0; transform: translate3d(80px, 0, 0) rotate(-15deg); }
+}
+
+/* -------------------------------------------------------------
+   Emerald Green Blackjack Table Felt Layer
+   ------------------------------------------------------------- */
+#table-felt-container {
+  left: 160px;
+  top: 55px;
+  width: 880px;
+  height: 540px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.table-felt-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.95));
+}
+
+/* Table Spotlights */
+#table-spotlights {
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 675px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.spotlight {
+  position: absolute;
+  top: 40px;
+  width: 320px;
+  height: 380px;
+  background: radial-gradient(ellipse at top center, rgba(160, 255, 240, 0.12) 0%, rgba(0, 220, 200, 0.05) 45%, rgba(0, 0, 0, 0) 75%);
+  pointer-events: none;
+}
+
+.spot-left { left: 360px; transform: rotate(-10deg); }
+.spot-right { left: 520px; transform: rotate(10deg); }
+
+/* -------------------------------------------------------------
+   Top Header Navigation Bar
+   ------------------------------------------------------------- */
+#top-header {
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 48px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+}
+
+.breadcrumb {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bc-link {
+  color: #ffffff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.bc-link:hover { color: #f7cf43; }
+.breadcrumb span { color: #8fa3b0; }
+
+/* Top Banner Ribbon Button (21-hint-input) */
+.top-banner-btn {
+  position: absolute;
+  left: 215px;
+  top: 4px;
+  width: 260px;
+  height: 42px;
+  background-image: url('21-hint-input@1x.217f24aced5b.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #2b1f06;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 40px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  z-index: 16;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* Right Toolbar Icons */
+.right-toolbar {
+  position: absolute;
+  right: 0;
+  top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 16;
+}
+
+.tool-btn {
+  width: 30px;
+  height: 30px;
+  background: rgba(12, 20, 32, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  color: #a0b8cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: -2px 2px 6px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+.tool-btn:hover {
+  background: rgba(22, 42, 68, 0.95);
+  color: #ffffff;
+}
+
+/* -------------------------------------------------------------
+   Interactive Jackpot Box & Dropdown Popup (Top Left)
+   ------------------------------------------------------------- */
+#jackpot-wrapper {
+  left: 42px;
+  top: 44px;
+  width: 216px;
+  height: 44px;
+  z-index: 50;
+  position: absolute;
+}
+
+#jackpot-box {
+  width: 212px;
+  height: 40px;
+  background-image: url('jackpot-header-bg.1b89dcf9335b.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  position: relative;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+#jackpot-box:hover {
+  filter: brightness(1.15);
+}
+
+.jp-title {
+  font-family: 'Roboto', 'Arial Black', sans-serif;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #fce38a;
+  text-shadow: 0 0 10px rgba(252, 227, 138, 0.8), 0 2px 4px #000;
+  background: linear-gradient(180deg, #fffbee 0%, #ebb434 45%, #8f6205 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Jackpot Dropdown Popup */
+.jackpot-dropdown-menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 330px;
+  background: #090f16;
+  border: 1.5px solid #dfb547;
+  border-radius: 4px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(223, 181, 71, 0.4);
+  display: none;
+  flex-direction: column;
+  z-index: 60;
+  pointer-events: auto;
+  overflow: hidden;
+  animation: jpDropAnim 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#jackpot-wrapper:hover .jackpot-dropdown-menu,
+.jackpot-dropdown-menu.active {
+  display: flex;
+}
+
+@keyframes jpDropAnim {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.jp-drop-header {
+  width: 100%;
+  height: 44px;
+  background-image: url('jackpot-header-bg.1b89dcf9335b.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.jp-drop-title {
+  font-family: 'Roboto', 'Arial Black', sans-serif;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #fce38a;
+  background: linear-gradient(180deg, #fffbee 0%, #ebb434 45%, #8f6205 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.jp-drop-body {
+  padding: 10px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: radial-gradient(circle at top center, #141f2c 0%, #070c12 100%);
+}
+
+.jp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+}
+
+.jp-row-label {
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  color: #d1dde6;
+  text-shadow: 0 1px 2px #000;
+}
+
+.jp-digits-row {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.jp-digit-box {
+  width: 18px;
+  height: 25px;
+  background-image: url('jackpot-body-scoreboard.58338ef435b5.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.jp-digit-num {
+  width: 14px;
+  height: 21px;
+  background-image: url('jackpot-body-sprite-numbers.2f5b872768e9.png');
+  background-size: 14px 210px;
+  background-repeat: no-repeat;
+}
+
+.jp-drop-footer {
+  padding: 8px 14px 10px;
+  background: #06090e;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.jp-rules-btn {
+  border: 1px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.jp-rules-btn:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.jp-currency-badge {
+  margin-top: 6px;
+  width: 64px;
+  height: 16px;
+  background-image: url('jackpot-footer-currency-bg.32f03c69ab51.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  color: #ffd700;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -------------------------------------------------------------
+   21 Medallion Logo (Top Center Table)
+   ------------------------------------------------------------- */
+#table-logo-21 {
+  left: 540px;
+  top: 8px;
+  width: 120px;
+  height: 98px;
+  z-index: 12;
+}
+
+.logo-cards-fan {
+  position: absolute;
+  left: 14px;
+  top: 2px;
+  width: 92px;
+  height: 46px;
+}
+
+.mini-card-icon {
+  position: absolute;
+  width: 26px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #999;
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+  font-size: 8.5px;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.mini-card-icon .c-suit { font-size: 11px; margin-top: 1px; }
+
+.mini-card-icon.c1 { transform: rotate(-24deg); left: 6px; top: 8px; color: #d00; }
+.mini-card-icon.c2 { transform: rotate(-8deg); left: 24px; top: 2px; color: #d00; }
+.mini-card-icon.c3 { transform: rotate(8deg); left: 44px; top: 2px; color: #111; }
+.mini-card-icon.c4 { transform: rotate(24deg); left: 62px; top: 8px; color: #111; }
+
+.logo-badge-circle {
+  position: absolute;
+  left: 20px;
+  top: 32px;
+  width: 80px;
+  height: 56px;
+  background: radial-gradient(circle, #1c182c 0%, #090614 100%);
+  border: 3px solid #dfb547;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.9), inset 0 0 10px rgba(223, 181, 71, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fce38a;
+  text-shadow: 0 2px 4px #000;
+  position: relative;
+}
+
+.logo-badge-circle .spade-symbol {
+  position: absolute;
+  font-size: 42px;
+  color: rgba(223, 181, 71, 0.15);
+  top: 4px;
+}
+
+.logo-badge-circle .logo-num {
+  font-size: 30px;
+  font-weight: 900;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, #fff7c2 0%, #ebb434 50%, #9e710e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* -------------------------------------------------------------
+   Dealer & Player Stats Section (Left Side Table)
+   ------------------------------------------------------------- */
+#table-left-panel {
+  left: 250px;
+  top: 130px;
+  width: 170px;
+  height: 300px;
+  z-index: 12;
+}
+
+.table-lbl {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #00d2c4;
+  text-shadow: 0 0 10px rgba(0, 210, 196, 0.5);
+}
+
+.score-box {
+  width: 58px;
+  height: 48px;
+  background: rgba(8, 28, 36, 0.92);
+  border: 2px solid #00f2e2;
+  border-radius: 8px;
+  box-shadow: 0 0 14px rgba(0, 242, 226, 0.45), inset 0 0 8px rgba(0, 242, 226, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-top: 6px;
+}
+
+.stats-badges-group {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-title {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #00d2c4;
+  margin-bottom: 2px;
+  letter-spacing: 0.6px;
+}
+
+.stat-pill-badge {
+  width: 58px;
+  height: 22px;
+  background: #09706a;
+  border: 1px solid #00d2c4;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.you-section { margin-top: 6px; }
+
+/* Table Center Divider Line */
+.table-center-divider {
+  left: 440px;
+  top: 285px;
+  width: 440px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 210, 196, 0) 0%, rgba(0, 210, 196, 0.6) 20%, rgba(0, 210, 196, 0.6) 80%, rgba(0, 210, 196, 0) 100%);
+  box-shadow: 0 0 8px rgba(0, 210, 196, 0.4);
+  z-index: 10;
+}
+
+/* Playing Cards Container */
+.cards-row {
+  position: absolute;
+  left: 440px;
+  width: 450px;
+  height: 145px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#dealer-cards { top: 130px; }
+#player-cards { top: 300px; }
+
+/* -------------------------------------------------------------
+   Playing Card Element (Flawless Pixel-Perfect Sprite Slicing)
+   Sprite size: 1656px x 1096px (9 columns x 4 rows)
+   Scale: 0.5x -> 828px x 548px
+   Card size: 92px x 137px
+   Zero border bleeding, crystal clear!
+   ------------------------------------------------------------- */
+.playing-card {
+  width: 92px;
+  height: 137px;
+  border-radius: 6px;
+  background-image: url('21-cards-sprite@1x.17d59ade8df6.png');
+  background-size: 828px 548px;
+  background-repeat: no-repeat;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  flex: none;
+  overflow: hidden;
+}
+
+/* -------------------------------------------------------------
+   Deck and Utility Buttons (Right Side Table)
+   ------------------------------------------------------------- */
+#deck-section {
+  left: 920px;
+  top: 185px;
+  width: 145px;
+  height: 165px;
+  z-index: 12;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.card-deck-box {
+  width: 92px;
+  height: 137px;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.85);
+}
+
+.deck-shadow-layer {
+  position: absolute;
+  inset: -2px;
+  background: #091724;
+  border-radius: 9px;
+  box-shadow: 2px 2px 0 #00d2c4, 4px 4px 0 #07131e, 6px 6px 0 #00a89d;
+}
+
+.deck-card-top {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  border: 2px solid #00f2e2;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.deck-card-inner {
+  width: 100%;
+  height: 100%;
+  background-image: url('card_back.jpg');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+}
+
+.deck-tools-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deck-tool-btn {
+  width: 32px;
+  height: 32px;
+  background: #0a4047;
+  border: 1px solid #00d2c4;
+  border-radius: 6px;
+  color: #00f2e2;
+  font-size: 15px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+.deck-tool-btn:hover {
+  background: #0f5963;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 242, 226, 0.6);
+}
+
+/* -------------------------------------------------------------
+   Result Overlay Banner
+   ------------------------------------------------------------- */
+#result-banner-overlay {
+  left: 180px;
+  top: 240px;
+  width: 840px;
+  height: 110px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.result-banner-bg {
+  width: 840px;
+  height: 110px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.result-banner-bg.lose { background-image: url('21-lose@1x.8158059005d3.png'); }
+.result-banner-bg.win { background-image: url('21-win-shine@1x.d411f15cf6ca.png'); }
+.result-banner-bg.draw { background-image: url('21-draws@1x.694c71a5712d.png'); }
+
+.result-main-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffde00;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 222, 0, 0.6), 0 2px 4px #000000;
+  text-transform: uppercase;
+}
+
+.result-sub-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-top: 4px;
+  text-shadow: 0 1px 3px #000000;
+}
+
+/* -------------------------------------------------------------
+   Bottom Controls Area Frame & Buttons (Pixel-Perfect Alignment)
+   - Frame: 21-controls-border@1x.1508ae7c8d0a.png
+   - Main Button: 21-btn-play-sprite@1x.bf600b883e9b.png & 21-btn-play-shadow@1x.22495e2e27c3.png
+   - Sub Button: 21-btn-stprite@1x.bc1ced42ec36.png
+   - Bet Input: 21-border-input@1x.6aed66c0e508.png
+   - Chip Buttons: 21-bet-btn@1x.f92c17e6ebdc.png
+   ------------------------------------------------------------- */
+#controls-frame-container {
+  left: 0;
+  bottom: 0;
+  width: 1200px;
+  height: 162px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.controls-border-img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1200px;
+  height: 162px;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* Main Action Button Container - NESTLED DIRECTLY IN TOP ARCH SOCKET */
+.main-btn-container {
+  position: absolute;
+  left: 458px;
+  bottom: 102px;
+  width: 284px;
+  height: 52px;
+  pointer-events: auto;
+  z-index: 28;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-btn-shadow {
+  display: none;
+}
+
+.main-action-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 284px;
+  height: 52px;
+  background-image: url('21-btn-play-sprite@1x.bf600b883e9b.png');
+  background-size: 284px 260px;
+  background-repeat: no-repeat;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+/* Purple PLACE A BET Button (Solid Single Button - No Hover Splitting) */
+.main-action-btn.bet-mode {
+  background-position: center 0;
+  filter: none;
+}
+
+.main-action-btn.bet-mode:hover {
+  filter: brightness(1.15) drop-shadow(0 0 10px rgba(184, 78, 255, 0.7));
+}
+
+.main-action-btn.bet-mode .main-btn-text {
+  display: block;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  text-transform: uppercase;
+}
+
+/* Cyan HIT Button */
+.main-action-btn.hit-mode {
+  background-position: center 0;
+  filter: hue-rotate(300deg) saturate(1.8) brightness(1.08);
+}
+
+.main-action-btn.hit-mode:hover {
+  filter: hue-rotate(300deg) saturate(2.0) brightness(1.2) drop-shadow(0 0 10px rgba(0, 248, 235, 0.8));
+}
+
+.main-action-btn.hit-mode .main-btn-text {
+  display: block;
+  color: #032b27;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.main-action-btn:active { transform: scale(0.97); }
+
+.main-action-btn:disabled {
+  filter: grayscale(0.8) brightness(0.6);
+  cursor: default;
+}
+
+/* Secondary Controls Row (AUTOPLAY / STAND + Bet Input Box in dual sockets) */
+.sub-controls-row {
+  position: absolute;
+  left: 458px;
+  bottom: 54px;
+  width: 284px;
+  height: 42px;
+  pointer-events: auto;
+  z-index: 28;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sub-action-btn {
+  width: 136px;
+  height: 40px;
+  background-image: url('21-btn-stprite@1x.bc1ced42ec36.png');
+  background-size: 136px 80px;
+  background-repeat: no-repeat;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+/* Green AUTOPLAY Button */
+.sub-action-btn.autoplay-mode {
+  background-position: 0 0;
+}
+
+.sub-action-btn.autoplay-mode:hover {
+  filter: brightness(1.15) drop-shadow(0 0 8px rgba(24, 238, 92, 0.6));
+}
+
+.sub-action-btn.autoplay-mode .sub-btn-text {
+  display: block;
+  color: #02260d;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Red STAND Button */
+.sub-action-btn.stand-mode {
+  background-position: 0 -40px;
+}
+
+.sub-action-btn.stand-mode:hover {
+  filter: brightness(1.15) drop-shadow(0 0 8px rgba(255, 64, 64, 0.6));
+}
+
+.sub-action-btn.stand-mode .sub-btn-text {
+  display: block;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.sub-action-btn:active { transform: scale(0.97); }
+
+.sub-action-btn:disabled {
+  filter: grayscale(0.7) brightness(0.6);
+  cursor: default;
+}
+
+/* Bet Input Box (21-border-input) */
+.bet-input-box {
+  width: 136px;
+  height: 40px;
+  background-image: url('21-border-input@1x.6aed66c0e508.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 0 16px;
+}
+
+.bet-val-text {
+  font-size: 17px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 1px 4px #000000;
+}
+
+.bet-clear-btn {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  color: #dfb547;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, transform 0.1s;
+}
+
+.bet-clear-btn:hover {
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+/* Preset Chips Row: 6 buttons positioned inside the frame notches */
+.preset-chips-row {
+  position: absolute;
+  left: 290px;
+  bottom: 10px;
+  width: 620px;
+  height: 26px;
+  pointer-events: auto;
+  z-index: 28;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preset-chip-btn {
+  width: 90px;
+  height: 24px;
+  background-image: url('21-bet-btn@1x.f92c17e6ebdc.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border: none;
+  background-color: transparent;
+  color: #8bebee;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 3px #000;
+  transition: filter 0.15s, transform 0.1s, color 0.15s;
+}
+
+.preset-chip-btn:hover {
+  filter: brightness(1.25);
+  color: #ffffff;
+}
+
+.preset-chip-btn:active { transform: scale(0.95); }
+
+.preset-chip-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* -------------------------------------------------------------
+   Demo Mode Badge & Live Support (Bottom Right)
+   ------------------------------------------------------------- */
+#demo-mode-badge {
+  right: 80px;
+  bottom: 8px;
+  height: 28px;
+  background: #153a5e;
+  border: 1px solid #1f5487;
+  border-radius: 4px;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8faec9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 30;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+
+.yellow-dot {
+  color: #f7cf43;
+  font-size: 10px;
+}
+
+.arrow-up {
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+#live-support-btn {
+  right: 18px;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle, #1ea3ea 0%, #0076bf 100%);
+  border: 1px solid #66c6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  z-index: 30;
+  box-shadow: 0 2px 8px rgba(0, 118, 191, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+#live-support-btn:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.support-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}

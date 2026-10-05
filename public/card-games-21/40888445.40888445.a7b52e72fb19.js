@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x26fe87d],{0x26fe87d(e,c,a){a.r(c),a.d(c,{createCSSUrl:()=>t,createCSSVariableName:()=>r,createCSSVariablesObject:()=>b});let r=e=>"--".concat(e),t=e=>"url('".concat(e,"')"),b=e=>{let c={};return e.forEach((e,a)=>{c[r(a)]=t(e.src)}),c}}}]);

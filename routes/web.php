@@ -175,6 +175,27 @@ Route::get('/games/crystal', function () {
     return redirect()->route('crystal');
 });
 
+Route::get('/roman-slot', function () {
+    return view('customer.roman-slot');
+})->name('roman-slot');
+Route::get('/games/roman-slot', function () {
+    return redirect()->route('roman-slot');
+});
+
+Route::get('/easter-slot', function () {
+    return view('customer.easter-slot');
+})->name('easter-slot');
+Route::get('/games/easter-slot', function () {
+    return redirect()->route('easter-slot');
+});
+
+Route::get('/juice-slots', function () {
+    return view('customer.juice-slots');
+})->name('juice-slots');
+Route::get('/games/juice-slots', function () {
+    return redirect()->route('juice-slots');
+});
+
 Route::get('/super-ace-deluxe', function () {
     return view('customer.super-ace-deluxe');
 })->middleware('auth')->name('super-ace-deluxe');
@@ -223,10 +244,39 @@ Route::get('/heads-or-tails/doubling', function () {
     return view('customer.heads-or-tails-doubling');
 })->middleware('auth')->name('heads-or-tails.doubling');
 
+// Under and Over 7 Official 1xGames Dice Game Routes
+Route::get('/under-and-over-7', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'index'])->name('under-and-over-7');
+Route::get('/under-and-over', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'index'])->name('under-and-over');
+Route::get('/underover7', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'index'])->name('underover7');
+Route::prefix('games/under-and-over-7')->group(function () {
+    Route::get('/', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'index'])->name('underover.index');
+    Route::get('/state', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'getState'])->name('underover.state');
+    Route::post('/bet', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'placeBet'])->name('underover.bet');
+    Route::get('/history', [App\Http\Controllers\UnderAndOver7\UnderAndOver7GameController::class, 'getHistory'])->name('underover.history');
+});
 
-
+// 21 Card Game Routes (1xGames Card Games 21)
+Route::get('/card-games-21', function () {
+    return view('customer.card-games-21');
+})->name('card-games-21');
+Route::get('/card-game-21', function () {
+    return redirect()->route('card-games-21');
+})->name('card-game-21');
+Route::get('/cardgames21', function () {
+    return redirect()->route('card-games-21');
+});
+Route::get('/card-21', function () {
+    return redirect()->route('card-games-21');
+});
+Route::get('/21', function () {
+    return redirect()->route('card-games-21');
+});
+Route::get('/games/card-games-21', function () {
+    return redirect()->route('card-games-21');
+});
 
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
+
 Route::post('/dashboard/withdraw', [DashboardController::class, 'withdraw'])->middleware('auth')->name('dashboard.withdraw');
 Route::post('/dashboard/transfer', [DashboardController::class, 'transfer'])->middleware('auth')->name('dashboard.transfer');
 Route::post('/dashboard/update-profile', [DashboardController::class, 'updateProfile'])->middleware('auth')->name('dashboard.update-profile');
@@ -373,7 +423,12 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/modules/trx-wingo/settings', [App\Http\Controllers\Admin\TrxWingoAdminController::class, 'updateSettings'])->name('trxwingo.settings');
     Route::post('/modules/trx-wingo/{id}/force-settle', [App\Http\Controllers\Admin\TrxWingoAdminController::class, 'forceSettle'])->name('trxwingo.settle');
 
+    // Under and Over 7 Casino Game Management Module
+    Route::get('/modules/under-and-over-7', [App\Http\Controllers\UnderAndOver7\UnderAndOver7AdminController::class, 'index'])->name('underover.admin');
+    Route::post('/modules/under-and-over-7/settings', [App\Http\Controllers\UnderAndOver7\UnderAndOver7AdminController::class, 'updateSettings'])->name('underover.settings');
+
     // Site Branding & Global Demo Limit Settings
+
     Route::get('/settings/branding', [App\Http\Controllers\AdminController::class, 'getBrandingSettings'])->name('settings.branding.get');
     Route::post('/settings/branding', [App\Http\Controllers\AdminController::class, 'updateBrandingSettings'])->name('settings.branding.update');
 

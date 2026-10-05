@@ -563,6 +563,13 @@
                     </div>
                     <ul class="mega-menu-links">
                         <li>
+                            <a href="{{ route('card-games-21') }}" style="color: #ffd76a;">
+                                <i class="fas fa-layer-group" style="color: #ffd76a;"></i>
+                                <span>Card Games 21™</span>
+                                <span class="mega-badge" style="background: #f59e0b; color: #000;">NEW</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('play') }}" style="color: #ffbe1a;">
                                 <i class="fas fa-plane-departure" style="color: #ffbe1a;"></i>
                                 <span>Aviator Crash</span>
@@ -593,6 +600,13 @@
                             <a href="{{ route('heads-or-tails') }}">
                                 <i class="fas fa-coins" style="color: #ffc107;"></i>
                                 <span>Heads or Tails</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('under-and-over-7') }}">
+                                <i class="fas fa-dice" style="color: #10b981;"></i>
+                                <span>Under and Over 7</span>
+                                <span class="mega-badge" style="background: rgba(16,185,129,0.25); color: #10b981;">HOT</span>
                             </a>
                         </li>
                         <li>
@@ -740,6 +754,13 @@
                     </div>
                     <ul class="mega-menu-links">
                         <li>
+                            <a href="{{ route('card-games-21') }}" style="color: #ffd76a;">
+                                <i class="fas fa-layer-group" style="color: #ffd76a;"></i>
+                                <span>Card Games 21™</span>
+                                <span class="mega-badge" style="background: #f59e0b; color: #000;">NEW</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('play') }}" style="color: #ffbe1a;">
                                 <i class="fas fa-plane-departure" style="color: #ffbe1a;"></i>
                                 <span>Aviator Crash</span>
@@ -770,6 +791,13 @@
                             <a href="{{ route('heads-or-tails') }}">
                                 <i class="fas fa-coins" style="color: #ffc107;"></i>
                                 <span>Heads or Tails</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('under-and-over-7') }}">
+                                <i class="fas fa-dice" style="color: #10b981;"></i>
+                                <span>Under and Over 7</span>
+                                <span class="mega-badge" style="background: rgba(16,185,129,0.25); color: #10b981;">HOT</span>
                             </a>
                         </li>
                         <li>
@@ -1239,6 +1267,15 @@
                         <i class="fas fa-coins drawer-item-icon" style="color: #ffc107;"></i>
                         <span>Heads or Tails</span>
                     </div>
+                </a>
+            </li>
+            <li class="drawer-nav-item">
+                <a href="{{ route('under-and-over-7') }}">
+                    <div class="drawer-item-left">
+                        <i class="fas fa-dice drawer-item-icon" style="color: #10b981;"></i>
+                        <span>Under and Over 7</span>
+                    </div>
+                    <span class="drawer-badge" style="background: rgba(16,185,129,0.25); color: #10b981;">HOT</span>
                 </a>
             </li>
             <li class="drawer-nav-item">

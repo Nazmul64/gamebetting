@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgame_over_under=self.webpackChunkgame_over_under||[]).push([[0x34b782d],{0x34b782d(e,r,t){t.r(r),t.d(r,{getPreferredTextureResolutionByViewport:()=>n});let n=e=>{var r;let t=e.idealViewport,n=e.resolutions,i=window.innerWidth,d=window.innerHeight,o=0;return o=d>i?d/t.height:i/t.width,null!=(r=n.sort((e,r)=>r-e).find(e=>e<=o))?r:n[n.length-1]}}}]);

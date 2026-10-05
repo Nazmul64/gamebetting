@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x115c8a9],{0x115c8a9(c,e,s){s.r(e)}}]);

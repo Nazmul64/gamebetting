@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgame_twenty_one=self.webpackChunkgame_twenty_one||[]).push([[0x24ae4b4],{0x5c2387b(e,n,a){e.exports=a.p+"common.manifest.944acfdca5f2.json"}}]);

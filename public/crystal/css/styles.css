@@ -238,7 +238,7 @@ html, body {
   font-weight: bold;
 }
 
-.demo-drawer-card {
+.demo-drawer-panel {
   position: absolute;
   bottom: 44px;
   right: 0;
@@ -254,7 +254,7 @@ html, body {
   backdrop-filter: blur(10px);
 }
 
-.demo-drawer-card.show {
+.demo-drawer-panel.show {
   display: flex;
   animation: fadeInUp 0.2s ease-out;
 }

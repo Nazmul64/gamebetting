@@ -130,6 +130,86 @@
             <!-- Slots Grid Section -->
             <div class="slots-grid" id="slots-grid-list">
 
+                <!-- Game: Card Games 21 -->
+                <a href="{{ route('card-games-21') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="card games 21 card game 21 blackjack 1xbet 1xgames twenty one 21" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#000; font-weight:900;">21 CARD</span>
+                    <div class="slot-card-image-wrapper" style="background: radial-gradient(circle, #0e1e38 0%, #030a16 100%); display:flex; align-items:center; justify-content:center;">
+                        <img src="{{ asset('assets/image/card-games-21.png') }}" class="slot-card-img" alt="Card Games 21" onerror="this.src='{{ asset('card-games-21/card_games_21.png') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #0f2744 0%, #061120 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-layer-group" style="font-size:28px; margin-bottom:8px; color:#ffd76a;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Card Games 21</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Card Games 21</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Card Games 21™</div>
+                    </div>
+                </a>
+
+                <!-- Game: Roman Slots -->
+                <a href="{{ route('roman-slot') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="roman slots roman slot 1xbet caesar rome gladiator empire" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #b91c1c 0%, #d97706 100%); color:#fff; font-weight:800;">ROMAN</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/roman_slot.jpg') }}" class="slot-card-img" alt="Roman Slots" onerror="this.src='{{ asset('roman-slot/roman-slot/assets/background.jpg') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #78350f 0%, #b91c1c 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-landmark" style="font-size:28px; margin-bottom:8px; color:#ffd76a;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Roman Slots</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Roman Slots</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Roman Slots™</div>
+                    </div>
+                </a>
+
+                <!-- Game: Easter Slots -->
+                <a href="{{ route('easter-slot') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="easter slots easter slot egg bunny spring 1xbet" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #16a34a 0%, #ca8a04 100%); color:#fff; font-weight:800;">EASTER</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/easter_slot.jpg') }}" class="slot-card-img" alt="Easter Slots" onerror="this.src='{{ asset('easter-slot/easter-slot/assets/background.jpg') }}'">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #15803d 0%, #166534 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-egg" style="font-size:28px; margin-bottom:8px; color:#fde047;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Easter Slots</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Easter Slots</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Easter Slots™</div>
+                    </div>
+                </a>
+
+                <!-- Game: Juice Slots -->
+                <a href="{{ route('juice-slots') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="juice slots juice slot fruit machine smoothie cocktail 1xbet" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #ea580c 0%, #eab308 100%); color:#fff; font-weight:800;">JUICE</span>
+                    <div class="slot-card-image-wrapper">
+                        <img src="{{ asset('assets/image/Juicywinsx10000.webp') }}" class="slot-card-img" alt="Juice Slots" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="slot-card-fallback-img" style="display:none; background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%); width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; color:#fff;">
+                            <i class="fas fa-cocktail" style="font-size:28px; margin-bottom:8px; color:#fde047;"></i>
+                            <span style="font-size:10px; font-weight:800; text-transform:uppercase;">Juice Slots</span>
+                        </div>
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Juice Slots</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES</span>
+                        <div class="slot-card-title">Juice Slots™</div>
+                    </div>
+                </a>
+
                 <!-- Game: Crystal (1xBet Cascading Slot) -->
                 <a href="{{ route('crystal') }}" class="slot-card" data-category="popular new exclusive quick bangladesh bonus all" data-name="crystal slots gems jewels 1xbet king 1xgames cascade avalanche" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
                     <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%); color:#fff; font-weight:800;">CRYSTAL</span>
@@ -427,6 +507,22 @@
                     <div class="slot-card-info">
                         <span class="slot-card-provider">1XGAMES EXCLUSIVE</span>
                         <div class="slot-card-title">Heads or Tails™</div>
+                    </div>
+                </a>
+
+                <!-- Game: Under and Over 7 -->
+                <a href="{{ route('under-and-over-7') }}" class="slot-card" data-category="dice popular quick exclusive bangladesh all" data-name="under and over 7 1xgames dice over equal under" style="text-decoration:none; display:flex; flex-direction:column; cursor:pointer;">
+                    <span class="slot-badge slot-badge-hot" style="background: linear-gradient(135deg, #10b981, #047857); color:#fff; font-weight:800;">HOT DICE</span>
+                    <div class="slot-card-image-wrapper" style="background: radial-gradient(circle, #1e3a5f 0%, #091a30 100%); display:flex; align-items:center; justify-content:center; padding:10px;">
+                        <img src="{{ asset('under-and-over-7/logo.png') }}" class="slot-card-img" alt="Under and Over 7" style="object-fit:contain; max-height:85%;">
+                    </div>
+                    <div class="slot-card-overlay">
+                        <span class="slot-play-btn"><i class="fas fa-play"></i></span>
+                        <span class="slot-demo-link">Play Under and Over 7</span>
+                    </div>
+                    <div class="slot-card-info">
+                        <span class="slot-card-provider">1XGAMES · DICE</span>
+                        <div class="slot-card-title">Under and Over 7™</div>
                     </div>
                 </a>
 

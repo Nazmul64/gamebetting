@@ -1471,6 +1471,13 @@
                             <span style="font-size:9px; background:#eab308; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
 
+                        <!-- Active Game: Under and Over 7 -->
+                        <a href="{{ route('admin.underover.admin') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-dice" style="color:#10b981; font-size:13px;"></i>
+                            <span>Under and Over 7™</span>
+                            <span style="font-size:9px; background:#10b981; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
                         <!-- Active Game 6: Lucky Joker 100 -->
                         <a href="{{ route('admin.joker.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); text-decoration:none; color:inherit;">
                             <i class="fas fa-hat-cowboy-side" style="color:#f43f5e; font-size:13px;"></i>

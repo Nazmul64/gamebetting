@@ -1,0 +1,13 @@
+game_table@1x.505dda182be1.png
+size:1608,730
+filter:Linear,Linear
+TABLE
+bounds:2,27,1386,701
+offsets:8,4,1396,706
+light_1
+bounds:1390,2,385,141
+offsets:28,1,449,152
+rotate:90
+light_TABLE_1
+bounds:1390,389,216,339
+offsets:12,0,233,375

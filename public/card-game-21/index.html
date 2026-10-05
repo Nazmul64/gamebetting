@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>21 - Card Game | 1XGAMES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="wrap">
+    <div id="stage">
+      <!-- Full-bleed background wallpaper -->
+      <img id="casino-bg" class="abs" src="assets/images/casino_bg.jpg" alt="Casino Background">
+
+      <!-- Dynamic Atmospheric Curtain Lighting Sway -->
+      <div id="curtain-anim-layer" class="abs">
+        <div class="curtain-sway curtain-left"></div>
+        <div class="curtain-sway curtain-right"></div>
+      </div>
+
+      <!-- City Night Skyline Twinkle Layer -->
+      <div id="city-lights-layer" class="abs">
+        <span class="city-twinkle t1"></span>
+        <span class="city-twinkle t2"></span>
+        <span class="city-twinkle t3"></span>
+        <span class="city-twinkle t4"></span>
+        <span class="city-twinkle t5"></span>
+        <span class="city-twinkle t6"></span>
+      </div>
+
+      <!-- Table Lighting / Spotlights -->
+      <div id="table-spotlights" class="abs">
+        <div class="spotlight spot-left"></div>
+        <div class="spotlight spot-right"></div>
+      </div>
+
+      <!-- Sparkling Champagne Effervescence (Over Real Table Glasses) -->
+      <div id="sparkle-fx-layer" class="abs">
+        <!-- Left Table Champagne Glass Effervescence -->
+        <div class="glass-sparkles left-glass-fx">
+          <div class="bubble b1"></div>
+          <div class="bubble b2"></div>
+          <div class="bubble b3"></div>
+          <div class="bubble b4"></div>
+          <div class="glint g1"></div>
+          <div class="glint g2"></div>
+        </div>
+
+        <!-- Right Table Champagne Glass Effervescence -->
+        <div class="glass-sparkles right-glass-fx">
+          <div class="bubble b1"></div>
+          <div class="bubble b2"></div>
+          <div class="bubble b3"></div>
+          <div class="bubble b4"></div>
+          <div class="glint g1"></div>
+          <div class="glint g2"></div>
+        </div>
+
+        <!-- Right Table Champagne Ice Bucket Mist & Sparkles -->
+        <div class="bucket-fx">
+          <div class="ice-mist m1"></div>
+          <div class="ice-mist m2"></div>
+          <div class="glint g3"></div>
+          <div class="glint g4"></div>
+        </div>
+      </div>
+
+      <!-- Top Header Navigation Bar -->
+      <div id="top-header" class="abs">
+        <div class="breadcrumb"><span class="bc-link">1XGAMES</span> <span>/</span> <span class="bc-link">CARD GAMES</span> <span>/</span> <span>21</span></div>
+        <div id="top-banner-pill" class="top-banner-btn">PLACE A BET</div>
+        <!-- Right side vertical toolbar -->
+        <div class="right-toolbar">
+          <div class="tool-btn" title="Settings">⚙</div>
+          <div class="tool-btn" title="Gifts">🎁</div>
+          <div class="tool-btn" title="Jackpot 7">7</div>
+          <div class="tool-btn" title="Casino">🎲</div>
+          <div class="tool-btn" title="Balance">$</div>
+        </div>
+      </div>
+
+      <!-- Interactive Jackpot Header & Dropdown (Top Left) -->
+      <div id="jackpot-wrapper" class="abs">
+        <div id="jackpot-box" role="button" aria-label="Jackpot"></div>
+
+        <!-- Jackpot Dropdown Popup (Opens on Hover / Click) -->
+        <div id="jackpot-dropdown" class="jackpot-dropdown-menu">
+          <div class="jp-drop-header"></div>
+
+          <div class="jp-drop-body">
+            <!-- Hourly -->
+            <div class="jp-row">
+              <span class="jp-row-label">HOURLY</span>
+              <div class="jp-digits-row" id="jp-hourly-digits"></div>
+            </div>
+
+            <!-- Daily -->
+            <div class="jp-row">
+              <span class="jp-row-label">DAILY</span>
+              <div class="jp-digits-row" id="jp-daily-digits"></div>
+            </div>
+
+            <!-- Weekly -->
+            <div class="jp-row">
+              <span class="jp-row-label">WEEKLY</span>
+              <div class="jp-digits-row" id="jp-weekly-digits"></div>
+            </div>
+
+            <!-- Monthly -->
+            <div class="jp-row">
+              <span class="jp-row-label">MONTHLY</span>
+              <div class="jp-digits-row" id="jp-monthly-digits"></div>
+            </div>
+          </div>
+
+          <div class="jp-drop-footer">
+            <button id="jp-rules-btn" class="jp-rules-btn">RULES</button>
+            <div class="jp-currency-badge">BDT</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 21 Medallion Logo at Top of Table -->
+      <div id="table-logo-21" class="abs">
+        <div class="logo-cards-fan">
+          <div class="mini-card-icon c1"><span class="c-rank">A</span><span class="c-suit">♦</span></div>
+          <div class="mini-card-icon c2"><span class="c-rank">A</span><span class="c-suit">♥</span></div>
+          <div class="mini-card-icon c3"><span class="c-rank">A</span><span class="c-suit">♣</span></div>
+          <div class="mini-card-icon c4"><span class="c-rank">A</span><span class="c-suit">♠</span></div>
+        </div>
+        <div class="logo-badge-circle">
+          <span class="spade-symbol">♠</span>
+          <span class="logo-num">21</span>
+        </div>
+      </div>
+
+      <!-- Emerald Green Blackjack Table Felt Shape Layer -->
+      <div id="table-felt-container" class="abs">
+        <svg class="table-felt-svg" viewBox="0 0 880 540" preserveAspectRatio="none">
+          <defs>
+            <!-- Radial Felt Gradient -->
+            <radialGradient id="feltGrad" cx="50%" cy="32%" r="58%">
+              <stop offset="0%" stop-color="#02a698"/>
+              <stop offset="35%" stop-color="#008075"/>
+              <stop offset="70%" stop-color="#005750"/>
+              <stop offset="95%" stop-color="#002d29"/>
+              <stop offset="100%" stop-color="#001a18"/>
+            </radialGradient>
+            <!-- Felt Table Border Glow/Gradient -->
+            <linearGradient id="feltBorderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#032624"/>
+              <stop offset="50%" stop-color="#004d47"/>
+              <stop offset="100%" stop-color="#001413"/>
+            </linearGradient>
+            <!-- Spotlight Cones Gradient -->
+            <radialGradient id="spotLight1" cx="35%" cy="0%" r="65%">
+              <stop offset="0%" stop-color="rgba(190, 255, 245, 0.45)"/>
+              <stop offset="35%" stop-color="rgba(0, 220, 200, 0.18)"/>
+              <stop offset="75%" stop-color="rgba(0, 0, 0, 0)"/>
+            </radialGradient>
+            <radialGradient id="spotLight2" cx="65%" cy="0%" r="65%">
+              <stop offset="0%" stop-color="rgba(190, 255, 245, 0.45)"/>
+              <stop offset="35%" stop-color="rgba(0, 220, 200, 0.18)"/>
+              <stop offset="75%" stop-color="rgba(0, 0, 0, 0)"/>
+            </radialGradient>
+            <filter id="tableShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.9"/>
+            </filter>
+          </defs>
+
+          <!-- Outer Rim / Bevel -->
+          <path d="M 28,14 L 350,14 C 388,14 402,82 440,82 C 478,82 492,14 530,14 L 852,14 C 872,14 876,28 870,55 L 818,440 C 795,508 730,528 650,528 L 230,528 C 150,528 85,508 62,440 L 10,55 C 4,28 8,14 28,14 Z"
+                fill="url(#feltBorderGrad)"
+                stroke="#00f2e2"
+                stroke-width="1.5"
+                stroke-opacity="0.3"
+                filter="url(#tableShadow)"/>
+
+          <!-- Main Felt Surface -->
+          <path d="M 32,20 L 350,20 C 390,20 404,86 440,86 C 476,86 490,20 530,20 L 848,20 C 864,20 868,32 862,56 L 812,436 C 790,502 728,520 648,520 L 232,520 C 152,520 90,502 68,436 L 18,56 C 12,32 16,20 32,20 Z"
+                fill="url(#feltGrad)"/>
+
+          <!-- Dual Spotlights Over Felt -->
+          <path d="M 32,20 L 350,20 C 390,20 404,86 440,86 C 476,86 490,20 530,20 L 848,20 C 864,20 868,32 862,56 L 812,436 C 790,502 728,520 648,520 L 232,520 C 152,520 90,502 68,436 L 18,56 C 12,32 16,20 32,20 Z"
+                fill="url(#spotLight1)"/>
+          <path d="M 32,20 L 350,20 C 390,20 404,86 440,86 C 476,86 490,20 530,20 L 848,20 C 864,20 868,32 862,56 L 812,436 C 790,502 728,520 648,520 L 232,520 C 152,520 90,502 68,436 L 18,56 C 12,32 16,20 32,20 Z"
+                fill="url(#spotLight2)"/>
+        </svg>
+      </div>
+
+      <!-- Left Side Table Stats (Dealer & Player Scores) -->
+      <div id="table-left-panel" class="abs">
+        <div class="table-lbl">DEALER</div>
+        <div id="dealer-score" class="score-box">0</div>
+
+        <div class="stats-badges-group">
+          <div class="stat-item">
+            <span class="stat-title">WINS</span>
+            <div id="stat-wins" class="stat-pill-badge">0</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-title">LOSSES</span>
+            <div id="stat-losses" class="stat-pill-badge">0</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-title">DRAWS</span>
+            <div id="stat-draws" class="stat-pill-badge">0</div>
+          </div>
+        </div>
+
+        <div class="you-section">
+          <div class="table-lbl">YOU</div>
+          <div id="player-score" class="score-box">0</div>
+        </div>
+      </div>
+
+      <!-- Table Center Dividing Line -->
+      <div class="table-center-divider abs"></div>
+
+      <!-- Cards Area -->
+      <div id="dealer-cards" class="cards-row abs"></div>
+      <div id="player-cards" class="cards-row abs"></div>
+
+      <!-- Right Side Table Deck & Tools -->
+      <div id="deck-section" class="abs">
+        <div class="card-deck-box">
+          <div class="deck-shadow-layer"></div>
+          <div class="deck-card-top">
+            <div class="deck-card-inner"></div>
+          </div>
+        </div>
+        <div class="deck-tools-stack">
+          <button id="btn-history" class="deck-tool-btn" title="History">↺</button>
+          <button id="btn-help" class="deck-tool-btn" title="Help">?</button>
+          <button id="btn-sound" class="deck-tool-btn" title="Sound">🔊</button>
+        </div>
+      </div>
+
+      <!-- Result Banner Overlay -->
+      <div id="result-banner-overlay" class="abs hidden">
+        <div id="result-banner-bg" class="result-banner-bg lose">
+          <div id="result-main-title" class="result-main-title">BETTER LUCK NEXT TIME</div>
+          <div id="result-sub-title" class="result-sub-title">Dealer has more points</div>
+        </div>
+      </div>
+
+      <!-- Bottom Controls Panel Frame & Buttons (Pixel-Perfect Alignment) -->
+      <div id="controls-frame-container" class="abs">
+        <!-- Ornate Golden Frame Overlay -->
+        <img class="controls-border-img" src="assets/images/21-controls-border@1x.1508ae7c8d0a.png" alt="Controls Frame">
+
+        <!-- Main Action Button (PLACE A BET / HIT - Crisp Pill in top arch socket) -->
+        <div class="main-btn-container">
+          <div class="main-btn-shadow"></div>
+          <button id="main-action-btn" class="main-action-btn bet-mode" aria-label="Main Action">
+            <span class="main-btn-text">PLACE A BET</span>
+          </button>
+        </div>
+
+        <!-- Secondary Controls Row (STAND / AUTOPLAY + Bet Box in dual sockets) -->
+        <div class="sub-controls-row">
+          <button id="sub-action-btn" class="sub-action-btn autoplay-mode" aria-label="Sub Action">
+            <span class="sub-btn-text">AUTOPLAY</span>
+          </button>
+
+          <div id="bet-input-box" class="bet-input-box">
+            <span id="bet-val-text" class="bet-val-text">20</span>
+            <button id="bet-clear-btn" class="bet-clear-btn" title="Clear Bet">✕</button>
+          </div>
+        </div>
+
+        <!-- Preset Chips Row (20, 100, 300, 800, 3000, 10000 in bottom sockets) -->
+        <div class="preset-chips-row">
+          <button class="preset-chip-btn" data-val="20">20</button>
+          <button class="preset-chip-btn" data-val="100">100</button>
+          <button class="preset-chip-btn" data-val="300">300</button>
+          <button class="preset-chip-btn" data-val="800">800</button>
+          <button class="preset-chip-btn" data-val="3000">3000</button>
+          <button class="preset-chip-btn" data-val="10000">10000</button>
+        </div>
+      </div>
+
+      <!-- Demo Mode Badge (Bottom Right) -->
+      <div id="demo-mode-badge" class="abs">
+        <span class="yellow-dot">●</span> DEMO MODE <span class="arrow-up">︽</span>
+      </div>
+
+      <!-- Live Support Headphone Icon (Bottom Right Corner) -->
+      <div id="live-support-btn" class="abs" title="Live Support">
+        <svg viewBox="0 0 24 24" class="support-icon">
+          <path fill="currentColor" d="M12 3a9 9 0 0 0-9 9v7c0 1.1.9 2 2 2h3a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5v-2a7 7 0 0 1 14 0v2h-3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h3c1.1 0 2-.9 2-2v-7a9 9 0 0 0-9-9z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/game.js"></script>
+</body>
+</html>

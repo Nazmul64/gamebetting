@@ -1,0 +1,46 @@
+:root{--bg1:#ff8a00;--bg2:#c94b00;--frame:#ffc23d;--red:#d62a2a;--red2:#ff5a5a;--dark:#8a1717;--ink:#fff}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;color:var(--ink);background:radial-gradient(circle at 30% 30%,#ffb020,var(--bg1) 45%,var(--bg2))}
+body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1000px;height:520px;transform-origin:center}
+.abs{position:absolute}
+#credit{left:300px;top:6px;width:400px;height:52px;background:var(--red);border:5px dotted #ffd36b;border-radius:14px;text-align:center;font-size:36px;line-height:44px;letter-spacing:1px}
+#machine{left:60px;top:44px;width:880px;height:376px;background:linear-gradient(#ffd25a,var(--frame));border-radius:60px 60px 40px 40px;box-shadow:0 8px 0 #b7691a}
+#well{left:150px;top:24px;width:580px;height:328px;background:#b5651d;padding:8px}
+#reels{position:relative;display:flex;height:100%;background:#fff}
+.reel{flex:1;border-right:2px solid #c98;background:linear-gradient(90deg,#c9c9c9,#fff 20%,#fff 80%,#c9c9c9);overflow:hidden;display:flex;flex-direction:column}
+.reel:last-child{border:0}
+.cell{flex:1;display:flex;align-items:center;justify-content:center}
+.cell img{width:78%;height:78%}
+.spinning .cell{filter:blur(2px)}
+.win svg{animation:pop .5s ease-in-out infinite alternate}
+@keyframes pop{to{transform:scale(1.18)}}
+#lines{position:absolute;inset:0;pointer-events:none}
+.ln{position:absolute;display:flex;flex-direction:column;justify-content:space-between;top:36px;height:300px}
+.ln span{background:var(--red);border-radius:6px;width:42px;height:30px;text-align:center;font-size:24px;line-height:30px;box-shadow:0 3px 0 var(--dark);transition:opacity .2s}
+.off{opacity:.3}
+.lever{left:920px;top:110px;width:14px;height:110px;background:#f0a92b;border-radius:8px;transform:rotate(8deg)}
+.lever:before{content:"";position:absolute;left:-13px;top:-22px;width:38px;height:38px;border-radius:50%;background:#d62a2a}
+.lever.pull{animation:pull .5s}
+@keyframes pull{50%{transform:rotate(8deg) translateY(40px)}}
+.box{position:absolute;bottom:88px;width:150px;height:36px;background:#777;border:3px solid #999;border-radius:6px 6px 0 0;text-align:center;font-size:26px;line-height:32px;color:#fff}
+.btn{position:absolute;bottom:20px;width:170px;height:56px;border:0;border-radius:10px;background:linear-gradient(var(--red2),var(--red));color:#fff;font:inherit;font-size:30px;box-shadow:0 6px 0 var(--dark);cursor:pointer}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--dark)}
+.btn:disabled{filter:grayscale(.6);cursor:default}
+#gear{position:absolute;right:16px;top:10px;width:64px;height:52px;border:0;border-radius:10px;background:linear-gradient(var(--red2),var(--red));box-shadow:0 5px 0 var(--dark);color:#fff;font-size:30px;cursor:pointer}
+#msg{left:0;right:0;top:428px;text-align:center;font-size:30px;color:#fff;text-shadow:0 2px 0 #7a2d00;height:34px}
+.modal{position:fixed;inset:0;background:rgba(60,20,0,.7);display:none;align-items:center;justify-content:center;z-index:5;padding:12px}
+.modal.on{display:flex}
+.card{background:#fff3d6;color:#5a1d00;border:6px solid var(--frame);border-radius:20px;padding:18px 22px;width:min(560px,100%);max-height:100%;overflow:auto;font-family:Arial,sans-serif}
+.card h2{font-family:'Bebas Neue',Impact,sans-serif;font-size:34px;font-weight:400;margin-bottom:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0;font-size:15px}
+.row select,.row button{font:inherit;padding:6px 10px;border-radius:8px;border:2px solid #d9902b;background:#fff;color:#5a1d00;cursor:pointer}
+.row input[type=range]{width:180px;accent-color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:4px;text-align:center;border-bottom:1px solid #f0c98a}
+td img{width:34px;height:34px}
+.close{margin-top:10px;width:100%;padding:10px;border:0;border-radius:10px;background:var(--red);color:#fff;font:22px 'Bebas Neue',Impact,sans-serif;cursor:pointer}
+#rot{position:fixed;inset:0;background:#3a1200;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;font-size:32px;z-index:9}
+@media (orientation:portrait) and (max-width:700px){#rot{display:flex}}
+@media (prefers-reduced-motion:reduce){.win svg,.lever.pull{animation:none}}

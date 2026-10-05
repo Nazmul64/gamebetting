@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgame_twenty_one=self.webpackChunkgame_twenty_one||[]).push([[0x22af37f],{0x2411304(e,s,n){e.exports=n.p+"sounds.manifest.d707ebf5c10f.json"}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x23f5948],{0x23f5948(_,e,s){s.r(e),s.d(e,{BUILD_NAME_IS:()=>b});let b={V2:!1,V3:!0,B2B:!1,MOBILE_APP_DEFAULT:!1,WINDOWS_APP_DEFAULT:!1}}}]);

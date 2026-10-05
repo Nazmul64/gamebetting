@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x4a8c8d5],{0x4a8c8d5(s,t,e){e.r(t),e.d(t,{default:()=>c});let c=s=>s.startsWith(e.du)?s:(s.startsWith("/")&&(s=s.slice(1)),e.du+s)}}]);

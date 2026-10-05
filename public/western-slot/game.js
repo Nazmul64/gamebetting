@@ -251,6 +251,15 @@
     ]
   };
 
+  function getAssetUrl(filename) {
+    if (!filename) return '';
+    if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('/')) {
+      return filename;
+    }
+    const base = (typeof window !== 'undefined' && (window.WESTERN_ASSET_BASE || window.WESTERN_SLOT_BASE)) ? (window.WESTERN_ASSET_BASE || window.WESTERN_SLOT_BASE) : '/western-slot/';
+    return base + filename;
+  }
+
   // --- RENDER REEL SYMBOLS ---
   function createSymbolElement(symId, isWinning = false) {
     const sym = SYMBOLS.find(s => s.id === symId) || SYMBOLS[0];
@@ -260,12 +269,12 @@
 
     const bg = document.createElement('img');
     bg.className = 'symbol-bg';
-    bg.src = isWinning ? 'icon-back-active.b46d4046361b.png' : 'icon-back.9b97ecb985b4.png';
+    bg.src = getAssetUrl(isWinning ? 'icon-back-active.b46d4046361b.png' : 'icon-back.9b97ecb985b4.png');
     bg.alt = 'cell';
 
     const icon = document.createElement('img');
     icon.className = 'symbol-icon';
-    icon.src = isWinning ? sym.activeSrc : sym.src;
+    icon.src = getAssetUrl(isWinning ? sym.activeSrc : sym.src);
     icon.alt = sym.name;
 
     cell.appendChild(bg);
@@ -470,8 +479,8 @@
           cell.classList.add('winning');
           const bg = cell.querySelector('.symbol-bg');
           const icon = cell.querySelector('.symbol-icon');
-          if (bg) bg.src = 'icon-back-active.b46d4046361b.png';
-          if (icon && symObj) icon.src = symObj.activeSrc;
+          if (bg) bg.src = getAssetUrl('icon-back-active.b46d4046361b.png');
+          if (icon && symObj) icon.src = getAssetUrl(symObj.activeSrc);
         }
       });
     });

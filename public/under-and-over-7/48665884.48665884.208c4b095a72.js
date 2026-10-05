@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x2e6951c],{0x2e6951c(e,t,s){s.r(t),s.d(t,{default:()=>b});let b=e=>"number"==typeof e?e:!e||Number.isNaN(e)?-(new Date().getTimezoneOffset()/60):+e}}]);

@@ -26,6 +26,12 @@
     window.BURNING_HOT_BASE = "{{ asset('crystal') }}/";
   </script>
   <script src="{{ asset('crystal/js/lib/pixi.min.js') }}"></script>
+  <script>
+    window.require = function(mod) {
+      if (typeof PIXI !== 'undefined') return PIXI;
+      return window[mod] || {};
+    };
+  </script>
   <script src="{{ asset('crystal/js/lib/pixi-spine.js') }}"></script>
   <script src="{{ asset('crystal/js/lib/gsap.min.js') }}"></script>
   <script src="{{ asset('crystal/js/lib/PixiPlugin.min.js') }}"></script>

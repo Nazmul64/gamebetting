@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkhost_b2c_web_v3=self.webpackChunkhost_b2c_web_v3||[]).push([[0x40efb77],{0x40efb77(e,A,s){s.r(A),s.d(A,{default:()=>b});let a=new Promise(e=>{let A=new Image;A.onload=()=>e(A.width>0&&A.height>0),A.onerror=()=>e(!1),A.src="data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"}),b=()=>a}}]);

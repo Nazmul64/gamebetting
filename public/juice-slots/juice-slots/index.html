@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Juice Slots</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head><body>
+<div id="wrap"><div id="stage">
+ <div id="credit" class="abs">CREDIT: $<span id="cr">30.00</span></div>
+ <button id="gear" aria-label="Settings">&#9881;</button>
+ <div id="machine" class="abs">
+  <div class="ln" id="lnL" style="left:26px"></div>
+  <div class="ln" id="lnR" style="right:26px"></div>
+  <div id="well" class="abs"><div id="reels"></div></div>
+ </div>
+ <div class="abs lever" id="lever"></div>
+ <div id="msg" class="abs"></div>
+ <div class="box" style="left:280px" id="bxL">9</div>
+ <div class="box" style="left:475px" id="bxB">0.05</div>
+ <div class="box" style="left:670px" id="bxT">BET: 0.45</div>
+ <div class="box" style="left:865px;width:110px;display:none"></div>
+ <button class="btn" style="left:60px;width:130px" id="bInfo">INFO</button>
+ <button class="btn" style="left:255px" id="bLines">LINES</button>
+ <button class="btn" style="left:450px" id="bBet">BET</button>
+ <button class="btn" style="left:645px" id="bMax">MAX BET</button>
+ <button class="btn" style="left:840px;width:150px" id="bSpin">SPIN</button>
+</div></div>
+
+<div class="modal" id="mInfo"><div class="card"><h2>Pay table</h2>
+ <p style="font-size:14px;margin-bottom:6px">Match 3, 4 or 5 symbols from the left on a line. The juice is wild. Pay = line bet × multiplier.</p>
+ <table id="pt"></table><button class="close" data-close>CLOSE</button></div></div>
+
+<div class="modal" id="mSet"><div class="card"><h2>Settings</h2>
+ <div class="row">Game mode<select id="sMode"><option value="9">Multi-line (9 lines)</option><option value="3">Three line</option></select></div>
+ <div class="row">Sound<button id="sMute">On</button></div>
+ <div class="row">Full screen<button id="sFull">Enter</button></div>
+ <div class="row">Win chance<span><input type="range" id="sWin" min="0" max="100" value="35"> <b id="vWin">35</b>%</span></div>
+ <div class="row">Big win share<span><input type="range" id="sBig" min="0" max="100" value="10"> <b id="vBig">10</b>%</span></div>
+ <div class="row">Next spin result<select id="sPre"><option value="random">Random (by chances)</option><option value="lose">Lose</option><option value="win">Small win</option><option value="big">Big win (5 trophies)</option></select></div>
+ <div class="row">Reset credit<button id="sReset">$30.00</button></div>
+ <div class="row">Share score<span id="share"></span></div>
+ <div class="row"><button id="sExit">Exit game</button></div>
+ <button class="close" data-close>CLOSE</button></div></div>
+<div id="rot">Please rotate your device<br>to landscape</div>
+
+<script src="js/game.js"></script>
+</body></html>
