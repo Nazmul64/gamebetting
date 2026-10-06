@@ -525,7 +525,11 @@
             return { total, hit, extra, scWin, sc };
         }
 
-        function spin() {
+        let bal = @auth {{ auth()->user()->balance }} @else 1000.0 @endauth;
+        const isAuth = @auth true @else false @endauth;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        async function spin() {
             if (busy) return;
             easterAudio.init();
             if (bal < bet) {
@@ -535,11 +539,36 @@
                 return;
             }
             busy = true;
-            bal -= bet;
-            ui();
             $('win').textContent = '0.00';
             $('msg').textContent = '';
             clr();
+
+            let backendResult = null;
+            try {
+                const response = await fetch('/games/easter-slots/spin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bet_amount: bet,
+                        is_demo: !isAuth
+                    })
+                });
+                backendResult = await response.json();
+                if (!backendResult.success) {
+                    $('msg').textContent = backendResult.message || 'Error occurred';
+                    busy = false;
+                    return;
+                }
+            } catch (err) {
+                console.warn('Backend API spin fallback', err);
+            }
+
+            bal -= bet;
+            ui();
 
             const stop = [0,0,0,0,0];
             const iv = setInterval(() => {
@@ -559,27 +588,51 @@
                     stop[c] = 1;
                     easterAudio.playReelStep();
                     for (let r = 0; r < 3; r++) {
-                        grid[r][c] = rnd();
+                        if (backendResult && backendResult.grid && backendResult.grid[c]) {
+                            grid[r][c] = backendResult.grid[c][r];
+                        } else {
+                            grid[r][c] = rnd();
+                        }
                         draw(r, c);
                     }
                     if (c === 4) {
                         clearInterval(iv);
-                        const e = evaluate();
-                        if (e.total > 0 || e.hit.size) {
+                        let winAmount = 0;
+                        let hitSet = new Set();
+                        let isSc = false;
+
+                        if (backendResult && backendResult.grid) {
+                            winAmount = backendResult.win_amount;
+                            bal = backendResult.balance;
+                            if (backendResult.winning_lines) {
+                                backendResult.winning_lines.forEach(l => {
+                                    if (l.coords) {
+                                        l.coords.forEach(pt => hitSet.add(pt[1] * 5 + pt[0]));
+                                    }
+                                });
+                            }
+                        } else {
+                            const e = evaluate();
+                            winAmount = e.total;
+                            bal += e.total;
+                            hitSet = e.hit;
+                            isSc = e.scWin;
+                        }
+
+                        if (winAmount > 0 || hitSet.size) {
                             cells.forEach((d, i) => {
-                                if (e.hit.has(i)) d.classList.add(e.scWin && e.sc.includes(i) ? 'sc' : 'win');
+                                if (hitSet.has(i)) d.classList.add(isSc ? 'sc' : 'win');
                                 else d.classList.add('dim');
                             });
                         }
-                        bal += e.total;
                         ui();
-                        $('win').textContent = e.total.toFixed(2);
-                        if (e.total > 0) {
-                            easterAudio.playWin(e.total >= bet * 5);
-                            $('msg').textContent = 'WIN ' + e.total.toFixed(2) + e.extra;
+                        $('win').textContent = winAmount.toFixed(2);
+                        if (winAmount > 0) {
+                            easterAudio.playWin(winAmount >= bet * 5);
+                            $('msg').textContent = 'WIN ৳' + winAmount.toFixed(2);
                         }
                         busy = false;
-                        if (auto) setTimeout(spin, e.total ? 2200 : 1200);
+                        if (auto) setTimeout(spin, winAmount ? 2200 : 1200);
                     }
                 }, 600 + c * 350);
             }

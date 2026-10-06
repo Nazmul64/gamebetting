@@ -1533,6 +1533,20 @@
                             <span style="font-size:9px; background:#dc2626; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
 
+                        <!-- Active Game: Easter Slots -->
+                        <a href="{{ route('admin.easterslots.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-egg" style="color:#22c55e; font-size:13px;"></i>
+                            <span>Easter Slots™</span>
+                            <span style="font-size:9px; background:#16a34a; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game: Juice Slots -->
+                        <a href="{{ route('admin.juiceslots.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-cocktail" style="color:#f97316; font-size:13px;"></i>
+                            <span>Juice Slots™</span>
+                            <span style="font-size:9px; background:#ea580c; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
                         <!-- Active Game: Crystal Slot -->
                         <a href="{{ route('admin.crystal.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); text-decoration:none; color:inherit;">
                             <i class="fas fa-gem" style="color:#a855f7; font-size:13px;"></i>

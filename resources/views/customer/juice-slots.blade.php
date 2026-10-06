@@ -657,7 +657,11 @@
             $('lines').innerHTML = '';
         }
 
-        function spin() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const isAuth = @auth true @else false @endauth;
+        st.credit = @auth {{ auth()->user()->balance }} @else 1000.0 @endauth;
+
+        async function spin() {
             if (st.spinning) return;
             juiceAudio.init();
             const total = +(st.bet * st.lines).toFixed(2);
@@ -666,12 +670,39 @@
                 juiceAudio.beep(120, 0.3, 'sawtooth');
                 return;
             }
-            st.credit = +(st.credit - total).toFixed(2);
-            ui();
-            clearWin();
-            msg('');
+
             st.spinning = true;
             setBtns(true);
+            clearWin();
+            msg('');
+
+            let backendResult = null;
+            try {
+                const response = await fetch('/games/juice-slots/spin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bet_amount: total,
+                        is_demo: !isAuth
+                    })
+                });
+                backendResult = await response.json();
+                if (!backendResult.success) {
+                    msg(backendResult.message || 'Spin failed');
+                    st.spinning = false;
+                    setBtns(false);
+                    return;
+                }
+            } catch (err) {
+                console.warn('API error fallback', err);
+            }
+
+            st.credit = +(st.credit - total).toFixed(2);
+            ui();
 
             $('lever').classList.remove('pull');
             void $('lever').offsetWidth;
@@ -687,24 +718,35 @@
                 setTimeout(() => {
                     clearInterval(iv);
                     reel.classList.remove('spinning');
-                    for (let r = 0; r < 3; r++) setCell(c, r, g[c][r]);
+                    for (let r = 0; r < 3; r++) {
+                        let sym = (backendResult && backendResult.grid && backendResult.grid[c]) ? backendResult.grid[c][r] : g[c][r];
+                        setCell(c, r, sym);
+                        if (backendResult && backendResult.grid) g[c][r] = sym;
+                    }
                     grid[c] = g[c];
                     juiceAudio.beep(220 + c * 40, 0.12);
-                    if (c === 4) done(g, total);
+                    if (c === 4) done(g, total, backendResult);
                 }, 700 + c * 350);
             }
         }
 
-        function done(g, total) {
-            const w = evaluate(g);
+        function done(g, total, backendResult) {
             let win = 0;
-            w.forEach(x => { win += x.mult * st.bet; });
-            win = +win.toFixed(2);
+            if (backendResult && backendResult.grid) {
+                win = backendResult.win_amount;
+                st.credit = backendResult.balance;
+            } else {
+                const w = evaluate(g);
+                w.forEach(x => { win += x.mult * st.bet; });
+                win = +win.toFixed(2);
+                if (win > 0) st.credit = +(st.credit + win).toFixed(2);
+            }
+
             if (win > 0) {
-                st.credit = +(st.credit + win).toFixed(2);
-                msg('YOU WIN $' + win.toFixed(2) + '!');
+                msg('YOU WIN ৳' + win.toFixed(2) + '!');
                 [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => juiceAudio.beep(f, 0.18, 'triangle', 0.08), i * 110));
                 const svg = $('lines');
+                const w = evaluate(g);
                 w.forEach(x => {
                     x.path.forEach((r, c) => {
                         if (c < x.n) cellEl(c, r).classList.add('win');

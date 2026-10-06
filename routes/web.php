@@ -194,16 +194,22 @@ Route::prefix('games/roman-slots')->group(function () {
     Route::post('/spin', [App\Http\Controllers\RomanSlots\RomanSlotsGameController::class, 'spin'])->name('romanslots.spin');
 });
 
-Route::get('/easter-slot', function () {
-    return view('customer.easter-slot');
-})->name('easter-slot');
+Route::get('/easter-slot', [App\Http\Controllers\EasterSlots\EasterSlotsGameController::class, 'index'])->name('easter-slot');
+Route::prefix('games/easter-slots')->group(function () {
+    Route::get('/', [App\Http\Controllers\EasterSlots\EasterSlotsGameController::class, 'index'])->name('easterslots.index');
+    Route::get('/state', [App\Http\Controllers\EasterSlots\EasterSlotsGameController::class, 'getState'])->name('easterslots.state');
+    Route::post('/spin', [App\Http\Controllers\EasterSlots\EasterSlotsGameController::class, 'spin'])->name('easterslots.spin');
+});
 Route::get('/games/easter-slot', function () {
     return redirect()->route('easter-slot');
 });
 
-Route::get('/juice-slots', function () {
-    return view('customer.juice-slots');
-})->name('juice-slots');
+Route::get('/juice-slots', [App\Http\Controllers\JuiceSlots\JuiceSlotsGameController::class, 'index'])->name('juice-slots');
+Route::prefix('games/juice-slots')->group(function () {
+    Route::get('/', [App\Http\Controllers\JuiceSlots\JuiceSlotsGameController::class, 'index'])->name('juiceslots.index');
+    Route::get('/state', [App\Http\Controllers\JuiceSlots\JuiceSlotsGameController::class, 'getState'])->name('juiceslots.state');
+    Route::post('/spin', [App\Http\Controllers\JuiceSlots\JuiceSlotsGameController::class, 'spin'])->name('juiceslots.spin');
+});
 Route::get('/games/juice-slots', function () {
     return redirect()->route('juice-slots');
 });
@@ -475,6 +481,14 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     // Burning Hot Slot Casino Game Management Module
     Route::get('/modules/burning-hot', [App\Http\Controllers\BurningHot\BurningHotAdminController::class, 'index'])->name('burninghot.index');
     Route::post('/modules/burning-hot/settings', [App\Http\Controllers\BurningHot\BurningHotAdminController::class, 'updateSettings'])->name('burninghot.settings');
+
+    // Easter Slots Casino Game Management Module
+    Route::get('/modules/easter-slots', [App\Http\Controllers\EasterSlots\EasterSlotsAdminController::class, 'index'])->name('easterslots.index');
+    Route::post('/modules/easter-slots/settings', [App\Http\Controllers\EasterSlots\EasterSlotsAdminController::class, 'updateSettings'])->name('easterslots.settings');
+
+    // Juice Slots Casino Game Management Module
+    Route::get('/modules/juice-slots', [App\Http\Controllers\JuiceSlots\JuiceSlotsAdminController::class, 'index'])->name('juiceslots.index');
+    Route::post('/modules/juice-slots/settings', [App\Http\Controllers\JuiceSlots\JuiceSlotsAdminController::class, 'updateSettings'])->name('juiceslots.settings');
 
     // Site Branding & Global Demo Limit Settings
 
