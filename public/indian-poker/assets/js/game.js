@@ -97,7 +97,17 @@ function setMessage(text, type = '') {
   const msgEl = document.getElementById('msg');
   msgEl.className = '';
   if (type) msgEl.classList.add(type);
-  msgEl.textContent = text;
+async function fetchGameState() {
+  try {
+    const res = await $.getJSON('/games/indian-poker/state');
+    if (res && res.success) {
+      if (res.user_balance !== null && typeof res.user_balance === 'number') {
+        State.balance = res.user_balance;
+        State.demoMode = false;
+      }
+      updateUI();
+    }
+  } catch(e) {}
 }
 
 async function playRound() {
@@ -108,8 +118,7 @@ async function playRound() {
   }
 
   State.busy = true;
-  State.balance -= State.bet;
-  updateUI();
+  const isDemo = !window.IS_AUTH;
 
   // Disable controls
   document.getElementById('btn-place-bet').disabled = true;
@@ -121,74 +130,99 @@ async function playRound() {
 
   setMessage('Good luck!');
 
-  if (State.deck.length < 6) {
-    initDeck();
-  }
+  try {
+    const response = await $.ajax({
+      url: '/games/indian-poker/bet',
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': window.CSRF_TOKEN || $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        amount: State.bet,
+        is_demo: isDemo ? 1 : 0
+      }
+    });
 
-  const dealtHand = [State.deck.pop(), State.deck.pop(), State.deck.pop()];
-
-  const basePath = window.INDIAN_POKER_BASE || '/indian-poker/';
-
-  // Update card front images
-  dealtHand.forEach((card, i) => {
-    const frontImg = document.querySelector(`.card-slot[data-index="${i}"] .card-face.front img`);
-    if (frontImg) {
-      frontImg.src = `${basePath}assets/images/cards/${card}.svg`;
+    if (!response || !response.success) {
+      setMessage(response?.error || 'Bet failed. Try again.');
+      State.busy = false;
+      document.getElementById('btn-place-bet').disabled = false;
+      document.querySelectorAll('.chip-btn').forEach(b => b.disabled = false);
+      return;
     }
-  });
 
-  const speedMultiplier = State.fastPlay ? 0.5 : 1.0;
+    const dealtHand = response.cards || ['2S', '4H', '8D'];
+    const basePath = window.INDIAN_POKER_BASE || '/indian-poker/';
 
-  // Step 1: Deal sound
-  AudioFX.deal();
+    // Update card front images
+    dealtHand.forEach((card, i) => {
+      const frontImg = document.querySelector(`.card-slot[data-index="${i}"] .card-face.front img`);
+      if (frontImg) {
+        frontImg.src = `${basePath}assets/images/cards/${card}.svg`;
+      }
+    });
 
-  // Step 2: Flip cards one by one
-  for (let i = 0; i < 3; i++) {
-    await new Promise(res => setTimeout(res, (350 * speedMultiplier)));
-    const slot = document.querySelector(`.card-slot[data-index="${i}"]`);
-    slot.classList.add('flipped');
-    AudioFX.flip();
-  }
+    const speedMultiplier = State.fastPlay ? 0.5 : 1.0;
 
-  // Step 3: Evaluate Hand and payout
-  await new Promise(res => setTimeout(res, (500 * speedMultiplier)));
-  const winHandId = evaluateHand(dealtHand);
+    // Step 1: Deal sound
+    AudioFX.deal();
 
-  if (winHandId) {
-    const config = HAND_CONFIG.find(h => h.id === winHandId);
-    // Payout: Original bet * (multiplier + 1)
-    const winAmount = State.bet * (config.mult + 1);
-    State.balance += winAmount;
+    // Step 2: Flip cards one by one
+    for (let i = 0; i < 3; i++) {
+      await new Promise(res => setTimeout(res, (350 * speedMultiplier)));
+      const slot = document.querySelector(`.card-slot[data-index="${i}"]`);
+      if (slot) slot.classList.add('flipped');
+      AudioFX.flip();
+    }
 
-    // Highlight badge
-    const badgeEl = document.querySelector(`.badge-item[data-id="${winHandId}"]`);
-    if (badgeEl) badgeEl.classList.add('active-win');
+    // Step 3: Evaluate Hand and payout
+    await new Promise(res => setTimeout(res, (500 * speedMultiplier)));
+    const isWin = response.is_win;
+    const winHandId = response.hand_type;
+    const winAmount = response.win_amount;
 
-    // Highlight winning cards
-    document.querySelectorAll('.card-slot').forEach(slot => slot.classList.add('winning'));
+    if (isWin && winHandId) {
+      // Highlight badge
+      const badgeEl = document.querySelector(`.badge-item[data-id="${winHandId}"]`);
+      if (badgeEl) badgeEl.classList.add('active-win');
 
-    // Sound and message
-    AudioFX.win(winHandId);
-    if (winHandId === 'three' || winHandId === 'sf') {
-      setMessage(`${config.name}! You win ${winAmount.toFixed(2)}`, 'bigwin');
+      // Highlight winning cards
+      document.querySelectorAll('.card-slot').forEach(slot => slot.classList.add('winning'));
+
+      // Sound and message
+      AudioFX.win(winHandId);
+      if (winHandId === 'three' || winHandId === 'sf') {
+        setMessage(`${response.hand_name || 'Win'}! You win ${winAmount.toFixed(2)}`, 'bigwin');
+      } else {
+        setMessage(`${response.hand_name || 'Win'}! You win ${winAmount.toFixed(2)}`, 'win');
+      }
     } else {
-      setMessage(`${config.name}! You win ${winAmount.toFixed(2)}`, 'win');
+      AudioFX.lose();
+      setMessage('Try again!');
     }
-  } else {
-    AudioFX.lose();
-    setMessage('Try again!');
-  }
 
-  updateUI();
-  State.busy = false;
-  document.getElementById('btn-place-bet').disabled = false;
-  document.querySelectorAll('.chip-btn').forEach(b => b.disabled = false);
+    if (response.new_balance !== undefined) {
+      State.balance = response.new_balance;
+    } else if (isDemo) {
+      State.balance = isWin ? State.balance - State.bet + winAmount : State.balance - State.bet;
+    }
+
+    updateUI();
+  } catch (err) {
+    const errorMsg = err.responseJSON?.error || err.responseJSON?.message || 'Error communicating with game server.';
+    setMessage(errorMsg);
+  } finally {
+    State.busy = false;
+    document.getElementById('btn-place-bet').disabled = false;
+    document.querySelectorAll('.chip-btn').forEach(b => b.disabled = false);
+  }
 }
 
 // Event Listeners initialization
 document.addEventListener('DOMContentLoaded', () => {
   initDeck();
   Engine.init('fx', 1024, 438);
+  fetchGameState();
 
   // Setup Chips
   document.querySelectorAll('.chip-btn').forEach(btn => {
@@ -198,20 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Clear Bet button
-  document.getElementById('bet-clr').addEventListener('click', () => {
-    setBet(1);
+  document.getElementById('bet-clr')?.addEventListener('click', () => {
+    setBet(10);
   });
 
   // Place Bet Button
-  document.getElementById('btn-place-bet').addEventListener('click', playRound);
+  document.getElementById('btn-place-bet')?.addEventListener('click', playRound);
 
   // Info Button
-  document.getElementById('btn-info').addEventListener('click', () => {
+  document.getElementById('btn-info')?.addEventListener('click', () => {
     showModal('modal-info');
   });
 
   // Jackpot Button
-  document.getElementById('btn-jackpot').addEventListener('click', () => {
+  document.getElementById('btn-jackpot')?.addEventListener('click', () => {
     showModal('modal-jackpot');
   });
 
@@ -237,9 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Demo badge toggle
   document.getElementById('demo-badge')?.addEventListener('click', () => {
-    State.balance = 1000.00;
-    updateUI();
-    setMessage('Balance reset to 1000.00');
+    if (!window.IS_AUTH) {
+      State.balance = 1000.00;
+      updateUI();
+      setMessage('Demo balance reset to 1000.00');
+    }
   });
 
   updateUI();

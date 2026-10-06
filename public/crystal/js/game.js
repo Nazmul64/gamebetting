@@ -33,13 +33,35 @@ const CELL_SIZE = 79.5;
 const GRID_X = 654;
 const GRID_Y = 188;
 
-let balance = 10000;
+let balance = (typeof window !== 'undefined' && typeof window.USER_BALANCE === 'number') ? window.USER_BALANCE : 10000;
 let totalWinnings = 0;
 let betAmount = 20;
 let isSpinning = false;
 let isTurbo = false;
 let isAutoPlay = false;
 let autoSpinsLeft = 0;
+
+async function syncBackendSpin(bet) {
+  try {
+    const isDemo = !window.IS_AUTH;
+    const csrfToken = window.CSRF_TOKEN || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const res = await fetch('/games/crystal/spin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+        bet: bet,
+        is_demo: isDemo ? 1 : 0
+      })
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return null;
+  }
+}
 
 let app;
 let grid = []; // 7x7 2D array of sprite objects
@@ -452,6 +474,7 @@ async function startSpin() {
     window.crystalWinCards.removeChildren();
   }
 
+  const backendPromise = syncBackendSpin(betAmount);
   isSpinning = true;
   balance -= betAmount;
   updateUILabel();
@@ -637,6 +660,14 @@ async function startSpin() {
   } else {
     if (messageText) messageText.text = 'Press the Play button';
   }
+
+  try {
+    const backendData = await backendPromise;
+    if (backendData && backendData.new_balance !== undefined) {
+      balance = backendData.new_balance;
+      updateUILabel();
+    }
+  } catch(e) {}
 
   isSpinning = false;
 

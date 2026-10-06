@@ -252,79 +252,165 @@ var Game = {
     return $card;
   },
 
+  currentBetId: null,
+  remainingDeck: [],
+
+  fetchState: function() {
+    var self = this;
+    $.getJSON('/games/card-games-21/state', function(res) {
+      if (res && res.success) {
+        if (res.user_balance !== null && typeof res.user_balance === 'number') {
+          self.bal = res.user_balance;
+        }
+        self.updateUI();
+      }
+    });
+  },
+
   startRound: function() {
     if (this.state !== 'idle') return;
 
+    var self = this;
     this.state = 'dealing';
-    this.shuffleDeck();
+    var isDemo = !window.IS_AUTH;
 
-    this.dealerHand = [];
-    this.playerHand = [];
-
+    $('#main-action-btn, #sub-action-btn').prop('disabled', true);
     $('#dealer-cards, #player-cards').empty();
     $('#result-banner-overlay').addClass('hidden');
 
-    this.updateUI();
-    $('#main-action-btn, #sub-action-btn').prop('disabled', true);
-
-    var self = this;
-
-    // Deal sequence: Player 1st, Dealer 1st, Player 2nd, Dealer 2nd
-    var dealSeq = [
-      { target: 'player', delay: 100 },
-      { target: 'dealer', delay: 400 },
-      { target: 'player', delay: 700 },
-      { target: 'dealer', delay: 1000 }
-    ];
-
-    dealSeq.forEach(function(step) {
-      setTimeout(function() {
-        var card = self.deck.pop();
-        if (step.target === 'player') {
-          self.playerHand.push(card);
-          var $c = self.createCardElem(card);
-          $('#player-cards').append($c);
-        } else {
-          self.dealerHand.push(card);
-          var $c = self.createCardElem(card);
-          $('#dealer-cards').append($c);
+    $.ajax({
+      url: '/games/card-games-21/deal',
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': window.CSRF_TOKEN || $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        amount: self.bet,
+        is_demo: isDemo ? 1 : 0
+      },
+      success: function(res) {
+        if (!res || !res.success) {
+          alert(res?.error || 'Deal failed. Please try again.');
+          self.state = 'idle';
+          self.setMode('bet');
+          return;
         }
-        SoundFX.playCard();
-        self.updateUI();
-      }, step.delay);
-    });
 
-    setTimeout(function() {
-      self.state = 'play';
-      self.setMode('play');
+        self.currentBetId = res.bet_id;
+        self.remainingDeck = res.remaining_deck || [];
+        self.dealerHand = [];
+        self.playerHand = [];
 
-      var pScore = self.calcScore(self.playerHand);
-      if (pScore === 21) {
-        self.stand();
-      } else if (self.autoPlay) {
-        self.autoStep();
+        var pCards = (res.player_cards || []).map(function(id) {
+          return { rank: id.slice(0, -1), suit: id.slice(-1), id: id };
+        });
+        var dCards = (res.dealer_cards || []).map(function(id) {
+          return { rank: id.slice(0, -1), suit: id.slice(-1), id: id };
+        });
+
+        // Animated dealing sequence
+        var dealSeq = [
+          { target: 'player', card: pCards[0], delay: 100 },
+          { target: 'dealer', card: dCards[0], delay: 400 },
+          { target: 'player', card: pCards[1], delay: 700 }
+        ];
+
+        dealSeq.forEach(function(step) {
+          setTimeout(function() {
+            if (step.target === 'player' && step.card) {
+              self.playerHand.push(step.card);
+              var $c = self.createCardElem(step.card);
+              $('#player-cards').append($c);
+            } else if (step.target === 'dealer' && step.card) {
+              self.dealerHand.push(step.card);
+              var $c = self.createCardElem(step.card);
+              $('#dealer-cards').append($c);
+            }
+            SoundFX.playCard();
+            self.updateUI();
+          }, step.delay);
+        });
+
+        setTimeout(function() {
+          if (res.status === 'won') {
+            self.finishRound('win', res.message || 'Golden 21! Instant Win');
+          } else {
+            self.state = 'play';
+            self.setMode('play');
+            if (self.autoPlay) {
+              self.autoStep();
+            }
+          }
+        }, 1100);
+      },
+      error: function(xhr) {
+        var err = xhr.responseJSON?.error || xhr.responseJSON?.message || 'Error dealing cards.';
+        alert(err);
+        self.state = 'idle';
+        self.setMode('bet');
       }
-    }, 1400);
+    });
   },
 
   hit: function() {
     if (this.state !== 'play') return;
 
-    var card = this.deck.pop();
-    this.playerHand.push(card);
-    var $c = this.createCardElem(card);
-    $('#player-cards').append($c);
-    SoundFX.playCard();
-    this.updateUI();
+    var self = this;
+    var isDemo = !window.IS_AUTH;
+    $('#main-action-btn, #sub-action-btn').prop('disabled', true);
 
-    var pScore = this.calcScore(this.playerHand);
-    if (pScore > 21) {
-      this.finishRound('lose', 'BUST - YOU LOSE');
-    } else if (pScore === 21) {
-      this.stand();
-    } else if (this.autoPlay) {
-      this.autoStep();
-    }
+    var playerCardIds = this.playerHand.map(function(c) { return c.id; });
+    var dealerCardIds = this.dealerHand.map(function(c) { return c.id; });
+
+    $.ajax({
+      url: '/games/card-games-21/hit',
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': window.CSRF_TOKEN || $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        bet_id: self.currentBetId,
+        is_demo: isDemo ? 1 : 0,
+        amount: self.bet,
+        player_cards: playerCardIds,
+        dealer_cards: dealerCardIds,
+        remaining_deck: self.remainingDeck
+      },
+      success: function(res) {
+        if (!res || !res.success) {
+          alert(res?.error || 'Hit failed.');
+          $('#main-action-btn, #sub-action-btn').prop('disabled', false);
+          return;
+        }
+
+        var newCardId = res.new_card;
+        if (newCardId) {
+          var cardObj = { rank: newCardId.slice(0, -1), suit: newCardId.slice(-1), id: newCardId };
+          self.playerHand.push(cardObj);
+          var $c = self.createCardElem(cardObj);
+          $('#player-cards').append($c);
+          SoundFX.playCard();
+        }
+        self.remainingDeck = res.remaining_deck || self.remainingDeck;
+        self.updateUI();
+
+        if (res.status === 'busted') {
+          self.finishRound('lose', res.message || 'BUST - YOU LOSE');
+        } else if (res.status === 'won') {
+          self.finishRound('win', res.message || 'YOU WIN!');
+        } else {
+          $('#main-action-btn, #sub-action-btn').prop('disabled', false);
+          if (self.autoPlay) {
+            self.autoStep();
+          }
+        }
+      },
+      error: function(xhr) {
+        var err = xhr.responseJSON?.error || xhr.responseJSON?.message || 'Error on hit.';
+        alert(err);
+        $('#main-action-btn, #sub-action-btn').prop('disabled', false);
+      }
+    });
   },
 
   autoStep: function() {
@@ -343,46 +429,67 @@ var Game = {
   stand: function() {
     if (this.state !== 'play') return;
 
+    var self = this;
     this.state = 'dealer';
     $('#main-action-btn, #sub-action-btn').prop('disabled', true);
+    var isDemo = !window.IS_AUTH;
 
-    var self = this;
+    var playerCardIds = this.playerHand.map(function(c) { return c.id; });
+    var dealerCardIds = this.dealerHand.map(function(c) { return c.id; });
 
-    function dealerStep() {
-      var dScore = self.calcScore(self.dealerHand);
-      if (dScore < 17) {
-        var card = self.deck.pop();
-        self.dealerHand.push(card);
-        var $c = self.createCardElem(card);
-        $('#dealer-cards').append($c);
-        SoundFX.playCard();
-        self.updateUI();
-        setTimeout(dealerStep, 700);
-      } else {
-        setTimeout(function() {
-          self.evaluateWinner();
-        }, 400);
+    $.ajax({
+      url: '/games/card-games-21/stand',
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': window.CSRF_TOKEN || $('meta[name="csrf-token"]').attr('content')
+      },
+      data: {
+        bet_id: self.currentBetId,
+        is_demo: isDemo ? 1 : 0,
+        amount: self.bet,
+        player_cards: playerCardIds,
+        dealer_cards: dealerCardIds,
+        remaining_deck: self.remainingDeck
+      },
+      success: function(res) {
+        if (!res || !res.success) {
+          alert(res?.error || 'Stand failed.');
+          return;
+        }
+
+        // Animate dealer cards draw if any new cards were dealt
+        var finalDealerCards = (res.dealer_cards || []).map(function(id) {
+          return { rank: id.slice(0, -1), suit: id.slice(-1), id: id };
+        });
+
+        var startIndex = self.dealerHand.length;
+        if (startIndex < finalDealerCards.length) {
+          var stepDelay = 0;
+          for (var i = startIndex; i < finalDealerCards.length; i++) {
+            (function(card, delay) {
+              setTimeout(function() {
+                self.dealerHand.push(card);
+                var $c = self.createCardElem(card);
+                $('#dealer-cards').append($c);
+                SoundFX.playCard();
+                self.updateUI();
+              }, delay);
+            })(finalDealerCards[i], stepDelay);
+            stepDelay += 600;
+          }
+
+          setTimeout(function() {
+            self.finishRound(res.status, res.message);
+          }, stepDelay + 300);
+        } else {
+          self.finishRound(res.status, res.message);
+        }
+      },
+      error: function(xhr) {
+        var err = xhr.responseJSON?.error || xhr.responseJSON?.message || 'Error on stand.';
+        alert(err);
       }
-    }
-
-    dealerStep();
-  },
-
-  evaluateWinner: function() {
-    var pScore = this.calcScore(this.playerHand);
-    var dScore = this.calcScore(this.dealerHand);
-
-    if (pScore > 21) {
-      this.finishRound('lose', 'Dealer has more points');
-    } else if (dScore > 21) {
-      this.finishRound('win', 'YOU WIN! Dealer Busted');
-    } else if (pScore > dScore) {
-      this.finishRound('win', 'YOU WIN!');
-    } else if (pScore < dScore) {
-      this.finishRound('lose', 'Dealer has more points');
-    } else {
-      this.finishRound('draw', 'DRAW - Stake Returned');
-    }
+    });
   },
 
   finishRound: function(result, subText) {
@@ -394,13 +501,13 @@ var Game = {
 
     $bg.removeClass('lose win draw');
 
-    if (result === 'win') {
+    if (result === 'win' || result === 'won') {
       this.wins++;
       $bg.addClass('win');
       $title.text('YOU WIN!');
       $sub.text(subText || 'Congratulations!');
       SoundFX.playWin();
-    } else if (result === 'lose') {
+    } else if (result === 'lose' || result === 'lost' || result === 'busted') {
       this.losses++;
       $bg.addClass('lose');
       $title.text('BETTER LUCK NEXT TIME');
@@ -440,4 +547,5 @@ var Game = {
 
 $(function() {
   Game.init();
+  Game.fetchState();
 });

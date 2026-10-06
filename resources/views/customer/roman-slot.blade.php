@@ -473,7 +473,7 @@
 
         const $ = id => document.getElementById(id);
         const st = $('stage');
-        let bet = 20, bal = window.USER_BALANCE || 5000, busy = false, auto = false, grid = [], cells = [];
+        let bet = 20, bal = {{ Auth::check() ? (float)(Auth::user()->balance ?? 1000.00) : 1000.00 }}, busy = false, auto = false, grid = [], cells = [];
         const rnd = () => BAG[Math.random() * BAG.length | 0];
 
         for (let r = 0; r < 3; r++) {
@@ -501,33 +501,7 @@
 
         const clr = () => cells.forEach(d => d.className = 'cell');
 
-        function evaluate() {
-            let total = 0;
-            const hit = new Set(), lb = bet / 20;
-            LINES.forEach(L => {
-                const line = L.map((r,c) => grid[r][c]);
-                const t = line.find(x => x !== 'W') || 'W';
-                if (t === 'S') return;
-                let n = 0;
-                while (n < 5 && (line[n] === t || line[n] === 'W')) n++;
-                if (n >= 3) {
-                    total += PAY[t][n-1] * lb;
-                    for (let i = 0; i < n; i++) hit.add(L[i]*5 + i);
-                }
-            });
-            const sc = [];
-            grid.forEach((row,r) => row.forEach((s,c) => { if (s === 'S') sc.push(r*5+c); }));
-            let extra = '', scWin = false;
-            if (sc.length >= 3) {
-                total += bet * SCATTER[Math.min(sc.length, 5)];
-                extra = ' Scatter x' + sc.length + '!';
-                scWin = true;
-                sc.forEach(i => hit.add(i));
-            }
-            return { total, hit, extra, scWin, sc };
-        }
-
-        function spin() {
+        async function spin() {
             if (busy) return;
             romanAudio.init();
             if (bal < bet) {
@@ -537,12 +511,14 @@
                 return;
             }
             busy = true;
+            const isDemo = {{ Auth::check() ? 'false' : 'true' }};
             bal -= bet;
             ui();
             $('win').textContent = '0.00';
             $('msg').textContent = '';
             clr();
 
+            // Start reel rolling sound & visual animation
             const stop = [0,0,0,0,0];
             const iv = setInterval(() => {
                 romanAudio.playReelStep();
@@ -556,31 +532,78 @@
                 }
             }, 70);
 
-            for (let c = 0; c < 5; c++) {
-                setTimeout(() => {
-                    stop[c] = 1;
-                    romanAudio.playReelStep();
-                    for (let r = 0; r < 3; r++) {
-                        grid[r][c] = rnd();
-                        draw(r, c);
-                    }
-                    if (c === 4) {
-                        clearInterval(iv);
-                        const e = evaluate();
-                        if (e.hit.size) {
-                            cells.forEach((d, i) => d.classList.add(e.hit.has(i) ? (e.scWin && e.sc.includes(i) ? 'sc' : 'win') : 'dim'));
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const response = await fetch('/games/roman-slots/spin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        bet: bet,
+                        is_demo: isDemo ? 1 : 0
+                    })
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    clearInterval(iv);
+                    $('msg').textContent = data.error || 'Spin failed';
+                    bal += bet;
+                    ui();
+                    busy = false;
+                    return;
+                }
+
+                const finalGrid = data.grid;
+                const winAmount = data.win_amount || 0;
+                const hitCells = data.hit_cells || [];
+                const scWin = data.scatter_win || false;
+
+                for (let c = 0; c < 5; c++) {
+                    setTimeout(() => {
+                        stop[c] = 1;
+                        romanAudio.playReelStep();
+                        for (let r = 0; r < 3; r++) {
+                            grid[r][c] = finalGrid[r][c];
+                            draw(r, c);
                         }
-                        bal += e.total;
-                        ui();
-                        $('win').textContent = e.total.toFixed(2);
-                        if (e.total > 0) {
-                            romanAudio.playWin(e.total >= bet * 5);
-                            $('msg').textContent = 'WIN ' + e.total.toFixed(2) + e.extra;
+                        if (c === 4) {
+                            clearInterval(iv);
+                            if (hitCells.length) {
+                                cells.forEach((d, i) => {
+                                    if (hitCells.includes(i)) {
+                                        d.classList.add(scWin ? 'sc' : 'win');
+                                    } else {
+                                        d.classList.add('dim');
+                                    }
+                                });
+                            }
+
+                            if (data.new_balance !== undefined) {
+                                bal = data.new_balance;
+                            } else {
+                                bal += winAmount;
+                            }
+
+                            ui();
+                            $('win').textContent = winAmount.toFixed(2);
+                            if (winAmount > 0) {
+                                romanAudio.playWin(winAmount >= bet * 5);
+                                $('msg').textContent = 'WIN ' + winAmount.toFixed(2) + (data.extra_msg || '');
+                            }
+                            busy = false;
+                            if (auto) setTimeout(spin, winAmount ? 2200 : 1200);
                         }
-                        busy = false;
-                        if (auto) setTimeout(spin, e.total ? 2200 : 1200);
-                    }
-                }, 600 + c * 350);
+                    }, 600 + c * 350);
+                }
+            } catch (err) {
+                clearInterval(iv);
+                $('msg').textContent = 'Connection error. Try again.';
+                bal += bet;
+                ui();
+                busy = false;
             }
         }
 

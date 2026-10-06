@@ -161,25 +161,37 @@ Route::prefix('games/temple-of-fortune')->group(function () {
     Route::post('/bet', [App\Http\Controllers\AbyssOfGlory\AbyssGameController::class, 'placeBet'])->name('abyss.bet');
 });
 
-Route::get('/burning-hot', function () {
-    return view('customer.burning-hot');
-})->name('burning-hot');
+// Burning Hot Realistic Casino Slot Game Routes
+Route::get('/burning-hot', [App\Http\Controllers\BurningHot\BurningHotGameController::class, 'index'])->name('burning-hot');
 Route::get('/games/burning-hot', function () {
     return redirect()->route('burning-hot');
 });
+Route::prefix('games/burning-hot')->group(function () {
+    Route::get('/', [App\Http\Controllers\BurningHot\BurningHotGameController::class, 'index'])->name('burninghot.index');
+    Route::get('/state', [App\Http\Controllers\BurningHot\BurningHotGameController::class, 'getState'])->name('burninghot.state');
+    Route::post('/spin', [App\Http\Controllers\BurningHot\BurningHotGameController::class, 'spin'])->name('burninghot.spin');
+});
 
-Route::get('/crystal', function () {
-    return view('customer.crystal');
-})->name('crystal');
+// Crystal Realistic Cascading Slot Game Routes
+Route::get('/crystal', [App\Http\Controllers\Crystal\CrystalGameController::class, 'index'])->name('crystal');
 Route::get('/games/crystal', function () {
     return redirect()->route('crystal');
 });
+Route::prefix('games/crystal')->group(function () {
+    Route::get('/', [App\Http\Controllers\Crystal\CrystalGameController::class, 'index'])->name('crystal.index');
+    Route::get('/state', [App\Http\Controllers\Crystal\CrystalGameController::class, 'getState'])->name('crystal.state');
+    Route::post('/spin', [App\Http\Controllers\Crystal\CrystalGameController::class, 'spin'])->name('crystal.spin');
+});
 
-Route::get('/roman-slot', function () {
-    return view('customer.roman-slot');
-})->name('roman-slot');
+// Roman Slots Casino Game Routes
+Route::get('/roman-slot', [App\Http\Controllers\RomanSlots\RomanSlotsGameController::class, 'index'])->name('roman-slot');
 Route::get('/games/roman-slot', function () {
     return redirect()->route('roman-slot');
+});
+Route::prefix('games/roman-slots')->group(function () {
+    Route::get('/', [App\Http\Controllers\RomanSlots\RomanSlotsGameController::class, 'index'])->name('romanslots.index');
+    Route::get('/state', [App\Http\Controllers\RomanSlots\RomanSlotsGameController::class, 'getState'])->name('romanslots.state');
+    Route::post('/spin', [App\Http\Controllers\RomanSlots\RomanSlotsGameController::class, 'spin'])->name('romanslots.spin');
 });
 
 Route::get('/easter-slot', function () {
@@ -256,9 +268,7 @@ Route::prefix('games/under-and-over-7')->group(function () {
 });
 
 // 21 Card Game Routes (1xGames Card Games 21)
-Route::get('/card-games-21', function () {
-    return view('customer.card-games-21');
-})->name('card-games-21');
+Route::get('/card-games-21', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'index'])->name('card-games-21');
 Route::get('/card-game-21', function () {
     return redirect()->route('card-games-21');
 })->name('card-game-21');
@@ -271,22 +281,27 @@ Route::get('/card-21', function () {
 Route::get('/21', function () {
     return redirect()->route('card-games-21');
 });
-Route::get('/games/card-games-21', function () {
-    return redirect()->route('card-games-21');
+Route::prefix('games/card-games-21')->group(function () {
+    Route::get('/', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'index'])->name('card21.index');
+    Route::get('/state', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'getState'])->name('card21.state');
+    Route::post('/deal', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'startRound'])->name('card21.deal');
+    Route::post('/hit', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'hit'])->name('card21.hit');
+    Route::post('/stand', [App\Http\Controllers\CardGames21\CardGames21GameController::class, 'stand'])->name('card21.stand');
 });
 
 // Indian Poker Game Routes
-Route::get('/indian-poker', function () {
-    return view('customer.indian-poker');
-})->name('indian-poker');
+Route::get('/indian-poker', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'index'])->name('indian-poker');
 Route::get('/indian_poker', function () {
     return redirect()->route('indian-poker');
 })->name('indian_poker');
 Route::get('/indianpoker', function () {
     return redirect()->route('indian-poker');
 });
-Route::get('/games/indian-poker', function () {
-    return redirect()->route('indian-poker');
+Route::prefix('games/indian-poker')->group(function () {
+    Route::get('/', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'index'])->name('indianpoker.index');
+    Route::get('/state', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'getState'])->name('indianpoker.state');
+    Route::post('/bet', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'placeBet'])->name('indianpoker.bet');
+    Route::get('/history', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'getHistory'])->name('indianpoker.history');
 });
 
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
@@ -440,6 +455,26 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     // Under and Over 7 Casino Game Management Module
     Route::get('/modules/under-and-over-7', [App\Http\Controllers\UnderAndOver7\UnderAndOver7AdminController::class, 'index'])->name('underover.admin');
     Route::post('/modules/under-and-over-7/settings', [App\Http\Controllers\UnderAndOver7\UnderAndOver7AdminController::class, 'updateSettings'])->name('underover.settings');
+
+    // Indian Poker Casino Game Management Module
+    Route::get('/modules/indian-poker', [App\Http\Controllers\IndianPoker\IndianPokerAdminController::class, 'index'])->name('indianpoker.index');
+    Route::post('/modules/indian-poker/settings', [App\Http\Controllers\IndianPoker\IndianPokerAdminController::class, 'updateSettings'])->name('indianpoker.settings');
+
+    // Card Games 21 Casino Game Management Module
+    Route::get('/modules/card-games-21', [App\Http\Controllers\CardGames21\CardGames21AdminController::class, 'index'])->name('cardgames21.index');
+    Route::post('/modules/card-games-21/settings', [App\Http\Controllers\CardGames21\CardGames21AdminController::class, 'updateSettings'])->name('cardgames21.settings');
+
+    // Roman Slots Casino Game Management Module
+    Route::get('/modules/roman-slots', [App\Http\Controllers\RomanSlots\RomanSlotsAdminController::class, 'index'])->name('romanslots.index');
+    Route::post('/modules/roman-slots/settings', [App\Http\Controllers\RomanSlots\RomanSlotsAdminController::class, 'updateSettings'])->name('romanslots.settings');
+
+    // Crystal Slot Casino Game Management Module
+    Route::get('/modules/crystal', [App\Http\Controllers\Crystal\CrystalAdminController::class, 'index'])->name('crystal.index');
+    Route::post('/modules/crystal/settings', [App\Http\Controllers\Crystal\CrystalAdminController::class, 'updateSettings'])->name('crystal.settings');
+
+    // Burning Hot Slot Casino Game Management Module
+    Route::get('/modules/burning-hot', [App\Http\Controllers\BurningHot\BurningHotAdminController::class, 'index'])->name('burninghot.index');
+    Route::post('/modules/burning-hot/settings', [App\Http\Controllers\BurningHot\BurningHotAdminController::class, 'updateSettings'])->name('burninghot.settings');
 
     // Site Branding & Global Demo Limit Settings
 

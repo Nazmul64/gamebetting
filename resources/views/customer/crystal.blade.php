@@ -24,6 +24,9 @@
   </style>
   <script>
     window.BURNING_HOT_BASE = "{{ asset('crystal') }}/";
+    window.IS_AUTH = {{ Auth::check() ? 'true' : 'false' }};
+    window.USER_BALANCE = {{ Auth::check() ? (float)(Auth::user()->balance ?? 10000.00) : 10000.00 }};
+    window.CSRF_TOKEN = "{{ csrf_token() }}";
   </script>
   <script src="{{ asset('crystal/js/lib/pixi.min.js') }}"></script>
   <script>

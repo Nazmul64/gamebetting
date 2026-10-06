@@ -1512,6 +1512,41 @@
                             <span style="font-size:9px; background:#fbbf24; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
 
+                        <!-- Active Game: Indian Poker -->
+                        <a href="{{ route('admin.indianpoker.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-spade" style="color:#eab308; font-size:13px;"></i>
+                            <span>Indian Poker™</span>
+                            <span style="font-size:9px; background:#eab308; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game: Card Games 21 -->
+                        <a href="{{ route('admin.cardgames21.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-cards" style="color:#38bdf8; font-size:13px;"></i>
+                            <span>Card Games 21™</span>
+                            <span style="font-size:9px; background:#0284c7; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game: Roman Slots -->
+                        <a href="{{ route('admin.romanslots.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-shield" style="color:#ef4444; font-size:13px;"></i>
+                            <span>Roman Slots™</span>
+                            <span style="font-size:9px; background:#dc2626; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game: Crystal Slot -->
+                        <a href="{{ route('admin.crystal.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-gem" style="color:#a855f7; font-size:13px;"></i>
+                            <span>Crystal™</span>
+                            <span style="font-size:9px; background:#9333ea; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
+                        <!-- Active Game: Burning Hot Slot -->
+                        <a href="{{ route('admin.burninghot.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25); text-decoration:none; color:inherit;">
+                            <i class="fas fa-fire" style="color:#f97316; font-size:13px;"></i>
+                            <span>Burning Hot™</span>
+                            <span style="font-size:9px; background:#ea580c; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
+                        </a>
+
                         <!-- Active Game 11: WinGo Lottery -->
                         <a href="{{ route('admin.wingo.index') }}" class="sidebar-nav-link" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); text-decoration:none; color:inherit;">
                             <i class="fas fa-dice" style="color:#10b981; font-size:13px;"></i>

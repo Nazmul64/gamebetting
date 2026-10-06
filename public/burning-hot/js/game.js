@@ -43,12 +43,34 @@ const REEL_H = 170;
 const GRID_X = 490;
 const GRID_Y = 175;
 
-let balance = 10000;
+let balance = (typeof window !== 'undefined' && typeof window.USER_BALANCE === 'number') ? window.USER_BALANCE : 10000;
 let totalWinnings = 0;
 let betAmount = 20;
 let isSpinning = false;
 let isAutoPlay = false;
 let autoSpinsLeft = 0;
+
+async function syncBackendSpin(bet) {
+  try {
+    const isDemo = !window.IS_AUTH;
+    const csrfToken = window.CSRF_TOKEN || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const res = await fetch('/games/burning-hot/spin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+        bet: bet,
+        is_demo: isDemo ? 1 : 0
+      })
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return null;
+  }
+}
 
 let app;
 let dragonSpine, knightSpine, fireSpineMain, fireSpineLeft, fireSpineRight, teethSpine, logoSpine, bg1Spine;
@@ -431,6 +453,7 @@ async function startSpin() {
     return;
   }
 
+  const backendPromise = syncBackendSpin(betAmount);
   isSpinning = true;
   balance -= betAmount;
   updateUILabel();
@@ -451,9 +474,18 @@ async function startSpin() {
   }
 
   await new Promise(res => setTimeout(res, 200));
-  isSpinning = false;
 
   evaluateLines();
+
+  try {
+    const backendData = await backendPromise;
+    if (backendData && backendData.new_balance !== undefined) {
+      balance = backendData.new_balance;
+      updateUILabel();
+    }
+  } catch(e) {}
+
+  isSpinning = false;
 
   if (isAutoPlay) {
     if (autoSpinsLeft > 0) autoSpinsLeft--;
