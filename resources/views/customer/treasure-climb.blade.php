@@ -1772,6 +1772,13 @@ class MoneyBackdrop{
         updateBalanceDisplay();
         soundCtrl.playCollect();
         showToast(`Top rung reached! Won ${currencySymbol} ${win.toFixed(2)}`, "win");
+        if (typeof window.triggerWinCelebration === 'function') {
+          window.triggerWinCelebration({
+            amount: win,
+            multiplier: state.stake > 0 ? (win / state.stake) : 0,
+            title: 'TREASURE TOP RUNG WIN!'
+          });
+        }
         
         finishRound(true);
       } else {
@@ -1824,6 +1831,13 @@ class MoneyBackdrop{
     updateBalanceDisplay();
     
     showToast(`Collected ${currencySymbol} ${win.toFixed(2)}`, "win");
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: win,
+        multiplier: state.stake > 0 ? (win / state.stake) : 0,
+        title: 'TREASURE COLLECT WIN!'
+      });
+    }
     finishRound(true);
   }
 

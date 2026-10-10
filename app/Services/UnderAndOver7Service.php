@@ -47,7 +47,7 @@ class UnderAndOver7Service {
 
         if ($isDemo) {
             // Demo mode logic
-            $diceResult = $this->generateDiceOutcome($choice, $settings, true);
+            $diceResult = $this->generateDiceOutcome($user, $choice, $settings, true);
             $die1 = $diceResult['die1'];
             $die2 = $diceResult['die2'];
             $sum = $die1 + $die2;
@@ -72,6 +72,8 @@ class UnderAndOver7Service {
         if (!$user) {
             throw new Exception('Please log in to place real bets.');
         }
+
+        app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($user, false);
 
         return DB::transaction(function () use ($user, $settings, $choice, $amount, $multiplier) {
             // Lock user record
@@ -110,7 +112,7 @@ class UnderAndOver7Service {
             ]);
 
             // Determine outcome
-            $diceResult = $this->generateDiceOutcome($choice, $settings, false);
+            $diceResult = $this->generateDiceOutcome($lockedUser, $choice, $settings, false);
             $die1 = $diceResult['die1'];
             $die2 = $diceResult['die2'];
             $sum = $die1 + $die2;
@@ -168,21 +170,9 @@ class UnderAndOver7Service {
         return false;
     }
 
-    private function generateDiceOutcome(string $choice, UnderAndOver7Setting $settings, bool $isDemo): array {
-        $mode = $settings->control_mode ?? 'house_profit';
-        $winRate = (int)($settings->win_chance_percentage ?? 45);
-
-        if ($isDemo) {
-            // In demo mode, give slightly higher excitement (50% win chance)
-            $shouldWin = (rand(1, 100) <= 52);
-        } else {
-            if ($mode === 'random') {
-                $die1 = rand(1, 6);
-                $die2 = rand(1, 6);
-                return ['die1' => $die1, 'die2' => $die2];
-            }
-            $shouldWin = (rand(1, 100) <= $winRate);
-        }
+    private function generateDiceOutcome(?User $user, string $choice, UnderAndOver7Setting $settings, bool $isDemo): array {
+        $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+        $shouldWin = $rigService->shouldPlayerWin($user, $isDemo);
 
         // Generate matching combination based on shouldWin
         if ($shouldWin) {

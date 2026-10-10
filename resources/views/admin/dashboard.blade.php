@@ -1069,6 +1069,54 @@
         }
         .form-input:disabled { opacity: 0.55; cursor: not-allowed; }
 
+        /* Fix option text visibility and contrast in select dropdowns */
+        select.form-input option, .form-input option, select option {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            padding: 8px 12px;
+        }
+        .light-theme select.form-input option, .light-theme .form-input option, .light-theme select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        /* Flight Design Preview Card Styles */
+        .design-preview-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            user-select: none;
+        }
+        .design-preview-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .design-preview-card.selected-design {
+            border-color: #ffbe1a !important;
+            background: rgba(255, 190, 26, 0.12) !important;
+            box-shadow: 0 0 0 2px #ffbe1a, 0 10px 25px -5px rgba(255, 190, 26, 0.3) !important;
+        }
+        .design-preview-card.selected-design::after {
+            content: '✓ ACTIVE';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ffbe1a;
+            color: #000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
         /* Submit btn */
         .btn-primary {
             width: 100%;
@@ -1339,10 +1387,25 @@
                     <i class="fas fa-users"></i>
                     <span>User Management</span>
                 </button>
+                <button class="sidebar-nav-link" id="nav-kyc" onclick="switchTab('kyc', this)">
+                    <i class="fas fa-id-card" style="color:var(--accent-cyan);"></i>
+                    <span>KYC Verifications</span>
+                    <span class="badge sidebar-badge-count" id="admin-kyc-pending-badge" style="display:none; background:#f59e0b; color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; margin-left:auto; font-weight:800;">0</span>
+                </button>
                 <button class="sidebar-nav-link" id="nav-live-bets" onclick="switchTab('live-bets', this)">
                     <i class="fas fa-tower-broadcast" style="color:var(--accent-cyan);"></i>
                     <span>Live Bets Stream</span>
                     <span style="font-size: 9px; background: #00f2fe; color: #000; padding: 1px 6px; border-radius: 4px; margin-left: auto; font-weight: 800;">LIVE</span>
+                </button>
+                <button class="sidebar-nav-link" id="nav-game" onclick="switchTab('game', this)">
+                    <i class="fas fa-satellite-dish" style="color:var(--accent-orange);"></i>
+                    <span>Crash Controls & Ladder</span>
+                    <span style="font-size: 9px; background: #ef4444; color: #fff; padding: 1px 6px; border-radius: 4px; margin-left: auto; font-weight: 800;">5 ENGINES</span>
+                </button>
+                <button class="sidebar-nav-link" id="nav-sellers" onclick="switchTab('sellers', this)">
+                    <i class="fas fa-user-tie" style="color:var(--accent-teal);"></i>
+                    <span>Sellers &amp; Agents</span>
+                    <span style="font-size: 9px; background: #0284c7; color: #fff; padding: 1px 6px; border-radius: 4px; margin-left: auto; font-weight: 800;">AGENTS</span>
                 </button>
                 <button class="sidebar-nav-link" id="nav-withdrawals" onclick="switchTab('withdrawals', this)">
                     <i class="fas fa-money-bill-transfer"></i>
@@ -1396,49 +1459,49 @@
                     
                     <div id="games-module-submenu" style="display:flex; flex-direction:column; gap:4px;">
                         <!-- Active Game 1: Olympus Gold -->
-                        <button class="sidebar-nav-link" id="nav-olympus" onclick="switchTab('olympus', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.25);">
+                        <button type="button" onclick="switchTab('olympus', this)" class="sidebar-nav-link" id="nav-olympus" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.25); width:100%; text-align:left; cursor:pointer; color:inherit;">
                             <i class="fas fa-bolt" style="color:var(--accent-gold); font-size:13px;"></i>
                             <span>Olympus Gold™</span>
                             <span style="font-size:9px; background:#10b981; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- Active Game 2: Western Vault -->
-                        <button class="sidebar-nav-link" id="nav-western" onclick="switchTab('western', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25);">
+                        <button type="button" onclick="switchTab('western', this)" class="sidebar-nav-link" id="nav-western" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25); width:100%; text-align:left; cursor:pointer; color:inherit;">
                             <i class="fas fa-vault" style="color:var(--accent-orange); font-size:13px;"></i>
                             <span>Western Vault™</span>
                             <span style="font-size:9px; background:#f97316; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- 1. HelicopterX Crash Engine -->
-                        <button class="sidebar-nav-link" id="nav-game-helicopterx" onclick="openGameTab('helicopterx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25);">
+                        <button class="sidebar-nav-link" id="nav-game-helicopterx" onclick="openGameTab('helicopterx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); cursor:pointer;">
                             <i class="fas fa-helicopter" style="color:#f59e0b; font-size:13px;"></i>
                             <span>HelicopterX</span>
                             <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- 2. 1xAero Crash Engine -->
-                        <button class="sidebar-nav-link" id="nav-game-1xaero" onclick="openGameTab('1xaero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25);">
+                        <button class="sidebar-nav-link" id="nav-game-1xaero" onclick="openGameTab('1xaero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.25); cursor:pointer;">
                             <i class="fas fa-jet-fighter" style="color:#00f2fe; font-size:13px;"></i>
                             <span>1xAero</span>
                             <span style="font-size:9px; background:#00f2fe; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- 3. Aero Crash Engine -->
-                        <button class="sidebar-nav-link" id="nav-game-aero" onclick="openGameTab('aero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                        <button class="sidebar-nav-link" id="nav-game-aero" onclick="openGameTab('aero', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); cursor:pointer;">
                             <i class="fas fa-plane" style="color:#ef4444; font-size:13px;"></i>
                             <span>Aero</span>
                             <span style="font-size:9px; background:#ef4444; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- 4. CrashX Engine -->
-                        <button class="sidebar-nav-link" id="nav-game-crashx" onclick="openGameTab('crashx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);">
+                        <button class="sidebar-nav-link" id="nav-game-crashx" onclick="openGameTab('crashx', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); cursor:pointer;">
                             <i class="fas fa-rocket" style="color:#10b981; font-size:13px;"></i>
                             <span>CrashX</span>
                             <span style="font-size:9px; background:#10b981; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </button>
 
                         <!-- 5. Crash (1xGames Exclusive) -->
-                        <button class="sidebar-nav-link" id="nav-game-crash" onclick="openGameTab('crash', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25);">
+                        <button class="sidebar-nav-link" id="nav-game-crash" onclick="openGameTab('crash', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); cursor:pointer;">
                             <i class="fas fa-meteor" style="color:#8b5cf6; font-size:13px;"></i>
                             <span>Crash (1xGames)</span>
                             <span style="font-size:9px; background:#8b5cf6; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
@@ -1451,7 +1514,7 @@
                             <span style="font-size:9px; background:#f59e0b; color:#000; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
                         </a>
                         <!-- Active Game 3: Boxing King -->
-                        <button class="sidebar-nav-link" id="nav-boxing-king" onclick="switchTab('boxing-king', this)" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                        <button type="button" onclick="switchTab('boxing-king', this)" class="sidebar-nav-link" id="nav-boxing-king" style="padding: 8px 10px; font-size: 12.5px; border-radius: 8px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); width:100%; text-align:left; cursor:pointer; color:inherit;">
                             <i class="fas fa-crown" style="color:#ef4444; font-size:13px;"></i>
                             <span>Boxing King™</span>
                             <span style="font-size:9px; background:#ef4444; color:#fff; padding:1px 6px; border-radius:4px; margin-left:auto; font-weight:800;">ACTIVE</span>
@@ -1596,11 +1659,11 @@
                     <i class="fas fa-arrow-up-right-from-square" style="font-size:11px; margin-left:auto; opacity:0.5;"></i>
                 </a>
 
-                <!-- ⚡ FORCE CRASH BUTTON -->
+                <!-- ⚡ LIVE MONITOR & FORCE CRASH BUTTON -->
                 <div style="margin-top:10px;">
                     <button
                         id="sidebar-force-crash-btn"
-                        onclick="adminForceCrash()"
+                        onclick="switchTab('game', document.getElementById('nav-game'))"
                         style="
                             display: flex;
                             align-items: center;
@@ -1623,8 +1686,8 @@
                         onmouseover="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.38),rgba(185,28,28,0.3))'; this.style.borderColor='rgba(239,68,68,0.8)';"
                         onmouseout="this.style.background='linear-gradient(135deg,rgba(239,68,68,0.22),rgba(185,28,28,0.15))'; this.style.borderColor='rgba(239,68,68,0.45)';"
                     >
-                        <i class="fas fa-bolt" style="color:var(--accent-red);"></i>
-                        <span>Force Crash Game</span>
+                        <i class="fas fa-satellite-dish" style="color:var(--accent-red);"></i>
+                        <span>Live Monitor & Crash Point</span>
                     </button>
                 </div>
             </nav>
@@ -1946,6 +2009,66 @@
                     </div>
                 </div>
 
+                <!-- ========== TAB: SELLERS & AGENTS MANAGEMENT ========== -->
+                <div class="tab-pane" id="tab-sellers">
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                        <div>
+                            <h2>Sellers &amp; Resellers Management</h2>
+                            <p>Create verified sellers, upload seller profile photos, assign balances, and monitor customer balance transfers.</p>
+                        </div>
+                        <button onclick="openAddSellerModal()" class="btn-primary" style="width:auto; padding:10px 20px; font-size:13px; font-weight:800; display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, #0284c7, #0369a1);">
+                            <i class="fas fa-user-plus"></i> Add New Seller
+                        </button>
+                    </div>
+
+                    <!-- Summary stat cards for sellers -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+                        <div class="stat-card" style="border-left:4px solid var(--accent-cyan);">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Total Registered Sellers</div>
+                            <div id="stat-sellers-count" style="font-size:22px; font-weight:800; color:#fff; font-family:'Roboto Mono',monospace; margin-top:4px;">0</div>
+                        </div>
+                        <div class="stat-card" style="border-left:4px solid var(--accent-green);">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Total Sellers Float Balance</div>
+                            <div id="stat-sellers-balance" style="font-size:22px; font-weight:800; color:#34d399; font-family:'Roboto Mono',monospace; margin-top:4px;">৳ 0.00</div>
+                        </div>
+                        <div class="stat-card" style="border-left:4px solid var(--accent-gold);">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Total Transferred to Customers</div>
+                            <div id="stat-sellers-transfers" style="font-size:22px; font-weight:800; color:#fbbf24; font-family:'Roboto Mono',monospace; margin-top:4px;">৳ 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                            <div class="panel-title"><i class="fas fa-users-gear" style="color:var(--accent-teal);"></i> All Sellers / Agents List</div>
+                            <div class="search-bar">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="search-input" id="seller-search-input" placeholder="Search seller name, ID, email, mobile..." oninput="filterSellersTable()">
+                            </div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>SELLER</th>
+                                        <th>10-DIGIT USER ID</th>
+                                        <th>MOBILE / CONTACT</th>
+                                        <th>WALLET BALANCE</th>
+                                        <th>TOTAL TRANSFERRED</th>
+                                        <th>STATUS</th>
+                                        <th>CREATED</th>
+                                        <th style="text-align:right;">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sellers-table-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading sellers...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ========== TAB: WITHDRAWAL REQUESTS ========== -->
                 <div class="tab-pane" id="tab-withdrawals">
                     <div class="page-header">
@@ -1963,6 +2086,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>CUSTOMER</th>
+                                        <th>USER BALANCE</th>
                                         <th>GATEWAY</th>
                                         <th>ACCOUNT DETAIL</th>
                                         <th>AMOUNT</th>
@@ -1975,7 +2099,7 @@
                                 </thead>
                                 <tbody id="withdrawals-table-tbody">
                                     <tr class="loading-row">
-                                        <td colspan="10"><i class="fas fa-spinner fa-spin"></i> Loading withdrawals...</td>
+                                        <td colspan="11"><i class="fas fa-spinner fa-spin"></i> Loading withdrawals...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2121,6 +2245,97 @@
                                 <tbody id="users-table-tbody">
                                     <tr class="loading-row">
                                         <td colspan="10"><i class="fas fa-spinner fa-spin"></i> Loading users...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+
+                <!-- ========== TAB: KYC VERIFICATIONS MANAGEMENT ========== -->
+                <div class="tab-pane" id="tab-kyc">
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+                        <div>
+                            <h2>KYC Verification Requests (জাতীয় পরিচয়পত্র ও পাসপোর্ট যাচাইকরণ)</h2>
+                            <p>Review customer identity documents (NID, Passport, Birth Registration), inspect front &amp; back images, and approve or reject verification applications.</p>
+                        </div>
+                        <button type="button" onclick="loadKycVerifications()" class="btn-primary" style="width:auto; padding:8px 16px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
+                            <i class="fas fa-arrows-rotate"></i> Refresh KYC List
+                        </button>
+                    </div>
+
+                    <!-- KYC Stat Counters -->
+                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:20px;">
+                        <div class="stat-card" style="border-left:4px solid var(--accent-cyan); cursor:pointer;" onclick="filterKycByStatus('all')">
+                            <div class="stat-card-header">
+                                <span>TOTAL SUBMISSIONS</span>
+                                <div class="stat-card-icon" style="background:rgba(0,242,254,0.1); color:#00f2fe;"><i class="fas fa-id-card"></i></div>
+                            </div>
+                            <div class="stat-card-value" id="kyc-stat-total">0</div>
+                            <div class="stat-card-sub">All KYC applications</div>
+                        </div>
+
+                        <div class="stat-card" style="border-left:4px solid #f59e0b; cursor:pointer;" onclick="filterKycByStatus('pending')">
+                            <div class="stat-card-header">
+                                <span>PENDING APPROVAL</span>
+                                <div class="stat-card-icon" style="background:rgba(245,158,11,0.1); color:#fbbf24;"><i class="fas fa-hourglass-half"></i></div>
+                            </div>
+                            <div class="stat-card-value" id="kyc-stat-pending" style="color:#fbbf24;">0</div>
+                            <div class="stat-card-sub">Awaiting admin review</div>
+                        </div>
+
+                        <div class="stat-card" style="border-left:4px solid #10b981; cursor:pointer;" onclick="filterKycByStatus('verified')">
+                            <div class="stat-card-header">
+                                <span>VERIFIED / APPROVED</span>
+                                <div class="stat-card-icon" style="background:rgba(16,185,129,0.1); color:#10b981;"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                            <div class="stat-card-value" id="kyc-stat-verified" style="color:#10b981;">0</div>
+                            <div class="stat-card-sub">Approved accounts</div>
+                        </div>
+
+                        <div class="stat-card" style="border-left:4px solid #ef4444; cursor:pointer;" onclick="filterKycByStatus('rejected')">
+                            <div class="stat-card-header">
+                                <span>REJECTED</span>
+                                <div class="stat-card-icon" style="background:rgba(239,68,68,0.1); color:#ef4444;"><i class="fas fa-times-circle"></i></div>
+                            </div>
+                            <div class="stat-card-value" id="kyc-stat-rejected" style="color:#ef4444;">0</div>
+                            <div class="stat-card-sub">Cancelled / Rejected</div>
+                        </div>
+                    </div>
+
+                    <!-- KYC Table Panel -->
+                    <div class="panel">
+                        <div class="panel-header" style="flex-wrap:wrap; gap:12px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="panel-title"><i class="fas fa-id-card"></i> KYC Verification Applications</div>
+                            </div>
+
+                            <!-- Filter Pills -->
+                            <div style="display:flex; gap:6px; background:#071224; padding:4px; border-radius:8px; border:1px solid #1d3354;">
+                                <button type="button" class="kyc-filter-btn active" id="kyc-filter-all" onclick="filterKycByStatus('all')" style="background:#007bff; color:#fff; border:none; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">All</button>
+                                <button type="button" class="kyc-filter-btn" id="kyc-filter-pending" onclick="filterKycByStatus('pending')" style="background:transparent; color:#8ca3c7; border:none; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">Pending</button>
+                                <button type="button" class="kyc-filter-btn" id="kyc-filter-verified" onclick="filterKycByStatus('verified')" style="background:transparent; color:#8ca3c7; border:none; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">Verified</button>
+                                <button type="button" class="kyc-filter-btn" id="kyc-filter-rejected" onclick="filterKycByStatus('rejected')" style="background:transparent; color:#8ca3c7; border:none; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">Rejected</button>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>USER</th>
+                                        <th>DOCUMENT TYPE</th>
+                                        <th>DOC NUMBER &amp; NAME</th>
+                                        <th style="text-align:center;">FRONT IMAGE</th>
+                                        <th style="text-align:center;">BACK IMAGE</th>
+                                        <th style="text-align:center;">STATUS</th>
+                                        <th>SUBMITTED AT</th>
+                                        <th style="text-align:right;">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kyc-table-tbody">
+                                    <tr class="loading-row">
+                                        <td colspan="9" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Loading KYC verifications...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2432,29 +2647,58 @@
                                 </div>
                             </div>
 
-                            <!-- Panel 2: Global Demo Free Spins Limit -->
+                            <!-- Panel 2: Global Demo Balance & Win/Loss Engine -->
                             <div class="panel">
                                 <div class="panel-header">
-                                    <div class="panel-title"><i class="fas fa-gamepad" style="color:var(--accent-cyan);"></i> Global Demo Spins Engine</div>
+                                    <div class="panel-title"><i class="fas fa-gamepad" style="color:var(--accent-cyan);"></i> Global Demo Engine &amp; Win/Loss Ratios</div>
                                 </div>
                                 <div class="panel-body">
-                                    <div class="form-group" style="margin-bottom:18px;">
+                                    <div class="form-group" style="margin-bottom:16px;">
+                                        <label class="form-label" style="font-weight:700;">Global Demo Starting Balance (BDT)</label>
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <input type="number" class="form-input" id="setting-global-demo-balance" name="global_demo_balance" min="100" step="500" value="{{ \App\Models\Setting::getVal('global_demo_balance', 10000) }}" required style="font-weight:800; font-size:16px; width:160px; text-align:center; color:#00ff88;">
+                                            <span style="font-size:13px; font-weight:700; color:#cbd5e1;">BDT (Demo Wallet)</span>
+                                        </div>
+                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;">Default is 10,000 BDT. All 30 games will automatically supply this demo balance when users play in Demo Mode.</small>
+                                    </div>
+
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                                        <div class="form-group">
+                                            <label class="form-label" style="font-weight:700; color:#00f2fe;">Demo Mode Win Rate (%)</label>
+                                            <div style="display:flex; align-items:center; gap:6px;">
+                                                <input type="number" class="form-input" id="setting-demo-win-rate" name="demo_win_rate" min="1" max="100" value="{{ \App\Models\Setting::getVal('demo_win_rate', 70) }}" required style="font-weight:800; font-size:15px; text-align:center; color:#00f2fe;">
+                                                <span style="font-size:13px; font-weight:700; color:#cbd5e1;">% Win</span>
+                                            </div>
+                                            <small style="color:var(--text-muted); font-size:10.5px; display:block; margin-top:4px;">Target: 70% win rate in Demo Mode.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" style="font-weight:700; color:#ff5447;">Real Mode House Profit (%)</label>
+                                            <div style="display:flex; align-items:center; gap:6px;">
+                                                <input type="number" class="form-input" id="setting-real-house-profit-rate" name="real_house_profit_rate" min="1" max="100" value="{{ \App\Models\Setting::getVal('real_house_profit_rate', 70) }}" required style="font-weight:800; font-size:15px; text-align:center; color:#ff5447;">
+                                                <span style="font-size:13px; font-weight:700; color:#cbd5e1;">% Profit</span>
+                                            </div>
+                                            <small style="color:var(--text-muted); font-size:10.5px; display:block; margin-top:4px;">House 70% profit / Customer 30% win.</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom:16px;">
                                         <label class="form-label" style="font-weight:700;">Demo Free Spins Limit (Per Game)</label>
                                         <div style="display:flex; align-items:center; gap:10px;">
                                             <input type="number" class="form-input" id="setting-demo-spins-limit" name="demo_spins_limit" min="1" max="50" value="{{ \App\Models\Setting::getVal('demo_spins_limit', 3) }}" required style="font-weight:800; font-size:16px; width:120px; text-align:center; color:var(--accent-cyan);">
                                             <span style="font-size:13px; font-weight:700; color:#cbd5e1;">Free Spins</span>
                                         </div>
-                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:6px;">Default is 3 spins. Once a guest/user consumes these demo spins in any dynamic casino slot game, the screen will automatically lock with the deposit prompt modal.</small>
+                                        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;">Number of free guest spins before deposit modal prompt.</small>
                                     </div>
 
                                     <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:8px; padding:12px; margin-bottom:16px;">
                                         <span style="font-size:11px; font-weight:800; color:#34d399; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;"><i class="fas fa-shield-halved"></i> Universal Game Enforcement</span>
-                                        <p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.4;">Applicable across all 16+ slot and casino game engines dynamically with real-time deposit conversion triggers.</p>
+                                        <p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.4;">Demo balance &amp; Win ratios apply across all 30 games (Crash, Slots, Lottery, Cards, Dice).</p>
                                     </div>
 
                                     <div style="display:flex; justify-content:flex-end;">
                                         <button type="submit" id="btn-save-branding" class="btn-primary" style="padding:10px 24px; font-size:13px; font-weight:800;">
-                                            <i class="fas fa-floppy-disk"></i> Save Branding &amp; Demo Limit
+                                            <i class="fas fa-floppy-disk"></i> Save Branding &amp; Demo Settings
                                         </button>
                                     </div>
                                 </div>
@@ -2587,7 +2831,7 @@
                                         5 Independent Crash Game Setup Modules
                                     </div>
                                     <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-                                        Customize active flight sprite designs (1-10), countdown durations, and audio tracks for each of the 5 lobby games.
+                                        Customize active flight sprite designs (1-100), countdown durations, and audio tracks for each of the 5 lobby games.
                                     </div>
                                 </div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;" id="game-settings-tab-buttons">
@@ -2633,22 +2877,13 @@
                                         <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                             <label class="form-label" style="font-size:11px;color:#f59e0b;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (HELICOPTERX)</label>
                                             <div class="form-group" style="margin-bottom:12px;">
-                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design (1-100)</label>
                                                 <select class="form-input" id="setting-helicopter-design-helicopterx" style="cursor:pointer;" required>
-                                                    <option value="1">Design 1: Gold Fighter Jet</option>
-                                                    <option value="2">Design 2: Classic Chopper</option>
-                                                    <option value="3">Design 3: Space Rocket</option>
-                                                    <option value="4">Design 4: Alien UFO</option>
-                                                    <option value="5">Design 5: Stealth Bomber</option>
-                                                    <option value="6">Design 6: Cyber Drone</option>
-                                                    <option value="7">Design 7: Vintage Biplane</option>
-                                                    <option value="8">Design 8: Hot Air Balloon</option>
-                                                    <option value="9">Design 9: Future Skycar</option>
-                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                    <!-- Dynamically injected 100 designs -->
                                                 </select>
                                             </div>
                                             <button type="button" onclick="openViewHelicoptersModal('helicopterx')" class="btn-primary" style="background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                                <i class="fas fa-eye"></i> View 10 Designs
+                                                <i class="fas fa-eye"></i> View 100 Designs
                                             </button>
                                         </div>
 
@@ -2712,22 +2947,13 @@
                                         <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                             <label class="form-label" style="font-size:11px;color:#00f2fe;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (1XAERO)</label>
                                             <div class="form-group" style="margin-bottom:12px;">
-                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Fighter Jet Design (1-100)</label>
                                                 <select class="form-input" id="setting-helicopter-design-1xaero" style="cursor:pointer;" required>
-                                                    <option value="1">Design 1: Gold Fighter Jet</option>
-                                                    <option value="2">Design 2: Classic Chopper</option>
-                                                    <option value="3">Design 3: Space Rocket</option>
-                                                    <option value="4">Design 4: Alien UFO</option>
-                                                    <option value="5">Design 5: Stealth Bomber</option>
-                                                    <option value="6">Design 6: Cyber Drone</option>
-                                                    <option value="7">Design 7: Vintage Biplane</option>
-                                                    <option value="8">Design 8: Hot Air Balloon</option>
-                                                    <option value="9">Design 9: Future Skycar</option>
-                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                    <!-- Dynamically injected 100 designs -->
                                                 </select>
                                             </div>
                                             <button type="button" onclick="openViewHelicoptersModal('1xaero')" class="btn-primary" style="background:linear-gradient(135deg, #00f2fe, #0284c7); color:#000; font-weight:700; box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                                <i class="fas fa-eye"></i> View 10 Designs
+                                                <i class="fas fa-eye"></i> View 100 Designs
                                             </button>
                                         </div>
 
@@ -2788,22 +3014,13 @@
                                         <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                             <label class="form-label" style="font-size:11px;color:#ef4444;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (AERO)</label>
                                             <div class="form-group" style="margin-bottom:12px;">
-                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Vintage Plane Design (1-100)</label>
                                                 <select class="form-input" id="setting-helicopter-design-aero" style="cursor:pointer;" required>
-                                                    <option value="1">Design 1: Gold Fighter Jet</option>
-                                                    <option value="2">Design 2: Classic Chopper</option>
-                                                    <option value="3">Design 3: Space Rocket</option>
-                                                    <option value="4">Design 4: Alien UFO</option>
-                                                    <option value="5">Design 5: Stealth Bomber</option>
-                                                    <option value="6">Design 6: Cyber Drone</option>
-                                                    <option value="7">Design 7: Vintage Biplane</option>
-                                                    <option value="8">Design 8: Hot Air Balloon</option>
-                                                    <option value="9">Design 9: Future Skycar</option>
-                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                    <!-- Dynamically injected 100 designs -->
                                                 </select>
                                             </div>
                                             <button type="button" onclick="openViewHelicoptersModal('aero')" class="btn-primary" style="background:linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                                <i class="fas fa-eye"></i> View 10 Designs
+                                                <i class="fas fa-eye"></i> View 100 Designs
                                             </button>
                                         </div>
 
@@ -2864,22 +3081,13 @@
                                         <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                             <label class="form-label" style="font-size:11px;color:#10b981;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (CRASHX)</label>
                                             <div class="form-group" style="margin-bottom:12px;">
-                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Cyber Drone/Rocket (1-100)</label>
                                                 <select class="form-input" id="setting-helicopter-design-crashx" style="cursor:pointer;" required>
-                                                    <option value="1">Design 1: Gold Fighter Jet</option>
-                                                    <option value="2">Design 2: Classic Chopper</option>
-                                                    <option value="3">Design 3: Space Rocket</option>
-                                                    <option value="4">Design 4: Alien UFO</option>
-                                                    <option value="5">Design 5: Stealth Bomber</option>
-                                                    <option value="6">Design 6: Cyber Drone</option>
-                                                    <option value="7">Design 7: Vintage Biplane</option>
-                                                    <option value="8">Design 8: Hot Air Balloon</option>
-                                                    <option value="9">Design 9: Future Skycar</option>
-                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                    <!-- Dynamically injected 100 designs -->
                                                 </select>
                                             </div>
                                             <button type="button" onclick="openViewHelicoptersModal('crashx')" class="btn-primary" style="background:linear-gradient(135deg, #10b981, #047857); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                                <i class="fas fa-eye"></i> View 10 Designs
+                                                <i class="fas fa-eye"></i> View 100 Designs
                                             </button>
                                         </div>
 
@@ -2940,22 +3148,13 @@
                                         <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
                                             <label class="form-label" style="font-size:11px;color:#8b5cf6;margin-bottom:8px;font-weight:700;">FLIGHT DESIGN (CRASH EXCLUSIVE)</label>
                                             <div class="form-group" style="margin-bottom:12px;">
-                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Helicopter/Plane Design</label>
+                                                <label class="form-label" style="font-size:10px;color:var(--text-muted);">Active Starship/Craft Design (1-100)</label>
                                                 <select class="form-input" id="setting-helicopter-design-crash" style="cursor:pointer;" required>
-                                                    <option value="1">Design 1: Gold Fighter Jet</option>
-                                                    <option value="2">Design 2: Classic Chopper</option>
-                                                    <option value="3">Design 3: Space Rocket</option>
-                                                    <option value="4">Design 4: Alien UFO</option>
-                                                    <option value="5">Design 5: Stealth Bomber</option>
-                                                    <option value="6">Design 6: Cyber Drone</option>
-                                                    <option value="7">Design 7: Vintage Biplane</option>
-                                                    <option value="8">Design 8: Hot Air Balloon</option>
-                                                    <option value="9">Design 9: Future Skycar</option>
-                                                    <option value="10">Design 10: Phoenix Firebird</option>
+                                                    <!-- Dynamically injected 100 designs -->
                                                 </select>
                                             </div>
                                             <button type="button" onclick="openViewHelicoptersModal('crash')" class="btn-primary" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: none; font-size:11px; padding: 8px 12px; display:inline-flex; align-items:center; gap:6px; width:auto; height:34px;">
-                                                <i class="fas fa-eye"></i> View 10 Designs
+                                                <i class="fas fa-eye"></i> View 100 Designs
                                             </button>
                                         </div>
 
@@ -4161,58 +4360,182 @@
         </div>
     </div>
 
-    <!-- ==================== VIEW HELICOPTERS MODAL ==================== -->
-    <div class="modal-overlay" id="view-helicopters-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,16,33,0.75); z-index:9999; padding:20px; box-sizing:border-box;">
-        <div class="modal-box" style="max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative; background:var(--bg-card); border-radius:16px; border:1px solid rgba(255,255,255,0.08); padding:28px;">
+    <!-- ==================== VIEW HELICOPTERS MODAL (100 DESIGNS) ==================== -->
+    <div class="modal-overlay" id="view-helicopters-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,16,33,0.85); z-index:9999; padding:20px; box-sizing:border-box; backdrop-filter:blur(6px);">
+        <div class="modal-box" style="max-width:1100px; width:100%; max-height:92vh; display:flex; flex-direction:column; position:relative; background:var(--bg-card); border-radius:16px; border:1px solid rgba(255,255,255,0.12); padding:24px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);">
             <button class="modal-close" onclick="closeViewHelicoptersModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-title" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:20px; display:flex; align-items:center; gap:10px;"><i class="fas fa-helicopter" style="color:var(--accent-gold);"></i> 10 Helicopter Designs Preview</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
+                <div class="modal-title" id="view-helicopters-modal-title" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:0; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-helicopter" style="color:var(--accent-gold);" id="view-helicopters-modal-icon"></i> <span id="view-helicopters-modal-heading">100 Flight Designs Catalog & Live Preview</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="position:relative; width:260px;">
+                        <input type="text" id="helicopter-search-filter" placeholder="Search 100 designs (e.g. Stealth, Gold)..." oninput="filterHelicopterDesigns(this.value)" class="form-input" style="padding:6px 12px 6px 32px; font-size:12px; height:34px; border-radius:20px;">
+                        <i class="fas fa-search" style="position:absolute; left:12px; top:10px; font-size:12px; color:var(--text-muted);"></i>
+                    </div>
+                    <span id="helicopter-catalog-count-badge" style="font-size:11px; padding:6px 12px; border-radius:20px; background:rgba(0,242,254,0.1); color:var(--accent-cyan); font-weight:700; border:1px solid rgba(0,242,254,0.3);">100 Models Loaded</span>
+                </div>
+            </div>
             
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:20px;">
-                <div class="panel design-preview-card" id="design-card-1" onclick="selectHelicopterDesignInPreview(1)">
-                    <canvas id="design-canvas-1" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 1: Gold Fighter Jet</div>
+            <div id="helicopter-preview-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:14px; overflow-y:auto; max-height:calc(92vh - 170px); padding-right:6px; margin-bottom:16px;">
+                <!-- Dynamically populated 100 cards -->
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:12px; border-top:1px solid var(--border-subtle); flex-wrap:wrap; gap:10px;">
+                <div style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                    <i class="fas fa-circle-info" style="color:var(--accent-cyan);"></i> Click any card to select & activate the design for this game.
                 </div>
-                <div class="panel design-preview-card" id="design-card-2" onclick="selectHelicopterDesignInPreview(2)">
-                    <canvas id="design-canvas-2" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 2: Classic Chopper</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-3" onclick="selectHelicopterDesignInPreview(3)">
-                    <canvas id="design-canvas-3" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 3: Space Rocket</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-4" onclick="selectHelicopterDesignInPreview(4)">
-                    <canvas id="design-canvas-4" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 4: Alien UFO</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-5" onclick="selectHelicopterDesignInPreview(5)">
-                    <canvas id="design-canvas-5" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 5: Stealth Bomber</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-6" onclick="selectHelicopterDesignInPreview(6)">
-                    <canvas id="design-canvas-6" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 6: Cyber Drone</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-7" onclick="selectHelicopterDesignInPreview(7)">
-                    <canvas id="design-canvas-7" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 7: Vintage Biplane</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-8" onclick="selectHelicopterDesignInPreview(8)">
-                    <canvas id="design-canvas-8" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 8: Hot Air Balloon</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-9" onclick="selectHelicopterDesignInPreview(9)">
-                    <canvas id="design-canvas-9" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 9: Future Skycar</div>
-                </div>
-                <div class="panel design-preview-card" id="design-card-10" onclick="selectHelicopterDesignInPreview(10)">
-                    <canvas id="design-canvas-10" width="150" height="100" style="background:#080c1a; border-radius:8px; border:1px solid rgba(255,255,255,0.05);"></canvas>
-                    <div style="margin-top:8px; font-weight:600; font-size:13px; color:#fff;">Design 10: Phoenix Firebird</div>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn-primary" onclick="closeViewHelicoptersModal()" style="background:var(--text-muted); width:auto; padding:8px 20px; font-size:12px;">Close</button>
+                    <button type="button" class="btn-primary" onclick="submitSelectedHelicopterDesign()" style="background:linear-gradient(135deg, #ffbe1a, #f06424); color:#000; font-weight:700; width:auto; padding:8px 24px; font-size:12px;">Save Platform Settings</button>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button type="button" class="btn-primary" onclick="closeViewHelicoptersModal()" style="background:var(--text-muted); width:auto; padding:8px 24px;">Cancel</button>
-                <button type="button" class="btn-primary" onclick="submitSelectedHelicopterDesign()" style="background:linear-gradient(135deg, #ffbe1a, #f06424); color:#000; font-weight:700; width:auto; padding:8px 24px;">Select & Save Design</button>
+        </div>
+    </div>
+
+    <!-- ==================== ADD SELLER MODAL ==================== -->
+    <div class="modal-overlay" id="add-seller-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,16,33,0.85); z-index:9999; padding:20px; box-sizing:border-box; backdrop-filter:blur(6px);">
+        <div class="modal-box" style="max-width:540px; width:100%; position:relative; background:var(--bg-card); border-radius:16px; border:1px solid rgba(255,255,255,0.08); padding:28px;">
+            <button class="modal-close" onclick="closeAddSellerModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:18px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-user-tie" style="color:var(--accent-teal);"></i> Create New Verified Seller / Agent
             </div>
+            
+            <form id="add-seller-form" onsubmit="submitAddSeller(event)" enctype="multipart/form-data">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Seller Full Name *</label>
+                        <input type="text" class="form-input" name="name" id="new-seller-name" placeholder="e.g. Rahim Agency" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Email Address *</label>
+                        <input type="email" class="form-input" name="email" id="new-seller-email" placeholder="seller@example.com" required>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Password (Min 6 chars) *</label>
+                        <input type="password" class="form-input" name="password" id="new-seller-pass" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Confirm Password *</label>
+                        <input type="password" class="form-input" name="password_confirmation" id="new-seller-pass-conf" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Mobile / WhatsApp Number</label>
+                        <input type="text" class="form-input" name="phone" id="new-seller-phone" placeholder="017XXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Initial Float Balance (BDT)</label>
+                        <input type="number" class="form-input" name="initial_balance" id="new-seller-bal" min="0" step="0.01" value="0.00">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:18px;">
+                    <label class="form-label" style="font-weight:700;">Seller Profile Photo (Uploaded to public/uploads/sellers)</label>
+                    <input type="file" class="form-input" name="photo" id="new-seller-photo" accept="image/*" style="font-size:12px; padding:7px 10px;">
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-save-new-seller" style="width:100%; padding:12px; font-weight:800; background:linear-gradient(135deg, #0284c7, #0369a1);">
+                    <i class="fas fa-check-circle"></i> Create &amp; Activate Seller
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== EDIT SELLER MODAL ==================== -->
+    <div class="modal-overlay" id="edit-seller-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,16,33,0.85); z-index:9999; padding:20px; box-sizing:border-box; backdrop-filter:blur(6px);">
+        <div class="modal-box" style="max-width:520px; width:100%; position:relative; background:var(--bg-card); border-radius:16px; border:1px solid rgba(255,255,255,0.08); padding:28px;">
+            <button class="modal-close" onclick="closeEditSellerModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:18px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-pen-to-square" style="color:var(--accent-gold);"></i> Edit Seller Information
+            </div>
+            
+            <form id="edit-seller-form" onsubmit="submitEditSeller(event)" enctype="multipart/form-data">
+                <input type="hidden" id="edit-seller-id" name="id">
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Seller Name *</label>
+                        <input type="text" class="form-input" name="name" id="edit-seller-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Email Address *</label>
+                        <input type="email" class="form-input" name="email" id="edit-seller-email" required>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Mobile / Contact</label>
+                        <input type="text" class="form-input" name="phone" id="edit-seller-phone">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:700;">Status</label>
+                        <select class="form-input" name="status" id="edit-seller-status" style="cursor:pointer;">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive / Suspended</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-weight:700;">Reset Password (Leave blank to keep current)</label>
+                    <input type="password" class="form-input" name="password" id="edit-seller-pass" placeholder="Enter new password if updating">
+                </div>
+
+                <div class="form-group" style="margin-bottom:18px;">
+                    <label class="form-label" style="font-weight:700;">Update Photo (Optional)</label>
+                    <input type="file" class="form-input" name="photo" id="edit-seller-photo" accept="image/*" style="font-size:12px; padding:7px 10px;">
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-save-edit-seller" style="width:100%; padding:12px; font-weight:800;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== ADJUST SELLER BALANCE MODAL ==================== -->
+    <div class="modal-overlay" id="adjust-seller-balance-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,16,33,0.85); z-index:9999; padding:20px; box-sizing:border-box; backdrop-filter:blur(6px);">
+        <div class="modal-box" style="max-width:480px; width:100%; position:relative; background:var(--bg-card); border-radius:16px; border:1px solid rgba(255,255,255,0.08); padding:28px;">
+            <button class="modal-close" onclick="closeAdjustSellerBalanceModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-family:'Outfit',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:18px; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-wallet" style="color:var(--accent-cyan);"></i> Add / Deduct Seller Float Balance
+            </div>
+            
+            <input type="hidden" id="adj-seller-id">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" style="font-weight:700;">Seller / Agent</label>
+                <input type="text" class="form-input" id="adj-seller-name" disabled style="opacity:0.85; font-weight:700;">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" style="font-weight:700;">Current Float Balance</label>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:800; color:var(--accent-green);" id="adj-seller-current-balance">৳ 0.00</div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" style="font-weight:700;">Operation</label>
+                <select class="form-input" id="adj-seller-action-type" style="cursor:pointer; font-weight:700;">
+                    <option value="add">➕ Add Float Balance (Admin Top-up)</option>
+                    <option value="deduct">➖ Deduct Float Balance</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" style="font-weight:700;">Amount (BDT)</label>
+                <input type="number" class="form-input" id="adj-seller-amount" min="0.01" step="0.01" placeholder="e.g. 10000.00" style="font-weight:700; font-size:15px;">
+            </div>
+            <div class="form-group" style="margin-bottom:18px;">
+                <label class="form-label" style="font-weight:700;">Remarks / Note</label>
+                <input type="text" class="form-input" id="adj-seller-remarks" placeholder="e.g. Float Allocation, Cash Settlement">
+            </div>
+
+            <button type="button" class="btn-primary" id="btn-save-adj-seller" onclick="submitAdjustSellerBalance()" style="width:100%; padding:12px; font-weight:800; background:linear-gradient(135deg, #10b981, #059669);">
+                <i class="fas fa-check-circle"></i> Confirm Float Adjustment
+            </button>
         </div>
     </div>
 
@@ -4225,6 +4548,25 @@
     <script>
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         let allUsers = [];
+
+        // Global Toast Notification Helper
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('admin-toast');
+            if (!toast) return;
+            const icon = document.getElementById('toast-icon');
+            const msgEl = document.getElementById('toast-msg');
+            if (msgEl) msgEl.textContent = msg;
+            toast.className = 'admin-toast' + (isError ? ' error' : '');
+            if (icon) icon.className = isError ? 'fas fa-circle-exclamation' : 'fas fa-circle-check';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+        function showAdminToast(msg, type = 'success') {
+            const isError = type === 'error' || type === false;
+            showToast(msg, isError);
+        }
+        window.showToast = showToast;
+        window.showAdminToast = showAdminToast;
 
         // --- LIVE GAME MONITOR SYSTEM ---
         let liveMonitorInterval = null;
@@ -4435,45 +4777,94 @@
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
+        // Show specific crash game configuration module (1-5)
+        function showGameSettingModule(gameKey, btn) {
+            document.querySelectorAll('.game-setting-pane').forEach(p => {
+                p.style.display = 'none';
+                p.classList.remove('active');
+            });
+            document.querySelectorAll('.settings-game-tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = 'rgba(255,255,255,0.08)';
+                b.style.background = 'rgba(255,255,255,0.03)';
+                b.style.color = 'var(--text-secondary)';
+            });
+
+            const pane = document.getElementById('module-' + gameKey);
+            if (pane) {
+                pane.style.display = 'block';
+                pane.classList.add('active');
+            }
+
+            const activeBtn = btn || document.querySelector(`button[onclick*="showGameSettingModule('${gameKey}'"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.style.borderColor = '#f59e0b';
+                activeBtn.style.background = 'rgba(245,158,11,0.2)';
+                activeBtn.style.color = '#fbbf24';
+            }
+        }
+
         // Open dedicated crash game tab and switch sub-modules
         function openGameTab(gameKey, btn) {
-            switchTab('game', btn || document.getElementById('nav-game-' + gameKey));
-            switchMonitorGame(gameKey);
-            switchCrashPointsGame(gameKey);
-            showGameSettingModule(gameKey);
+            if (!document.getElementById('tab-game')) {
+                window.location.href = '{{ route("admin.dashboard") }}?tab=game&game=' + encodeURIComponent(gameKey);
+                return;
+            }
+            switchTab('game', document.getElementById('nav-game'));
+            if (typeof switchMonitorGame === 'function') {
+                switchMonitorGame(gameKey, null);
+            }
+            if (typeof switchCrashPointsGame === 'function') {
+                switchCrashPointsGame(gameKey, null);
+            }
         }
 
         // Tab switcher
         function switchTab(tabId, btn) {
             // Automatically close mobile sidebar when navigating on mobile
-            toggleMobileSidebar(false);
+            if (typeof toggleMobileSidebar === 'function') {
+                toggleMobileSidebar(false);
+            }
+
+            const target = document.getElementById('tab-' + tabId);
+            if (!target) {
+                window.location.href = '{{ route("admin.dashboard") }}?tab=' + encodeURIComponent(tabId);
+                return;
+            }
 
             document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            target.classList.add('active');
             if (btn) btn.classList.add('active');
 
             const titles = {
                 overview: 'Overview <span>/ Admin Dashboard</span>',
-                'live-bets': 'Live Bets Stream <span>/ All 19 Games Real-Time Feed</span>',
+                'live-bets': 'Live Bets Stream <span>/ All Games Real-Time Feed</span>',
                 branding: 'Site Branding & Demo <span>/ Platform Customization</span>',
                 sliders:  'Promotional Sliders <span>/ Banner Management</span>',
                 users:    'User Management & Controls <span>/ All Accounts</span>',
+                kyc:      'KYC Verifications <span>/ Identity Document Management & Approval</span>',
                 withdrawals: 'Withdrawal Requests <span>/ Operational Requests</span>',
                 deposits: 'Deposit Requests <span>/ Operational Requests</span>',
                 game:     'Game Settings <span>/ Crash Point Sequence</span>',
                 gateways: 'Payment Gateways <span>/ Gateway Configurations</span>',
                 'withdraw-gateways': 'Withdrawal Payment Methods <span>/ Withdrawal Gateway Setup</span>',
+                sellers:  'Sellers &amp; Agents <span>/ Seller &amp; Reseller Management</span>',
                 settings: 'Platform Settings <span>/ Configuration</span>',
                 support: 'Support Live Chat <span>/ Customer Chats</span>',
                 olympus: 'Olympus Slot Game <span>/ Management & Engine Controls</span>',
                 western: 'Western Vault™ <span>/ Management & Engine Controls</span>',
                 'boxing-king': 'Boxing King™ <span>/ Management & Engine Controls</span>',
             };
-            document.getElementById('topbar-page-title').innerHTML = titles[tabId] || tabId;
+            const titleEl = document.getElementById('topbar-page-title');
+            if (titleEl) {
+                titleEl.innerHTML = titles[tabId] || tabId;
+            }
 
             // Stop live monitor first (will be started if active)
-            stopLiveMonitor();
+            if (typeof stopLiveMonitor === 'function') stopLiveMonitor();
 
             // Handle live bets polling
             if (tabId === 'live-bets') {
@@ -4486,6 +4877,16 @@
             // Load sliders table when sliders tab is opened
             if (tabId === 'sliders') {
                 loadSlidersTable();
+            }
+
+            // Load KYC verifications when KYC tab is opened
+            if (tabId === 'kyc') {
+                loadKycVerifications();
+            }
+
+            // Load sellers table when sellers tab is opened
+            if (tabId === 'sellers') {
+                loadSellers();
             }
 
             // Load olympus settings when olympus tab is opened
@@ -4541,6 +4942,312 @@
             if (tabId === 'withdraw-gateways') {
                 loadWithdrawPaymentGateways();
             }
+        }
+
+        /* ==========================================================================
+           SELLERS & AGENTS MANAGEMENT (JS)
+           ========================================================================== */
+        let allSellersCache = [];
+
+        function loadSellers() {
+            const tbody = document.getElementById('sellers-table-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr class="loading-row"><td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading sellers &amp; agents...</td></tr>`;
+
+            fetch('{{ route('admin.sellers.index') }}', {
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    allSellersCache = data.sellers || [];
+                    
+                    // Update summary stats
+                    const cntEl = document.getElementById('stat-sellers-count');
+                    const balEl = document.getElementById('stat-sellers-balance');
+                    const trfEl = document.getElementById('stat-sellers-transfers');
+                    if (cntEl) cntEl.textContent = data.stats?.total_sellers || allSellersCache.length;
+                    if (balEl) balEl.textContent = '৳ ' + parseFloat(data.stats?.total_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                    if (trfEl) trfEl.textContent = '৳ ' + parseFloat(data.stats?.total_transferred || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                    renderSellersTable(allSellersCache);
+                } else {
+                    tbody.innerHTML = `<tr class="loading-row"><td colspan="8" style="color:var(--accent-red);">Failed to load sellers.</td></tr>`;
+                }
+            })
+            .catch(() => {
+                tbody.innerHTML = `<tr class="loading-row"><td colspan="8" style="color:var(--accent-red);">Connection error loading sellers.</td></tr>`;
+            });
+        }
+
+        function renderSellersTable(sellers) {
+            const tbody = document.getElementById('sellers-table-tbody');
+            if (!tbody) return;
+
+            if (!sellers || sellers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-user-tie"></i><p>No verified sellers or agents registered yet.</p></div></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = sellers.map(s => {
+                const photoSrc = s.seller_photo ? s.seller_photo : '{{ asset("uploads/agent_profile_pictures/default_agent.png") }}';
+                const statusBadge = s.seller_status === 'active'
+                    ? `<span class="status-badge badge-active"><i class="fas fa-circle" style="font-size:6px;"></i> Active</span>`
+                    : `<span class="status-badge" style="background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3);"><i class="fas fa-circle" style="font-size:6px;"></i> Suspended</span>`;
+
+                return `
+                    <tr id="seller-row-${s.id}">
+                        <td>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <img src="${photoSrc}" alt="${escHtml(s.name)}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(2,132,199,0.5); background:#0f172a;" onerror="this.src='{{ asset("uploads/agent_profile_pictures/default_agent.png") }}'">
+                                <div>
+                                    <strong style="color:var(--text-primary); font-size:13.5px;">${escHtml(s.name)}</strong>
+                                    <div style="font-size:11px; color:var(--text-muted);">${escHtml(s.email)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13.5px; color:var(--accent-cyan); background:rgba(0,242,254,0.08); border:1px solid rgba(0,242,254,0.25); padding:3px 8px; border-radius:6px; letter-spacing:0.8px;">
+                                ${s.user_code || '—'}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#cbd5e1;">
+                                ${s.seller_phone || s.mobile || '—'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="balance-val" style="color:#34d399; font-size:14px; font-weight:800;">
+                                ৳ ${parseFloat(s.balance || 0).toFixed(2)}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:#fbbf24; font-size:13px;">
+                                ৳ ${parseFloat(s.total_transferred || 0).toFixed(2)}
+                            </span>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td style="color:var(--text-muted); font-size:12px;">${s.created_at || '—'}</td>
+                        <td style="text-align:right;">
+                            <div style="display:inline-flex; gap:6px;">
+                                <button class="action-btn" title="Add / Deduct Float Balance" onclick="openAdjustSellerBalanceModal(${s.id}, '${escHtml(s.name)}', ${s.balance || 0})" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;">
+                                    <i class="fas fa-wallet"></i>
+                                </button>
+                                <button class="action-btn edit" title="Edit Seller Info" onclick="openEditSellerModal(${s.id})">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button class="action-btn del" title="Delete Seller" onclick="deleteSeller(${s.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterSellersTable() {
+            const query = (document.getElementById('seller-search-input')?.value || '').toLowerCase().trim();
+            if (!query) {
+                renderSellersTable(allSellersCache);
+                return;
+            }
+            const filtered = allSellersCache.filter(s => 
+                (s.name && s.name.toLowerCase().includes(query)) ||
+                (s.email && s.email.toLowerCase().includes(query)) ||
+                (s.user_code && s.user_code.toLowerCase().includes(query)) ||
+                (s.seller_phone && s.seller_phone.toLowerCase().includes(query))
+            );
+            renderSellersTable(filtered);
+        }
+
+        function openAddSellerModal() {
+            const form = document.getElementById('add-seller-form');
+            if (form) form.reset();
+            const modal = document.getElementById('add-seller-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeAddSellerModal() {
+            const modal = document.getElementById('add-seller-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitAddSeller(e) {
+            e.preventDefault();
+            const form = document.getElementById('add-seller-form');
+            const submitBtn = document.getElementById('btn-save-new-seller');
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Seller...';
+
+            fetch('{{ route('admin.sellers.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Create &amp; Activate Seller';
+
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    closeAddSellerModal();
+                    loadSellers();
+                } else {
+                    showAdminToast((data.errors || [data.message || 'Failed to create seller']).join(' '), 'error');
+                }
+            })
+            .catch(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Create &amp; Activate Seller';
+                showAdminToast('Network connection error.', 'error');
+            });
+        }
+
+        function openEditSellerModal(id) {
+            const seller = allSellersCache.find(s => s.id === id);
+            if (!seller) return;
+
+            document.getElementById('edit-seller-id').value = seller.id;
+            document.getElementById('edit-seller-name').value = seller.name || '';
+            document.getElementById('edit-seller-email').value = seller.email || '';
+            document.getElementById('edit-seller-phone').value = seller.seller_phone || seller.mobile || '';
+            document.getElementById('edit-seller-status').value = seller.seller_status || 'active';
+            document.getElementById('edit-seller-pass').value = '';
+
+            const modal = document.getElementById('edit-seller-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeEditSellerModal() {
+            const modal = document.getElementById('edit-seller-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitEditSeller(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-seller-id').value;
+            const form = document.getElementById('edit-seller-form');
+            const submitBtn = document.getElementById('btn-save-edit-seller');
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch(`/admin/sellers/${id}/update`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    closeEditSellerModal();
+                    loadSellers();
+                } else {
+                    showAdminToast((data.errors || [data.message || 'Failed to update seller']).join(' '), 'error');
+                }
+            })
+            .catch(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                showAdminToast('Network connection error.', 'error');
+            });
+        }
+
+        function openAdjustSellerBalanceModal(id, name, balance) {
+            document.getElementById('adj-seller-id').value = id;
+            document.getElementById('adj-seller-name').value = name;
+            document.getElementById('adj-seller-current-balance').textContent = '৳ ' + parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('adj-seller-amount').value = '';
+            document.getElementById('adj-seller-remarks').value = '';
+
+            const modal = document.getElementById('adjust-seller-balance-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeAdjustSellerBalanceModal() {
+            const modal = document.getElementById('adjust-seller-balance-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitAdjustSellerBalance() {
+            const id = document.getElementById('adj-seller-id').value;
+            const action = document.getElementById('adj-seller-action-type').value;
+            const amount = parseFloat(document.getElementById('adj-seller-amount').value);
+            const remarks = document.getElementById('adj-seller-remarks').value;
+            const btn = document.getElementById('btn-save-adj-seller');
+
+            if (!amount || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            fetch(`/admin/sellers/${id}/adjust-balance`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: JSON.stringify({ action, amount, remarks })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Float Adjustment';
+
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    closeAdjustSellerBalanceModal();
+                    loadSellers();
+                } else {
+                    showAdminToast(data.message || 'Failed to adjust seller balance.', 'error');
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Float Adjustment';
+                showAdminToast('Network connection error.', 'error');
+            });
+        }
+
+        function deleteSeller(id) {
+            if (!confirm('Are you sure you want to deactivate and remove this seller account?')) return;
+
+            fetch(`/admin/sellers/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    loadSellers();
+                } else {
+                    showAdminToast(data.message || 'Failed to delete seller.', 'error');
+                }
+            })
+            .catch(() => showAdminToast('Network connection error.', 'error'));
         }
 
 
@@ -4605,18 +5312,21 @@
             const tbody = document.getElementById('withdrawals-table-tbody');
             if (!tbody) return;
             if (withdrawals.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-money-bill-transfer"></i><p>No withdrawal requests found.</p></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><i class="fas fa-money-bill-transfer"></i><p>No withdrawal requests found.</p></div></td></tr>`;
                 return;
             }
             tbody.innerHTML = withdrawals.map(w => {
                 let statusBadge = '';
                 let actionsHtml = '—';
+                const userBal = parseFloat(w.user_balance || 0);
+                const reqAmt = parseFloat(w.amount || 0);
+                const hasSufficientBal = userBal >= reqAmt;
 
                 if (w.status === 'Pending') {
                     statusBadge = `<span class="status-badge" style="background:rgba(255,190,26,0.1); border:1px solid rgba(255,190,26,0.2); color:var(--accent-gold);"><i class="fas fa-circle-notch fa-spin" style="font-size:6px;"></i> Pending</span>`;
                     actionsHtml = `
                         <div style="display:flex;gap:5px;">
-                            <button class="action-btn edit" title="Approve Withdrawal" onclick="processWithdrawal(${w.id}, 'approve')" style="color:var(--accent-green); border-color:rgba(34,197,94,0.3); background:rgba(34,197,94,0.05); width:auto; padding: 4px 10px; font-weight: 600; font-size: 11px;">
+                            <button class="action-btn edit" title="${hasSufficientBal ? 'Approve Withdrawal' : 'Warning: User has insufficient balance'}" onclick="processWithdrawal(${w.id}, 'approve')" style="color:var(--accent-green); border-color:rgba(34,197,94,0.3); background:rgba(34,197,94,0.05); width:auto; padding: 4px 10px; font-weight: 600; font-size: 11px;">
                                 <i class="fas fa-check"></i> Approve
                             </button>
                             <button class="action-btn del" title="Reject Withdrawal" onclick="processWithdrawal(${w.id}, 'reject')" style="color:var(--accent-red); border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.05); width:auto; padding: 4px 10px; font-weight: 600; font-size: 11px;">
@@ -4637,9 +5347,13 @@
                             <strong style="color:var(--text-primary);">${escHtml(w.user_name)}</strong>
                             <div style="font-size:11px;color:var(--text-muted);">${escHtml(w.user_email)}</div>
                         </td>
+                        <td>
+                            <span class="balance-val" style="color:${hasSufficientBal ? 'var(--accent-green)' : 'var(--accent-red)'}; font-family:'Roboto Mono',monospace; font-weight:700;">৳ ${userBal.toFixed(2)}</span>
+                            ${!hasSufficientBal && w.status === 'Pending' ? '<div style="font-size:9.5px; color:#ef4444; font-weight:800;">(Insufficient Bal)</div>' : ''}
+                        </td>
                         <td><strong style="color:#fff;">${escHtml(w.gateway)}</strong></td>
                         <td><span style="font-family:'Roboto Mono',monospace; font-size:12px;">${escHtml(w.account_number)}</span></td>
-                        <td><span class="balance-val">${parseFloat(w.amount).toFixed(2)}</span> <small style="color:var(--text-muted);">${w.user_currency}</small></td>
+                        <td><span class="balance-val">${reqAmt.toFixed(2)}</span> <small style="color:var(--text-muted);">${w.user_currency}</small></td>
                         <td style="color:var(--accent-red); font-family:'Roboto Mono',monospace;">-${parseFloat(w.fee).toFixed(2)}</td>
                         <td><span style="font-family:'Roboto Mono',monospace; font-weight:700; color:var(--accent-teal);">${parseFloat(w.net_payable).toFixed(2)}</span> <small style="color:var(--text-muted);">${w.user_currency}</small></td>
                         <td style="color:var(--text-muted);font-size:12px;">${w.created_at}</td>
@@ -6155,18 +6869,149 @@
         }
 
         // ==============================================
-        // HELICOPTER PREVIEW MODAL DRAWING LOOP
+        // ==============================================
+        // 100 FLIGHT DESIGNS PER GAME CATALOG & PREVIEW SYSTEM
         // ==============================================
         let previewAnimFrame = null;
         let currentModalTargetGame = 'helicopterx';
         
+        // 100 Thematic Names Generator per Crash Game
+        const GAME_DESIGN_THEMES = {
+            'helicopterx': {
+                icon: 'fa-helicopter',
+                color: '#f59e0b',
+                title: 'HelicopterX Chopper Designs',
+                archetypes: ['Attack Gunship', 'Chinook Cargo', 'Scout Bird', 'Stealth Comanche', 'V-22 Tiltrotor', 'Ka-52 Alligator', 'Cyber Quad-Copter', 'Fire & Rescue', 'Heavy Stallion', 'Royal Sovereign'],
+                modifiers: ['Gold Edition', 'Cyber Neon', 'Crimson Blood', 'Toxic Emerald', 'Royal Phantom', 'Shadow Black', 'Solar Flare', 'Arctic Ice', 'Plasma Pink', 'Desert Storm']
+            },
+            '1xaero': {
+                icon: 'fa-jet-fighter',
+                color: '#00f2fe',
+                title: '1xAero Supersonic Fighter Jet Designs',
+                archetypes: ['F-22 Raptor', 'Mirage Delta', 'Su-47 Berkut', 'F-14 Tomcat', 'B-2 Stealth Wing', 'Hypersonic Aurora', 'Su-57 Felon', 'Vampire Twin-Boom', 'Cyberpunk Vector', 'Sovereign Jet'],
+                modifiers: ['Supersonic Gold', 'Neon Cyan', 'Crimson Strike', 'Bio-Hazard Lime', 'Dark Void', 'Carbon Stealth', 'Solar Reheat', 'Frostbite Mach-5', 'Hyper Magenta', 'Warzone Camo']
+            },
+            'aero': {
+                icon: 'fa-plane',
+                color: '#ef4444',
+                title: 'Aero Vintage & Classic Plane Designs',
+                archetypes: ['Red Baron Triplane', 'Sopwith Biplane', 'Spitfire Ace', 'P-51 Mustang', 'Corsair Gullwing', 'Sea Floatplane', 'Gee Bee Racer', 'Classic Trimotor', 'B-17 Fortress', 'Steampunk Flyer'],
+                modifiers: ['Golden Era', 'Sky Blue', 'Scarlet Ace', 'Emerald Wing', 'Royal Velvet', 'Midnight Aviator', 'Sunset Bronze', 'Silver Cloud', 'Rosy Dawn', 'Desert Aviator']
+            },
+            'crashx': {
+                icon: 'fa-rocket',
+                color: '#10b981',
+                title: 'CrashX Cyber Drone & Rocket Designs',
+                archetypes: ['Falcon Heavy Rocket', 'Cyber Quad-Drone', 'Hexacopter Titan', 'Ion Deep Probe', 'Hypersonic Missile', 'VTOL Ducted Fan', 'Orbital Satellite', 'Insectoid Nano', 'Starship Heavy', 'Hover Cruiser'],
+                modifiers: ['Gold Star-Drive', 'Neon Matrix', 'Ruby Laser', 'Emerald Circuit', 'Dark Matter', 'Carbon Chassis', 'Solar Plasma', 'Cryo Core', 'Cyber Pulse', 'Military Spec']
+            },
+            'crash': {
+                icon: 'fa-meteor',
+                color: '#8b5cf6',
+                title: 'Crash Starship & Spacecraft Designs',
+                archetypes: ['Phoenix Firebird', 'Alien UFO Saucer', 'Quantum Starfighter', 'Solar Flare Cruiser', 'Void Warp Destroyer', 'Bio-Leviathan', 'Galactic Dreadnought', 'Valkyrie Astral', 'Nova Prismatic', 'Celestial Sovereign'],
+                modifiers: ['Golden Supernova', 'Cyan Warp', 'Crimson Star', 'Emerald Comet', 'Dark Nebula', 'Obsidian Void', 'Solar Eclipse', 'Starlight Diamond', 'Magenta Pulsar', 'Cosmic Titan']
+            }
+        };
+
+        function getGameDesignName(gameKey, id) {
+            const theme = GAME_DESIGN_THEMES[gameKey] || GAME_DESIGN_THEMES['helicopterx'];
+            const archIdx = (id - 1) % 10;
+            const modIdx = Math.floor((id - 1) / 10) % 10;
+            const arch = theme.archetypes[archIdx];
+            const mod = theme.modifiers[modIdx];
+            return `Design ${id}: ${mod} ${arch}`;
+        }
+
+        // Dynamically populate all 5 select dropdowns with 100 options
+        function populateAllGameFlightSelects() {
+            supportedCrashGames.forEach(g => {
+                const selectEl = document.getElementById(`setting-helicopter-design-${g}`);
+                if (selectEl) {
+                    const currentVal = selectEl.value;
+                    let html = '';
+                    for (let i = 1; i <= 100; i++) {
+                        const name = getGameDesignName(g, i);
+                        html += `<option value="${i}">${name}</option>`;
+                    }
+                    selectEl.innerHTML = html;
+                    if (currentVal && parseInt(currentVal) >= 1 && parseInt(currentVal) <= 100) {
+                        selectEl.value = currentVal;
+                    }
+                }
+            });
+        }
+
+        // Open View 100 Designs Modal
         function openViewHelicoptersModal(gameKey = 'helicopterx') {
             currentModalTargetGame = gameKey;
+            const meta = GAME_DESIGN_THEMES[gameKey] || GAME_DESIGN_THEMES['helicopterx'];
+            
+            // Set Modal Title & Icon
+            const iconEl = document.getElementById('view-helicopters-modal-icon');
+            const titleEl = document.getElementById('view-helicopters-modal-heading');
+            if (iconEl) {
+                iconEl.className = `fas ${meta.icon}`;
+                iconEl.style.color = meta.color;
+            }
+            if (titleEl) {
+                titleEl.textContent = `100 ${meta.title} (Live Catalog)`;
+            }
+
+            // Clear search filter input
+            const searchInput = document.getElementById('helicopter-search-filter');
+            if (searchInput) searchInput.value = '';
+
             const targetSelect = document.getElementById(`setting-helicopter-design-${gameKey}`) || document.getElementById('setting-helicopter-design');
-            const activeId = targetSelect ? targetSelect.value : '1';
-            highlightHelicopterDesignInPreview(activeId);
+            const activeId = parseInt(targetSelect ? targetSelect.value : '1') || 1;
+
+            // Build dynamic 100 cards
+            buildHelicopterPreviewGrid(gameKey, activeId);
+
             document.getElementById('view-helicopters-modal').style.display = 'flex';
             startHelicopterPreviews();
+        }
+
+        function buildHelicopterPreviewGrid(gameKey, activeId) {
+            const grid = document.getElementById('helicopter-preview-grid');
+            if (!grid) return;
+
+            let html = '';
+            for (let i = 1; i <= 100; i++) {
+                const name = getGameDesignName(gameKey, i);
+                const isSelected = i === activeId ? 'selected-design' : '';
+                const numStr = i < 10 ? `0${i}` : `${i}`;
+                html += `
+                    <div class="design-preview-card ${isSelected}" id="design-card-${i}" onclick="selectHelicopterDesignInPreview(${i})" data-design-id="${i}" data-design-name="${name.toLowerCase()}" style="position:relative; background:rgba(13,20,40,0.85); border:1px solid rgba(255,255,255,0.09); border-radius:12px; padding:10px; text-align:center; cursor:pointer; transition:all 0.22s ease;">
+                        <div style="position:absolute; top:8px; left:8px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; z-index:2; border:1px solid rgba(255,255,255,0.1);">#${numStr}</div>
+                        <canvas id="design-canvas-${i}" width="180" height="100" style="background:#050914; border-radius:8px; border:1px solid rgba(255,255,255,0.06); width:100%; height:100px; display:block;"></canvas>
+                        <div style="margin-top:8px; font-weight:700; font-size:11.5px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${name}">${name}</div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+            
+            // Update badge count
+            const countBadge = document.getElementById('helicopter-catalog-count-badge');
+            if (countBadge) countBadge.textContent = '100 Models Loaded';
+        }
+
+        function filterHelicopterDesigns(query) {
+            const q = (query || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('#helicopter-preview-grid .design-preview-card');
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const name = card.getAttribute('data-design-name') || '';
+                const id = card.getAttribute('data-design-id') || '';
+                if (!q || name.includes(q) || id === q || `design ${id}`.includes(q) || `#${id}`.includes(q)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            const countBadge = document.getElementById('helicopter-catalog-count-badge');
+            if (countBadge) countBadge.textContent = `${visibleCount} / 100 Visible`;
         }
 
         function closeViewHelicoptersModal() {
@@ -6178,12 +7023,13 @@
         }
 
         function highlightHelicopterDesignInPreview(id) {
-            document.querySelectorAll('.design-preview-card').forEach(card => {
+            document.querySelectorAll('#helicopter-preview-grid .design-preview-card').forEach(card => {
                 card.classList.remove('selected-design');
             });
             const activeCard = document.getElementById(`design-card-${id}`);
             if (activeCard) {
                 activeCard.classList.add('selected-design');
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
 
@@ -6197,10 +7043,10 @@
             if (fallbackSelect) {
                 fallbackSelect.value = id;
             }
-            // Highlight it first, wait 250ms, then save and close automatically
+            // Highlight it first, wait 200ms, then save and close automatically
             setTimeout(() => {
                 submitSelectedHelicopterDesign();
-            }, 250);
+            }, 200);
         }
 
         function submitSelectedHelicopterDesign() {
@@ -6216,502 +7062,401 @@
         function startHelicopterPreviews() {
             if (previewAnimFrame) {
                 cancelAnimationFrame(previewAnimFrame);
+                previewAnimFrame = null;
             }
-            const canvases = [];
-            for (let i = 1; i <= 10; i++) {
+            
+            const modalBox = document.getElementById('view-helicopters-modal');
+            const grid = document.getElementById('helicopter-preview-grid');
+            if (!modalBox || !grid) return;
+
+            // Find canvases and render immediate frame
+            const canvasItems = [];
+            const now = Date.now();
+            for (let i = 1; i <= 100; i++) {
                 const canvas = document.getElementById(`design-canvas-${i}`);
                 if (canvas) {
-                    canvases.push({
+                    const ctx = canvas.getContext('2d');
+                    canvasItems.push({
                         el: canvas,
-                        ctx: canvas.getContext('2d'),
-                        index: i
+                        ctx: ctx,
+                        index: i,
+                        card: document.getElementById(`design-card-${i}`)
                     });
+                    const w = canvas.width;
+                    const h = canvas.height;
+                    ctx.clearRect(0, 0, w, h);
+                    drawFlightDesign(ctx, i, w / 2, h / 2, true, now, currentModalTargetGame);
                 }
             }
 
             function loop() {
+                if (modalBox.style.display === 'none') {
+                    return;
+                }
                 const time = Date.now();
-                canvases.forEach(item => {
-                    const ctx = item.ctx;
-                    const w = item.el.width;
-                    const h = item.el.height;
-                    ctx.clearRect(0, 0, w, h);
-                    drawFlightDesign(ctx, item.index, 75, 50, true, time);
+                const gridRect = grid.getBoundingClientRect();
+
+                canvasItems.forEach(item => {
+                    if (item.card && item.card.style.display !== 'none') {
+                        const cardRect = item.card.getBoundingClientRect();
+                        const isVisible = (cardRect.bottom >= gridRect.top - 120 && cardRect.top <= gridRect.bottom + 120);
+                        if (isVisible) {
+                            const ctx = item.ctx;
+                            const w = item.el.width;
+                            const h = item.el.height;
+                            ctx.clearRect(0, 0, w, h);
+                            drawFlightDesign(ctx, item.index, w / 2, h / 2, true, time, currentModalTargetGame);
+                        }
+                    }
                 });
                 previewAnimFrame = requestAnimationFrame(loop);
             }
-            loop();
+            previewAnimFrame = requestAnimationFrame(loop);
         }
 
-        function drawFlightDesign(ctx, designIndex, x, y, isFlying, time = Date.now()) {
+        // ==============================================
+        // MASTER 100-DESIGN PROCEDURAL FLIGHT RENDERER
+        // ==============================================
+        const DESIGN_PALETTES = [
+            { main: '#ffd13b', sec: '#b28005', hi: '#ffffff', glow: '#f59e0b', dark: '#451a03' }, // 0: Gold
+            { main: '#00f2fe', sec: '#0284c7', hi: '#e0f2fe', glow: '#00f2fe', dark: '#082f49' }, // 1: Cyan
+            { main: '#ef4444', sec: '#991b1b', hi: '#fee2e2', glow: '#ef4444', dark: '#450a0a' }, // 2: Crimson
+            { main: '#10b981', sec: '#047857', hi: '#d1fae5', glow: '#10b981', dark: '#022c22' }, // 3: Emerald
+            { main: '#8b5cf6', sec: '#5b21b6', hi: '#ede9fe', glow: '#8b5cf6', dark: '#2e1065' }, // 4: Violet
+            { main: '#334155', sec: '#0f172a', hi: '#94a3b8', glow: '#64748b', dark: '#020617' }, // 5: Carbon
+            { main: '#f97316', sec: '#c2410c', hi: '#ffedd5', glow: '#f97316', dark: '#431407' }, // 6: Orange
+            { main: '#e2e8f0', sec: '#64748b', hi: '#ffffff', glow: '#38bdf8', dark: '#1e293b' }, // 7: Arctic
+            { main: '#ec4899', sec: '#9d174d', hi: '#fce7f3', glow: '#ec4899', dark: '#500724' }, // 8: Magenta
+            { main: '#65a30d', sec: '#365314', hi: '#ecfccb', glow: '#84cc16', dark: '#1a2e05' }  // 9: Camo
+        ];
+
+        function drawFlightDesign(ctx, designIndex, x, y, isFlying, time = Date.now(), gameKey = 'helicopterx') {
+            const idx = parseInt(designIndex) || 1;
+            const arch = (idx - 1) % 10;
+            const palIdx = Math.floor((idx - 1) / 10) % 10;
+            const pal = DESIGN_PALETTES[palIdx];
+
             ctx.save();
             ctx.translate(x, y);
-            ctx.scale(1.1, 1.1);
+            ctx.scale(1.15, 1.15);
 
-            let targetTilt = -20 * Math.PI / 180;
-            if (isFlying && designIndex !== 4 && designIndex !== 8) {
-                const tiltOsc = Math.sin(time * 0.015) * 0.02;
+            // Dynamic Hover Bobbing and Tilt
+            let targetTilt = -18 * Math.PI / 180;
+            if (isFlying && arch !== 1 && gameKey !== 'crash') {
+                const tiltOsc = Math.sin(time * 0.012 + idx) * 0.03;
                 ctx.rotate(targetTilt + tiltOsc);
-            } else if (designIndex !== 4 && designIndex !== 8) {
+            } else if (arch !== 1 && gameKey !== 'crash') {
                 ctx.rotate(targetTilt);
             }
 
-            switch(parseInt(designIndex)) {
-                case 1: // Gold Fighter Jet
+            // Glow aura
+            ctx.shadowColor = pal.glow;
+            ctx.shadowBlur = 10;
+
+            if (gameKey === 'helicopterx') {
+                // ==================== HELICOPTERX PROCEDURAL CHOOPERS (1-100) ====================
+                // Main Hull
+                ctx.fillStyle = pal.sec;
+                ctx.beginPath();
+                ctx.ellipse(-2, 2, 22, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = pal.main;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Tail Boom
+                ctx.strokeStyle = pal.sec;
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(-16, 0);
+                ctx.lineTo(-38, -5);
+                ctx.stroke();
+
+                // Vertical Tail Fin
+                ctx.fillStyle = pal.main;
+                ctx.beginPath();
+                ctx.moveTo(-38, -14);
+                ctx.lineTo(-34, -4);
+                ctx.lineTo(-42, 2);
+                ctx.closePath();
+                ctx.fill();
+
+                // Spinning Tail Rotor
+                ctx.save();
+                ctx.translate(-38, -6);
+                ctx.rotate(time * 0.18 + idx);
+                ctx.strokeStyle = pal.hi;
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                ctx.moveTo(-8, 0); ctx.lineTo(8, 0);
+                ctx.moveTo(0, -8); ctx.lineTo(0, 8);
+                ctx.stroke();
+                ctx.restore();
+
+                // Landing Skids
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-8, 10); ctx.lineTo(-8, 16);
+                ctx.moveTo(10, 10); ctx.lineTo(10, 16);
+                ctx.moveTo(-18, 16); ctx.lineTo(18, 16);
+                ctx.stroke();
+
+                // Cockpit Glass
+                ctx.fillStyle = 'rgba(168, 225, 255, 0.75)';
+                ctx.beginPath();
+                ctx.arc(8, -1, 7, -Math.PI / 2, Math.PI / 2);
+                ctx.fill();
+
+                // Main Rotor Mast & Spinning Blades
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, -10); ctx.lineTo(0, -16);
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(0, -16);
+                const bladeScale = Math.cos(time * 0.12 + idx);
+                ctx.strokeStyle = pal.hi;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(-36 * bladeScale, 0);
+                ctx.lineTo(36 * bladeScale, 0);
+                ctx.stroke();
+                ctx.restore();
+
+                // Side Weapon / Searchlight pod
+                if (arch % 2 === 0) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(-6, 4, 12, 3);
+                }
+
+            } else if (gameKey === '1xaero') {
+                // ==================== 1XAERO FIGHTER JETS (1-100) ====================
+                // Jet Afterburner Flame
+                if (isFlying) {
+                    ctx.save();
+                    const flameLen = 22 + Math.sin(time * 0.06 + idx) * 8;
+                    const fireGrad = ctx.createLinearGradient(-24 - flameLen, 0, -24, 0);
+                    fireGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+                    fireGrad.addColorStop(0.5, pal.glow);
+                    fireGrad.addColorStop(1, '#ffffff');
+                    ctx.fillStyle = fireGrad;
+                    ctx.beginPath();
+                    ctx.moveTo(-24, -4);
+                    ctx.lineTo(-24 - flameLen, 0);
+                    ctx.lineTo(-24, 4);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // Wings
+                ctx.fillStyle = pal.sec;
+                ctx.beginPath();
+                ctx.moveTo(-6, 3);
+                ctx.lineTo(-20, 18);
+                ctx.lineTo(-6, 18);
+                ctx.lineTo(10, 3);
+                ctx.closePath();
+                ctx.fill();
+
+                // Fuselage
+                const jetGrad = ctx.createLinearGradient(-26, 0, 28, 0);
+                jetGrad.addColorStop(0, pal.sec);
+                jetGrad.addColorStop(0.5, pal.main);
+                jetGrad.addColorStop(1, pal.hi);
+                ctx.fillStyle = jetGrad;
+                ctx.beginPath();
+                ctx.moveTo(28, -1);
+                ctx.bezierCurveTo(18, -6, -2, -7, -22, -5);
+                ctx.lineTo(-25, -4);
+                ctx.lineTo(-25, 2);
+                ctx.lineTo(-22, 4);
+                ctx.bezierCurveTo(-2, 6, 18, 4, 28, -1);
+                ctx.closePath();
+                ctx.fill();
+
+                // Canopy Glass
+                ctx.fillStyle = 'rgba(168, 225, 255, 0.7)';
+                ctx.beginPath();
+                ctx.moveTo(4, -4);
+                ctx.quadraticCurveTo(14, -4, 17, -1);
+                ctx.quadraticCurveTo(9, 2, 2, 1);
+                ctx.closePath();
+                ctx.fill();
+
+                // Vertical Stabilizer / Tail Fin
+                ctx.fillStyle = pal.main;
+                ctx.beginPath();
+                ctx.moveTo(-8, -5);
+                ctx.lineTo(-22, -18);
+                ctx.lineTo(-26, -18);
+                ctx.closePath();
+                ctx.fill();
+
+            } else if (gameKey === 'aero') {
+                // ==================== AERO VINTAGE PLANES (1-100) ====================
+                // Spinning Front Propeller
+                ctx.save();
+                ctx.translate(22, 0);
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.rotate(time * 0.14 + idx);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, -22); ctx.lineTo(0, 22);
+                ctx.stroke();
+                ctx.restore();
+
+                // Fuselage
+                ctx.fillStyle = pal.sec;
+                ctx.beginPath();
+                ctx.moveTo(20, -4);
+                ctx.lineTo(-24, -2);
+                ctx.lineTo(-24, 2);
+                ctx.lineTo(20, 4);
+                ctx.closePath();
+                ctx.fill();
+
+                // Biplane Wings (Upper & Lower)
+                ctx.fillStyle = pal.main;
+                ctx.fillRect(-6, -16, 16, 4);
+                ctx.fillRect(-6, 12, 16, 4);
+
+                // Wing Struts
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(0, -12); ctx.lineTo(0, 12);
+                ctx.moveTo(6, -12); ctx.lineTo(6, 12);
+                ctx.stroke();
+
+                // Tail Rudder & Wheels
+                ctx.fillStyle = pal.main;
+                ctx.fillRect(-28, -10, 5, 16);
+
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(6, 9, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+            } else if (gameKey === 'crashx') {
+                // ==================== CRASHX CYBER DRONES & ROCKETS (1-100) ====================
+                if (arch % 2 === 0) {
+                    // Orbital Rocket Style
                     if (isFlying) {
                         ctx.save();
-                        ctx.shadowColor = '#f06424';
-                        ctx.shadowBlur = 20;
-                        const flameLength = 24 + Math.sin(time * 0.055) * 8;
-                        const fireGrad = ctx.createLinearGradient(-25 - flameLength, 0, -25, 0);
-                        fireGrad.addColorStop(0, 'rgba(235, 64, 52, 0)');
-                        fireGrad.addColorStop(0.5, '#f06424');
-                        fireGrad.addColorStop(1, '#ffbe1a');
-                        ctx.fillStyle = fireGrad;
-                        ctx.beginPath();
-                        ctx.moveTo(-24, -4);
-                        ctx.lineTo(-24 - flameLength, 0);
-                        ctx.lineTo(-24, 4);
-                        ctx.closePath();
-                        ctx.fill();
-                        ctx.restore();
-                    }
-                    ctx.fillStyle = '#b28005';
-                    ctx.beginPath();
-                    ctx.moveTo(-8, 3);
-                    ctx.lineTo(-18, 18);
-                    ctx.lineTo(-5, 18);
-                    ctx.lineTo(8, 3);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    const goldGrad = ctx.createLinearGradient(-25, 0, 25, 0);
-                    goldGrad.addColorStop(0, '#e5a910');
-                    goldGrad.addColorStop(0.5, '#ffd13b');
-                    goldGrad.addColorStop(1, '#ffffff');
-                    ctx.fillStyle = goldGrad;
-                    ctx.beginPath();
-                    ctx.moveTo(28, -1);
-                    ctx.bezierCurveTo(20, -5, 0, -7, -20, -5);
-                    ctx.lineTo(-24, -4);
-                    ctx.lineTo(-24, 2);
-                    ctx.lineTo(-20, 3);
-                    ctx.bezierCurveTo(0, 5, 20, 3, 28, -1);
-                    ctx.closePath();
-                    ctx.fill();
-                    
-                    ctx.fillStyle = '#3c3c3c';
-                    ctx.fillRect(-25, -4, 2, 6);
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath();
-                    ctx.arc(10.5, -2.0, 3.2, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = 'rgba(168, 225, 255, 0.55)';
-                    ctx.beginPath();
-                    ctx.moveTo(6, -4);
-                    ctx.quadraticCurveTo(15, -4, 18, -1);
-                    ctx.quadraticCurveTo(10, 2, 4, 1);
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.fillStyle = '#f06424';
-                    ctx.beginPath();
-                    ctx.moveTo(-8, -5);
-                    ctx.lineTo(-21, -19);
-                    ctx.lineTo(-26, -19);
-                    ctx.closePath();
-                    ctx.fill();
-                    break;
-
-                case 2: // Classic Chopper
-                    ctx.fillStyle = '#1e3a8a';
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, 20, 14, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.strokeStyle = '#1e3a8a';
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(-15, 0);
-                    ctx.lineTo(-35, -5);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#ef4444';
-                    ctx.fillRect(-37, -12, 4, 10);
-                    ctx.save();
-                    ctx.translate(-35, -7);
-                    ctx.rotate(time * 0.15);
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(-8, 0); ctx.lineTo(8, 0);
-                    ctx.moveTo(0, -8); ctx.lineTo(0, 8);
-                    ctx.stroke();
-                    ctx.restore();
-
-                    ctx.strokeStyle = '#64748b';
-                    ctx.lineWidth = 2.5;
-                    ctx.beginPath();
-                    ctx.moveTo(-10, 14); ctx.lineTo(-10, 20);
-                    ctx.moveTo(10, 14); ctx.lineTo(10, 20);
-                    ctx.moveTo(-18, 20); ctx.lineTo(18, 20);
-                    ctx.stroke();
-
-                    ctx.fillStyle = 'rgba(147, 197, 253, 0.6)';
-                    ctx.beginPath();
-                    ctx.arc(8, -2, 8, -Math.PI/2, Math.PI/2);
-                    ctx.fill();
-
-                    ctx.strokeStyle = '#475569';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.moveTo(0, -14); ctx.lineTo(0, -19);
-                    ctx.stroke();
-
-                    ctx.save();
-                    ctx.translate(0, -19);
-                    const bladeScale = Math.cos(time * 0.1);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(-35 * bladeScale, 0);
-                    ctx.lineTo(35 * bladeScale, 0);
-                    ctx.stroke();
-                    ctx.restore();
-                    break;
-
-                case 3: // Space Rocket
-                    ctx.rotate(Math.PI / 4);
-                    if (isFlying) {
-                        ctx.save();
-                        const plume = 15 + Math.sin(time * 0.08) * 6;
-                        const fire = ctx.createLinearGradient(0, 15, 0, 15 + plume);
-                        fire.addColorStop(0, '#ffbe1a');
-                        fire.addColorStop(0.5, '#f06424');
+                        const plume = 18 + Math.sin(time * 0.08 + idx) * 6;
+                        const fire = ctx.createLinearGradient(0, 14, 0, 14 + plume);
+                        fire.addColorStop(0, '#ffffff');
+                        fire.addColorStop(0.4, pal.glow);
                         fire.addColorStop(1, 'rgba(239, 68, 68, 0)');
                         ctx.fillStyle = fire;
                         ctx.beginPath();
-                        ctx.moveTo(-8, 15);
-                        ctx.lineTo(0, 15 + plume);
-                        ctx.lineTo(8, 15);
+                        ctx.moveTo(-7, 14);
+                        ctx.lineTo(0, 14 + plume);
+                        ctx.lineTo(7, 14);
                         ctx.closePath();
                         ctx.fill();
                         ctx.restore();
                     }
-                    ctx.fillStyle = '#f8fafc';
+                    ctx.rotate(Math.PI / 4);
+                    ctx.fillStyle = pal.hi;
                     ctx.beginPath();
-                    ctx.moveTo(0, -25);
-                    ctx.bezierCurveTo(10, -10, 10, 10, 8, 15);
-                    ctx.lineTo(-8, 15);
-                    ctx.bezierCurveTo(-10, 10, -10, -10, 0, -25);
+                    ctx.moveTo(0, -24);
+                    ctx.bezierCurveTo(9, -10, 9, 10, 7, 14);
+                    ctx.lineTo(-7, 14);
+                    ctx.bezierCurveTo(-9, 10, -9, -10, 0, -24);
                     ctx.fill();
 
-                    ctx.fillStyle = '#ef4444';
+                    ctx.fillStyle = pal.main;
                     ctx.beginPath();
-                    ctx.moveTo(0, -25);
-                    ctx.bezierCurveTo(7, -15, 7, -10, 7, -8);
-                    ctx.lineTo(-7, -8);
-                    ctx.bezierCurveTo(-7, -10, -7, -15, 0, -25);
+                    ctx.moveTo(-7, 4); ctx.lineTo(-15, 16); ctx.lineTo(-7, 14); ctx.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(7, 4); ctx.lineTo(15, 16); ctx.lineTo(7, 14); ctx.fill();
+
+                    ctx.fillStyle = pal.glow;
+                    ctx.beginPath();
+                    ctx.arc(0, -3, 4, 0, Math.PI * 2);
                     ctx.fill();
-
-                    ctx.beginPath();
-                    ctx.moveTo(-8, 5); ctx.lineTo(-16, 17); ctx.lineTo(-8, 15); ctx.fill();
-                    ctx.beginPath();
-                    ctx.moveTo(8, 5); ctx.lineTo(16, 17); ctx.lineTo(8, 15); ctx.fill();
-
-                    ctx.fillStyle = '#0f172a';
-                    ctx.beginPath();
-                    ctx.arc(0, -2, 5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#93c5fd';
-                    ctx.beginPath();
-                    ctx.arc(0, -2, 3.8, 0, Math.PI * 2);
-                    ctx.fill();
-                    break;
-
-                case 4: // Alien UFO
-                    if (isFlying) {
-                        ctx.save();
-                        const beamGrad = ctx.createLinearGradient(0, 5, 0, 45);
-                        beamGrad.addColorStop(0, 'rgba(34, 197, 94, 0.4)');
-                        beamGrad.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
-                        ctx.fillStyle = beamGrad;
-                        ctx.beginPath();
-                        ctx.moveTo(-10, 5);
-                        ctx.lineTo(-25, 45);
-                        ctx.lineTo(25, 45);
-                        ctx.lineTo(10, 5);
-                        ctx.closePath();
-                        ctx.fill();
-                        ctx.restore();
-                    }
-                    ctx.fillStyle = '#64748b';
-                    ctx.beginPath();
-                    ctx.ellipse(0, 2, 28, 9, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    const lightColor = Math.floor(time / 200) % 2 === 0 ? '#ffbe1a' : '#22c55e';
-                    ctx.fillStyle = lightColor;
-                    for (let angle = -2.5; angle <= 2.5; angle += 0.8) {
-                        ctx.beginPath();
-                        ctx.arc(Math.sin(angle) * 23, 2 + Math.cos(angle)*1.2, 2, 0, Math.PI*2);
-                        ctx.fill();
-                    }
-
-                    ctx.fillStyle = 'rgba(52, 211, 153, 0.7)';
-                    ctx.beginPath();
-                    ctx.arc(0, -2, 11, Math.PI, 0);
-                    ctx.fill();
-
-                    ctx.fillStyle = '#064e3b';
-                    ctx.beginPath();
-                    ctx.arc(0, -5, 3, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.fillRect(-1.5, -3, 3, 4);
-                    break;
-
-                case 5: // Stealth Bomber
-                    if (isFlying) {
-                        ctx.save();
-                        ctx.strokeStyle = '#8b5cf6';
-                        ctx.lineWidth = 3;
-                        ctx.beginPath();
-                        ctx.moveTo(-10, 7);
-                        ctx.lineTo(-25, 7);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
-                    ctx.fillStyle = '#1e293b';
-                    ctx.beginPath();
-                    ctx.moveTo(30, 0);
-                    ctx.lineTo(-25, 20);
-                    ctx.lineTo(-12, 0);
-                    ctx.lineTo(-25, -20);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(30, 0);
-                    ctx.lineTo(-12, 0);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#ef4444';
-                    ctx.beginPath();
-                    ctx.arc(-22, 18, 1.5, 0, Math.PI*2);
-                    ctx.arc(-22, -18, 1.5, 0, Math.PI*2);
-                    ctx.fill();
-                    break;
-
-                case 6: // Cyber Drone
-                    ctx.fillStyle = '#0f172a';
-                    ctx.strokeStyle = '#06b6d4';
+                } else {
+                    // Cyber Multi-Rotor Drone Style
+                    ctx.fillStyle = pal.dark;
+                    ctx.strokeStyle = pal.main;
                     ctx.lineWidth = 2;
                     ctx.beginPath();
-                    ctx.arc(0, 0, 8, 0, Math.PI*2);
+                    ctx.arc(0, 0, 9, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
 
-                    ctx.strokeStyle = '#475569';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.moveTo(-6, -6); ctx.lineTo(-18, -18);
-                    ctx.moveTo(6, -6); ctx.lineTo(18, -18);
-                    ctx.moveTo(-6, 6); ctx.lineTo(-18, 18);
-                    ctx.moveTo(6, 6); ctx.lineTo(18, 18);
-                    ctx.stroke();
-
-                    const rotAngle = time * 0.1;
-                    const arms = [
-                        {x: -18, y: -18}, {x: 18, y: -18},
-                        {x: -18, y: 18}, {x: 18, y: 18}
-                    ];
+                    const arms = [{x: -16, y: -16}, {x: 16, y: -16}, {x: -16, y: 16}, {x: 16, y: 16}];
+                    const rotAngle = time * 0.12 + idx;
                     arms.forEach(arm => {
-                        ctx.fillStyle = '#0f172a';
+                        ctx.strokeStyle = '#64748b';
+                        ctx.lineWidth = 2.5;
                         ctx.beginPath();
-                        ctx.arc(arm.x, arm.y, 4, 0, Math.PI*2);
-                        ctx.fill();
+                        ctx.moveTo(0, 0); ctx.lineTo(arm.x, arm.y);
+                        ctx.stroke();
 
                         ctx.save();
                         ctx.translate(arm.x, arm.y);
                         ctx.rotate(rotAngle);
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.strokeStyle = pal.hi;
                         ctx.lineWidth = 1.5;
                         ctx.beginPath();
-                        ctx.moveTo(-12, 0); ctx.lineTo(12, 0);
+                        ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
                         ctx.stroke();
                         ctx.restore();
                     });
 
-                    ctx.fillStyle = '#22d3ee';
+                    ctx.fillStyle = pal.glow;
                     ctx.beginPath();
-                    ctx.arc(0, 0, 3, 0, Math.PI*2);
+                    ctx.arc(0, 0, 4, 0, Math.PI * 2);
                     ctx.fill();
-                    break;
+                }
 
-                case 7: // Vintage Biplane
+            } else {
+                // ==================== CRASH EXCLUSIVE (STARSHIPS & UFOS 1-100) ====================
+                if (arch % 2 === 0) {
+                    // Phoenix Cosmic Firebird Style
+                    const wingFlap = Math.sin(time * 0.02 + idx) * 0.35;
                     ctx.save();
-                    ctx.translate(22, 0);
-                    ctx.fillStyle = '#e2e8f0';
-                    ctx.beginPath();
-                    ctx.arc(0, 0, 3, 0, Math.PI*2);
-                    ctx.fill();
-                    
-                    ctx.rotate(time * 0.12);
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(0, -22); ctx.lineTo(0, 22);
-                    ctx.stroke();
-                    ctx.restore();
-
-                    ctx.fillStyle = '#b91c1c';
-                    ctx.beginPath();
-                    ctx.moveTo(20, -4);
-                    ctx.lineTo(-24, -2);
-                    ctx.lineTo(-24, 2);
-                    ctx.lineTo(20, 4);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.fillStyle = '#facc15';
-                    ctx.fillRect(-27, -8, 4, 16);
-                    ctx.fillRect(-27, -10, 6, 4);
-
-                    ctx.fillStyle = '#1e293b';
-                    ctx.beginPath();
-                    ctx.arc(8, 10, 4, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.strokeStyle = '#94a3b8';
-                    ctx.beginPath();
-                    ctx.moveTo(8, 2); ctx.lineTo(8, 8);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#facc15';
-                    ctx.fillRect(-5, -16, 12, 4);
-                    ctx.fillRect(-5, 12, 12, 4);
-                    
-                    ctx.strokeStyle = '#475569';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(1, -12); ctx.lineTo(1, 12);
-                    ctx.moveTo(5, -12); ctx.lineTo(5, 12);
-                    ctx.stroke();
-                    break;
-
-                case 8: // Hot Air Balloon
-                    if (isFlying) {
-                        ctx.fillStyle = '#f97316';
-                        ctx.beginPath();
-                        ctx.moveTo(-3, 10);
-                        ctx.lineTo(0, 10 - (8 + Math.sin(time*0.05)*3));
-                        ctx.lineTo(3, 10);
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-                    const stripeColors = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981'];
-                    ctx.save();
-                    ctx.translate(0, -12);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, 20, 0.15 * Math.PI, 0.85 * Math.PI, true);
-                    ctx.lineTo(-7, 22);
-                    ctx.lineTo(7, 22);
-                    ctx.closePath();
-                    ctx.clip();
-
-                    for (let i = -3; i <= 3; i++) {
-                        ctx.fillStyle = stripeColors[Math.abs(i) % stripeColors.length];
-                        ctx.fillRect(i * 7 - 3.5, -25, 7, 50);
-                    }
-                    ctx.restore();
-
-                    ctx.strokeStyle = '#b45309';
-                    ctx.lineWidth = 0.8;
-                    ctx.beginPath();
-                    ctx.moveTo(-6, 10); ctx.lineTo(-4, 18);
-                    ctx.moveTo(6, 10); ctx.lineTo(4, 18);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#78350f';
-                    ctx.fillRect(-5, 18, 10, 8);
-                    break;
-
-                case 9: // Future Skycar
-                    if (isFlying) {
-                        ctx.save();
-                        ctx.shadowColor = '#06b6d4';
-                        ctx.shadowBlur = 10;
-                        ctx.fillStyle = 'rgba(6, 182, 212, 0.6)';
-                        ctx.fillRect(-15, 6, 8, 4);
-                        ctx.fillRect(7, 6, 8, 4);
-                        ctx.restore();
-                    }
-                    ctx.fillStyle = '#6d28d9';
-                    ctx.beginPath();
-                    ctx.moveTo(24, 0);
-                    ctx.bezierCurveTo(20, -8, -10, -9, -24, -4);
-                    ctx.lineTo(-24, 4);
-                    ctx.bezierCurveTo(-10, 9, 20, 8, 24, 0);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.strokeStyle = '#a78bfa';
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.moveTo(12, 2);
-                    ctx.lineTo(-16, 2);
-                    ctx.stroke();
-
-                    ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
-                    ctx.beginPath();
-                    ctx.moveTo(4, -4);
-                    ctx.quadraticCurveTo(15, -4, 17, 0);
-                    ctx.quadraticCurveTo(10, 4, 3, 2);
-                    ctx.closePath();
-                    ctx.fill();
-                    break;
-
-                case 10: // Phoenix Firebird
-                    const wingFlap = Math.sin(time * 0.02) * 0.4;
-                    ctx.save();
-                    const tailGrad = ctx.createLinearGradient(-12, 0, -32, 0);
-                    tailGrad.addColorStop(0, '#f97316');
+                    const tailGrad = ctx.createLinearGradient(-10, 0, -30, 0);
+                    tailGrad.addColorStop(0, pal.main);
                     tailGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
                     ctx.fillStyle = tailGrad;
                     ctx.beginPath();
-                    ctx.moveTo(-10, -3);
-                    ctx.lineTo(-30, -10);
-                    ctx.lineTo(-24, 0);
-                    ctx.lineTo(-30, 10);
-                    ctx.lineTo(-10, 3);
+                    ctx.moveTo(-8, -3);
+                    ctx.lineTo(-28, -10);
+                    ctx.lineTo(-22, 0);
+                    ctx.lineTo(-28, 10);
+                    ctx.lineTo(-8, 3);
                     ctx.closePath();
                     ctx.fill();
                     ctx.restore();
 
-                    ctx.fillStyle = '#ef4444';
+                    ctx.fillStyle = pal.sec;
                     ctx.beginPath();
                     ctx.moveTo(16, 0);
-                    ctx.quadraticCurveTo(8, -6, -10, -3);
-                    ctx.lineTo(-8, 3);
+                    ctx.quadraticCurveTo(8, -6, -8, -3);
+                    ctx.lineTo(-6, 3);
                     ctx.quadraticCurveTo(8, 6, 16, 0);
                     ctx.closePath();
                     ctx.fill();
 
-                    ctx.fillStyle = '#facc15';
-                    ctx.beginPath();
-                    ctx.moveTo(16, -2);
-                    ctx.lineTo(22, 0);
-                    ctx.lineTo(16, 2);
-                    ctx.closePath();
-                    ctx.fill();
-
                     ctx.save();
-                    ctx.translate(0, 0);
                     ctx.rotate(wingFlap);
-                    const wingGrad = ctx.createLinearGradient(0, 0, 0, -25);
-                    wingGrad.addColorStop(0, '#ef4444');
-                    wingGrad.addColorStop(0.7, '#f97316');
-                    wingGrad.addColorStop(1, '#facc15');
+                    const wingGrad = ctx.createLinearGradient(0, 0, 0, -26);
+                    wingGrad.addColorStop(0, pal.sec);
+                    wingGrad.addColorStop(0.6, pal.main);
+                    wingGrad.addColorStop(1, pal.hi);
                     ctx.fillStyle = wingGrad;
                     ctx.beginPath();
                     ctx.moveTo(-4, 0);
@@ -6720,11 +7465,52 @@
                     ctx.closePath();
                     ctx.fill();
                     ctx.restore();
-                    break;
+                } else {
+                    // Alien Saucer UFO Style
+                    if (isFlying) {
+                        ctx.save();
+                        const beam = ctx.createLinearGradient(0, 4, 0, 36);
+                        beam.addColorStop(0, pal.glow);
+                        beam.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
+                        ctx.fillStyle = beam;
+                        ctx.beginPath();
+                        ctx.moveTo(-8, 4);
+                        ctx.lineTo(-20, 36);
+                        ctx.lineTo(20, 36);
+                        ctx.lineTo(8, 4);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                    ctx.fillStyle = pal.sec;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 2, 26, 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = pal.hi;
+                    ctx.beginPath();
+                    ctx.arc(0, -2, 10, Math.PI, 0);
+                    ctx.fill();
+
+                    // Rotating perimeter dots
+                    const lightCol = Math.floor(time / 200 + idx) % 2 === 0 ? pal.main : '#ffffff';
+                    ctx.fillStyle = lightCol;
+                    for (let angle = -2.4; angle <= 2.4; angle += 0.8) {
+                        ctx.beginPath();
+                        ctx.arc(Math.sin(angle) * 21, 2 + Math.cos(angle) * 1.2, 1.8, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
             }
 
             ctx.restore();
         }
+
+        // Initialize 100 designs in select inputs on document load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateAllGameFlightSelects();
+        });
+        populateAllGameFlightSelects();
 
         // ==============================================
         // Support Chat Logic (Admin Side)
@@ -6760,7 +7546,8 @@
 
         function renderChatsList(chats) {
             const listContainer = document.getElementById('admin-chat-users-list');
-            if (chats.length === 0) {
+            if (!listContainer) return;
+            if (!Array.isArray(chats) || chats.length === 0) {
                 listContainer.innerHTML = `
                     <div style="padding: 20px; text-align: center; color: var(--text-muted);">
                         <i class="fas fa-comments" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
@@ -6941,6 +7728,26 @@
             // Check and update admin theme UI button state
             const currentTheme = localStorage.getItem('admin_theme') || 'dark';
             updateAdminThemeUI(currentTheme);
+
+            // Check URL parameters or hash to activate specific tab/game
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            const gameParam = urlParams.get('game');
+            if (gameParam) {
+                openGameTab(gameParam, document.getElementById('nav-game-' + gameParam));
+            } else if (tabParam) {
+                switchTab(tabParam, document.getElementById('nav-' + tabParam));
+            } else if (window.location.hash) {
+                const hashTab = window.location.hash.replace('#', '');
+                const navEl = document.getElementById('nav-' + hashTab) || document.getElementById('nav-game-' + hashTab);
+                if (navEl) {
+                    if (['helicopterx', '1xaero', 'aero', 'crashx', 'crash'].includes(hashTab)) {
+                        openGameTab(hashTab, navEl);
+                    } else {
+                        switchTab(hashTab, navEl);
+                    }
+                }
+            }
 
             // Poll for support chats list updates to display sidebar badge count
             loadSupportChats();
@@ -7998,6 +8805,285 @@
                 }
             });
         }
+
+        /* ==========================================================================
+           ADMIN KYC VERIFICATIONS MANAGEMENT JS
+           ========================================================================== */
+        let currentKycFilter = 'all';
+
+        function filterKycByStatus(status) {
+            currentKycFilter = status;
+            document.querySelectorAll('.kyc-filter-btn').forEach(b => {
+                b.style.background = 'transparent';
+                b.style.color = '#8ca3c7';
+            });
+            const activeBtn = document.getElementById('kyc-filter-' + status);
+            if (activeBtn) {
+                activeBtn.style.background = '#007bff';
+                activeBtn.style.color = '#ffffff';
+            }
+            loadKycVerifications();
+        }
+
+        function loadKycVerifications() {
+            const tbody = document.getElementById('kyc-table-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = `
+                <tr class="loading-row">
+                    <td colspan="9" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Fetching KYC verifications...</td>
+                </tr>
+            `;
+
+            fetch(`/admin/kyc?status=${currentKycFilter}`, {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (!res.success) {
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#ef4444; padding:20px;">Failed to load data.</td></tr>`;
+                    return;
+                }
+
+                // Update counters
+                if (res.counts) {
+                    document.getElementById('kyc-stat-total').innerText = res.counts.all || 0;
+                    document.getElementById('kyc-stat-pending').innerText = res.counts.pending || 0;
+                    document.getElementById('kyc-stat-verified').innerText = res.counts.verified || 0;
+                    document.getElementById('kyc-stat-rejected').innerText = res.counts.rejected || 0;
+
+                    const pendingBadge = document.getElementById('admin-kyc-pending-badge');
+                    if (pendingBadge) {
+                        if (res.counts.pending > 0) {
+                            pendingBadge.innerText = res.counts.pending;
+                            pendingBadge.style.display = 'inline-block';
+                        } else {
+                            pendingBadge.style.display = 'none';
+                        }
+                    }
+                }
+
+                const list = res.data.data || [];
+                if (list.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align:center; color:var(--text-muted); padding:35px;">
+                                <i class="fas fa-folder-open" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.5;"></i>
+                                No KYC applications found under this status.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = list.map(k => {
+                    const u = k.user || {};
+                    const docLabels = {
+                        nid: '<span class="badge" style="background:rgba(2,132,199,0.15); color:#38bdf8; border:1px solid rgba(2,132,199,0.3);"><i class="fas fa-id-card"></i> National ID (NID)</span>',
+                        passport: '<span class="badge" style="background:rgba(168,85,247,0.15); color:#c084fc; border:1px solid rgba(168,85,247,0.3);"><i class="fas fa-passport"></i> Passport</span>',
+                        birth_certificate: '<span class="badge" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);"><i class="fas fa-file-lines"></i> Birth Certificate</span>',
+                    };
+                    const docBadge = docLabels[k.document_type] || k.document_type;
+
+                    let statusBadge = '';
+                    if (k.status === 'verified') {
+                        statusBadge = '<span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);"><i class="fas fa-check-circle"></i> VERIFIED</span>';
+                    } else if (k.status === 'pending') {
+                        statusBadge = '<span class="badge" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);"><i class="fas fa-clock"></i> PENDING</span>';
+                    } else {
+                        statusBadge = `<span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3);" title="${k.rejection_reason || ''}"><i class="fas fa-times-circle"></i> REJECTED</span>`;
+                    }
+
+                    const frontImgUrl = '/' + k.front_image;
+                    const backImgUrl = k.back_image ? '/' + k.back_image : '';
+                    const submittedAt = k.submitted_at ? new Date(k.submitted_at).toLocaleString() : 'N/A';
+
+                    return `
+                        <tr>
+                            <td style="font-weight:800; font-family:'Roboto Mono',monospace; color:var(--text-muted);">#${k.id}</td>
+                            <td>
+                                <div style="font-weight:800; color:#fff;">${u.name || 'User #' + k.user_id}</div>
+                                <div style="font-size:11px; color:#8ca3c7;">${u.email || ''} | ${u.mobile || ''}</div>
+                                <div style="font-size:10.5px; color:#00f2fe; font-family:'Roboto Mono',monospace;">ID: ${u.user_code || u.id}</div>
+                            </td>
+                            <td>${docBadge}</td>
+                            <td>
+                                <div style="font-weight:700; color:#cbd5e1;">${k.full_name || 'N/A'}</div>
+                                <div style="font-size:11px; color:#94a3b8; font-family:'Roboto Mono',monospace;">No: ${k.document_number || 'N/A'}</div>
+                            </td>
+                            <td style="text-align:center;">
+                                <img src="${frontImgUrl}" onclick="openKycLightbox('${frontImgUrl}', '${backImgUrl}', '${k.document_type}', '${u.name || ''}', '${k.document_number || ''}')" style="width:60px; height:42px; object-fit:cover; border-radius:6px; border:1.5px solid #0284c7; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Click to enlarge">
+                            </td>
+                            <td style="text-align:center;">
+                                ${backImgUrl ? `
+                                    <img src="${backImgUrl}" onclick="openKycLightbox('${frontImgUrl}', '${backImgUrl}', '${k.document_type}', '${u.name || ''}', '${k.document_number || ''}')" style="width:60px; height:42px; object-fit:cover; border-radius:6px; border:1.5px solid #3b82f6; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Click to enlarge">
+                                ` : '<span style="font-size:11px; color:#64748b;">N/A</span>'}
+                            </td>
+                            <td style="text-align:center;">
+                                ${statusBadge}
+                                ${k.rejection_reason ? `<div style="font-size:10.5px; color:#fca5a5; margin-top:3px; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${k.rejection_reason}">${k.rejection_reason}</div>` : ''}
+                            </td>
+                            <td style="font-size:11.5px; color:#8ca3c7;">${submittedAt}</td>
+                            <td style="text-align:right;">
+                                <div style="display:inline-flex; gap:6px;">
+                                    ${k.status !== 'verified' ? `
+                                        <button onclick="approveKyc(${k.id})" class="btn-success" style="padding:5px 10px; font-size:11px; font-weight:800; border-radius:6px;" title="Approve KYC (ভেরিফাই করুন)">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                    ` : ''}
+                                    ${k.status !== 'rejected' ? `
+                                        <button onclick="rejectKyc(${k.id})" class="btn-danger" style="padding:5px 10px; font-size:11px; font-weight:800; border-radius:6px; background:#dc2626;" title="Reject KYC (বাতিল করুন)">
+                                            <i class="fas fa-ban"></i> Reject
+                                        </button>
+                                    ` : ''}
+                                    <button onclick="resetKyc(${k.id})" class="btn-secondary" style="padding:5px 8px; font-size:11px; border-radius:6px; background:rgba(255,255,255,0.06);" title="Delete / Release Record">
+                                        <i class="fas fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            })
+            .catch(() => {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#ef4444; padding:20px;">Network error loading KYC records.</td></tr>`;
+            });
+        }
+
+        function approveKyc(id) {
+            if (!confirm('Are you sure you want to APPROVE and VERIFY this user KYC application?')) return;
+
+            fetch(`/admin/kyc/${id}/approve`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    loadKycVerifications();
+                } else {
+                    showAdminToast('❌ ' + data.message, 'error');
+                }
+            })
+            .catch(() => showAdminToast('Network error.', 'error'));
+        }
+
+        function rejectKyc(id) {
+            const reason = prompt('Please enter the rejection reason for this customer:', 'ডকুমেন্ট অস্পষ্ট অথবা তথ্যের অমিল রয়েছে। পুনরায় সঠিক ডকুমেন্ট আপলোড করুন।');
+            if (reason === null) return;
+
+            fetch(`/admin/kyc/${id}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('⚠️ ' + data.message, 'warning');
+                    loadKycVerifications();
+                } else {
+                    showAdminToast('❌ ' + data.message, 'error');
+                }
+            })
+            .catch(() => showAdminToast('Network error.', 'error'));
+        }
+
+        function resetKyc(id) {
+            if (!confirm('Are you sure you want to DELETE/RELEASE this KYC record? The user will be able to submit freshly.')) return;
+
+            fetch(`/admin/kyc/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showAdminToast('✅ ' + data.message, 'success');
+                    loadKycVerifications();
+                } else {
+                    showAdminToast('❌ ' + data.message, 'error');
+                }
+            })
+            .catch(() => showAdminToast('Network error.', 'error'));
+        }
+
+        function openKycLightbox(frontUrl, backUrl, docLabel, userName, docNum) {
+            const modal = document.getElementById('admin-kyc-lightbox-modal');
+            if (!modal) return;
+
+            document.getElementById('kyc-lb-title').innerText = `${userName || 'Customer'} - ${docLabel.toUpperCase()} (${docNum || 'N/A'})`;
+            document.getElementById('kyc-lb-front-img').src = frontUrl;
+            
+            const backWrap = document.getElementById('kyc-lb-back-wrap');
+            const backImg = document.getElementById('kyc-lb-back-img');
+            if (backUrl) {
+                backImg.src = backUrl;
+                backWrap.style.display = 'block';
+            } else {
+                backWrap.style.display = 'none';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeKycLightbox() {
+            const modal = document.getElementById('admin-kyc-lightbox-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // Auto load KYC counter on init
+        setTimeout(() => {
+            fetch('/admin/kyc?status=pending', { headers: { 'Accept': 'application/json' } })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.counts && res.counts.pending > 0) {
+                        const b = document.getElementById('admin-kyc-pending-badge');
+                        if (b) {
+                            b.innerText = res.counts.pending;
+                            b.style.display = 'inline-block';
+                        }
+                    }
+                }).catch(() => {});
+        }, 1500);
     </script>
+
+    <!-- Admin KYC Document Lightbox Modal -->
+    <div id="admin-kyc-lightbox-modal" style="display:none; position:fixed; inset:0; z-index:1000000; background:rgba(0,0,0,0.92); backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#0c192c; border:1.5px solid #1e3a5f; border-radius:16px; width:100%; max-width:960px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.9);">
+            <div style="padding:16px 20px; background:#0f223d; border-bottom:1px solid #1e3a5f; display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-weight:800; font-size:16px; color:#fff;" id="kyc-lb-title">Document Inspection</div>
+                <button onclick="closeKycLightbox()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">&times;</button>
+            </div>
+            <div style="padding:20px; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:20px; background:#050c17;">
+                <div>
+                    <div style="font-weight:800; font-size:13px; color:#00f2fe; margin-bottom:8px;"><i class="fas fa-image"></i> FRONT PART (সামনের পাতা)</div>
+                    <div style="background:#000; border-radius:10px; overflow:hidden; border:1.5px solid #0284c7; text-align:center;">
+                        <img id="kyc-lb-front-img" src="" style="width:100%; max-height:480px; object-fit:contain; display:block;">
+                    </div>
+                </div>
+                <div id="kyc-lb-back-wrap">
+                    <div style="font-weight:800; font-size:13px; color:#38bdf8; margin-bottom:8px;"><i class="fas fa-image"></i> BACK PART (পেছনের পাতা)</div>
+                    <div style="background:#000; border-radius:10px; overflow:hidden; border:1.5px solid #3b82f6; text-align:center;">
+                        <img id="kyc-lb-back-img" src="" style="width:100%; max-height:480px; object-fit:contain; display:block;">
+                    </div>
+                </div>
+            </div>
+            <div style="padding:12px 20px; background:#0f223d; border-top:1px solid #1e3a5f; display:flex; justify-content:flex-end;">
+                <button onclick="closeKycLightbox()" class="btn-primary" style="width:auto; padding:8px 24px; font-weight:800;">Close Preview</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

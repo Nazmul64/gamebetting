@@ -62,7 +62,7 @@ class JuiceSlotsService
         }
 
         if (!$isDemo) {
-            GameOutcomeRiggingService::validatePlayerCanPlay($user, 'juice_slots');
+            app(GameOutcomeRiggingService::class)->validatePlayerCanPlay($user, false);
         }
 
         $balanceBefore = (float) $user->balance;
@@ -70,21 +70,7 @@ class JuiceSlotsService
             throw new Exception("Insufficient account balance to place bet.");
         }
 
-        $targetOutcome = null;
-        if (!$isDemo) {
-            $rigAction = GameOutcomeRiggingService::determineSpinRigAction($user, 'juice_slots');
-            if ($rigAction === 'force_win') {
-                $targetOutcome = 'win';
-            } elseif ($rigAction === 'force_lose') {
-                $targetOutcome = 'lose';
-            }
-        }
-
-        if ($targetOutcome === null) {
-            $winChance = $settings->win_chance_percentage ?? 30.0;
-            $randVal = mt_rand(1, 10000) / 100.0;
-            $targetOutcome = ($randVal <= $winChance) ? 'win' : 'lose';
-        }
+        $targetOutcome = app(GameOutcomeRiggingService::class)->determineSpinRigAction($user, $isDemo);
 
         $bestGrid = null;
         $bestResult = null;

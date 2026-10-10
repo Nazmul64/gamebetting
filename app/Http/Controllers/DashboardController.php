@@ -140,11 +140,13 @@ class DashboardController extends Controller
         
         $validator = Validator::make($request->all(), [
             'gateway_id' => 'required|integer',
-            'amount' => 'required|numeric|min:50|max:' . $user->balance,
-            'account_number' => 'required|string|min:10|max:40',
+            'amount' => 'required|numeric|min:50',
+            'account_number' => 'required|string|min:8|max:100',
             'note' => 'nullable|string|max:255',
         ], [
-            'amount.max' => 'Insufficient wallet balance for this withdrawal.'
+            'gateway_id.required' => 'Please select a withdrawal payment method.',
+            'amount.min' => 'Minimum withdrawal amount is 50 ' . ($user->currency ?: 'BDT') . '.',
+            'account_number.required' => 'Please provide your wallet phone / account number.'
         ]);
 
         if ($validator->fails()) {
@@ -154,15 +156,21 @@ class DashboardController extends Controller
             ], 422);
         }
 
-        $gateway = PaymentGateway::find($request->gateway_id);
-        if (!$gateway) {
+        $amount = (float)$request->amount;
+        if ($user->balance < $amount) {
             return response()->json([
                 'success' => false,
-                'errors' => ['Selected payment gateway is invalid.']
+                'errors' => ['Insufficient available balance in your account. (ব্যালেন্স এভেলেবল নেই)']
             ], 422);
         }
 
-        $amount = (float)$request->amount;
+        $gateway = PaymentGateway::find($request->gateway_id);
+        if (!$gateway || $gateway->status !== 'active') {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Selected payment method is invalid or inactive.']
+            ], 422);
+        }
         
         // Calculate withdraw commission fee only if active
         $withdrawCommStatus = Setting::getVal('withdraw_commission_status', 'active');
@@ -653,9 +661,10 @@ class DashboardController extends Controller
             return response()->json(['success' => false, 'errors' => ['Unauthorized']], 401);
         }
 
-        $rigMode = app(\App\Services\GameOutcomeRiggingService::class)->getUserRigMode($user);
-        if ($rigMode === 'always_lose') {
-            // Bet loses because round crashed before cashout was permitted
+        $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+        $shouldWin = $rigService->shouldPlayerWin($user, false);
+        if (!$shouldWin) {
+            // Bet loses because round crashed before cashout was permitted (70% house profit / 30% player win rate)
             $bet = \App\Models\GameBet::where('user_id', $user->id)
                 ->where('round_id', $request->round_id)
                 ->where('result', 'pending')

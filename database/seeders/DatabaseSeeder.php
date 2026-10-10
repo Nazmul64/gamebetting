@@ -39,5 +39,6 @@ class DatabaseSeeder extends Seeder
         $this->call(BonBonSettingSeeder::class);
         $this->call(BigBassSettingSeeder::class);
         $this->call(EmirateSettingSeeder::class);
+        $this->call(GameAudioSettingsSeeder::class);
     }
 }

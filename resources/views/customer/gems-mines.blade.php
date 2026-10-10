@@ -900,6 +900,13 @@
       syncBalance(balance);
       playSound('win');
       toast(`💎 YOU WIN ${currencySymbol}${winAmt.toFixed(2)} (x${mult.toFixed(2)})`, 'win');
+      if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+          amount: winAmt,
+          multiplier: mult,
+          title: 'GEMS MINES WINNER!'
+        });
+      }
     } else {
       toast('💣 BOOM! Better luck next time!', 'lose');
     }
@@ -919,6 +926,13 @@
     gameActive = false;
     revealAllMines();
     toast(`✅ Collected ${currencySymbol}${winAmt.toFixed(2)} (x${mult.toFixed(2)})`, 'win');
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: winAmt,
+        multiplier: mult,
+        title: 'MINES CASHOUT WIN!'
+      });
+    }
     setBtn('new');
   }
 

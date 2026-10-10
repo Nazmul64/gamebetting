@@ -194,10 +194,13 @@ const Engine = {
     const resize = () => {
       const wrap = document.getElementById('wrap') || document.body;
       const availW = wrap.clientWidth || window.innerWidth;
-      const availH = (wrap.clientHeight || (window.innerHeight - 70)) - 10;
-      const scale = Math.min(availW / W, availH / H, 1.4);
+      const availH = wrap.clientHeight || (window.innerHeight - 70);
+      const scale = Math.min(availW / W, availH / H);
       const stage = document.getElementById('stage');
-      if (stage) stage.style.transform = `scale(${scale})`;
+      if (stage) {
+        stage.style.transform = `scale(${scale})`;
+        stage.style.transformOrigin = 'center center';
+      }
     };
     window.addEventListener('resize', resize);
     window.addEventListener('orientationchange', resize);

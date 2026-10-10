@@ -571,6 +571,14 @@ async function startSpin() {
 
     playKingWinCelebration();
 
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: stepWin,
+        multiplier: betAmount > 0 ? (stepWin / betAmount) : 0,
+        title: `CRYSTAL CASCADE x${cascadeStep} WIN!`
+      });
+    }
+
     const shatterPromises = [];
     const removedCells = new Set();
 

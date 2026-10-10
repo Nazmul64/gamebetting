@@ -1595,6 +1595,13 @@
           }
 
           showWinToast(data.win_amount);
+          if (typeof window.triggerWinCelebration === 'function') {
+            window.triggerWinCelebration({
+              amount: data.win_amount,
+              multiplier: bet > 0 ? (data.win_amount / bet) : 0,
+              title: (data.win_amount >= bet * 5) ? 'KNOCKOUT WIN!' : 'BOXING KING WIN!'
+            });
+          }
           if (data.win_amount >= bet * 5) {
             showCelebration('🔥 KNOCKOUT WIN! 🔥', 2200);
           } else {

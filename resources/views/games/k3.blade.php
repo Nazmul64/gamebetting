@@ -1386,6 +1386,8 @@ If the opening numbers are any three consecutive numbers, it is the winning
             });
         }
 
+        let k3CelebratedBets = new Set();
+
         function loadMyHistory() {
             fetch(`/games/k3/my-history?type=${currentTimeType}`)
                 .then(res => res.json())
@@ -1396,6 +1398,20 @@ If the opening numbers are any three consecutive numbers, it is the winning
                     if (!data.history || data.history.length === 0) {
                         list.innerHTML = `<div class="text-center py-6 text-gray-400 text-xs">No bets placed in this timeframe yet.</div>`;
                         return;
+                    }
+
+                    if (Array.isArray(data.history)) {
+                        data.history.slice(0, 5).forEach(b => {
+                            if (b.status === 'won' && !k3CelebratedBets.has(b.id)) {
+                                k3CelebratedBets.add(b.id);
+                                if (typeof window.triggerWinCelebration === 'function') {
+                                    window.triggerWinCelebration({
+                                        amount: parseFloat(b.win_amount || (b.total_amount * 1.96)),
+                                        title: 'K3 DICE LOTTERY WIN!'
+                                    });
+                                }
+                            }
+                        });
                     }
 
                     list.innerHTML = '';

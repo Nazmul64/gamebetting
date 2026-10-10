@@ -7,6 +7,7 @@ use App\Models\CrashPoint;
 use App\Models\Setting;
 use App\Models\PaymentGateway;
 use App\Models\Transaction;
+use App\Models\SellerTransfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -769,7 +770,7 @@ class AdminController extends Controller
      */
     public function getCrashPoints(Request $request)
     {
-        $gameKey = $request->query('game_key');
+        $gameKey = $request->query('game_key') ?? $request->query('game');
         $query = CrashPoint::orderBy('sort_order')->orderBy('id');
         if ($gameKey && in_array($gameKey, ['helicopterx', '1xaero', 'aero', 'crashx', 'crash'])) {
             $query->where('game_key', $gameKey);
@@ -1423,7 +1424,7 @@ class AdminController extends Controller
      */
     public function getWithdrawals()
     {
-        $withdrawals = Transaction::with('user:id,name,email,mobile,currency')
+        $withdrawals = Transaction::with('user:id,name,email,mobile,currency,balance')
                                   ->where('type', 'Withdraw')
                                   ->orderBy('created_at', 'desc')
                                   ->get();
@@ -1437,6 +1438,7 @@ class AdminController extends Controller
                     'user_name' => $t->user ? $t->user->name : 'N/A',
                     'user_email' => $t->user ? $t->user->email : 'N/A',
                     'user_currency' => $t->user ? $t->user->currency : 'BDT',
+                    'user_balance' => $t->user ? (float)$t->user->balance : 0.00,
                     'gateway' => $t->gateway,
                     'amount' => (float)$t->amount,
                     'fee' => (float)$t->fee,
@@ -1452,16 +1454,14 @@ class AdminController extends Controller
     /**
      * Approve or reject a withdrawal request.
      */
-    public function processWithdrawal(Request $request, $id)
+    public function processWithdrawal(Request $request, $id, $action = null)
     {
-        $validator = Validator::make($request->all(), [
-            'action' => 'required|in:approve,reject',
-        ]);
+        $action = $action ?? $request->route('action') ?? $request->input('action');
 
-        if ($validator->fails()) {
+        if (!in_array($action, ['approve', 'reject'])) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()->all()
+                'errors' => ['Invalid withdrawal action: must be approve or reject.']
             ], 422);
         }
 
@@ -1479,12 +1479,12 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'errors' => ['User associated with withdrawal not found.']], 404);
         }
 
-        if ($request->action === 'approve') {
+        if ($action === 'approve') {
             // Check if user has sufficient balance at approval time
             if ($user->balance < $transaction->amount) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['Insufficient user balance. Cannot approve this withdrawal.']
+                    'errors' => ['Insufficient user balance (Available: ' . number_format($user->balance, 2) . '). Cannot approve this withdrawal.']
                 ], 422);
             }
 
@@ -1494,13 +1494,29 @@ class AdminController extends Controller
 
             $transaction->status = 'Completed';
             $transaction->save();
-            return response()->json(['success' => true, 'message' => 'Withdrawal approved successfully. Balance deducted.']);
+
+            $this->logAdminAction('approve_withdrawal', [
+                'transaction_id' => $transaction->id,
+                'user_id'        => $user->id,
+                'user_email'     => $user->email,
+                'amount'         => $transaction->amount,
+                'remaining_bal'  => $user->balance,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Withdrawal #' . $id . ' approved successfully. Balance deducted: ৳' . number_format($transaction->amount, 2)]);
         } else {
-            // Reject: update status to Failed. No balance deduction occurred on submit, so no refund is needed.
+            // Reject: update status to Failed.
             $transaction->status = 'Failed';
             $transaction->save();
 
-            return response()->json(['success' => true, 'message' => 'Withdrawal request rejected successfully.']);
+            $this->logAdminAction('reject_withdrawal', [
+                'transaction_id' => $transaction->id,
+                'user_id'        => $user->id,
+                'user_email'     => $user->email,
+                'amount'         => $transaction->amount,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Withdrawal request #' . $id . ' rejected.']);
         }
     }
 
@@ -1952,6 +1968,9 @@ class AdminController extends Controller
         $request->validate([
             'site_name' => 'nullable|string|max:100',
             'demo_spins_limit' => 'nullable|integer|min:1|max:100',
+            'global_demo_balance' => 'nullable|numeric|min:100',
+            'demo_win_rate' => 'nullable|integer|min:1|max:100',
+            'real_house_profit_rate' => 'nullable|integer|min:1|max:100',
             'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg,gif|max:5120',
             'remove_logo' => 'nullable|boolean',
         ]);
@@ -1962,6 +1981,18 @@ class AdminController extends Controller
 
         if ($request->filled('demo_spins_limit')) {
             Setting::setVal('demo_spins_limit', (int)$request->demo_spins_limit);
+        }
+
+        if ($request->filled('global_demo_balance')) {
+            Setting::setVal('global_demo_balance', (float)$request->global_demo_balance);
+        }
+
+        if ($request->filled('demo_win_rate')) {
+            Setting::setVal('demo_win_rate', (int)$request->demo_win_rate);
+        }
+
+        if ($request->filled('real_house_profit_rate')) {
+            Setting::setVal('real_house_profit_rate', (int)$request->real_house_profit_rate);
         }
 
         if ($request->boolean('remove_logo')) {
@@ -1983,10 +2014,13 @@ class AdminController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Site branding and Demo limit settings saved successfully!',
+            'message' => 'Site branding, Demo balance, and Win/Loss settings saved successfully!',
             'site_name' => Setting::getVal('site_name', '1XBET'),
             'site_logo' => Setting::getVal('site_logo') ? asset(Setting::getVal('site_logo')) : null,
             'demo_spins_limit' => (int)Setting::getVal('demo_spins_limit', 3),
+            'global_demo_balance' => (float)Setting::getVal('global_demo_balance', 10000),
+            'demo_win_rate' => (int)Setting::getVal('demo_win_rate', 70),
+            'real_house_profit_rate' => (int)Setting::getVal('real_house_profit_rate', 70),
         ]);
     }
 
@@ -2000,7 +2034,266 @@ class AdminController extends Controller
             'site_name' => Setting::getVal('site_name', '1XBET'),
             'site_logo' => Setting::getVal('site_logo') ? asset(Setting::getVal('site_logo')) : null,
             'demo_spins_limit' => (int)Setting::getVal('demo_spins_limit', 3),
+            'global_demo_balance' => (float)Setting::getVal('global_demo_balance', 10000),
+            'demo_win_rate' => (int)Setting::getVal('demo_win_rate', 70),
+            'real_house_profit_rate' => (int)Setting::getVal('real_house_profit_rate', 70),
+        ]);
+    }
+
+    // =============================================
+    // SELLER / AGENT MANAGEMENT SYSTEM
+    // =============================================
+
+    /**
+     * Get all sellers for admin management.
+     */
+    public function getSellers()
+    {
+        $sellers = User::where('is_seller', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $data = $sellers->map(function ($s) {
+            $totalTransferred = SellerTransfer::where('seller_id', $s->id)->sum('amount');
+            $transfersCount   = SellerTransfer::where('seller_id', $s->id)->count();
+
+            return [
+                'id'                => $s->id,
+                'user_code'         => $s->user_code,
+                'name'              => $s->name,
+                'email'             => $s->email,
+                'mobile'            => $s->mobile ?: $s->seller_phone,
+                'seller_phone'      => $s->seller_phone,
+                'balance'           => number_format($s->balance, 2, '.', ''),
+                'seller_photo'      => ($s->seller_photo && file_exists(public_path($s->seller_photo))) ? asset($s->seller_photo) : asset('uploads/agent_profile_pictures/default_agent.png'),
+                'seller_status'     => $s->seller_status ?: 'active',
+                'is_blocked'        => (bool)$s->is_blocked,
+                'total_transferred' => number_format($totalTransferred, 2, '.', ''),
+                'transfers_count'   => $transfersCount,
+                'created_at'        => $s->created_at->format('d M Y, h:i A'),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'sellers' => $data,
+            'total_seller_balance' => number_format($sellers->sum('balance'), 2, '.', ''),
+            'total_transfers_sum'  => number_format(SellerTransfer::sum('amount'), 2, '.', ''),
+        ]);
+    }
+
+    /**
+     * Create a new Seller / Agent account.
+     */
+    public function createSeller(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'                  => 'required|string|max:100',
+            'email'                 => 'required|email|unique:users,email',
+            'password'              => 'required|string|min:6|confirmed',
+            'seller_phone'          => 'nullable|string|max:50',
+            'initial_balance'       => 'nullable|numeric|min:0',
+            'seller_photo'          => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()->all()
+            ], 422);
+        }
+
+        $photoPath = null;
+        if ($request->hasFile('seller_photo')) {
+            $file = $request->file('seller_photo');
+            $fileName = 'agent_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destDir = public_path('uploads/agent_profile_pictures');
+            if (!file_exists($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            $file->move($destDir, $fileName);
+            $photoPath = 'uploads/agent_profile_pictures/' . $fileName;
+        }
+
+        $code = strval(random_int(1000000000, 9999999999));
+        while (User::where('user_code', $code)->exists()) {
+            $code = strval(random_int(1000000000, 9999999999));
+        }
+
+        $initialBalance = (float)$request->input('initial_balance', 0);
+
+        $seller = User::create([
+            'user_code'     => $code,
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'mobile'        => $request->seller_phone,
+            'seller_phone'  => $request->seller_phone,
+            'seller_photo'  => $photoPath,
+            'seller_status' => 'active',
+            'balance'       => $initialBalance,
+            'is_seller'     => true,
+            'is_admin'      => false,
+            'currency'      => 'BDT',
+            'country'       => 'Bangladesh',
+        ]);
+
+        if ($initialBalance > 0) {
+            Transaction::create([
+                'user_id'  => $seller->id,
+                'type'     => 'Deposit',
+                'gateway'  => 'Admin Initial Credit',
+                'amount'   => $initialBalance,
+                'fee'      => 0,
+                'status'   => 'Completed',
+                'metadata' => ['notes' => 'Initial balance loaded by Admin upon seller creation']
+            ]);
+        }
+
+        $this->logAdminAction('create_seller', [
+            'seller_id'       => $seller->id,
+            'seller_email'    => $seller->email,
+            'user_code'       => $seller->user_code,
+            'initial_balance' => $initialBalance,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Seller '{$seller->name}' created successfully with User ID #{$seller->user_code}!",
+            'seller'  => $seller
+        ]);
+    }
+
+    /**
+     * Update existing Seller information.
+     */
+    public function updateSeller(Request $request, $id)
+    {
+        $seller = User::where('id', $id)->where('is_seller', true)->first();
+        if (!$seller) {
+            return response()->json(['success' => false, 'errors' => ['Seller not found.']], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name'          => 'required|string|max:100',
+            'email'         => 'required|email|unique:users,email,' . $seller->id,
+            'seller_phone'  => 'nullable|string|max:50',
+            'seller_status' => 'required|in:active,inactive',
+            'password'      => 'nullable|string|min:6',
+            'seller_photo'  => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        $seller->name = $request->name;
+        $seller->email = $request->email;
+        $seller->seller_phone = $request->seller_phone;
+        $seller->mobile = $request->seller_phone;
+        $seller->seller_status = $request->seller_status;
+
+        if ($request->filled('password')) {
+            $seller->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('seller_photo')) {
+            $file = $request->file('seller_photo');
+            $fileName = 'agent_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destDir = public_path('uploads/agent_profile_pictures');
+            if (!file_exists($destDir)) {
+                mkdir($destDir, 0777, true);
+            }
+            $file->move($destDir, $fileName);
+            $seller->seller_photo = 'uploads/agent_profile_pictures/' . $fileName;
+        }
+
+        $seller->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Seller '{$seller->name}' updated successfully!",
+            'seller'  => $seller
+        ]);
+    }
+
+    /**
+     * Add or Deduct balance for Seller.
+     */
+    public function adjustSellerBalance(Request $request, $id)
+    {
+        $seller = User::where('id', $id)->where('is_seller', true)->first();
+        if (!$seller) {
+            return response()->json(['success' => false, 'errors' => ['Seller not found.']], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'type'   => 'required|in:credit,debit',
+            'amount' => 'required|numeric|min:1',
+            'notes'  => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        $amount = (float)$request->amount;
+        $type   = $request->type;
+
+        if ($type === 'debit' && $seller->balance < $amount) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Cannot deduct more than current balance (Available: ৳' . number_format($seller->balance, 2) . ')']
+            ], 422);
+        }
+
+        if ($type === 'credit') {
+            $seller->balance += $amount;
+        } else {
+            $seller->balance -= $amount;
+        }
+        $seller->save();
+
+        Transaction::create([
+            'user_id'  => $seller->id,
+            'type'     => $type === 'credit' ? 'Deposit' : 'Withdraw',
+            'gateway'  => 'Admin Adjustment',
+            'amount'   => $amount,
+            'fee'      => 0,
+            'status'   => 'Completed',
+            'metadata' => [
+                'adjustment_type' => $type,
+                'admin_notes'     => $request->notes,
+                'new_balance'     => $seller->balance
+            ]
+        ]);
+
+        return response()->json([
+            'success'     => true,
+            'message'     => 'Seller balance updated! New balance: ৳' . number_format($seller->balance, 2),
+            'new_balance' => number_format($seller->balance, 2, '.', '')
+        ]);
+    }
+
+    /**
+     * Delete or Remove Seller status.
+     */
+    public function deleteSeller($id)
+    {
+        $seller = User::where('id', $id)->where('is_seller', true)->first();
+        if (!$seller) {
+            return response()->json(['success' => false, 'errors' => ['Seller not found.']], 404);
+        }
+
+        $seller->is_seller = false;
+        $seller->seller_status = 'inactive';
+        $seller->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Seller role removed for '{$seller->name}'."
         ]);
     }
 }
+
 

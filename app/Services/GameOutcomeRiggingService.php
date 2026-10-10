@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use App\Models\User;
 use Exception;
 
@@ -17,6 +18,14 @@ class GameOutcomeRiggingService
             return 'normal';
         }
         return $user->game_rig_mode ?: 'normal';
+    }
+
+    /**
+     * Get Global Demo Balance configured by Admin
+     */
+    public function getGlobalDemoBalance(): float
+    {
+        return (float)Setting::getVal('global_demo_balance', 10000.00);
     }
 
     /**
@@ -41,48 +50,61 @@ class GameOutcomeRiggingService
     }
 
     /**
-     * Check if coin toss / heads or tails outcome should be rigged.
+     * Determine if player should win the current bet/round.
+     * Rules:
+     * - Admin user rig 'always_win': 100% win
+     * - Admin user rig 'always_lose': 0% win (100% lose)
+     * - Demo Mode: 70% win rate for player
+     * - Real Mode: 70% House Profit (30% win rate for player)
      */
-    public function determineCoinTossOutcome(?User $user, string $userSelection): string
+    public function shouldPlayerWin(?User $user, bool $isDemo = false): bool
     {
         $mode = $this->getUserRigMode($user);
-        $userSelection = strtolower(trim($userSelection));
-        $opposite = ($userSelection === 'heads' || $userSelection === 'head' || $userSelection === 'h') ? 'tails' : 'heads';
-
         if ($mode === 'always_win') {
-            return ($userSelection === 'head' || $userSelection === 'h') ? 'heads' : $userSelection;
+            return true;
         }
-
         if ($mode === 'always_lose') {
-            return $opposite;
+            return false;
         }
 
-        // Standard 50-50 / house margin
-        return (rand(1, 100) <= 48) ? (($userSelection === 'head' || $userSelection === 'h') ? 'heads' : $userSelection) : $opposite;
+        if ($isDemo) {
+            // Demo mode: 70% win rate
+            return (rand(1, 100) <= 70);
+        }
+
+        // Real mode: Admin 70% profit, Player 30% win rate
+        return (rand(1, 100) <= 30);
     }
 
     /**
-     * Check if slot spin should be rigged.
-     * Returns 'win' | 'lose' | 'normal'
+     * Check if slot spin should result in win or lose.
+     * Returns 'win' | 'lose'
      */
-    public function determineSpinRigAction(?User $user): string
+    public function determineSpinRigAction(?User $user, bool $isDemo = false): string
     {
-        $mode = $this->getUserRigMode($user);
-        if ($mode === 'always_win') {
-            return 'win';
-        }
-        if ($mode === 'always_lose') {
-            return 'lose';
-        }
-        return 'normal';
+        return $this->shouldPlayerWin($user, $isDemo) ? 'win' : 'lose';
+    }
+
+    /**
+     * Check if coin toss / heads or tails outcome should be win or loss for user.
+     */
+    public function determineCoinTossOutcome(?User $user, string $userSelection, bool $isDemo = false): string
+    {
+        $userSelection = strtolower(trim($userSelection));
+        $isHeads = ($userSelection === 'heads' || $userSelection === 'head' || $userSelection === 'h');
+        $normSelection = $isHeads ? 'heads' : 'tails';
+        $opposite = $isHeads ? 'tails' : 'heads';
+
+        $isWin = $this->shouldPlayerWin($user, $isDemo);
+        return $isWin ? $normSelection : $opposite;
     }
 
     /**
      * Check if lottery number / color pick should be rigged.
-     * $userPicks: Array of numbers or colors user bet on (e.g. [0, 5, 'green'])
-     * $candidateNumbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+     * $userNumbers: Array of numbers user bet on (e.g. [0, 5, 8])
+     * $allNumbers: Array of possible numbers [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
      */
-    public function determineLotteryWinningNumber(?User $user, array $userNumbers, array $allNumbers = [0,1,2,3,4,5,6,7,8,9]): ?int
+    public function determineLotteryWinningNumber(?User $user, array $userNumbers, array $allNumbers = [0,1,2,3,4,5,6,7,8,9], bool $isDemo = false): ?int
     {
         $mode = $this->getUserRigMode($user);
         if ($mode === 'always_win' && !empty($userNumbers)) {
@@ -96,6 +118,28 @@ class GameOutcomeRiggingService
             }
         }
 
-        return null; // Let standard house profit engine decide
+        if ($isDemo) {
+            // 70% win chance in demo
+            $shouldWin = (rand(1, 100) <= 70);
+            if ($shouldWin && !empty($userNumbers)) {
+                return $userNumbers[array_rand($userNumbers)];
+            }
+            $losingNumbers = array_values(array_diff($allNumbers, $userNumbers));
+            if (!empty($losingNumbers)) {
+                return $losingNumbers[array_rand($losingNumbers)];
+            }
+        } else {
+            // Real mode: 70% house profit, 30% player win
+            $shouldWin = (rand(1, 100) <= 30);
+            if ($shouldWin && !empty($userNumbers)) {
+                return $userNumbers[array_rand($userNumbers)];
+            }
+            $losingNumbers = array_values(array_diff($allNumbers, $userNumbers));
+            if (!empty($losingNumbers)) {
+                return $losingNumbers[array_rand($losingNumbers)];
+            }
+        }
+
+        return null;
     }
 }

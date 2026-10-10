@@ -945,6 +945,8 @@
                 });
         }
 
+        let trxCelebratedBets = new Set();
+
         function fetchMyHistory() {
             const list = document.getElementById('my-history-list');
             list.innerHTML = '<div class="text-center py-6 text-gray-400 text-xs">লোড হচ্ছে...</div>';
@@ -965,6 +967,20 @@
                             </div>
                         `;
                         return;
+                    }
+
+                    if (Array.isArray(data.bets)) {
+                        data.bets.slice(0, 5).forEach(b => {
+                            if (b.status === 'won' && !trxCelebratedBets.has(b.id)) {
+                                trxCelebratedBets.add(b.id);
+                                if (typeof window.triggerWinCelebration === 'function') {
+                                    window.triggerWinCelebration({
+                                        amount: parseFloat(b.win_amount || (b.total_amount * 1.96)),
+                                        title: 'TRX WINGO LOTTERY WIN!'
+                                    });
+                                }
+                            }
+                        });
                     }
 
                     list.innerHTML = '';

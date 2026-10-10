@@ -2003,6 +2003,13 @@ function makeParticle(x,y){
     if (typeof soundEngine !== 'undefined') {
       soundEngine.playWin();
     }
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: result.totalWin,
+        multiplier: totalBet() > 0 ? (result.totalWin / totalBet()) : 0,
+        title: 'ELVES KINGDOM WIN!'
+      });
+    }
     for (const win of result.wins){
       if (win.isScatter){
         lightPip(-1);

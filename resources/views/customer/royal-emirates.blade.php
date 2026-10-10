@@ -22,12 +22,19 @@
     --red:#e0265f;
     --blue-glow:#4fc3f7;
     --text-light:#eef3fb;
+  *{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-user-drag:none;
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
+  img { pointer-events: none; -webkit-user-drag: none; }
   html,body{
     margin:0;padding:0;min-height:100vh;
     background:#040d1c;
-    font-family:'Outfit','Noto Sans Bengali',sans-serif;
+    font-family:'Outfit','Montserrat',sans-serif;
     color:var(--text-light);
     overflow-x:hidden;
   }
@@ -467,7 +474,7 @@
   }
 </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <!-- 1XBET OFFICIAL TOP HEADER -->
 @include('customer.header')
@@ -605,16 +612,16 @@
     <div style="width:68px; height:68px; border-radius:50%; background:rgba(232,185,74,0.15); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:var(--gold); font-size:30px;">
       <i class="fa-solid fa-wallet"></i>
     </div>
-    <h4 style="color:#fff; font-weight:800; margin-bottom:10px;">ডেমো লিমিট শেষ!</h4>
+    <h4 style="color:#fff; font-weight:800; margin-bottom:10px;">Demo Limit Reached!</h4>
     <p style="color:#cbd5e1; font-size:13.5px; line-height:1.6; margin-bottom:24px;">
-      আপনার <span id="modalDemoLimitText">{{ \App\Models\Setting::getVal('demo_spins_limit', 3) }}</span>টি ফ্রি ডেমো স্পিনের লিমিট শেষ হয়ে গেছে। আসল টাকা জিতে নিতে এবং আনলিমিটেড স্পিন ও ৫,০০০ গুণ Grand Jackpot উপভোগ করতে এখনই ডিপোজিট করুন!
+      Your <span id="modalDemoLimitText">{{ \App\Models\Setting::getVal('demo_spins_limit', 3) }}</span> free demo spins limit is completed. Deposit funds now to win real money and enjoy unlimited spins and the 5,000x Grand Jackpot!
     </p>
     <div style="display:flex; gap:12px; justify-content:center;">
       <a href="{{ route('dashboard') }}" style="flex:1; padding:12px; border-radius:10px; background:linear-gradient(135deg,#e8b94a,#caa01f); color:#000; font-weight:800; text-decoration:none; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
-        <i class="fa-solid fa-circle-dollar-to-slot"></i> ডিপোজিট করুন
+        <i class="fa-solid fa-circle-dollar-to-slot"></i> Deposit Now
       </a>
       <button onclick="closeDepositPopup()" style="padding:12px 18px; border-radius:10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; font-weight:700; cursor:pointer;">
-        বন্ধ করুন
+        Close
       </button>
     </div>
   </div>
@@ -900,7 +907,7 @@ window.setPlayMode = function(mode) {
       bottomModeVal.style.color = '#22d3ee';
       bottomModeVal.innerHTML = `<i class="fa-solid fa-gamepad"></i> DEMO PLAY (${globalDemoSpinsLimit})`;
     }
-    showToast(`🎮 ডেমো মোড সক্রিয় হয়েছে (${globalDemoSpinsLimit} স্পিন লিমিট)`);
+    showToast(`🎮 Demo Mode Active (${globalDemoSpinsLimit} spins limit)`);
   } else {
     isDemoMode = false;
     balance = realBalance;
@@ -915,7 +922,7 @@ window.setPlayMode = function(mode) {
       bottomModeVal.style.color = '#10b981';
       bottomModeVal.innerHTML = '<i class="fa-solid fa-coins"></i> REAL PLAY';
     }
-    showToast('💰 আসল টাকা মোড সক্রিয় হয়েছে');
+    showToast('💰 Real Money Mode Active');
   }
   updateBalanceUi();
 };
@@ -1020,7 +1027,7 @@ function triggerRoyalSpin() {
   }
 
   if (!isDemoMode && balance < bet) {
-    showToast('পর্যাপ্ত রিয়েল ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
+    showToast('Insufficient real wallet balance! Please deposit to continue.');
     document.getElementById('depositPopupModal').style.display = 'flex';
     return;
   }
@@ -1084,7 +1091,7 @@ function triggerRoyalSpin() {
     setSpinUiBusy(false);
     balance += bet;
     updateBalanceUi();
-    showToast('সংযোগ বিচ্ছিন্ন হয়েছে। পুনরায় চেষ্টা করুন।');
+    showToast('Connection interrupted. Please try again.');
   });
 }
 
@@ -1117,6 +1124,12 @@ function handleSpinResult(data, bet) {
   if (data.is_win && data.win_amount > 0) {
     soundEngine.playWin(data.audio?.win);
     showToast('আপনি জিতেছেন ৳ ' + money(data.win_amount) + '!');
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: data.win_amount,
+        title: 'ROYAL EMIRATES WIN!'
+      });
+    }
     triggerCoinBurst(false);
   }
 }
@@ -1155,6 +1168,12 @@ function endHoldAndSpin(data) {
     winText = `🏆 ${data.jackpot_won} JACKPOT জয়! ৳ ${money(data.win_amount)}`;
   }
   showToast(winText);
+  if (typeof window.triggerWinCelebration === 'function') {
+    window.triggerWinCelebration({
+      amount: data.win_amount,
+      title: data.jackpot_won ? `${data.jackpot_won} JACKPOT WIN!` : 'HOLD & SPIN BONUS WIN!'
+    });
+  }
   triggerCoinBurst(true);
 
   setTimeout(() => {

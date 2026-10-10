@@ -1706,6 +1706,13 @@ function resolveSpin(grid){
     }
     state.winThisSpin = applied;
     sfxWin();
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: applied,
+        multiplier: state.bet > 0 ? (applied / state.bet) : 0,
+        title: 'SUPER ACE DELUXE WIN!'
+      });
+    }
   } else {
     state.winThisSpin = 0;
   }

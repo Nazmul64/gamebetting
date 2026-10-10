@@ -1948,7 +1948,7 @@
             e.preventDefault();
             const gatewayId = document.getElementById('withdraw-gateway-id').value;
             if (!gatewayId) {
-                alert("Please select a payment gateway logo.");
+                alert("Please select a withdrawal payment method from the dropdown.");
                 return;
             }
 

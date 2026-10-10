@@ -1218,6 +1218,14 @@ function handleWinCascades(data) {
   toast.innerText = `🍬 WIN ৳ ${parseFloat(data.win_amount).toFixed(2)} (${data.tumble_count} Tumbles!)`;
   toast.style.display = 'block';
 
+  if (typeof window.triggerWinCelebration === 'function') {
+    window.triggerWinCelebration({
+      amount: data.win_amount,
+      multiplier: totalBet > 0 ? (data.win_amount / totalBet) : 0,
+      title: 'BONBON SWEET WIN!'
+    });
+  }
+
   document.getElementById('winDisplay').innerText = '৳ ' + parseFloat(data.win_amount).toFixed(2);
 
   // Pulse matched winning candies

@@ -46,8 +46,12 @@ class SoundEngine {
         
         // Handle custom background music if set
         if (window.gameBgMusicUrl) {
-            if (!this.bgAudio) {
+            if (!this.bgAudio || this.bgAudio.getAttribute('data-src') !== window.gameBgMusicUrl) {
+                if (this.bgAudio) {
+                    try { this.bgAudio.pause(); } catch(e) {}
+                }
                 this.bgAudio = new Audio(window.gameBgMusicUrl);
+                this.bgAudio.setAttribute('data-src', window.gameBgMusicUrl);
                 this.bgAudio.loop = true;
             }
             if (this.isMuted) return;
@@ -167,8 +171,12 @@ class SoundEngine {
         // Play custom countdown tick if set
         if (window.gameCountdownSoundUrl) {
             try {
-                const tickSound = new Audio(window.gameCountdownSoundUrl);
-                tickSound.play().catch(e => console.log("Tick audio play failed:", e));
+                if (!this.tickAudio || this.tickAudio.getAttribute('data-src') !== window.gameCountdownSoundUrl) {
+                    this.tickAudio = new Audio(window.gameCountdownSoundUrl);
+                    this.tickAudio.setAttribute('data-src', window.gameCountdownSoundUrl);
+                }
+                this.tickAudio.currentTime = 0;
+                this.tickAudio.play().catch(e => console.log("Tick audio play failed:", e));
             } catch (e) {}
             return;
         }
@@ -1165,6 +1173,14 @@ function triggerCashout(panelId) {
     updatePlayerBetRowGreen(panelId);
     updateBettingButtonUI(panelId);
     syncCashoutToDatabase(state.odds, state.win);
+
+    if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+            amount: state.win,
+            multiplier: state.odds,
+            title: state.odds >= 5 ? 'SUPER CASHOUT!' : 'WINNER CASHOUT!'
+        });
+    }
 }
 
 // Phase 3: Crash
@@ -1613,493 +1629,348 @@ function drawPlaneGlow(x, y) {
     ctx.restore();
 }
 
-// Render a large, highly-detailed golden supersonic fighter jet plane with a pilot visible inside the canopy
+// ==============================================
+// MASTER 100-DESIGN PROCEDURAL FLIGHT RENDERER (IN-GAME)
+// ==============================================
+const GAME_CRASH_PALETTES = [
+    { main: '#ffd13b', sec: '#b28005', hi: '#ffffff', glow: '#f59e0b', dark: '#451a03' }, // 0: Gold
+    { main: '#00f2fe', sec: '#0284c7', hi: '#e0f2fe', glow: '#00f2fe', dark: '#082f49' }, // 1: Cyan
+    { main: '#ef4444', sec: '#991b1b', hi: '#fee2e2', glow: '#ef4444', dark: '#450a0a' }, // 2: Crimson
+    { main: '#10b981', sec: '#047857', hi: '#d1fae5', glow: '#10b981', dark: '#022c22' }, // 3: Emerald
+    { main: '#8b5cf6', sec: '#5b21b6', hi: '#ede9fe', glow: '#8b5cf6', dark: '#2e1065' }, // 4: Violet
+    { main: '#334155', sec: '#0f172a', hi: '#94a3b8', glow: '#64748b', dark: '#020617' }, // 5: Carbon
+    { main: '#f97316', sec: '#c2410c', hi: '#ffedd5', glow: '#f97316', dark: '#431407' }, // 6: Orange
+    { main: '#e2e8f0', sec: '#64748b', hi: '#ffffff', glow: '#38bdf8', dark: '#1e293b' }, // 7: Arctic
+    { main: '#ec4899', sec: '#9d174d', hi: '#fce7f3', glow: '#ec4899', dark: '#500724' }, // 8: Magenta
+    { main: '#65a30d', sec: '#365314', hi: '#ecfccb', glow: '#84cc16', dark: '#1a2e05' }  // 9: Camo
+];
+
 function drawHelicopterPlane(x, y, isFlying) {
     ctx.save();
-    
     ctx.translate(x, y);
     ctx.scale(1.6, 1.6);
     
-    ctx.shadowBlur = 10;
-    
-    const designIndex = window.activeHelicopterDesign || 1;
+    const designIndex = parseInt(window.activeHelicopterDesign) || 1;
+    const gameKey = window.currentGameKey || 'helicopterx';
     const time = Date.now();
-    
-    let targetTilt = -20 * Math.PI / 180;
-    if (isFlying && designIndex !== 4 && designIndex !== 8) { // Skip tilt for UFO and Balloon
-        const tiltOsc = Math.sin(time * 0.015) * 0.02;
+    const idx = designIndex;
+    const arch = (idx - 1) % 10;
+    const palIdx = Math.floor((idx - 1) / 10) % 10;
+    const pal = GAME_CRASH_PALETTES[palIdx];
+
+    // Dynamic Hover Bobbing and Tilt
+    let targetTilt = -18 * Math.PI / 180;
+    if (isFlying && arch !== 1 && gameKey !== 'crash') {
+        const tiltOsc = Math.sin(time * 0.012 + idx) * 0.03;
         ctx.rotate(targetTilt + tiltOsc);
-    } else if (designIndex !== 4 && designIndex !== 8) {
+    } else if (arch !== 1 && gameKey !== 'crash') {
         ctx.rotate(targetTilt);
     }
-    
-    switch(parseInt(designIndex)) {
-        case 1: // Gold Fighter Jet
-            ctx.shadowColor = 'rgba(255, 190, 26, 0.6)';
-            ctx.shadowBlur = 15;
+
+    // Glow aura
+    ctx.shadowColor = pal.glow;
+    ctx.shadowBlur = 12;
+
+    if (gameKey === 'helicopterx') {
+        // Main Hull
+        ctx.fillStyle = pal.sec;
+        ctx.beginPath();
+        ctx.ellipse(-2, 2, 22, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = pal.main;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Tail Boom
+        ctx.strokeStyle = pal.sec;
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(-16, 0);
+        ctx.lineTo(-38, -5);
+        ctx.stroke();
+
+        // Vertical Tail Fin
+        ctx.fillStyle = pal.main;
+        ctx.beginPath();
+        ctx.moveTo(-38, -14);
+        ctx.lineTo(-34, -4);
+        ctx.lineTo(-42, 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Spinning Tail Rotor
+        ctx.save();
+        ctx.translate(-38, -6);
+        ctx.rotate(time * 0.18 + idx);
+        ctx.strokeStyle = pal.hi;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(-8, 0); ctx.lineTo(8, 0);
+        ctx.moveTo(0, -8); ctx.lineTo(0, 8);
+        ctx.stroke();
+        ctx.restore();
+
+        // Landing Skids
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-8, 10); ctx.lineTo(-8, 16);
+        ctx.moveTo(10, 10); ctx.lineTo(10, 16);
+        ctx.moveTo(-18, 16); ctx.lineTo(18, 16);
+        ctx.stroke();
+
+        // Cockpit Glass
+        ctx.fillStyle = 'rgba(168, 225, 255, 0.75)';
+        ctx.beginPath();
+        ctx.arc(8, -1, 7, -Math.PI / 2, Math.PI / 2);
+        ctx.fill();
+
+        // Main Rotor Mast & Spinning Blades
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, -10); ctx.lineTo(0, -16);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(0, -16);
+        const bladeScale = Math.cos(time * 0.12 + idx);
+        ctx.strokeStyle = pal.hi;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-36 * bladeScale, 0);
+        ctx.lineTo(36 * bladeScale, 0);
+        ctx.stroke();
+        ctx.restore();
+
+        // Side Weapon
+        if (arch % 2 === 0) {
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(-6, 4, 12, 3);
+        }
+
+    } else if (gameKey === '1xaero') {
+        // Jet Afterburner Flame
+        if (isFlying) {
+            ctx.save();
+            const flameLen = 22 + Math.sin(time * 0.06 + idx) * 8;
+            const fireGrad = ctx.createLinearGradient(-24 - flameLen, 0, -24, 0);
+            fireGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+            fireGrad.addColorStop(0.5, pal.glow);
+            fireGrad.addColorStop(1, '#ffffff');
+            ctx.fillStyle = fireGrad;
+            ctx.beginPath();
+            ctx.moveTo(-24, -4);
+            ctx.lineTo(-24 - flameLen, 0);
+            ctx.lineTo(-24, 4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Wings
+        ctx.fillStyle = pal.sec;
+        ctx.beginPath();
+        ctx.moveTo(-6, 3);
+        ctx.lineTo(-20, 18);
+        ctx.lineTo(-6, 18);
+        ctx.lineTo(10, 3);
+        ctx.closePath();
+        ctx.fill();
+
+        // Fuselage
+        const jetGrad = ctx.createLinearGradient(-26, 0, 28, 0);
+        jetGrad.addColorStop(0, pal.sec);
+        jetGrad.addColorStop(0.5, pal.main);
+        jetGrad.addColorStop(1, pal.hi);
+        ctx.fillStyle = jetGrad;
+        ctx.beginPath();
+        ctx.moveTo(28, -1);
+        ctx.bezierCurveTo(18, -6, -2, -7, -22, -5);
+        ctx.lineTo(-25, -4);
+        ctx.lineTo(-25, 2);
+        ctx.lineTo(-22, 4);
+        ctx.bezierCurveTo(-2, 6, 18, 4, 28, -1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Canopy Glass
+        ctx.fillStyle = 'rgba(168, 225, 255, 0.7)';
+        ctx.beginPath();
+        ctx.moveTo(4, -4);
+        ctx.quadraticCurveTo(14, -4, 17, -1);
+        ctx.quadraticCurveTo(9, 2, 2, 1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Tail Fin
+        ctx.fillStyle = pal.main;
+        ctx.beginPath();
+        ctx.moveTo(-8, -5);
+        ctx.lineTo(-22, -18);
+        ctx.lineTo(-26, -18);
+        ctx.closePath();
+        ctx.fill();
+
+    } else if (gameKey === 'aero') {
+        // Spinning Front Propeller
+        ctx.save();
+        ctx.translate(22, 0);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.rotate(time * 0.14 + idx);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(0, -22); ctx.lineTo(0, 22);
+        ctx.stroke();
+        ctx.restore();
+
+        // Fuselage
+        ctx.fillStyle = pal.sec;
+        ctx.beginPath();
+        ctx.moveTo(20, -4);
+        ctx.lineTo(-24, -2);
+        ctx.lineTo(-24, 2);
+        ctx.lineTo(20, 4);
+        ctx.closePath();
+        ctx.fill();
+
+        // Biplane Wings
+        ctx.fillStyle = pal.main;
+        ctx.fillRect(-6, -16, 16, 4);
+        ctx.fillRect(-6, 12, 16, 4);
+
+        // Struts
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, -12); ctx.lineTo(0, 12);
+        ctx.moveTo(6, -12); ctx.lineTo(6, 12);
+        ctx.stroke();
+
+        // Tail Rudder & Wheels
+        ctx.fillStyle = pal.main;
+        ctx.fillRect(-28, -10, 5, 16);
+
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(6, 9, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+    } else if (gameKey === 'crashx') {
+        if (arch % 2 === 0) {
+            // Orbital Rocket
             if (isFlying) {
                 ctx.save();
-                ctx.shadowColor = '#f06424';
-                ctx.shadowBlur = 20;
-                const flameLength = 24 + Math.sin(time * 0.055) * 8;
-                const fireGrad = ctx.createLinearGradient(-25 - flameLength, 0, -25, 0);
-                fireGrad.addColorStop(0, 'rgba(235, 64, 52, 0)');
-                fireGrad.addColorStop(0.5, '#f06424');
-                fireGrad.addColorStop(1, '#ffbe1a');
-                ctx.fillStyle = fireGrad;
-                ctx.beginPath();
-                ctx.moveTo(-24, -4);
-                ctx.lineTo(-24 - flameLength, 0);
-                ctx.lineTo(-24, 4);
-                ctx.closePath();
-                ctx.fill();
-                ctx.restore();
-            }
-            ctx.fillStyle = '#b28005';
-            ctx.beginPath();
-            ctx.moveTo(-8, 3);
-            ctx.lineTo(-18, 18);
-            ctx.lineTo(-5, 18);
-            ctx.lineTo(8, 3);
-            ctx.closePath();
-            ctx.fill();
-            
-            const goldGrad = ctx.createLinearGradient(-25, 0, 25, 0);
-            goldGrad.addColorStop(0, '#e5a910');
-            goldGrad.addColorStop(0.5, '#ffd13b');
-            goldGrad.addColorStop(1, '#ffffff');
-            ctx.fillStyle = goldGrad;
-            ctx.beginPath();
-            ctx.moveTo(28, -1);
-            ctx.bezierCurveTo(20, -5, 0, -7, -20, -5);
-            ctx.lineTo(-24, -4);
-            ctx.lineTo(-24, 2);
-            ctx.lineTo(-20, 3);
-            ctx.bezierCurveTo(0, 5, 20, 3, 28, -1);
-            ctx.closePath();
-            ctx.fill();
-            
-            ctx.fillStyle = '#3c3c3c';
-            ctx.fillRect(-25, -4, 2, 6);
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath();
-            ctx.arc(10.5, -2.0, 3.2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(168, 225, 255, 0.55)';
-            ctx.beginPath();
-            ctx.moveTo(6, -4);
-            ctx.quadraticCurveTo(15, -4, 18, -1);
-            ctx.quadraticCurveTo(10, 2, 4, 1);
-            ctx.closePath();
-            ctx.fill();
-            ctx.fillStyle = '#f06424';
-            ctx.beginPath();
-            ctx.moveTo(-8, -5);
-            ctx.lineTo(-21, -19);
-            ctx.lineTo(-26, -19);
-            ctx.closePath();
-            ctx.fill();
-            break;
-
-        case 2: // Classic Chopper
-            ctx.shadowColor = 'rgba(30, 58, 138, 0.4)';
-            ctx.fillStyle = '#1e3a8a';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 14, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.strokeStyle = '#1e3a8a';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(-15, 0);
-            ctx.lineTo(-35, -5);
-            ctx.stroke();
-
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(-37, -12, 4, 10);
-            ctx.save();
-            ctx.translate(-35, -7);
-            ctx.rotate(time * 0.15);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(-8, 0); ctx.lineTo(8, 0);
-            ctx.moveTo(0, -8); ctx.lineTo(0, 8);
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.strokeStyle = '#64748b';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(-10, 14); ctx.lineTo(-10, 20);
-            ctx.moveTo(10, 14); ctx.lineTo(10, 20);
-            ctx.moveTo(-18, 20); ctx.lineTo(18, 20);
-            ctx.stroke();
-
-            ctx.fillStyle = 'rgba(147, 197, 253, 0.6)';
-            ctx.beginPath();
-            ctx.arc(8, -2, 8, -Math.PI/2, Math.PI/2);
-            ctx.fill();
-
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(0, -14); ctx.lineTo(0, -19);
-            ctx.stroke();
-
-            ctx.save();
-            ctx.translate(0, -19);
-            const bladeScale = Math.cos(time * 0.1);
-            ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(-35 * bladeScale, 0);
-            ctx.lineTo(35 * bladeScale, 0);
-            ctx.stroke();
-            ctx.restore();
-            break;
-
-        case 3: // Space Rocket
-            ctx.rotate(Math.PI / 4);
-            ctx.shadowColor = 'rgba(239, 68, 68, 0.4)';
-            if (isFlying) {
-                ctx.save();
-                const plume = 15 + Math.sin(time * 0.08) * 6;
-                const fire = ctx.createLinearGradient(0, 15, 0, 15 + plume);
-                fire.addColorStop(0, '#ffbe1a');
-                fire.addColorStop(0.5, '#f06424');
+                const plume = 18 + Math.sin(time * 0.08 + idx) * 6;
+                const fire = ctx.createLinearGradient(0, 14, 0, 14 + plume);
+                fire.addColorStop(0, '#ffffff');
+                fire.addColorStop(0.4, pal.glow);
                 fire.addColorStop(1, 'rgba(239, 68, 68, 0)');
                 ctx.fillStyle = fire;
                 ctx.beginPath();
-                ctx.moveTo(-8, 15);
-                ctx.lineTo(0, 15 + plume);
-                ctx.lineTo(8, 15);
+                ctx.moveTo(-7, 14);
+                ctx.lineTo(0, 14 + plume);
+                ctx.lineTo(7, 14);
                 ctx.closePath();
                 ctx.fill();
                 ctx.restore();
             }
-            ctx.fillStyle = '#f8fafc';
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = pal.hi;
             ctx.beginPath();
-            ctx.moveTo(0, -25);
-            ctx.bezierCurveTo(10, -10, 10, 10, 8, 15);
-            ctx.lineTo(-8, 15);
-            ctx.bezierCurveTo(-10, 10, -10, -10, 0, -25);
+            ctx.moveTo(0, -24);
+            ctx.bezierCurveTo(9, -10, 9, 10, 7, 14);
+            ctx.lineTo(-7, 14);
+            ctx.bezierCurveTo(-9, 10, -9, -10, 0, -24);
             ctx.fill();
 
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = pal.main;
             ctx.beginPath();
-            ctx.moveTo(0, -25);
-            ctx.bezierCurveTo(7, -15, 7, -10, 7, -8);
-            ctx.lineTo(-7, -8);
-            ctx.bezierCurveTo(-7, -10, -7, -15, 0, -25);
+            ctx.moveTo(-7, 4); ctx.lineTo(-15, 16); ctx.lineTo(-7, 14); ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(7, 4); ctx.lineTo(15, 16); ctx.lineTo(7, 14); ctx.fill();
+
+            ctx.fillStyle = pal.glow;
+            ctx.beginPath();
+            ctx.arc(0, -3, 4, 0, Math.PI * 2);
             ctx.fill();
-
-            ctx.beginPath();
-            ctx.moveTo(-8, 5); ctx.lineTo(-16, 17); ctx.lineTo(-8, 15); ctx.fill();
-            ctx.beginPath();
-            ctx.moveTo(8, 5); ctx.lineTo(16, 17); ctx.lineTo(8, 15); ctx.fill();
-
-            ctx.fillStyle = '#0f172a';
-            ctx.beginPath();
-            ctx.arc(0, -2, 5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#93c5fd';
-            ctx.beginPath();
-            ctx.arc(0, -2, 3.8, 0, Math.PI * 2);
-            ctx.fill();
-            break;
-
-        case 4: // Alien UFO
-            ctx.shadowColor = 'rgba(34, 197, 94, 0.4)';
-            if (isFlying) {
-                ctx.save();
-                const beamGrad = ctx.createLinearGradient(0, 5, 0, 45);
-                beamGrad.addColorStop(0, 'rgba(34, 197, 94, 0.4)');
-                beamGrad.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
-                ctx.fillStyle = beamGrad;
-                ctx.beginPath();
-                ctx.moveTo(-10, 5);
-                ctx.lineTo(-25, 45);
-                ctx.lineTo(25, 45);
-                ctx.lineTo(10, 5);
-                ctx.closePath();
-                ctx.fill();
-                ctx.restore();
-            }
-            ctx.fillStyle = '#64748b';
-            ctx.beginPath();
-            ctx.ellipse(0, 2, 28, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            const lightColor = Math.floor(time / 200) % 2 === 0 ? '#ffbe1a' : '#22c55e';
-            ctx.fillStyle = lightColor;
-            for (let angle = -2.5; angle <= 2.5; angle += 0.8) {
-                ctx.beginPath();
-                ctx.arc(Math.sin(angle) * 23, 2 + Math.cos(angle)*1.2, 2, 0, Math.PI*2);
-                ctx.fill();
-            }
-
-            ctx.fillStyle = 'rgba(52, 211, 153, 0.7)';
-            ctx.beginPath();
-            ctx.arc(0, -2, 11, Math.PI, 0);
-            ctx.fill();
-
-            ctx.fillStyle = '#064e3b';
-            ctx.beginPath();
-            ctx.arc(0, -5, 3, 0, Math.PI*2);
-            ctx.fill();
-            ctx.fillRect(-1.5, -3, 3, 4);
-            break;
-
-        case 5: // Stealth Bomber
-            ctx.shadowColor = 'rgba(139, 92, 246, 0.4)';
-            if (isFlying) {
-                ctx.save();
-                ctx.strokeStyle = '#8b5cf6';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(-10, 7);
-                ctx.lineTo(-25, 7);
-                ctx.stroke();
-                ctx.restore();
-            }
-            ctx.fillStyle = '#1e293b';
-            ctx.beginPath();
-            ctx.moveTo(30, 0);
-            ctx.lineTo(-25, 20);
-            ctx.lineTo(-12, 0);
-            ctx.lineTo(-25, -20);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(30, 0);
-            ctx.lineTo(-12, 0);
-            ctx.stroke();
-
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath();
-            ctx.arc(-22, 18, 1.5, 0, Math.PI*2);
-            ctx.arc(-22, -18, 1.5, 0, Math.PI*2);
-            ctx.fill();
-            break;
-
-        case 6: // Cyber Drone
-            ctx.shadowColor = 'rgba(6, 182, 212, 0.4)';
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = '#06b6d4';
+        } else {
+            // Cyber Drone
+            ctx.fillStyle = pal.dark;
+            ctx.strokeStyle = pal.main;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(0, 0, 8, 0, Math.PI*2);
+            ctx.arc(0, 0, 9, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(-6, -6); ctx.lineTo(-18, -18);
-            ctx.moveTo(6, -6); ctx.lineTo(18, -18);
-            ctx.moveTo(-6, 6); ctx.lineTo(-18, 18);
-            ctx.moveTo(6, 6); ctx.lineTo(18, 18);
-            ctx.stroke();
-
-            const rotAngle = time * 0.1;
-            const arms = [
-                {x: -18, y: -18}, {x: 18, y: -18},
-                {x: -18, y: 18}, {x: 18, y: 18}
-            ];
+            const arms = [{x: -16, y: -16}, {x: 16, y: -16}, {x: -16, y: 16}, {x: 16, y: 16}];
+            const rotAngle = time * 0.12 + idx;
             arms.forEach(arm => {
-                ctx.fillStyle = '#0f172a';
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 2.5;
                 ctx.beginPath();
-                ctx.arc(arm.x, arm.y, 4, 0, Math.PI*2);
-                ctx.fill();
+                ctx.moveTo(0, 0); ctx.lineTo(arm.x, arm.y);
+                ctx.stroke();
 
                 ctx.save();
                 ctx.translate(arm.x, arm.y);
                 ctx.rotate(rotAngle);
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.strokeStyle = pal.hi;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.moveTo(-12, 0); ctx.lineTo(12, 0);
+                ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
                 ctx.stroke();
                 ctx.restore();
             });
 
-            ctx.fillStyle = '#22d3ee';
+            ctx.fillStyle = pal.glow;
             ctx.beginPath();
-            ctx.arc(0, 0, 3, 0, Math.PI*2);
+            ctx.arc(0, 0, 4, 0, Math.PI * 2);
             ctx.fill();
-            break;
+        }
 
-        case 7: // Vintage Biplane
-            ctx.shadowColor = 'rgba(185, 28, 28, 0.4)';
+    } else {
+        // Crash Exclusive
+        if (arch % 2 === 0) {
+            // Phoenix
+            const wingFlap = Math.sin(time * 0.02 + idx) * 0.35;
             ctx.save();
-            ctx.translate(22, 0);
-            ctx.fillStyle = '#e2e8f0';
-            ctx.beginPath();
-            ctx.arc(0, 0, 3, 0, Math.PI*2);
-            ctx.fill();
-            
-            ctx.rotate(time * 0.12);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(0, -22); ctx.lineTo(0, 22);
-            ctx.stroke();
-            ctx.restore();
-
-            ctx.fillStyle = '#b91c1c';
-            ctx.beginPath();
-            ctx.moveTo(20, -4);
-            ctx.lineTo(-24, -2);
-            ctx.lineTo(-24, 2);
-            ctx.lineTo(20, 4);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = '#facc15';
-            ctx.fillRect(-27, -8, 4, 16);
-            ctx.fillRect(-27, -10, 6, 4);
-
-            ctx.fillStyle = '#1e293b';
-            ctx.beginPath();
-            ctx.arc(8, 10, 4, 0, Math.PI*2);
-            ctx.fill();
-            ctx.strokeStyle = '#94a3b8';
-            ctx.beginPath();
-            ctx.moveTo(8, 2); ctx.lineTo(8, 8);
-            ctx.stroke();
-
-            ctx.fillStyle = '#facc15';
-            ctx.fillRect(-5, -16, 12, 4);
-            ctx.fillRect(-5, 12, 12, 4);
-            
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(1, -12); ctx.lineTo(1, 12);
-            ctx.moveTo(5, -12); ctx.lineTo(5, 12);
-            ctx.stroke();
-            break;
-
-        case 8: // Hot Air Balloon
-            ctx.shadowColor = 'rgba(249, 115, 22, 0.4)';
-            if (isFlying) {
-                ctx.fillStyle = '#f97316';
-                ctx.beginPath();
-                ctx.moveTo(-3, 10);
-                ctx.lineTo(0, 10 - (8 + Math.sin(time*0.05)*3));
-                ctx.lineTo(3, 10);
-                ctx.closePath();
-                ctx.fill();
-            }
-            const stripeColors = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981'];
-            ctx.save();
-            ctx.translate(0, -12);
-            ctx.beginPath();
-            ctx.arc(0, 0, 20, 0.15 * Math.PI, 0.85 * Math.PI, true);
-            ctx.lineTo(-7, 22);
-            ctx.lineTo(7, 22);
-            ctx.closePath();
-            ctx.clip();
-
-            for (let i = -3; i <= 3; i++) {
-                ctx.fillStyle = stripeColors[Math.abs(i) % stripeColors.length];
-                ctx.fillRect(i * 7 - 3.5, -25, 7, 50);
-            }
-            ctx.restore();
-
-            ctx.strokeStyle = '#b45309';
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(-6, 10); ctx.lineTo(-4, 18);
-            ctx.moveTo(6, 10); ctx.lineTo(4, 18);
-            ctx.stroke();
-
-            ctx.fillStyle = '#78350f';
-            ctx.fillRect(-5, 18, 10, 8);
-            break;
-
-        case 9: // Future Skycar
-            ctx.shadowColor = 'rgba(109, 40, 217, 0.4)';
-            if (isFlying) {
-                ctx.save();
-                ctx.shadowColor = '#06b6d4';
-                ctx.shadowBlur = 10;
-                ctx.fillStyle = 'rgba(6, 182, 212, 0.6)';
-                ctx.fillRect(-15, 6, 8, 4);
-                ctx.fillRect(7, 6, 8, 4);
-                ctx.restore();
-            }
-            ctx.fillStyle = '#6d28d9';
-            ctx.beginPath();
-            ctx.moveTo(24, 0);
-            ctx.bezierCurveTo(20, -8, -10, -9, -24, -4);
-            ctx.lineTo(-24, 4);
-            ctx.bezierCurveTo(-10, 9, 20, 8, 24, 0);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = '#a78bfa';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(12, 2);
-            ctx.lineTo(-16, 2);
-            ctx.stroke();
-
-            ctx.fillStyle = 'rgba(34, 211, 238, 0.6)';
-            ctx.beginPath();
-            ctx.moveTo(4, -4);
-            ctx.quadraticCurveTo(15, -4, 17, 0);
-            ctx.quadraticCurveTo(10, 4, 3, 2);
-            ctx.closePath();
-            ctx.fill();
-            break;
-
-        case 10: // Phoenix Firebird
-            ctx.shadowColor = 'rgba(239, 68, 68, 0.6)';
-            const wingFlap = Math.sin(time * 0.02) * 0.4;
-            ctx.save();
-            const tailGrad = ctx.createLinearGradient(-12, 0, -32, 0);
-            tailGrad.addColorStop(0, '#f97316');
+            const tailGrad = ctx.createLinearGradient(-10, 0, -30, 0);
+            tailGrad.addColorStop(0, pal.main);
             tailGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
             ctx.fillStyle = tailGrad;
             ctx.beginPath();
-            ctx.moveTo(-10, -3);
-            ctx.lineTo(-30, -10);
-            ctx.lineTo(-24, 0);
-            ctx.lineTo(-30, 10);
-            ctx.lineTo(-10, 3);
+            ctx.moveTo(-8, -3);
+            ctx.lineTo(-28, -10);
+            ctx.lineTo(-22, 0);
+            ctx.lineTo(-28, 10);
+            ctx.lineTo(-8, 3);
             ctx.closePath();
             ctx.fill();
             ctx.restore();
 
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = pal.sec;
             ctx.beginPath();
             ctx.moveTo(16, 0);
-            ctx.quadraticCurveTo(8, -6, -10, -3);
-            ctx.lineTo(-8, 3);
+            ctx.quadraticCurveTo(8, -6, -8, -3);
+            ctx.lineTo(-6, 3);
             ctx.quadraticCurveTo(8, 6, 16, 0);
             ctx.closePath();
             ctx.fill();
 
-            ctx.fillStyle = '#facc15';
-            ctx.beginPath();
-            ctx.moveTo(16, -2);
-            ctx.lineTo(22, 0);
-            ctx.lineTo(16, 2);
-            ctx.closePath();
-            ctx.fill();
-
             ctx.save();
-            ctx.translate(0, 0);
             ctx.rotate(wingFlap);
-            const wingGrad = ctx.createLinearGradient(0, 0, 0, -25);
-            wingGrad.addColorStop(0, '#ef4444');
-            wingGrad.addColorStop(0.7, '#f97316');
-            wingGrad.addColorStop(1, '#facc15');
+            const wingGrad = ctx.createLinearGradient(0, 0, 0, -26);
+            wingGrad.addColorStop(0, pal.sec);
+            wingGrad.addColorStop(0.6, pal.main);
+            wingGrad.addColorStop(1, pal.hi);
             ctx.fillStyle = wingGrad;
             ctx.beginPath();
             ctx.moveTo(-4, 0);
@@ -2108,11 +1979,46 @@ function drawHelicopterPlane(x, y, isFlying) {
             ctx.closePath();
             ctx.fill();
             ctx.restore();
-            break;
+        } else {
+            // UFO
+            if (isFlying) {
+                ctx.save();
+                const beam = ctx.createLinearGradient(0, 4, 0, 36);
+                beam.addColorStop(0, pal.glow);
+                beam.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
+                ctx.fillStyle = beam;
+                ctx.beginPath();
+                ctx.moveTo(-8, 4);
+                ctx.lineTo(-20, 36);
+                ctx.lineTo(20, 36);
+                ctx.lineTo(8, 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            ctx.fillStyle = pal.sec;
+            ctx.beginPath();
+            ctx.ellipse(0, 2, 26, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = pal.hi;
+            ctx.beginPath();
+            ctx.arc(0, -2, 10, Math.PI, 0);
+            ctx.fill();
+
+            const lightCol = Math.floor(time / 200 + idx) % 2 === 0 ? pal.main : '#ffffff';
+            ctx.fillStyle = lightCol;
+            for (let angle = -2.4; angle <= 2.4; angle += 0.8) {
+                ctx.beginPath();
+                ctx.arc(Math.sin(angle) * 21, 2 + Math.cos(angle) * 1.2, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
     }
 
     ctx.restore();
 }
+
 
 function drawCrashedTextLabel(w, h) {
     ctx.save();

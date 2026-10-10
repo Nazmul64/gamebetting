@@ -942,14 +942,40 @@
     </ul>
     
     <!-- Header Actions (Deposit / Withdraw / Balance / Cabinet) -->
-    <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 12px;">
+    <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 10px;">
         @auth
+            <!-- 10-Digit Customer User ID Badge -->
+            <div class="user-id-badge" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 10px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;" onclick="copyUserIdToClipboard('{{ auth()->user()->user_code ?? auth()->user()->id }}')" title="Click to copy your 10-digit User ID">
+                <span style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">MY ID:</span>
+                <span style="color: #00f2fe; font-family: 'Roboto Mono', monospace; font-size: 13.5px; font-weight: 800; letter-spacing: 0.5px;" id="header-user-id-val">{{ auth()->user()->user_code ?? auth()->user()->id }}</span>
+                <i class="fas fa-copy" style="font-size: 11px; color: #8ca3c7;" id="header-copy-icon"></i>
+            </div>
+
             <!-- Header Balance Display -->
             <div class="balance-container" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 14px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
                 <span class="balance-label" style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">BALANCE:</span>
                 <span class="balance-value header-balance-value" style="color: #ffbe1a; font-family: 'Roboto Mono', monospace; font-size: 15px;">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
                 <span class="balance-currency" style="color: #ffffff; font-size: 11px;">{{ auth()->user()->currency }}</span>
             </div>
+
+            <!-- KYC Status Badge / Button -->
+            @php
+                $userKycStatus = auth()->user()->kyc_status ?? 'unverified';
+            @endphp
+            <button onclick="openKycModal()" class="nav-btn-kyc" style="background: {{ $userKycStatus === 'verified' ? 'rgba(16,185,129,0.15)' : ($userKycStatus === 'pending' ? 'rgba(245,158,11,0.15)' : 'rgba(0,198,255,0.12)') }}; color: {{ $userKycStatus === 'verified' ? '#10b981' : ($userKycStatus === 'pending' ? '#fbbf24' : '#00f2fe') }}; border: 1.5px solid {{ $userKycStatus === 'verified' ? '#10b981' : ($userKycStatus === 'pending' ? '#f59e0b' : '#0284c7') }}; padding: 0 12px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="KYC Verification Status">
+                @if($userKycStatus === 'verified')
+                    <i class="fas fa-shield-check" style="color: #10b981;"></i> <span>ভেরিফাইড</span>
+                @elseif($userKycStatus === 'pending')
+                    <i class="fas fa-clock" style="color: #fbbf24;"></i> <span>পেন্ডিং</span>
+                @else
+                    <i class="fas fa-id-card"></i> <span>KYC ভেরিফাই</span>
+                @endif
+            </button>
+
+            <!-- Sellers / Agents Quick Chat & Deposit Button -->
+            <button onclick="openSellerAgentsModal()" class="nav-btn-sellers" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                <i class="fas fa-user-tie"></i> <span>SELLERS / AGENTS</span>
+            </button>
 
             <!-- Header Action Buttons -->
             <button onclick="handleHeaderAction('modal', 'deposit-modal')" class="nav-btn-deposit" style="background: #2ebd59; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(46, 189, 89, 0.2);">
@@ -970,6 +996,11 @@
                 <i class="fas fa-sign-out-alt"></i>
             </a>
         @else
+            <!-- Sellers / Agents Button for Guests -->
+            <button onclick="openSellerAgentsModal()" class="nav-btn-sellers" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                <i class="fas fa-user-tie"></i> <span>SELLERS / AGENTS</span>
+            </button>
+
             <!-- Guest login / signup actions -->
             <button onclick="openAuthModal('login')" class="nav-btn-login" style="background: #007bff; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);">
                 <i class="fas fa-sign-in-alt"></i> LOGIN
@@ -1011,6 +1042,9 @@
                     <div>
                         <div class="drawer-user-name">{{ auth()->user()->name }}</div>
                         <div class="drawer-user-email">{{ auth()->user()->email }}</div>
+                        <div style="margin-top:4px; font-size:11px; font-weight:800; color:#00f2fe; font-family:'Roboto Mono',monospace; cursor:pointer;" onclick="copyUserIdToClipboard('{{ auth()->user()->user_code ?? auth()->user()->id }}')">
+                            ID: {{ auth()->user()->user_code ?? auth()->user()->id }} <i class="fas fa-copy" style="font-size:10px; margin-left:3px;"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -1020,6 +1054,10 @@
                         {{ number_format(auth()->user()->balance, 2, '.', '') }} {{ auth()->user()->currency }}
                     </span>
                 </div>
+
+                <button onclick="toggleMobileDrawer(false); openSellerAgentsModal();" style="width:100%; margin-bottom:8px; padding:9px 0; border-radius:6px; background:linear-gradient(135deg,#0284c7,#0369a1); color:#fff; border:none; font-weight:800; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <i class="fas fa-user-tie"></i> <span>SELLERS / AGENTS</span>
+                </button>
 
                 <div class="drawer-actions-grid">
                     <button onclick="toggleMobileDrawer(false); handleHeaderAction('modal', 'deposit-modal');" class="drawer-action-btn" style="background: #2ebd59; color: #ffffff;">
@@ -1034,6 +1072,9 @@
             <!-- Guest Prompt -->
             <div class="drawer-guest-card">
                 <p style="color: #8ca3c7; font-size: 12px; margin-bottom: 12px;">Join millions of players on Bettingsite today!</p>
+                <button onclick="toggleMobileDrawer(false); openSellerAgentsModal();" style="width:100%; margin-bottom:8px; padding:9px 0; border-radius:6px; background:linear-gradient(135deg,#0284c7,#0369a1); color:#fff; border:none; font-weight:800; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <i class="fas fa-user-tie"></i> <span>SELLERS / AGENTS</span>
+                </button>
                 <div class="drawer-actions-grid">
                     <button onclick="toggleMobileDrawer(false); openAuthModal('login');" class="drawer-action-btn" style="background: #007bff; color: #ffffff;">
                         <i class="fas fa-sign-in-alt"></i> LOGIN
@@ -1714,5 +1755,497 @@ function handleLogout(e) {
     if (e) e.preventDefault();
     document.getElementById('logout-form').submit();
 }
+
+/* ==========================================================================
+   CUSTOMER - SELLER & AGENTS SYSTEM & REALTIME CHAT
+   ========================================================================== */
+function copyUserIdToClipboard(code) {
+    if (!code) return;
+    navigator.clipboard.writeText(code).then(() => {
+        const copyIcon = document.getElementById('header-copy-icon');
+        if (copyIcon) {
+            copyIcon.className = 'fas fa-check text-success';
+            setTimeout(() => { copyIcon.className = 'fas fa-copy'; }, 2000);
+        }
+        alert('✅ আপনার ১০ ডিজিট কাস্টমার আইডি কপি হয়েছে: ' + code);
+    }).catch(() => {
+        prompt('আপনার ১০ ডিজিট আইডি:', code);
+    });
+}
+
+let activeSellerChatId = null;
+let sellerChatPollingTimer = null;
+const CUSTOMER_USER_CODE = '{{ auth()->check() ? (auth()->user()->user_code ?? auth()->user()->id) : "" }}';
+
+function openSellerAgentsModal() {
+    const modal = document.getElementById('seller-agents-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    loadActiveSellers();
+}
+
+function closeSellerAgentsModal() {
+    const modal = document.getElementById('seller-agents-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function loadActiveSellers() {
+    const grid = document.getElementById('seller-agents-list-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#8ca3c7;"><i class="fas fa-spinner fa-spin"></i> ভেরিফাইড সেলার ও এজেন্ট তালিকা লোড হচ্ছে...</div>';
+
+    fetch('/seller/active-list', {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.sellers && data.sellers.length > 0) {
+            grid.innerHTML = data.sellers.map(s => {
+                const photo = s.seller_photo || '{{ asset("uploads/agent_profile_pictures/default_agent.png") }}';
+                return `
+                    <div style="background:#11223b; border:1.5px solid #1d3354; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:12px; transition:all 0.2s ease;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <img src="${photo}" alt="${s.name}" style="width:52px; height:52px; border-radius:50%; object-fit:cover; border:2px solid #00f2fe; background:#0c1a30;" onerror="this.src='{{ asset("uploads/agent_profile_pictures/default_agent.png") }}'">
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-weight:800; color:#ffffff; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.name}</div>
+                                <div style="font-size:11px; color:#34d399; font-weight:700; display:flex; align-items:center; gap:4px; margin-top:2px;">
+                                    <i class="fas fa-certificate" style="color:#00f2fe;"></i> ভেরিফাইড এজেন্ট
+                                </div>
+                                ${s.seller_phone ? `<div style="font-size:11px; color:#8ca3c7; margin-top:2px; font-family:'Roboto Mono',monospace;"><i class="fas fa-phone-alt"></i> ${s.seller_phone}</div>` : ''}
+                            </div>
+                        </div>
+
+                        <div style="background:rgba(0,242,254,0.06); border:1px solid rgba(0,242,254,0.2); border-radius:8px; padding:8px 10px; font-size:11.5px; color:#cbd5e1; display:flex; justify-content:space-between; align-items:center;">
+                            <span>ব্যালেন্স লোড:</span>
+                            <span style="color:#38ef7d; font-weight:800;">ইনস্ট্যান্ট ক্যাশ ইন</span>
+                        </div>
+
+                        <button type="button" onclick="startChatWithSeller(${s.id}, '${s.name.replace(/'/g, "\\'")}', '${photo}')" style="width:100%; padding:10px; border-radius:8px; background:linear-gradient(135deg, #0284c7, #0369a1); color:#ffffff; font-weight:800; font-size:12.5px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 12px rgba(2,132,199,0.3); transition:all 0.2s;">
+                            <i class="fas fa-comments"></i> লাইভ চ্যাট ও ডিপোজিট
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#8ca3c7;"><i class="fas fa-user-slash" style="font-size:24px; margin-bottom:8px; display:block;"></i> বর্তমানে কোন এজেন্ট একটিভ নেই। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।</div>';
+        }
+    })
+    .catch(() => {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#f87171;">এজেন্টদের তালিকা লোড করতে ব্যর্থ হয়েছে।</div>';
+    });
+}
+
+function startChatWithSeller(sellerId, sellerName, sellerPhoto) {
+    @guest
+        closeSellerAgentsModal();
+        openAuthModal('login');
+        return;
+    @endguest
+
+    closeSellerAgentsModal();
+    activeSellerChatId = sellerId;
+
+    document.getElementById('seller-chat-title-name').textContent = sellerName;
+    document.getElementById('seller-chat-title-photo').src = sellerPhoto;
+    document.getElementById('seller-chat-modal').style.display = 'flex';
+
+    loadSellerChatMessages();
+    if (sellerChatPollingTimer) clearInterval(sellerChatPollingTimer);
+    sellerChatPollingTimer = setInterval(loadSellerChatMessages, 3000);
+}
+
+function closeSellerChatModal() {
+    activeSellerChatId = null;
+    if (sellerChatPollingTimer) clearInterval(sellerChatPollingTimer);
+    const modal = document.getElementById('seller-chat-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function loadSellerChatMessages() {
+    if (!activeSellerChatId) return;
+
+    fetch(`/seller/chat/${activeSellerChatId}/messages`, {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            renderSellerChatMessages(data.messages);
+        }
+    })
+    .catch(err => console.error('Chat sync error', err));
+}
+
+function renderSellerChatMessages(messages) {
+    const box = document.getElementById('seller-chat-messages-container');
+    if (!box) return;
+
+    if (!messages || messages.length === 0) {
+        box.innerHTML = `
+            <div style="text-align:center; padding:30px 10px; color:#8ca3c7; font-size:12.5px;">
+                <i class="fas fa-handshake" style="font-size:28px; color:#00f2fe; margin-bottom:8px; display:block;"></i>
+                এজেন্টের সাথে লাইভ কথোপকথন শুরু করুন。<br>টাকা ডিপোজিট করতে আপনার <strong>১০ ডিজিট আইডি</strong> শেয়ার করুন।
+            </div>
+        `;
+        return;
+    }
+
+    const currentUserId = {{ auth()->check() ? auth()->id() : 0 }};
+
+    box.innerHTML = messages.map(m => {
+        const isMe = m.sender_id == currentUserId;
+        return `
+            <div style="display:flex; justify-content:${isMe ? 'flex-end' : 'flex-start'}; margin-bottom:10px;">
+                <div style="max-width:75%; padding:9px 13px; border-radius:${isMe ? '12px 12px 2px 12px' : '12px 12px 12px 2px'}; background:${isMe ? 'linear-gradient(135deg, #0284c7, #0369a1)' : '#11223b'}; border:1px solid ${isMe ? 'rgba(0,242,254,0.3)' : '#1d3354'}; color:#ffffff; font-size:12.5px; line-height:1.4; word-break:break-word; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+                    ${m.message.replace(/\n/g, '<br>')}
+                    <div style="font-size:9.5px; color:${isMe ? 'rgba(255,255,255,0.7)' : '#8ca3c7'}; margin-top:3px; text-align:right;">${m.time || ''}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    box.scrollTop = box.scrollHeight;
+}
+
+function sendSellerChatMessage(e) {
+    if (e) e.preventDefault();
+    if (!activeSellerChatId) return;
+
+    const input = document.getElementById('seller-chat-input-text');
+    const msg = (input.value || '').trim();
+    if (!msg) return;
+
+    input.value = '';
+
+    fetch(`/seller/chat/${activeSellerChatId}/send`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            loadSellerChatMessages();
+        }
+    })
+    .catch(err => console.error('Message send error', err));
+}
+
+function sendMyUserIdToSellerChat() {
+    if (!CUSTOMER_USER_CODE) return;
+    const input = document.getElementById('seller-chat-input-text');
+    if (input) {
+        input.value = `আমার কাস্টমার আইডি: ${CUSTOMER_USER_CODE} (অনুগ্রহ করে ব্যালেন্স এড করে দিন)`;
+        input.focus();
+    }
+}
 </script>
+
+<!-- ==================== SELLER & AGENTS LIST MODAL ==================== -->
+<div class="modal-overlay" id="seller-agents-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(4,10,20,0.85); z-index:100000; padding:16px; box-sizing:border-box; backdrop-filter:blur(6px); font-family:'Outfit','Inter',sans-serif;">
+    <div class="modal-box" style="max-width:760px; width:100%; max-height:90vh; display:flex; flex-direction:column; position:relative; background:#0a1628; border-radius:16px; border:1.5px solid #1d3354; padding:24px; box-shadow:0 25px 60px rgba(0,0,0,0.9);">
+        <button class="modal-close" onclick="closeSellerAgentsModal()" style="position:absolute; top:18px; right:18px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;"><i class="fas fa-times"></i></button>
+        
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1d3354;">
+            <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg, #0284c7, #00f2fe); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; box-shadow:0 4px 15px rgba(2,132,199,0.4);">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size:18px; font-weight:800; color:#fff;">ভেরিফাইড সেলার ও এজেন্ট সেন্টার</h3>
+                <p style="margin:2px 0 0; font-size:12px; color:#8ca3c7;">যেকোনো এজেন্টের সাথে চ্যাট করে নগদ, বিকাশ বা রকেটে ইনস্ট্যান্ট একাউন্ট রিচার্জ করুন।</p>
+            </div>
+        </div>
+
+        @auth
+        <div style="background:#112038; border:1px solid #1d3354; border-radius:10px; padding:10px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:12px; color:#8ca3c7;">
+                আপনার ইউনিক আইডি: <strong style="color:#00f2fe; font-family:'Roboto Mono',monospace; font-size:14px;">{{ auth()->user()->user_code ?? auth()->user()->id }}</strong>
+            </div>
+            <button type="button" onclick="copyUserIdToClipboard('{{ auth()->user()->user_code ?? auth()->user()->id }}')" style="background:rgba(0,242,254,0.15); border:1px solid rgba(0,242,254,0.3); color:#00f2fe; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">
+                <i class="fas fa-copy"></i> কপি আইডি
+            </button>
+        </div>
+        @endauth
+
+        <div id="seller-agents-list-grid" style="flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px; padding-right:4px;">
+            <!-- Dynamically loaded seller cards -->
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SELLER LIVE CHAT MODAL ==================== -->
+<div class="modal-overlay" id="seller-chat-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(4,10,20,0.85); z-index:100001; padding:16px; box-sizing:border-box; backdrop-filter:blur(6px); font-family:'Outfit','Inter',sans-serif;">
+    <div class="modal-box" style="max-width:500px; width:100%; height:560px; max-height:92vh; display:flex; flex-direction:column; position:relative; background:#0a1628; border-radius:16px; border:1.5px solid #1d3354; overflow:hidden; box-shadow:0 25px 60px rgba(0,0,0,0.95);">
+        
+        <!-- Chat Header -->
+        <div style="padding:14px 18px; background:#0d1e38; border-bottom:1px solid #1d3354; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img id="seller-chat-title-photo" src="{{ asset('uploads/agent_profile_pictures/default_agent.png') }}" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid #00f2fe;" onerror="this.src='{{ asset("uploads/agent_profile_pictures/default_agent.png") }}'">
+                <div>
+                    <div id="seller-chat-title-name" style="font-weight:800; color:#fff; font-size:14px;">Seller Name</div>
+                    <div style="font-size:10.5px; color:#34d399; display:flex; align-items:center; gap:4px;">
+                        <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span> অনলাইন এজেন্ট
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeSellerChatModal()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- ID Share Banner -->
+        @auth
+        <div style="padding:8px 14px; background:rgba(2,132,199,0.15); border-bottom:1px solid #1d3354; display:flex; align-items:center; justify-content:space-between; font-size:11.5px;">
+            <span style="color:#cbd5e1;">আপনার আইডি: <strong style="color:#00f2fe; font-family:'Roboto Mono',monospace;">{{ auth()->user()->user_code ?? auth()->user()->id }}</strong></span>
+            <button type="button" onclick="sendMyUserIdToSellerChat()" style="background:#0284c7; color:#fff; border:none; padding:3px 8px; border-radius:4px; font-size:10.5px; font-weight:800; cursor:pointer;">
+                <i class="fas fa-paper-plane"></i> চ্যাটে আইডি দিন
+            </button>
+        </div>
+        @endauth
+
+        <!-- Chat Messages Container -->
+        <div id="seller-chat-messages-container" style="flex:1; overflow-y:auto; padding:16px; background:#07101d;">
+            <!-- Rendered chat messages -->
+        </div>
+
+        <!-- Chat Input Form -->
+        <form onsubmit="sendSellerChatMessage(event)" style="padding:12px 14px; background:#0d1e38; border-top:1px solid #1d3354; display:flex; gap:8px; align-items:center; margin:0;">
+            <input type="text" id="seller-chat-input-text" placeholder="মেসেজ লিখুন..." autocomplete="off" required style="flex:1; height:38px; padding:0 12px; background:#07101d; border:1px solid #1d3354; border-radius:8px; color:#fff; font-family:inherit; font-size:13px; outline:none;">
+            <button type="submit" style="height:38px; padding:0 16px; background:#007bff; color:#fff; border:none; border-radius:8px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                <span>পাঠান</span> <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     KYC VERIFICATION MODAL & UPLOADER
+     ========================================================================== -->
+<div id="kyc-verification-modal" style="display:none; position:fixed; inset:0; z-index:1000000; background:rgba(4,9,20,0.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#0c192c; border:1.5px solid #1e3a5f; border-radius:18px; width:100%; max-width:540px; box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(0,242,254,0.15); display:flex; flex-direction:column; max-height:92vh; overflow:hidden; font-family:'Outfit',system-ui,sans-serif;">
+        <!-- KYC Modal Header -->
+        <div style="padding:16px 20px; background:#0f223d; border-bottom:1px solid #1e3a5f; display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:38px; height:38px; border-radius:10px; background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.3); display:flex; align-items:center; justify-content:center; color:#00f2fe; font-size:18px;">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div style="font-weight:900; font-size:16px; color:#fff; letter-spacing:0.5px;">KYC ভেরিফিকেশন (Identity Verification)</div>
+                    <div style="font-size:11.5px; color:#8ca3c7;">জাতীয় পরিচয়পত্র, পাসপোর্ট অথবা জন্ম নিবন্ধন আপলোড করুন</div>
+                </div>
+            </div>
+            <button onclick="closeKycModal()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- KYC Modal Body -->
+        <div style="padding:20px; overflow-y:auto; flex:1;" id="kyc-modal-body-content">
+            <!-- KYC Status Banner -->
+            <div id="kyc-status-banner-box" style="margin-bottom:18px; padding:14px; border-radius:12px; display:none;"></div>
+
+            <!-- KYC Submission Form -->
+            <form id="kyc-submit-form" onsubmit="submitKycForm(event)" enctype="multipart/form-data">
+                @csrf
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:800; color:#cbd5e1; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">
+                        ডকুমেন্টের ধরণ নির্বাচন করুন <span style="color:#ef4444;">*</span>
+                    </label>
+                    <select name="document_type" id="kyc-doc-type" required style="width:100%; height:42px; background:#07101d; border:1.5px solid #1d3354; border-radius:8px; color:#fff; padding:0 12px; font-size:13px; font-weight:700; outline:none;">
+                        <option value="nid">জাতীয় পরিচয়পত্র (National ID / NID Card)</option>
+                        <option value="passport">পাসপোর্ট (International Passport)</option>
+                        <option value="birth_certificate">জন্ম নিবন্ধন সনদ (Birth Registration Certificate)</option>
+                    </select>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:800; color:#cbd5e1; margin-bottom:6px;">ডকুমেন্ট নাম্বার</label>
+                        <input type="text" name="document_number" id="kyc-doc-number" placeholder="যেমন: 199012345678" style="width:100%; height:40px; background:#07101d; border:1px solid #1d3354; border-radius:8px; color:#fff; padding:0 12px; font-size:13px; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:800; color:#cbd5e1; margin-bottom:6px;">পূর্ণ নাম (ডকুমেন্ট অনুযায়ী)</label>
+                        <input type="text" name="full_name" id="kyc-doc-name" value="{{ auth()->user()->name ?? '' }}" placeholder="আপনার নাম" style="width:100%; height:40px; background:#07101d; border:1px solid #1d3354; border-radius:8px; color:#fff; padding:0 12px; font-size:13px; outline:none;">
+                    </div>
+                </div>
+
+                <!-- Image Uploads Grid -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
+                    <!-- Front Part -->
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:800; color:#cbd5e1; margin-bottom:6px;">
+                            সামনের পাতা (Front Part) <span style="color:#ef4444;">*</span>
+                        </label>
+                        <div onclick="document.getElementById('kyc-front-file').click()" style="border:2px dashed #0284c7; border-radius:10px; padding:16px 10px; text-align:center; background:#07101d; cursor:pointer; transition:all 0.2s;" id="kyc-front-dropzone">
+                            <i class="fas fa-cloud-arrow-up" style="font-size:26px; color:#00f2fe; margin-bottom:6px;"></i>
+                            <div style="font-size:11.5px; font-weight:700; color:#cbd5e1;" id="kyc-front-filename">ছবি সিলেক্ট করুন</div>
+                            <div style="font-size:10px; color:#64748b;">JPG, PNG, WEBP (সর্বোচ্চ 8MB)</div>
+                            <img id="kyc-front-preview" style="display:none; width:100%; height:110px; object-fit:cover; border-radius:6px; margin-top:8px; border:1px solid #00f2fe;">
+                        </div>
+                        <input type="file" name="front_image" id="kyc-front-file" accept="image/*" required style="display:none;" onchange="previewKycImage(this, 'kyc-front-preview', 'kyc-front-filename')">
+                    </div>
+
+                    <!-- Back Part -->
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:800; color:#cbd5e1; margin-bottom:6px;">
+                            পেছনের পাতা (Back Part)
+                        </label>
+                        <div onclick="document.getElementById('kyc-back-file').click()" style="border:2px dashed #334155; border-radius:10px; padding:16px 10px; text-align:center; background:#07101d; cursor:pointer; transition:all 0.2s;" id="kyc-back-dropzone">
+                            <i class="fas fa-cloud-arrow-up" style="font-size:26px; color:#94a3b8; margin-bottom:6px;"></i>
+                            <div style="font-size:11.5px; font-weight:700; color:#cbd5e1;" id="kyc-back-filename">ছবি সিলেক্ট করুন</div>
+                            <div style="font-size:10px; color:#64748b;">JPG, PNG, WEBP (ঐচ্ছিক)</div>
+                            <img id="kyc-back-preview" style="display:none; width:100%; height:110px; object-fit:cover; border-radius:6px; margin-top:8px; border:1px solid #3b82f6;">
+                        </div>
+                        <input type="file" name="back_image" id="kyc-back-file" accept="image/*" style="display:none;" onchange="previewKycImage(this, 'kyc-back-preview', 'kyc-back-filename')">
+                    </div>
+                </div>
+
+                <button type="submit" id="kyc-submit-btn" style="width:100%; height:44px; border:none; border-radius:10px; background:linear-gradient(135deg, #0284c7 0%, #00f2fe 100%); color:#040914; font-weight:900; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 20px rgba(0,242,254,0.3); text-transform:uppercase; letter-spacing:0.5px;">
+                    <i class="fas fa-paper-plane"></i> <span>কেওয়াইসি সাবমিট করুন</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Include Global Win Celebration Motion Graphics -->
+<script src="{{ asset('js/win-celebration.js') }}"></script>
+
+<script>
+/* ==========================================================================
+   KYC VERIFICATION CLIENT JS
+   ========================================================================== */
+function openKycModal() {
+    const modal = document.getElementById('kyc-verification-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    fetchKycStatus();
+}
+
+function closeKycModal() {
+    const modal = document.getElementById('kyc-verification-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function previewKycImage(input, previewId, labelId) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById(labelId).innerText = file.name.length > 18 ? file.name.substring(0, 15) + '...' : file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(previewId);
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function fetchKycStatus() {
+    fetch('{{ route("kyc.status") }}', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success) return;
+        const banner = document.getElementById('kyc-status-banner-box');
+        const form = document.getElementById('kyc-submit-form');
+        const status = data.status;
+        const kyc = data.kyc;
+
+        if (status === 'verified') {
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(16,185,129,0.12)';
+            banner.style.border = '1.5px solid #10b981';
+            banner.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-check-circle" style="font-size:28px; color:#10b981;"></i>
+                    <div>
+                        <div style="font-weight:900; color:#10b981; font-size:15px;">অভিনন্দন! আপনার অ্যাকাউন্ট ভেরিফাইড (Verified)</div>
+                        <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">ডকুমেন্ট: ${kyc.document_label} (${kyc.document_number || 'N/A'})</div>
+                    </div>
+                </div>
+            `;
+            form.style.display = 'none';
+        } else if (status === 'pending') {
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(245,158,11,0.12)';
+            banner.style.border = '1.5px solid #f59e0b';
+            banner.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-hourglass-half" style="font-size:28px; color:#fbbf24; animation:spin 4s linear infinite;"></i>
+                    <div>
+                        <div style="font-weight:900; color:#fbbf24; font-size:15px;">কেওয়াইসি পর্যালোচনায় রয়েছে (Under Review / Pending)</div>
+                        <div style="font-size:12px; color:#cbd5e1; margin-top:2px;">সাবমিট তারিখ: ${kyc.submitted_at}। অ্যাডমিন দ্রুত এটি যাচাই করে অনুমোদন দেবে।</div>
+                    </div>
+                </div>
+            `;
+            form.style.display = 'none';
+        } else if (status === 'rejected') {
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(239,68,68,0.12)';
+            banner.style.border = '1.5px solid #ef4444';
+            banner.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-times-circle" style="font-size:28px; color:#ef4444;"></i>
+                    <div>
+                        <div style="font-weight:900; color:#ef4444; font-size:15px;">পূর্ববর্তী আবেদনটি বাতিল (Rejected) হয়েছে</div>
+                        <div style="font-size:12px; color:#fca5a5; margin-top:2px;">কারণ: ${kyc.rejection_reason || 'তথ্য স্পষ্ট নয়'}</div>
+                        <div style="font-size:11px; color:#cbd5e1; margin-top:4px;">নিচে সঠিক ডকুমেন্ট দিয়ে পুনরায় সাবমিট করুন:</div>
+                    </div>
+                </div>
+            `;
+            form.style.display = 'block';
+        } else {
+            banner.style.display = 'none';
+            form.style.display = 'block';
+        }
+    })
+    .catch(() => {});
+}
+
+function submitKycForm(e) {
+    e.preventDefault();
+    const form = document.getElementById('kyc-submit-form');
+    const formData = new FormData(form);
+    const btn = document.getElementById('kyc-submit-btn');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>আপলোড হচ্ছে...</span>';
+
+    fetch('{{ route("kyc.submit") }}', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>কেওয়াইসি সাবমিট করুন</span>';
+
+        if (data.success) {
+            alert(data.message);
+            fetchKycStatus();
+            // Update header button status
+            const kycBtn = document.querySelector('.nav-btn-kyc');
+            if (kycBtn) {
+                kycBtn.style.color = '#fbbf24';
+                kycBtn.style.borderColor = '#f59e0b';
+                kycBtn.innerHTML = '<i class="fas fa-clock" style="color:#fbbf24;"></i> <span>পেন্ডিং</span>';
+            }
+        } else {
+            alert(data.message || 'সাবমিট ব্যর্থ হয়েছে।');
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> <span>কেওয়াইসি সাবমিট করুন</span>';
+        alert('সার্ভার এরর অথবা নেটওয়ার্ক সমস্যা হয়েছে।');
+    });
+}
+</script>
+
+
 

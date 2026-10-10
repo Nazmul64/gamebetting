@@ -1856,6 +1856,13 @@
 
       playWinSound();
       showWinToast(finalWin);
+      if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+          amount: finalWin,
+          multiplier: activeBet > 0 ? (finalWin / activeBet) : 0,
+          title: (finalWin >= activeBet * 5) ? 'OLYMPUS JACKPOT!' : 'ZEUS VICTORY!'
+        });
+      }
     } else {
       if (msg) msg.textContent = 'PLACE YOUR BETS!';
     }

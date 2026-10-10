@@ -507,6 +507,13 @@ var Game = {
       $title.text('YOU WIN!');
       $sub.text(subText || 'Congratulations!');
       SoundFX.playWin();
+      if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+          amount: (this.currentBet || 20) * 2,
+          multiplier: 2.0,
+          title: '21 BLACKJACK WIN!'
+        });
+      }
     } else if (result === 'lose' || result === 'lost' || result === 'busted') {
       this.losses++;
       $bg.addClass('lose');

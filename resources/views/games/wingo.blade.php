@@ -1638,6 +1638,8 @@
         let currentMyBetsPage = 1;
         const myBetsPerPage = 10;
 
+        let wingoCelebratedBets = new Set();
+
         function loadMyHistory() {
             fetch(`{{ route('wingo.myhistory') }}?type=${currentTimeType}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -1647,6 +1649,20 @@
                 const bets = data.bets || data || [];
                 currentMyBetsList = bets;
                 renderMyHistory();
+
+                if (Array.isArray(bets)) {
+                    bets.slice(0, 5).forEach(b => {
+                        if (b.status === 'won' && !wingoCelebratedBets.has(b.id)) {
+                            wingoCelebratedBets.add(b.id);
+                            if (typeof window.triggerWinCelebration === 'function') {
+                                window.triggerWinCelebration({
+                                    amount: parseFloat(b.win_amount || (b.total_amount * 1.96)),
+                                    title: 'WINGO LOTTERY WIN!'
+                                });
+                            }
+                        }
+                    });
+                }
             })
             .catch(e => console.error(e));
         }

@@ -1,628 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Roman Slots - 1xBet Casino</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            background: #080506;
-            color: #fff;
-            overflow-x: hidden;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .game-viewport {
-            min-height: calc(100vh - 70px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            background: radial-gradient(circle at center, #26110f 0%, #0c0506 70%, #000 100%);
-            position: relative;
-        }
-        .game-top-bar {
-            width: 100%;
-            max-width: 1170px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 16px;
-            margin-bottom: 8px;
-            background: rgba(26, 12, 12, 0.85);
-            border: 1px solid rgba(218, 165, 32, 0.3);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .breadcrumbs {
-            font-size: 13px;
-            color: #e2b765;
-            font-weight: 600;
-        }
-        .breadcrumbs a {
-            color: #e2b765;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .breadcrumbs a:hover {
-            color: #fff;
-        }
-        .top-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .sound-toggle-btn, .info-btn {
-            background: linear-gradient(135deg, #71150a, #9b1f13);
-            border: 1px solid #e2b765;
-            color: #ffe9a8;
-            padding: 6px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .sound-toggle-btn:hover, .info-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        #stage-container {
-            width: 100%;
-            max-width: 1170px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #stage {
-            position: relative;
-            width: min(100vw - 20px, calc((100vh - 150px) * 1170 / 658), 1170px);
-            aspect-ratio: 1170 / 658;
-            container-type: inline-size;
-            background: url("{{ asset('roman-slot/roman-slot/assets/background.jpg') }}") center/100% 100% no-repeat;
-            user-select: none;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 25px rgba(218, 165, 32, 0.25);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid rgba(218, 165, 32, 0.4);
-        }
-        .cell {
-            position: absolute;
-            background: #15121a;
-            overflow: hidden;
-            transition: filter 0.25s, transform 0.25s;
-            border-radius: 4px;
-        }
-        .cell img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-        }
-        .cell.win {
-            z-index: 3;
-            box-shadow: 0 0 1.6cqw 0.4cqw #ffd54a;
-            animation: pulseWin 0.5s infinite alternate;
-        }
-        .cell.dim {
-            filter: brightness(0.3);
-        }
-        .cell.sc {
-            z-index: 4;
-            box-shadow: 0 0 2.2cqw 0.8cqw #fff;
-            animation: scWin 0.45s infinite alternate;
-        }
-        @keyframes pulseWin {
-            to { transform: scale(1.06); }
-        }
-        @keyframes scWin {
-            to { transform: scale(1.1) rotate(-1.5deg); }
-        }
-        .val {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #f3e0b0;
-            font: bold 2cqw 'Cinzel', Georgia, serif;
-            background: linear-gradient(#71150a, #9b1f13);
-            text-shadow: 0 0.1cqw 0.3cqw #000;
-            border-radius: 0.4cqw;
-            border: 0.15cqw solid rgba(255, 215, 0, 0.4);
-        }
-        .hit {
-            position: absolute;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .hit:active {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(0.96);
-        }
-        #msg {
-            position: absolute;
-            left: 17.436%;
-            top: 82.219%;
-            width: 65.214%;
-            height: 3.951%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffe9a8;
-            font: bold 1.7cqw 'Cinzel', Georgia, serif;
-            text-shadow: 0 0.1cqw 0.4cqw #000;
-            letter-spacing: 0.05cqw;
-        }
-        .auto {
-            outline: 0.3cqw solid #ffd54a;
-            border-radius: 1cqw;
-            box-shadow: 0 0 10px #ffd54a;
-        }
-        /* Paytable Rules Modal */
-        .game-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 16px;
-        }
-        .game-modal.active {
-            display: flex;
-        }
-        .game-modal-content {
-            background: linear-gradient(135deg, #2b110e, #140708);
-            border: 2px solid #e2b765;
-            border-radius: 12px;
-            max-width: 600px;
-            width: 100%;
-            padding: 24px;
-            color: #ffe9a8;
-            box-shadow: 0 10px 35px rgba(0,0,0,0.9);
-            position: relative;
-        }
-        .game-modal-close {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background: #9b1f13;
-            border: 1px solid #e2b765;
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .rules-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 14px;
-            font-size: 13px;
-        }
-        .rules-table th, .rules-table td {
-            border: 1px solid rgba(226, 183, 101, 0.3);
-            padding: 8px;
-            text-align: center;
-        }
-        .rules-table th {
-            background: #48110b;
-            color: #ffd54a;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Roman Slots - 1XGAMES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      font-family:'Montserrat', sans-serif; 
+      user-select:none; 
+      -webkit-user-select:none; 
+      -webkit-user-drag:none; 
+    }
+    img { pointer-events: none; -webkit-user-drag: none; }
+    html, body { background: #060303; color: #f8fafc; min-height: 100vh; overflow-x: hidden; }
+
+    .game-page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-nav-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .breadcrumbs a { color: #eab308; text-decoration: none; }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .audio-btn {
+      background: rgba(30, 20, 15, 0.85);
+      border: 1px solid #ca8a04;
+      color: #facc15;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .audio-btn:hover { background: #ca8a04; color: #000; }
+
+    /* Native Game Stage (Seamless Background) */
+    .stage-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: center;
+    }
+
+    #stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1170 / 658;
+      background: url('/roman-slot/assets/background.jpg') center / 100% 100% no-repeat;
+      user-select: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(202, 138, 4, 0.2);
+    }
+
+    /* Transparent Reel Cells */
+    .cell {
+      position: absolute;
+      background: transparent;
+      overflow: hidden;
+      transition: filter 0.2s ease, transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .cell.spinning img {
+      filter: blur(2px);
+      transform: translateY(-4px);
+    }
+    .cell.win {
+      z-index: 5;
+      filter: drop-shadow(0 0 12px #facc15) brightness(1.2);
+      animation: pulseWin 0.5s infinite alternate ease-in-out;
+    }
+    .cell.dim {
+      opacity: 0.35;
+      filter: grayscale(0.5);
+    }
+    .cell.sc {
+      z-index: 6;
+      filter: drop-shadow(0 0 16px #ffffff) brightness(1.3);
+      animation: pulseScatter 0.45s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseWin {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+    @keyframes pulseScatter {
+      from { transform: scale(1) rotate(-2deg); }
+      to { transform: scale(1.12) rotate(2deg); }
+    }
+
+    /* Native UI Readout Texts with Opaque Backplates covering background image art */
+    .val {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff4c6;
+      background: #170d06;
+      border: 1.5px solid #854d0e;
+      border-radius: 5px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.9), 0 0 6px rgba(133, 77, 14, 0.4);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(10px, 1.4vw, 17px);
+      text-shadow: 0 1px 2px #000;
+      pointer-events: none;
+      z-index: 4;
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 0 4px;
+    }
+
+    /* Clickable Hotspots overlaying native background buttons */
+    .hit {
+      position: absolute;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .hit:hover {
+      background: rgba(250, 204, 21, 0.15);
+    }
+    .hit:active {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0.96);
+    }
+
+    #spin {
+      border-radius: 50%;
+    }
+    #spin.busy {
+      pointer-events: none;
+      opacity: 0.85;
+      filter: grayscale(0.3);
+    }
+
+    #msg {
+      position: absolute;
+      left: 17.436%;
+      top: 81.2%;
+      width: 65.214%;
+      height: 4.5%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffe9a8;
+      font-family: 'Cinzel', 'Georgia', serif;
+      font-weight: 800;
+      font-size: clamp(10px, 1.6vw, 18px);
+      text-shadow: 0 2px 6px #000, 0 0 10px rgba(250, 204, 21, 0.6);
+      pointer-events: none;
+      letter-spacing: 1px;
+    }
+
+    .auto-active {
+      outline: 3px solid #facc15;
+      background: rgba(250, 204, 21, 0.25) !important;
+      border-radius: 8px;
+    }
+
+    /* Bottom Quick Action Bar for Extra Convenience */
+    .extra-controls-bar {
+      width: 100%;
+      max-width: 1100px;
+      background: #120b08;
+      border: 1px solid #78350f;
+      border-radius: 16px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .chip-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #271912;
+      border: 1px solid #78350f;
+      color: #fde047;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chip-btn:hover { background: #451a03; }
+    .chip-btn.active {
+      background: #eab308;
+      color: #000;
+      border-color: #fde047;
+    }
+  </style>
 </head>
-<body>
-    @include('customer.header')
+<body oncontextmenu="return false;">
 
-    <div class="game-viewport">
-        <!-- Top Breadcrumbs & Sound Bar -->
-        <div class="game-top-bar">
-            <div class="breadcrumbs">
-                <a href="{{ route('home') }}">HOME</a> / <a href="{{ route('dashboard') }}">SLOTS</a> / <span>ROMAN SLOTS</span>
-            </div>
-            <div class="top-controls">
-                <button class="sound-toggle-btn" id="soundBtn" onclick="toggleAudio()">
-                    <i class="fas fa-volume-up" id="soundIcon"></i> <span id="soundText">Music: ON</span>
-                </button>
-                <button class="info-btn" onclick="openRulesModal()">
-                    <i class="fas fa-info-circle"></i> Paytable
-                </button>
-            </div>
-        </div>
+  @include('customer.header')
 
-        <!-- Slot Game Canvas Stage -->
-        <div id="stage-container">
-            <div id="stage">
-                <div id="msg"></div>
-                <div class="val" id="tb" style="left:27.179%;top:92.553%;width:6.154%;height:4.103%"></div>
-                <div class="val" id="bal" style="left:65.470%;top:92.553%;width:11.453%;height:4.103%"></div>
-                <div class="val" id="win" style="left:81.026%;top:92.553%;width:5.983%;height:4.103%"></div>
-                <div class="hit" id="minus" style="left:24.274%;top:92.705%;width:1.709%;height:3.647%" title="Decrease Bet"></div>
-                <div class="hit" id="plus" style="left:34.188%;top:92.705%;width:1.709%;height:3.647%" title="Increase Bet"></div>
-                <div class="hit" id="max" style="left:39.231%;top:91.793%;width:5.641%;height:5.623%" title="Max Bet & Spin"></div>
-                <div class="hit" id="spin" style="left:44.701%;top:84.802%;width:10.598%;height:15.198%;border-radius:50%" title="Spin!"></div>
-                <div class="hit" id="autob" style="left:55.299%;top:91.793%;width:5.641%;height:5.623%" title="Auto Play"></div>
-            </div>
-        </div>
+  <!-- Background Music Audio Element -->
+  <audio id="bgm-player" src="/assets/audio/games/slot_bg.mp3" loop preload="auto"></audio>
+
+  <div class="game-page-container">
+    <div class="top-nav-bar">
+      <div class="breadcrumbs">
+        <a href="{{ route('home') }}">1XGAMES</a>
+        <span>/</span>
+        <a href="{{ route('dashboard') }}">SLOTS</a>
+        <span>/</span>
+        <span style="color:#f8fafc;">ROMAN SLOTS</span>
+      </div>
+
+      <div class="audio-controls">
+        <button class="audio-btn" id="sound-toggle" onclick="toggleAudio()">
+          <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+          <span id="sound-label">Sound: ON</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Paytable Modal -->
-    <div class="game-modal" id="rulesModal">
-        <div class="game-modal-content">
-            <button class="game-modal-close" onclick="closeRulesModal()">&times;</button>
-            <h3 style="margin-top:0; color:#ffd54a; font-family:'Cinzel',serif;"><i class="fas fa-crown"></i> Roman Slots - Paytable & Multipliers</h3>
-            <p style="font-size:13px; color:#e0c9a6;">20 Fixed Paylines. Wins pay from left to right on adjacent reels. Scatter pays anywhere!</p>
-            <table class="rules-table">
-                <thead>
-                    <tr>
-                        <th>Symbol</th>
-                        <th>3 in a line</th>
-                        <th>4 in a line</th>
-                        <th>5 in a line</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Golden Wild</td><td>15x</td><td>50x</td><td>300x</td></tr>
-                    <tr><td>Roman Dagger</td><td>8x</td><td>25x</td><td>100x</td></tr>
-                    <tr><td>Imperial Vase</td><td>8x</td><td>25x</td><td>100x</td></tr>
-                    <tr><td>Laurel Wreath</td><td>5x</td><td>12x</td><td>50x</td></tr>
-                    <tr><td>Gladiator Helmet</td><td>5x</td><td>12x</td><td>50x</td></tr>
-                    <tr><td>Lion Coin / Column</td><td>3x</td><td>8x</td><td>30x</td></tr>
-                    <tr><td>Altar / Arch Coins</td><td>2x</td><td>5x</td><td>20x</td></tr>
-                    <tr><td>Scatter (Eagle/Shield)</td><td>2x Total</td><td>10x Total</td><td>50x Total</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <!-- Authentic Stage directly over Background Art -->
+    <div class="stage-wrapper">
+      <div id="stage">
+        <div id="msg">PRESS SPIN TO PLAY</div>
+
+        <!-- Dynamic Output Displays on Background Graphics -->
+        <div class="val" id="tb" style="left:27.179%; top:92.553%; width:6.154%; height:4.103%;">20</div>
+        <div class="val" id="bal" style="left:65.470%; top:92.553%; width:11.453%; height:4.103%;">{{ number_format(Auth::check() ? (float)Auth::user()->balance : 1000, 2) }}</div>
+        <div class="val" id="win" style="left:81.026%; top:92.553%; width:5.983%; height:4.103%;">0.00</div>
+
+        <!-- Clickable Native Buttons on Background Artwork -->
+        <div class="hit" id="minus" style="left:24.274%; top:92.705%; width:1.709%; height:3.647%;" title="Decrease Bet"></div>
+        <div class="hit" id="plus" style="left:34.188%; top:92.705%; width:1.709%; height:3.647%;" title="Increase Bet"></div>
+        <div class="hit" id="max" style="left:39.231%; top:91.793%; width:5.641%; height:5.623%;" title="Max Bet"></div>
+        <div class="hit" id="spin" style="left:44.701%; top:84.802%; width:10.598%; height:15.198%;" title="Spin Reels"></div>
+        <div class="hit" id="autob" style="left:55.299%; top:91.793%; width:5.641%; height:5.623%;" title="Auto Spin"></div>
+      </div>
     </div>
 
-    <script>
-        window.ROMAN_BASE = "{{ asset('roman-slot/roman-slot') }}/";
-        window.USER_BALANCE = {{ Auth::check() ? (float)Auth::user()->balance : 5000.00 }};
+    <!-- Quick Stake Bar & Mode Toggle -->
+    <div class="extra-controls-bar">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:12px; font-weight:700; color:#ca8a04;">QUICK STAKE:</span>
+        <button class="chip-btn" onclick="setBet(10)">10</button>
+        <button class="chip-btn active" onclick="setBet(20)">20</button>
+        <button class="chip-btn" onclick="setBet(50)">50</button>
+        <button class="chip-btn" onclick="setBet(100)">100</button>
+        <button class="chip-btn" onclick="setBet(500)">500</button>
+      </div>
 
-        // --- Audio Synthesizer & Sound Engine with Background Music ---
-        class RomanAudioEngine {
-            constructor() {
-                this.ctx = null;
-                this.isMuted = false;
-                this.bgTimer = null;
-                this.bgStep = 0;
-            }
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="mode-real" class="chip-btn active" onclick="setDemo(false)">💰 Real</button>
+        <button id="mode-demo" class="chip-btn" onclick="setDemo(true)">🎮 Demo</button>
+      </div>
+    </div>
+  </div>
 
-            init() {
-                if (!this.ctx) {
-                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                    if (AudioCtx) this.ctx = new AudioCtx();
-                }
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
-                this.startBackgroundMusic();
-            }
+  <script>
+    const IMG = {
+      S: "/roman-slot/assets/scatter.jpg",
+      A: "/roman-slot/assets/coin-arch.jpg",
+      V: "/roman-slot/assets/vase.jpg",
+      W: "/roman-slot/assets/wild.jpg",
+      F: "/roman-slot/assets/coin-altar.jpg",
+      K: "/roman-slot/assets/coin-column.jpg",
+      H: "/roman-slot/assets/helmet.jpg",
+      L: "/roman-slot/assets/wreath.jpg",
+      N: "/roman-slot/assets/coin-lion.jpg",
+      D: "/roman-slot/assets/dagger.jpg"
+    };
 
-            startBackgroundMusic() {
-                if (this.bgTimer || this.isMuted || !this.ctx) return;
-                // Roman epic ambient harmonic chord progression
-                const chords = [
-                    [130.81, 164.81, 196.00], // C minor
-                    [116.54, 146.83, 174.61], // Bb major
-                    [103.83, 130.81, 155.56], // Ab major
-                    [123.47, 146.83, 185.00]  // G dominant
-                ];
-                let chordIdx = 0;
-                this.bgTimer = setInterval(() => {
-                    if (this.isMuted || !this.ctx) return;
-                    const chord = chords[chordIdx % chords.length];
-                    chordIdx++;
-                    chord.forEach((freq, i) => {
-                        try {
-                            const osc = this.ctx.createOscillator();
-                            const gain = this.ctx.createGain();
-                            osc.type = i === 0 ? 'sawtooth' : 'triangle';
-                            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                            gain.gain.setValueAtTime(0.018, this.ctx.currentTime);
-                            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 3.8);
-                            osc.connect(gain);
-                            gain.connect(this.ctx.destination);
-                            osc.start();
-                            osc.stop(this.ctx.currentTime + 3.8);
-                        } catch(e){}
-                    });
-                }, 4000);
-            }
+    const SYMBOL_ALIAS = {
+      'H1': 'H', 'H2': 'D', 'H3': 'V', 'H4': 'L',
+      'L1': 'N', 'L2': 'F', 'L3': 'K', 'L4': 'A',
+      'W': 'W', 'S': 'S',
+      'wild': 'W', 'scatter': 'S', 'helmet': 'H', 'dagger': 'D', 'vase': 'V',
+      'wreath': 'L', 'coin-lion': 'N', 'coin-altar': 'F', 'coin-column': 'K', 'coin-arch': 'A'
+    };
 
-            stopBackgroundMusic() {
-                if (this.bgTimer) {
-                    clearInterval(this.bgTimer);
-                    this.bgTimer = null;
-                }
-            }
+    const W0 = 1170, H0 = 658;
+    const x0 = 204, y0 = 147, cw = 152.6, ch = 130.0;
+    const BAG = 'KKKAAAFFFNNNHHLLVVDDWSS'.split('');
 
-            playClick() {
-                if (this.isMuted || !this.ctx) return;
-                try {
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.05);
-                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.05);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + 0.05);
-                } catch(e){}
-            }
+    const $ = id => document.getElementById(id);
+    const st = $('stage');
 
-            playReelStep() {
-                if (this.isMuted || !this.ctx) return;
-                try {
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(180, this.ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(70, this.ctx.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.08);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + 0.08);
-                } catch(e){}
-            }
+    let bet = 20;
+    let bal = parseFloat("{{ Auth::check() ? (float)Auth::user()->balance : 1000 }}");
+    let isDemo = false;
+    let busy = false;
+    let auto = false;
+    let isMuted = false;
+    let grid = [], cells = [];
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-            playWin(isBig) {
-                if (this.isMuted || !this.ctx) return;
-                const notes = isBig ? [440, 554, 659, 880, 1108] : [440, 554, 659, 880];
-                notes.forEach((freq, idx) => {
-                    setTimeout(() => {
-                        if (this.isMuted || !this.ctx) return;
-                        try {
-                            const osc = this.ctx.createOscillator();
-                            const gain = this.ctx.createGain();
-                            osc.type = 'sine';
-                            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                            gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
-                            osc.connect(gain);
-                            gain.connect(this.ctx.destination);
-                            osc.start();
-                            osc.stop(this.ctx.currentTime + 0.35);
-                        } catch(e){}
-                    }, idx * 100);
-                });
-            }
+    // Audio Engine
+    const bgm = $('bgm-player');
+    function startBGM() {
+      if (!isMuted) {
+        bgm.volume = 0.5;
+        bgm.play().catch(() => {});
+      }
+    }
+    window.addEventListener('click', startBGM, { once: true });
+    window.addEventListener('keydown', startBGM, { once: true });
 
-            toggleMute() {
-                this.isMuted = !this.isMuted;
-                if (this.isMuted) {
-                    this.stopBackgroundMusic();
-                } else {
-                    this.init();
-                }
-                return !this.isMuted;
-            }
+    function toggleAudio() {
+      isMuted = !isMuted;
+      if (isMuted) {
+        bgm.pause();
+        $('sound-icon').className = 'fa-solid fa-volume-xmark';
+        $('sound-label').innerText = 'Sound: OFF';
+      } else {
+        bgm.play().catch(() => {});
+        $('sound-icon').className = 'fa-solid fa-volume-high';
+        $('sound-label').innerText = 'Sound: ON';
+      }
+    }
+
+    const rnd = () => BAG[Math.random() * BAG.length | 0];
+
+    // Build 15 cells directly on the stage
+    for (let r = 0; r < 3; r++) {
+      grid.push([]);
+      for (let c = 0; c < 5; c++) {
+        const d = document.createElement('div');
+        d.className = 'cell';
+        d.style.cssText = `left:${(x0 + c * cw + 1) / W0 * 100}%; top:${(y0 + r * ch + 1) / H0 * 100}%; width:${(cw - 2) / W0 * 100}%; height:${(ch - 2) / H0 * 100}%;`;
+        d.innerHTML = '<img>';
+        st.appendChild(d);
+        cells.push(d);
+        grid[r].push(rnd());
+      }
+    }
+
+    const draw = (r, c) => {
+      const sym = grid[r][c];
+      const mapped = SYMBOL_ALIAS[sym] || sym;
+      cells[r * 5 + c].firstChild.src = IMG[mapped] || IMG['H'];
+    };
+
+    const all = () => {
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 5; c++) draw(r, c);
+      }
+    };
+
+    const ui = () => {
+      $('tb').textContent = bet;
+      $('bal').textContent = bal.toFixed(2);
+      document.querySelectorAll('.extra-controls-bar .chip-btn').forEach(b => {
+        if (!b.id) b.classList.toggle('active', parseInt(b.innerText) === bet);
+      });
+    };
+
+    all();
+    ui();
+    $('win').textContent = '0.00';
+
+    const clr = () => cells.forEach(d => {
+      d.className = 'cell';
+    });
+
+    function setBet(v) {
+      bet = Math.max(1, Math.min(50000, v));
+      ui();
+    }
+
+    function setDemo(val) {
+      isDemo = val;
+      $('mode-real').classList.toggle('active', !val);
+      $('mode-demo').classList.toggle('active', val);
+      if (isDemo) {
+        $('msg').textContent = 'DEMO MODE - PLAY FOR FUN';
+      } else {
+        $('msg').textContent = 'REAL MODE - PRESS SPIN';
+      }
+    }
+
+    async function spin() {
+      if (busy) return;
+      if (!isDemo && bal < bet) {
+        $('msg').textContent = 'INSUFFICIENT WALLET BALANCE';
+        auto = false;
+        $('autob').classList.remove('auto-active');
+        return;
+      }
+
+      startBGM();
+      busy = true;
+      $('spin').classList.add('busy');
+      if (!isDemo) {
+        bal -= bet;
+      }
+      ui();
+      $('win').textContent = '0.00';
+      $('msg').textContent = 'SPINNING ROMAN REELS...';
+      clr();
+
+      cells.forEach(d => d.classList.add('spinning'));
+
+      const animInterval = setInterval(() => {
+        for (let c = 0; c < 5; c++) {
+          for (let r = 0; r < 3; r++) {
+            grid[r][c] = rnd();
+            draw(r, c);
+          }
+        }
+      }, 75);
+
+      try {
+        const res = await fetch("{{ route('romanslots.spin') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken,
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            bet: bet,
+            is_demo: isDemo
+          })
+        });
+
+        const data = await res.json();
+        clearInterval(animInterval);
+        cells.forEach(d => d.classList.remove('spinning'));
+
+        if (!data.success) {
+          $('msg').textContent = data.error || 'SPIN ERROR';
+          busy = false;
+          $('spin').classList.remove('busy');
+          auto = false;
+          $('autob').classList.remove('auto-active');
+          return;
         }
 
-        const romanAudio = new RomanAudioEngine();
-
-        function toggleAudio() {
-            romanAudio.init();
-            const isOn = romanAudio.toggleMute();
-            document.getElementById('soundIcon').className = isOn ? 'fas fa-volume-up' : 'fas fa-volume-mute';
-            document.getElementById('soundText').textContent = isOn ? 'Music: ON' : 'Music: OFF';
-        }
-
-        function openRulesModal() {
-            document.getElementById('rulesModal').classList.add('active');
-        }
-        function closeRulesModal() {
-            document.getElementById('rulesModal').classList.remove('active');
-        }
-
-        // Initialize audio on first click anywhere
-        window.addEventListener('click', function() {
-            romanAudio.init();
-        }, { once: true });
-
-        // --- Game Logic Engine ---
-        const IMG = {
-            S: window.ROMAN_BASE + "assets/scatter.jpg",
-            A: window.ROMAN_BASE + "assets/coin-arch.jpg",
-            V: window.ROMAN_BASE + "assets/vase.jpg",
-            W: window.ROMAN_BASE + "assets/wild.jpg",
-            F: window.ROMAN_BASE + "assets/coin-altar.jpg",
-            K: window.ROMAN_BASE + "assets/coin-column.jpg",
-            H: window.ROMAN_BASE + "assets/helmet.jpg",
-            L: window.ROMAN_BASE + "assets/wreath.jpg",
-            N: window.ROMAN_BASE + "assets/coin-lion.jpg",
-            D: window.ROMAN_BASE + "assets/dagger.jpg"
-        };
-        const W0 = 1170, H0 = 658;
-        const x0 = 204, y0 = 147, cw = 152.6, ch = 130.0;
-        const BAG = 'KKKAAAFFFNNNHHLLVVDDWSS'.split('');
-        const PAY = {
-            K: [0,0,2,5,20], F: [0,0,2,5,20], A: [0,0,3,8,30],
-            N: [0,0,3,8,30], H: [0,0,5,12,50], L: [0,0,5,12,50],
-            V: [0,0,8,25,100], D: [0,0,8,25,100], W: [0,0,15,50,300]
-        };
-        const SCATTER = [0,0,0,2,10,50];
-        const LINES = [
-            [1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],
-            [0,0,1,2,2],[2,2,1,0,0],[1,0,0,0,1],[1,2,2,2,1],[0,1,1,1,0],
-            [2,1,1,1,2],[1,0,1,2,1],[1,2,1,0,1],[0,1,0,1,0],[2,1,2,1,2],
-            [1,1,0,1,1],[1,1,2,1,1],[0,0,2,0,0],[2,2,0,2,2],[0,2,2,2,0]
-        ];
-
-        const $ = id => document.getElementById(id);
-        const st = $('stage');
-        let bet = 20, bal = {{ Auth::check() ? (float)(Auth::user()->balance ?? 1000.00) : 1000.00 }}, busy = false, auto = false, grid = [], cells = [];
-        const rnd = () => BAG[Math.random() * BAG.length | 0];
-
-        for (let r = 0; r < 3; r++) {
-            grid.push([]);
+        // Apply final grid from server
+        if (data.grid) {
+          for (let r = 0; r < 3; r++) {
             for (let c = 0; c < 5; c++) {
-                const d = document.createElement('div');
-                d.className = 'cell';
-                d.style.cssText = `left:${(x0+c*cw+1)/W0*100}%;top:${(y0+r*ch+1)/H0*100}%;width:${(cw-2)/W0*100}%;height:${(ch-2)/H0*100}%`;
-                d.innerHTML = '<img>';
-                st.appendChild(d);
-                cells.push(d);
-                grid[r].push(rnd());
+              grid[r][c] = data.grid[r][c];
+              draw(r, c);
             }
+          }
         }
 
-        const draw = (r,c) => { cells[r*5+c].firstChild.src = IMG[grid[r][c]]; };
-        const all = () => { for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) draw(r,c); };
-        const ui = () => {
-            $('tb').textContent = bet;
-            $('bal').textContent = (typeof bal === 'number') ? bal.toFixed(2) : bal;
-        };
-        all();
+        if (data.new_balance !== undefined && !isDemo) {
+          bal = parseFloat(data.new_balance);
+        } else if (isDemo) {
+          bal = Math.max(0, bal - bet + (parseFloat(data.win_amount) || 0));
+        }
+
+        const winAmount = parseFloat(data.win_amount || 0);
+        $('win').textContent = winAmount.toFixed(2);
         ui();
-        $('win').textContent = '0.00';
 
-        const clr = () => cells.forEach(d => d.className = 'cell');
-
-        async function spin() {
-            if (busy) return;
-            romanAudio.init();
-            if (bal < bet) {
-                $('msg').textContent = 'Insufficient Balance';
-                auto = false;
-                $('autob').classList.remove('auto');
-                return;
-            }
-            busy = true;
-            const isDemo = {{ Auth::check() ? 'false' : 'true' }};
-            bal -= bet;
-            ui();
-            $('win').textContent = '0.00';
-            $('msg').textContent = '';
-            clr();
-
-            // Start reel rolling sound & visual animation
-            const stop = [0,0,0,0,0];
-            const iv = setInterval(() => {
-                romanAudio.playReelStep();
-                for (let c = 0; c < 5; c++) {
-                    if (!stop[c]) {
-                        for (let r = 0; r < 3; r++) {
-                            grid[r][c] = rnd();
-                            draw(r, c);
-                        }
-                    }
-                }
-            }, 70);
-
-            try {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                const response = await fetch('/games/roman-slots/spin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        bet: bet,
-                        is_demo: isDemo ? 1 : 0
-                    })
-                });
-
-                const data = await response.json();
-                if (!data.success) {
-                    clearInterval(iv);
-                    $('msg').textContent = data.error || 'Spin failed';
-                    bal += bet;
-                    ui();
-                    busy = false;
-                    return;
-                }
-
-                const finalGrid = data.grid;
-                const winAmount = data.win_amount || 0;
-                const hitCells = data.hit_cells || [];
-                const scWin = data.scatter_win || false;
-
-                for (let c = 0; c < 5; c++) {
-                    setTimeout(() => {
-                        stop[c] = 1;
-                        romanAudio.playReelStep();
-                        for (let r = 0; r < 3; r++) {
-                            grid[r][c] = finalGrid[r][c];
-                            draw(r, c);
-                        }
-                        if (c === 4) {
-                            clearInterval(iv);
-                            if (hitCells.length) {
-                                cells.forEach((d, i) => {
-                                    if (hitCells.includes(i)) {
-                                        d.classList.add(scWin ? 'sc' : 'win');
-                                    } else {
-                                        d.classList.add('dim');
-                                    }
-                                });
-                            }
-
-                            if (data.new_balance !== undefined) {
-                                bal = data.new_balance;
-                            } else {
-                                bal += winAmount;
-                            }
-
-                            ui();
-                            $('win').textContent = winAmount.toFixed(2);
-                            if (winAmount > 0) {
-                                romanAudio.playWin(winAmount >= bet * 5);
-                                $('msg').textContent = 'WIN ' + winAmount.toFixed(2) + (data.extra_msg || '');
-                            }
-                            busy = false;
-                            if (auto) setTimeout(spin, winAmount ? 2200 : 1200);
-                        }
-                    }, 600 + c * 350);
-                }
-            } catch (err) {
-                clearInterval(iv);
-                $('msg').textContent = 'Connection error. Try again.';
-                bal += bet;
-                ui();
-                busy = false;
-            }
+        if (winAmount > 0) {
+          $('msg').textContent = `🎉 TRIUMPH! WIN: +৳${winAmount.toFixed(2)}`;
+          if (typeof confetti === 'function') {
+            confetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
+          }
+          if (typeof window.triggerWinCelebration === 'function') {
+            window.triggerWinCelebration({
+              amount: winAmount,
+              multiplier: bet > 0 ? (winAmount / bet) : 0,
+              title: 'GLORY OF ROME WIN!'
+            });
+          }
+          if (data.hit_cells && data.hit_cells.length > 0) {
+            cells.forEach((d, i) => {
+              if (data.hit_cells.includes(i)) {
+                d.classList.add(data.scatter_win ? 'sc' : 'win');
+              } else {
+                d.classList.add('dim');
+              }
+            });
+          }
+        } else {
+          $('msg').textContent = 'TRY AGAIN FOR THE GLORY OF ROME!';
         }
 
-        const setBet = v => {
-            romanAudio.playClick();
-            bet = Math.max(1, Math.min(5000, v));
-            ui();
-        };
+        busy = false;
+        $('spin').classList.remove('busy');
 
-        $('spin').onclick = spin;
-        $('plus').onclick = () => setBet(bet + 5);
-        $('minus').onclick = () => setBet(bet - 5);
-        $('max').onclick = () => { setBet(100); spin(); };
-        $('autob').onclick = () => {
-            romanAudio.playClick();
-            auto = !auto;
-            $('autob').classList.toggle('auto', auto);
-            if (auto) spin();
-        };
-    </script>
+        if (auto) {
+          setTimeout(spin, winAmount > 0 ? 2000 : 1000);
+        }
+
+      } catch (err) {
+        clearInterval(animInterval);
+        cells.forEach(d => d.classList.remove('spinning'));
+        busy = false;
+        $('spin').classList.remove('busy');
+        $('msg').textContent = 'NETWORK CONNECTION ERROR';
+        auto = false;
+        $('autob').classList.remove('auto-active');
+      }
+    }
+
+    $('spin').onclick = spin;
+    $('plus').onclick = () => setBet(bet + 10);
+    $('minus').onclick = () => setBet(Math.max(1, bet - 10));
+    $('max').onclick = () => { setBet(5000); spin(); };
+    $('autob').onclick = () => {
+      auto = !auto;
+      $('autob').classList.toggle('auto-active', auto);
+      if (auto && !busy) spin();
+    };
+  </script>
 </body>
 </html>

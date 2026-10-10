@@ -253,6 +253,7 @@ Route::prefix('games/heads-or-tails')->group(function () {
     Route::get('/state', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'getGameState'])->name('headstails.state');
     Route::post('/bet', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'placeBet'])->name('headstails.bet');
     Route::post('/toss', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'instantToss'])->name('headstails.toss');
+    Route::post('/cashout', [App\Http\Controllers\HeadsOrTails\HeadsTailsGameController::class, 'cashout'])->name('headstails.cashout');
 });
 Route::get('/heads-or-tails/fixed', function () {
     return view('customer.heads-or-tails-game');
@@ -326,6 +327,38 @@ Route::get('/dashboard/transactions', [DashboardController::class, 'getTransacti
 Route::get('/dashboard/referrals', [DashboardController::class, 'getReferrals'])->middleware('auth')->name('dashboard.referrals');
 Route::get('/dashboard/gateways', [DashboardController::class, 'getGateways'])->middleware('auth')->name('dashboard.gateways');
 
+// Public & Customer Seller APIs
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\KycController;
+Route::get('/public/sellers', [SellerController::class, 'getPublicSellers'])->name('public.sellers');
+Route::get('/seller/active-list', [SellerController::class, 'getPublicSellers'])->name('seller.active-list');
+Route::get('/dashboard/seller-chat/{sellerId}', [SellerController::class, 'getCustomerChat'])->middleware('auth')->name('customer.seller-chat');
+Route::get('/seller/chat/{sellerId}/messages', [SellerController::class, 'getCustomerChat'])->middleware('auth')->name('customer.seller-chat.messages');
+Route::post('/dashboard/seller-chat/send', [SellerController::class, 'sendCustomerMessage'])->middleware('auth')->name('customer.seller-chat.send');
+Route::post('/seller/chat/{sellerId}/send', [SellerController::class, 'sendCustomerMessage'])->middleware('auth')->name('customer.seller-chat.send.post');
+
+// Customer KYC Verification Routes
+Route::post('/kyc/submit', [KycController::class, 'submit'])->middleware('auth')->name('kyc.submit');
+Route::get('/kyc/status', [KycController::class, 'getStatus'])->middleware('auth')->name('kyc.status');
+
+
+
+// =============================================
+// SELLER / AGENT PORTAL ROUTES
+// =============================================
+Route::get('/seller/login', [SellerController::class, 'showLogin'])->name('seller.login');
+Route::post('/seller/login', [SellerController::class, 'login'])->name('seller.login.post');
+Route::post('/seller/logout', [SellerController::class, 'logout'])->middleware('auth')->name('seller.logout');
+
+Route::middleware(['auth'])->prefix('seller')->name('seller.')->group(function () {
+    Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/lookup-customer', [SellerController::class, 'lookupCustomer'])->name('lookup-customer');
+    Route::post('/transfer', [SellerController::class, 'transferToCustomer'])->name('transfer');
+    Route::get('/transfers-history', [SellerController::class, 'getTransfersHistory'])->name('transfers-history');
+    Route::get('/chat/{customerId}', [SellerController::class, 'getChatMessages'])->name('chat.messages');
+    Route::post('/chat/send', [SellerController::class, 'sendChatMessage'])->name('chat.send');
+});
+
 // =============================================
 // ADMIN Routes (Protected by auth + is_admin)
 // =============================================
@@ -353,6 +386,14 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/users/{id}/toggle-block', [AdminController::class, 'toggleBlockUser'])->name('users.toggle-block');
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
     Route::get('/live-bets', [AdminController::class, 'getLiveBetsFeed'])->name('live-bets');
+
+    // Seller / Agent CRUD Management
+    Route::get('/sellers', [AdminController::class, 'getSellers'])->name('sellers.index');
+    Route::post('/sellers', [AdminController::class, 'createSeller'])->name('sellers.store');
+    Route::post('/sellers/create', [AdminController::class, 'createSeller'])->name('sellers.create');
+    Route::post('/sellers/{id}', [AdminController::class, 'updateSeller'])->name('sellers.update');
+    Route::post('/sellers/{id}/adjust-balance', [AdminController::class, 'adjustSellerBalance'])->name('sellers.adjust-balance');
+    Route::delete('/sellers/{id}', [AdminController::class, 'deleteSeller'])->name('sellers.delete');
 
     // Crash Game Points CRUD
     Route::get('/crash-points', [AdminController::class, 'getCrashPoints'])->name('crash-points.index');
@@ -501,7 +542,14 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/sliders/{id}/update', [App\Http\Controllers\Admin\SliderAdminController::class, 'update'])->name('sliders.update');
     Route::post('/sliders/{id}/toggle', [App\Http\Controllers\Admin\SliderAdminController::class, 'toggleStatus'])->name('sliders.toggle');
     Route::delete('/sliders/{id}', [App\Http\Controllers\Admin\SliderAdminController::class, 'destroy'])->name('sliders.destroy');
+
+    // Admin KYC Verifications Management
+    Route::get('/kyc', [App\Http\Controllers\KycController::class, 'adminList'])->name('kyc.index');
+    Route::post('/kyc/{id}/approve', [App\Http\Controllers\KycController::class, 'adminApprove'])->name('kyc.approve');
+    Route::post('/kyc/{id}/reject', [App\Http\Controllers\KycController::class, 'adminReject'])->name('kyc.reject');
+    Route::delete('/kyc/{id}', [App\Http\Controllers\KycController::class, 'adminReset'])->name('kyc.delete');
 });
+
 
 // Game engine: fetch next crash point (auth required - players only)
 Route::get('/game/next-crash-point', [AdminController::class, 'getNextCrashPoint'])->middleware('auth')->name('game.next-crash-point');

@@ -408,6 +408,13 @@ function evaluateLines() {
     winTextLabel.text = `You have won ${totalWin.toFixed(0)} BDT`;
 
     const isBig = totalWin >= betAmount * 10;
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: totalWin,
+        multiplier: betAmount > 0 ? (totalWin / betAmount) : 0,
+        title: isBig ? 'BURNING MEGA JACKPOT!' : 'BURNING HOT WIN!'
+      });
+    }
     if (window.audio) {
       window.audio.playWin(isBig);
       window.audio.playRoar();

@@ -1796,6 +1796,13 @@ async function doSpin(){
       winAmt = parseFloat(data.win_amount);
       winTxt.textContent = '+' + fmt(winAmt) + (data.multiplier > 1 ? ' (' + data.multiplier + 'X)' : '');
       winBanner.classList.add('show');
+      if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+          amount: winAmt,
+          multiplier: data.multiplier || (bet > 0 ? (winAmt / bet) : 0),
+          title: data.triggered_wheel ? 'LUCKY WHEEL WIN!' : 'FORTUNE GEMS WIN!'
+        });
+      }
       flashRibbon(data.triggered_wheel ? `🔥 LUCKY WHEEL WIN Tk ${fmt(winAmt)}!` : `⭐ WIN Tk ${fmt(winAmt)} (${data.multiplier}X)!`);
       setTimeout(() => winBanner.classList.remove('show'), 2000);
     } else {

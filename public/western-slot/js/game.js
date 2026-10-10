@@ -448,7 +448,6 @@
     // Trigger Cowgirl celebratory shot
     animateCowgirlShoot();
 
-    // Show big banner if win >= 5x stake
     if (totalWin >= state.totalStake * 5) {
       playSound('big-win');
       const banner = document.createElement('div');
@@ -460,6 +459,14 @@
       }, 2500);
     } else {
       playSound('win');
+    }
+
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: totalWin,
+        multiplier: state.totalStake > 0 ? (totalWin / state.totalStake) : 0,
+        title: (totalWin >= state.totalStake * 5) ? 'WILD WEST BIG WIN!' : 'WESTERN WINNER!'
+      });
     }
 
     // Highlight winning cells on the reels

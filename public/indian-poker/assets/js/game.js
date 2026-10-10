@@ -191,6 +191,16 @@ async function playRound() {
 
       // Sound and message
       AudioFX.win(winHandId);
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 75, spread: 65, origin: { y: 0.6 } });
+      }
+      if (typeof window.triggerWinCelebration === 'function') {
+        window.triggerWinCelebration({
+          amount: winAmount,
+          multiplier: State.bet > 0 ? (winAmount / State.bet) : 0,
+          title: `${response.hand_name || 'INDIAN POKER WIN'}!`
+        });
+      }
       if (winHandId === 'three' || winHandId === 'sf') {
         setMessage(`${response.hand_name || 'Win'}! You win ${winAmount.toFixed(2)}`, 'bigwin');
       } else {

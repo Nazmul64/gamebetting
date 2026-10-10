@@ -469,6 +469,14 @@
       playSound('win');
     }
 
+    if (typeof window.triggerWinCelebration === 'function') {
+      window.triggerWinCelebration({
+        amount: totalWin,
+        multiplier: state.totalStake > 0 ? (totalWin / state.totalStake) : 0,
+        title: (totalWin >= state.totalStake * 5) ? 'WILD WEST BIG WIN!' : 'WESTERN WINNER!'
+      });
+    }
+
     // Highlight winning cells on the reels
     wins.forEach(w => {
       showPaylineOverlay(w.lineId);

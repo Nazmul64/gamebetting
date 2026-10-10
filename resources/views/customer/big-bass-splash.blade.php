@@ -1254,6 +1254,14 @@
                         document.getElementById('win-banner-title').innerText = data.has_fisherman ? '🎣 BIG HOOK COLLECT!' : 'SPLASH WIN!';
                         banner.classList.add('active');
 
+                        if (typeof window.triggerWinCelebration === 'function') {
+                            window.triggerWinCelebration({
+                                amount: data.win_amount,
+                                multiplier: charge > 0 ? (data.win_amount / charge) : 0,
+                                title: data.has_fisherman ? 'BIG HOOK COLLECT!' : 'SPLASH WIN!'
+                            });
+                        }
+
                         setTimeout(() => {
                             banner.classList.remove('active');
                         }, 3500);

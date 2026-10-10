@@ -1834,6 +1834,13 @@ window.state = state;
         wins.forEach(w=>w.cells.forEach(([c,r])=>{ cells[r][c].classList.remove('dim'); cells[r][c].classList.add('win'); }));
         showWinBanner('Win ' + currencySymbol + winAmount.toFixed(2));
         playWinSound();
+        if (typeof window.triggerWinCelebration === 'function') {
+          window.triggerWinCelebration({
+            amount: winAmount,
+            multiplier: state.bet > 0 ? (winAmount / state.bet) : 0,
+            title: 'TEMPLE OF FORTUNE WIN!'
+          });
+        }
 
         await sleep(state.turbo?500:1100);
         clearCellStates();

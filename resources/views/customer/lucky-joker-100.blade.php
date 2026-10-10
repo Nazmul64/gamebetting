@@ -2280,6 +2280,13 @@
         nextAutoSpinDelay = winLines.length*1000 + 1500;
         spawnWinParticles(46);
         sndWin();
+        if (typeof window.triggerWinCelebration === 'function') {
+          window.triggerWinCelebration({
+            amount: totalWin,
+            multiplier: activeBet > 0 ? (totalWin / activeBet) : 0,
+            title: (totalWin >= activeBet * 5) ? 'JOKER JACKPOT!' : 'LUCKY JOKER WIN!'
+          });
+        }
         playWinSequence(winLines, totalWin);
         syncBalance(balance);
       } else {

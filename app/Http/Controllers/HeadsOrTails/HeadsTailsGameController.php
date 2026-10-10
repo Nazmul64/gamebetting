@@ -104,11 +104,27 @@ class HeadsTailsGameController extends Controller {
             'amount' => 'required|numeric|min:0.1',
             'is_demo' => 'required|boolean',
             'step' => 'nullable|integer',
+            'mode' => 'nullable|string',
+            'is_continuing' => 'nullable|boolean',
             'demo_toss_done' => 'nullable|integer'
         ]);
 
         try {
             $res = $this->service->instantToss(auth()->user(), $request->all());
+            return response()->json($res);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+    }
+
+    public function cashout(Request $request) {
+        $request->validate([
+            'win_amount' => 'required|numeric|min:0.01',
+            'is_demo' => 'required|boolean',
+        ]);
+
+        try {
+            $res = $this->service->cashoutDoubling(auth()->user(), $request->all());
             return response()->json($res);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);

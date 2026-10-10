@@ -267,23 +267,34 @@ class HeadsTailsService {
     }
 
     // ইনস্ট্যান্ট বা প্রোগ্রেসিভ সিঙ্গল প্লেয়ার টস হ্যান্ডলার (যদি সিঙ্গল প্লেয়ার মোডে টস হয়)
+    // ইনস্ট্যান্ট বা প্রোগ্রেসিভ সিঙ্গল প্লেয়ার টস হ্যান্ডলার (Fixed & Doubling Ladder Modes)
     public function instantToss(?User $user, array $data): array {
         $settings = HeadsTailsSetting::firstOrCreate(['id' => 1]);
         $isDemo = (bool)($data['is_demo'] ?? false);
         $amount = (float)($data['amount'] ?? 1);
         $side = $data['side'] ?? 'heads';
         $progressiveStep = (int)($data['step'] ?? 1);
+        $mode = $data['mode'] ?? 'fixed'; // 'fixed' or 'doubling'
+        $isContinuing = (bool)($data['is_continuing'] ?? false); // step > 1 in doubling without debiting
 
         if (!in_array($side, ['heads', 'tails'])) {
             throw new Exception('Invalid side chosen.');
         }
 
-        // Calculate multiplier based on step (1 => 1.96, 2 => 3.84, 3 => 7.50)
-        $multiplier = (float)$settings->base_multiplier;
-        if ($progressiveStep == 2) {
-            $multiplier = 3.84;
-        } elseif ($progressiveStep >= 3) {
-            $multiplier = 7.50;
+        // Multiplier calculation
+        if ($mode === 'doubling') {
+            $doublingMultipliers = [
+                1 => 2.0,
+                2 => 4.0,
+                3 => 8.0,
+                4 => 16.0,
+                5 => 32.0,
+                6 => 64.0,
+                7 => 128.0
+            ];
+            $multiplier = $doublingMultipliers[$progressiveStep] ?? pow(2, min(7, max(1, $progressiveStep)));
+        } else {
+            $multiplier = (float)($settings->base_multiplier ?? 2.0);
         }
 
         if ($isDemo) {
@@ -296,45 +307,79 @@ class HeadsTailsService {
             }
 
             // Demo win logic
-            $won = (rand(1, 100) <= $settings->win_chance_percentage);
+            $won = (rand(1, 100) <= ($settings->win_chance_percentage ?? 40));
             $winningSide = $won ? $side : ($side === 'heads' ? 'tails' : 'heads');
+            $winAmount = $won ? ($amount * $multiplier) : 0;
 
             return [
                 'deposit_required' => false,
                 'winning_side' => $winningSide,
                 'is_win' => $won,
                 'multiplier' => $multiplier,
-                'win_amount' => $won ? ($amount * $multiplier) : 0,
+                'win_amount' => $winAmount,
+                'step' => $progressiveStep,
                 'new_balance' => null
             ];
         }
 
-        return DB::transaction(function () use ($user, $amount, $side, $progressiveStep, $multiplier, $settings) {
+        return DB::transaction(function () use ($user, $amount, $side, $progressiveStep, $multiplier, $mode, $isContinuing, $settings) {
             if (!$user) {
                 throw new Exception('দয়া করে লগইন করুন!');
             }
 
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
-            if (!$lockedUser || $lockedUser->balance < $amount) {
-                throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
+            if (!$lockedUser) {
+                throw new Exception('User not found.');
             }
 
             $opening = (float)$lockedUser->balance;
-            $lockedUser->decrement('balance', $amount);
-            $afterDebit = (float)$lockedUser->fresh()->balance;
+            $afterDebit = $opening;
 
-            // Decide winner based on control_mode
-            $won = false;
-            if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                $won = (rand(1, 100) <= $settings->win_chance_percentage);
-            } else {
-                $won = (rand(0, 1) === 1);
+            // If not continuing an active doubling run, debit the base bet
+            if (!$isContinuing) {
+                if ($lockedUser->balance < $amount) {
+                    throw new Exception('ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।');
+                }
+
+                app(\App\Services\GameOutcomeRiggingService::class)->validatePlayerCanPlay($lockedUser, false);
+
+                $lockedUser->decrement('balance', $amount);
+                $afterDebit = (float)$lockedUser->fresh()->balance;
+
+                HeadsTailsTransaction::create([
+                    'user_id' => $lockedUser->id,
+                    'type' => 'debit_bet',
+                    'amount' => $amount,
+                    'balance_before' => $opening,
+                    'balance_after' => $afterDebit
+                ]);
             }
+
+            // Rigging check & Win Calculation (Demo: 70% Win, Real: 70% House Profit / 30% Win)
+            $rigService = app(\App\Services\GameOutcomeRiggingService::class);
+            $won = $rigService->shouldPlayerWin($lockedUser, $isDemo);
 
             $winningSide = $won ? $side : ($side === 'heads' ? 'tails' : 'heads');
             $winAmount = $won ? ($amount * $multiplier) : 0.00;
 
-            // Create a round record for history
+            // In Fixed mode or if doubling finishes immediately (step 1 won & not continuing or ladder capped), credit win
+            // In Doubling mode, if user wins, they can choose to take winnings or continue
+            // If they win in fixed mode, credit immediately
+            $closing = $afterDebit;
+            if ($won && $mode === 'fixed' && $winAmount > 0) {
+                $lockedUser->increment('balance', $winAmount);
+                $closing = (float)$lockedUser->fresh()->balance;
+
+                HeadsTailsTransaction::create([
+                    'user_id' => $lockedUser->id,
+                    'type' => 'credit_win',
+                    'amount' => $winAmount,
+                    'balance_before' => $afterDebit,
+                    'balance_after' => $closing
+                ]);
+            }
+
+            // Record round
             $round = HeadsTailsRound::create([
                 'round_id' => 'COIN-' . strtoupper(uniqid()),
                 'winning_side' => $winningSide,
@@ -346,7 +391,7 @@ class HeadsTailsService {
                 'ends_at' => Carbon::now()
             ]);
 
-            $bet = HeadsTailsBet::create([
+            HeadsTailsBet::create([
                 'round_id' => $round->id,
                 'user_id' => $lockedUser->id,
                 'is_demo' => false,
@@ -356,38 +401,63 @@ class HeadsTailsService {
                 'status' => $won ? 'won' : 'lost'
             ]);
 
-            HeadsTailsTransaction::create([
-                'user_id' => $lockedUser->id,
-                'bet_id' => $bet->id,
-                'type' => 'debit_bet',
-                'amount' => $amount,
-                'balance_before' => $opening,
-                'balance_after' => $afterDebit
-            ]);
-
-            $closing = $afterDebit;
-            if ($won && $winAmount > 0) {
-                $lockedUser->increment('balance', $winAmount);
-                $closing = (float)$lockedUser->fresh()->balance;
-
-                HeadsTailsTransaction::create([
-                    'user_id' => $lockedUser->id,
-                    'bet_id' => $bet->id,
-                    'type' => 'credit_win',
-                    'amount' => $winAmount,
-                    'balance_before' => $afterDebit,
-                    'balance_after' => $closing
-                ]);
-            }
-
             return [
                 'deposit_required' => false,
                 'winning_side' => $winningSide,
                 'is_win' => $won,
                 'multiplier' => $multiplier,
                 'win_amount' => $winAmount,
+                'step' => $progressiveStep,
+                'mode' => $mode,
                 'new_balance' => $closing,
                 'round_id' => $round->round_id
+            ];
+        });
+    }
+
+    // Cash out current doubling winnings
+    public function cashoutDoubling(?User $user, array $data): array {
+        $amount = (float)($data['win_amount'] ?? 0);
+        $isDemo = (bool)($data['is_demo'] ?? false);
+
+        if ($amount <= 0) {
+            throw new Exception('Invalid win amount to cash out.');
+        }
+
+        if ($isDemo) {
+            return [
+                'success' => true,
+                'win_amount' => $amount,
+                'new_balance' => null
+            ];
+        }
+
+        if (!$user) {
+            throw new Exception('দয়া করে লগইন করুন!');
+        }
+
+        return DB::transaction(function () use ($user, $amount) {
+            $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
+            if (!$lockedUser) {
+                throw new Exception('User not found.');
+            }
+
+            $opening = (float)$lockedUser->balance;
+            $lockedUser->increment('balance', $amount);
+            $closing = (float)$lockedUser->fresh()->balance;
+
+            HeadsTailsTransaction::create([
+                'user_id' => $lockedUser->id,
+                'type' => 'credit_win',
+                'amount' => $amount,
+                'balance_before' => $opening,
+                'balance_after' => $closing
+            ]);
+
+            return [
+                'success' => true,
+                'win_amount' => $amount,
+                'new_balance' => $closing
             ];
         });
     }

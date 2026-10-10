@@ -552,15 +552,15 @@ body { background: #0c1626; font-family: 'Outfit', sans-serif; overflow-x: hidde
     <div class="modal-gold-icon">
       <i class="fas fa-lock"></i>
     </div>
-    <h2 class="modal-title">ডেমো লিমিট শেষ!</h2>
+    <h2 class="modal-title">Demo Limit Reached!</h2>
     <p class="modal-desc">
-      আপনার ৩টি ফ্রি ডেমো স্পিন শেষ হয়েছে। আসল ক্যাশ জিতে শেখ ও পাম জুমিরাহ স্ক্যাটার উপভোগ করতে এখনই ডিপোজিট করুন!
+      Your free demo spins limit is completed. Deposit funds now to play with real money and unlock massive jackpot multipliers!
     </p>
     <a href="{{ route('dashboard.deposit') }}" class="modal-btn-deposit">
-      <i class="fas fa-wallet"></i> ডিপোজিট করে আসল টাকা খেলুন
+      <i class="fas fa-wallet"></i> Deposit to Play Real Money
     </a>
     <button class="modal-btn-close" onclick="closeDepositModal()">
-      বন্ধ করুন
+      Close
     </button>
   </div>
 </div>
@@ -949,7 +949,7 @@ function doSpin() {
 
   // Real balance check
   if (!isDemoMode && realBalance < currentBet) {
-    alert("পর্যাপ্ত ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।");
+    alert("Insufficient wallet balance! Please deposit to continue.");
     if (autoOn) togAuto();
     return;
   }
@@ -1022,6 +1022,14 @@ function doSpin() {
       if (data.is_win && data.win_amount > 0) {
         soundEngine.playWin();
         drawWinLine(data.winning_lines);
+
+        if (typeof window.triggerWinCelebration === 'function') {
+          window.triggerWinCelebration({
+            amount: data.win_amount,
+            multiplier: currentBet > 0 ? (data.win_amount / currentBet) : 0,
+            title: 'EMIRATE ROYAL WIN!'
+          });
+        }
 
         const banner = document.getElementById('winBanner');
         document.getElementById('winAmt').innerText = parseFloat(data.win_amount).toFixed(2);

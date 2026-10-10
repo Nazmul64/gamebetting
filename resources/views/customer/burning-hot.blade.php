@@ -24,9 +24,6 @@
   </style>
   <script>
     window.BURNING_HOT_BASE = "{{ asset('burning-hot') }}/";
-    window.IS_AUTH = {{ Auth::check() ? 'true' : 'false' }};
-    window.USER_BALANCE = {{ Auth::check() ? (float)(Auth::user()->balance ?? 10000.00) : 10000.00 }};
-    window.CSRF_TOKEN = "{{ csrf_token() }}";
   </script>
   <script src="{{ asset('burning-hot/js/lib/pixi.min.js') }}"></script>
   <script src="{{ asset('burning-hot/js/lib/pixi-spine.js') }}"></script>
