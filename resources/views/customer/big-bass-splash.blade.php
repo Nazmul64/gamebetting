@@ -183,7 +183,7 @@
             left: 0;
             width: 100%;
             height: calc(100vh - 48px);
-            background: url('/games/big-bass-splash/canyon_river_bg.jpg') center center / cover no-repeat;
+            background: url('/games/big-bass-splash/assets/canyon_river_bg.jpg') center center / cover no-repeat;
             z-index: 500;
             display: flex;
             flex-direction: column;
@@ -217,41 +217,67 @@
             padding: 0 40px;
         }
 
-        /* Fisherman on Left */
+        /* Fisherman on Left (Body Sway, Right Arm Cranking, Right Boot Tapping) */
         .intro-fisherman-box {
             position: relative;
             width: 320px;
-            height: 520px;
+            height: 540px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
         }
-        .fisherman-full-body {
+        .fisherman-character-wrap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: 35% 95%;
+            animation: fishermanBodySwayAndTap 2.4s ease-in-out infinite;
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.75));
+        }
+        .fisherman-body-layer {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transform-origin: 50% 90%;
-            animation: fishermanFootMove 1.4s ease-in-out infinite;
-            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+            object-position: bottom center;
+            display: block;
         }
-        .fisherman-cranking-arm {
+        .fisherman-arm-layer {
             position: absolute;
-            top: 35%;
-            left: 47%;
-            width: 105px;
-            transform-origin: 82% 22%;
-            animation: fishermanCrank 1.1s linear infinite;
+            top: 43.8%;
+            left: 25.5%;
+            width: 57%;
+            transform-origin: 87% 26%;
+            animation: crankReelHandle 1.05s linear infinite;
             z-index: 5;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
         }
 
-        @keyframes fishermanCrank {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Fisherman Body Natural Movement & Foot Tap ("ডান পা টা একটু আলগি দিয়ে শরীরটা নাড়াচড়া করতেছে") */
+        @keyframes fishermanBodySwayAndTap {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            18% {
+                transform: translateY(-8px) rotate(-1.6deg); /* ডান পা আলগি দিয়ে শরীর নাড়ে */
+            }
+            36% {
+                transform: translateY(0) rotate(0deg); /* পা ফেলা */
+            }
+            52% {
+                transform: translateY(-3px) rotate(0.8deg); /* স্বাভাবিক শ্বাসপ্রশ্বাস ও নাড়াচড়া */
+            }
+            76% {
+                transform: translateY(-6px) rotate(-0.8deg);
+            }
         }
-        @keyframes fishermanFootMove {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            50% { transform: rotate(-2deg) translateY(-4px); }
+
+        /* Right Hand / Arm Cranking the Fishing Rod Reel Handle ("ডান হাতটা দিয়া ঐ যে বড়শির প্যাডেলটা ঘুরাইতাছে") */
+        @keyframes crankReelHandle {
+            0% { transform: rotate(0deg) translate(-4px, 0) rotate(0deg); }
+            25% { transform: rotate(90deg) translate(-4px, 0) rotate(-90deg); }
+            50% { transform: rotate(180deg) translate(-4px, 0) rotate(-180deg); }
+            75% { transform: rotate(270deg) translate(-4px, 0) rotate(-270deg); }
+            100% { transform: rotate(360deg) translate(-4px, 0) rotate(-360deg); }
         }
 
         /* Center Splash Logo & Tagline */
@@ -418,7 +444,7 @@
             left: 0;
             width: 100%;
             height: calc(100vh - 48px);
-            background: url('/games/big-bass-splash/underwater_slot_bg.jpg') center center / cover no-repeat;
+            background: url('/games/big-bass-splash/assets/canyon_river_bg.jpg') center center / cover no-repeat;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -1037,11 +1063,8 @@
                 padding: 10px;
             }
             .intro-fisherman-box {
-                width: 200px;
-                height: 240px;
-            }
-            .intro-fisherman-box .fisherman-cranking-arm {
-                width: 65px;
+                width: 220px;
+                height: 340px;
             }
             .logo-text-big-bass { font-size: 38px; }
             .logo-ribbon-splash { font-size: 18px; padding: 3px 18px; }
@@ -1118,14 +1141,16 @@
         <div class="intro-stage">
             <!-- Left: Fisherman with Animated Cranking Arm & Tapping Foot -->
             <div class="intro-fisherman-box">
-                <img src="/games/big-bass-splash/fisherman_body.png" alt="Fisherman" class="fisherman-full-body" id="intro-fisherman-body">
-                <img src="/games/big-bass-splash/fisherman_arm.png" alt="Cranking Arm" class="fisherman-cranking-arm">
+                <div class="fisherman-character-wrap">
+                    <img src="/games/big-bass-splash/assets/intro_fisherman_body.png" alt="Fisherman Body" class="fisherman-body-layer" id="intro-fisherman-body">
+                    <img src="/games/big-bass-splash/assets/intro_fisherman_arm.png" alt="Cranking Arm" class="fisherman-arm-layer">
+                </div>
             </div>
 
             <!-- Center: Leaping Bass Logo & 3D Typography -->
             <div class="intro-center-box">
                 <div class="intro-bass-logo-wrap">
-                    <img src="/games/big-bass-splash/bass_circle.png" alt="Golden Leaping Bass" class="intro-bass-circle-img">
+                    <img src="/games/big-bass-splash/assets/intro_bass_circle.png" alt="Golden Leaping Bass" class="intro-bass-circle-img">
                 </div>
 
                 <div class="big-bass-splash-logo-title">
@@ -1141,7 +1166,7 @@
             <!-- Right: Circular Reel Kingdom Monkey Spin Button -->
             <div class="intro-right-box">
                 <div class="reel-kingdom-circle-btn" id="btn-enter-game" onclick="enterGame()" title="Play Big Bass Splash">
-                    <img src="/games/big-bass-splash/reel_kingdom_spin_btn.jpg" alt="Spin to Start">
+                    <img src="/games/big-bass-splash/assets/btn_spin.png" alt="Spin to Start">
                 </div>
             </div>
         </div>
@@ -1161,10 +1186,10 @@
     <main id="game-screen">
         <!-- Background Swimming Fish ("পিছনে মাছ যাইতেছে") -->
         <div class="fish-background-aquarium">
-            <img src="/games/big-bass-splash/bass_circle.png" class="bg-fish bg-fish-1" alt="Fish">
-            <img src="/games/big-bass-splash/bass_circle.png" class="bg-fish bg-fish-2" alt="Fish">
-            <img src="/games/big-bass-splash/bass_circle.png" class="bg-fish bg-fish-3" alt="Fish">
-            <img src="/games/big-bass-splash/bass_circle.png" class="bg-fish bg-fish-4" alt="Fish">
+            <img src="/games/big-bass-splash/assets/bg_fish.png" class="bg-fish bg-fish-1" alt="Fish">
+            <img src="/games/big-bass-splash/assets/bg_fish.png" class="bg-fish bg-fish-2" alt="Fish">
+            <img src="/games/big-bass-splash/assets/bg_fish.png" class="bg-fish bg-fish-3" alt="Fish">
+            <img src="/games/big-bass-splash/assets/bg_fish.png" class="bg-fish bg-fish-4" alt="Fish">
         </div>
 
         <!-- Vertical Rising Bubble Streams ("পানিগুলা উপরে বক্সে উঠতেছে") -->
@@ -1191,12 +1216,12 @@
 
                 <!-- Center Logo with 2 Bass Fish -->
                 <div class="roof-logo-box">
-                    <img src="/games/big-bass-splash/bass_circle.png" class="roof-bass-left" alt="Bass">
+                    <img src="/games/big-bass-splash/assets/top_bass_icon.png" class="roof-bass-left" alt="Bass">
                     <div class="roof-logo-center">
                         <div class="roof-logo-text-big">BIG BASS</div>
                         <div class="roof-logo-badge-splash">SPLASH</div>
                     </div>
-                    <img src="/games/big-bass-splash/bass_circle.png" class="roof-bass-right" alt="Bass">
+                    <img src="/games/big-bass-splash/assets/top_bass_icon.png" class="roof-bass-right" alt="Bass">
                 </div>
 
                 <div style="width: 110px;"></div> <!-- Spacer for balance -->
@@ -1288,7 +1313,7 @@
                 
                 <div class="spin-btn-wrapper">
                     <button class="main-reel-spin-btn" id="btn-master-spin" onclick="handleSpinClick(false)" title="Spin Reels (Spacebar)">
-                        <img src="/games/big-bass-splash/reel_kingdom_spin_btn.jpg" alt="Spin">
+                        <img src="/games/big-bass-splash/assets/btn_spin.png" alt="Spin">
                     </button>
                     <button class="autoplay-label-btn" onclick="toggleAutoPlay()" id="btn-autoplay-toggle">AUTOPLAY</button>
                 </div>
@@ -1337,20 +1362,20 @@
         let spacePressed = false;
         let spaceTimer = null;
 
-        // Symbol Assets definition
+        // Authentic Game Symbol Assets (Extracted directly from Big Bass Splash)
         const SYMBOLS = {
-            'TRUCK': { type: 'img', src: '/games/big-bass-splash/symbol_monster_truck.jpg' },
-            'FISHING_ROD': { type: 'img', src: '/games/big-bass-splash/symbol_fishing_reel.jpg' },
-            'DRAGONFLY': { type: 'img', src: '/games/big-bass-splash/symbol_dragonfly.jpg' },
-            'TACKLE_BOX': { type: 'img', src: '/games/big-bass-splash/symbol_tackle_box.jpg' },
-            'FISH_MONEY': { type: 'fish', src: '/games/big-bass-splash/bass_circle.png' },
-            'FISHERMAN': { type: 'img', src: '/games/big-bass-splash/fisherman_body.png', isWild: true },
-            'SCATTER': { type: 'img', src: '/games/big-bass-splash/bass_circle.png', isScatter: true },
-            'A': { type: 'card', val: 'A', class: 'sym-A' },
-            'K': { type: 'card', val: 'K', class: 'sym-K' },
-            'Q': { type: 'card', val: 'Q', class: 'sym-Q' },
-            'J': { type: 'card', val: 'J', class: 'sym-J' },
-            '10': { type: 'card', val: '10', class: 'sym-10' }
+            'TRUCK': { src: '/games/big-bass-splash/assets/sym_truck.png', name: 'Monster Truck' },
+            'FISHING_ROD': { src: '/games/big-bass-splash/assets/sym_rod.png', name: 'Fishing Rod' },
+            'DRAGONFLY': { src: '/games/big-bass-splash/assets/sym_dragonfly.png', name: 'Dragonfly' },
+            'TACKLE_BOX': { src: '/games/big-bass-splash/assets/sym_tackle.png', name: 'Tackle Box' },
+            'FISH_MONEY': { src: '/games/big-bass-splash/assets/sym_fish_money.png', name: 'Fish Money', isFish: true },
+            'FISHERMAN': { src: '/games/big-bass-splash/assets/sym_wild.png', name: 'Wild Fisherman', isWild: true },
+            'SCATTER': { src: '/games/big-bass-splash/assets/sym_scatter.png', name: 'Scatter Bass', isScatter: true },
+            'A': { src: '/games/big-bass-splash/assets/sym_a.png', name: 'A' },
+            'K': { src: '/games/big-bass-splash/assets/sym_k.png', name: 'K' },
+            'Q': { src: '/games/big-bass-splash/assets/sym_q.png', name: 'Q' },
+            'J': { src: '/games/big-bass-splash/assets/sym_j.png', name: 'J' },
+            '10': { src: '/games/big-bass-splash/assets/sym_10.png', name: '10' }
         };
 
         // Web Audio Synthesizer for instant slot sound effects
@@ -1534,30 +1559,19 @@
             cell.classList.remove('winner-cell');
             const def = SYMBOLS[symKey] || SYMBOLS['10'];
 
-            if (def.type === 'card') {
-                const div = document.createElement('div');
-                div.className = `card-symbol-3d ${def.class}`;
-                div.innerText = def.val;
-                cell.appendChild(div);
-            } else if (def.type === 'fish') {
-                const img = document.createElement('img');
-                img.src = def.src;
-                img.className = 'symbol-img';
-                img.alt = 'Fish';
-                cell.appendChild(img);
+            const img = document.createElement('img');
+            img.src = def.src;
+            img.className = 'symbol-img';
+            img.alt = symKey;
+            cell.appendChild(img);
 
+            if (symKey === 'FISH_MONEY' || def.isFish) {
                 const badge = document.createElement('div');
                 badge.className = 'fish-money-badge';
                 const curBet = BET_STEPS[currentBetIndex];
                 const amt = fishCash ? fishCash : (curBet * (Math.random() > 0.5 ? 5 : 2)).toFixed(2);
                 badge.innerText = `$${amt}`;
                 cell.appendChild(badge);
-            } else {
-                const img = document.createElement('img');
-                img.src = def.src;
-                img.className = 'symbol-img';
-                img.alt = symKey;
-                cell.appendChild(img);
             }
         }
 
@@ -1776,7 +1790,7 @@
 
         // Fallback grid generator
         function generateRandomGrid() {
-            const keys = ['TRUCK', 'FISHING_ROD', 'DRAGONFLY', 'TACKLE_BOX', 'FISH_MONEY', 'A', 'K', 'Q', 'J', '10'];
+            const keys = ['TRUCK', 'FISHING_ROD', 'DRAGONFLY', 'TACKLE_BOX', 'FISH_MONEY', 'FISHERMAN', 'SCATTER', 'A', 'K', 'Q', 'J', '10'];
             const res = [];
             for (let r = 0; r < 3; r++) {
                 const row = [];
