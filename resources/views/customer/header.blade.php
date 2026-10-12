@@ -1314,6 +1314,7 @@
     
     <!-- Header Actions (Deposit / Withdraw / Balance / Cabinet) -->
     <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 10px;">
+        @auth
             <!-- 1. Sleek Balance Chip with Refresh Action -->
             <div class="header-balance-chip" onclick="if(typeof fetchDashboardBalance === 'function') fetchDashboardBalance();" title="Click to refresh balance">
                 <span class="chip-currency">{{ auth()->user()->currency ?? '৳' }}</span>
