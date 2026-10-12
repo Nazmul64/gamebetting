@@ -33,6 +33,8 @@
 }
 .bd-dropdown-menu a:hover {
     background: #142847 !important;
+}
+
 /* User Profile Dropdown Menu & Top Header Refresh */
 .header-balance-chip {
     background: #112038;
