@@ -969,7 +969,7 @@
             justify-content: center;
             padding: 16px;
         }
-        .modal-overlay.open { display: flex; }
+        .modal-overlay.open, .modal-overlay.active { display: flex !important; }
         
         .design-preview-card {
             cursor: pointer;
@@ -3212,7 +3212,6 @@
                             </button>
                         </div>
                     </form>
-                </div>
 
                     <div class="panel">
                         <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -8990,12 +8989,21 @@
                 document.getElementById('slider-status').value = 'active';
             }
 
-            document.getElementById('slider-modal').classList.add('active');
+            const modal = document.getElementById('slider-modal');
+            if (modal) {
+                modal.classList.add('open');
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+            }
         }
 
         function closeSliderModal() {
             const modal = document.getElementById('slider-modal');
-            if (modal) modal.classList.remove('active');
+            if (modal) {
+                modal.classList.remove('open');
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
         }
 
         function editSliderById(id) {

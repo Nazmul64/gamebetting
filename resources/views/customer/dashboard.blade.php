@@ -2331,16 +2331,23 @@
         const isAuth = true; // Always authenticated in customer dashboard
         let pollInterval = null;
 
-        function toggleChat() {
-            boxContainer.classList.toggle('hidden');
-            scrollChatToBottom();
-            if (isAuth && !boxContainer.classList.contains('hidden')) {
-                loadSupportMessages();
-                // Start polling when chat is open
-                if (!pollInterval) {
-                    pollInterval = setInterval(loadSupportMessages, 3000);
+        function toggleChat(forceOpen = null) {
+            const isCurrentlyHidden = boxContainer.classList.contains('hidden');
+            const shouldOpen = forceOpen !== null ? forceOpen : isCurrentlyHidden;
+
+            if (shouldOpen) {
+                boxContainer.classList.remove('hidden');
+                localStorage.setItem('customer_live_chat_open', '1');
+                scrollChatToBottom();
+                if (isAuth) {
+                    loadSupportMessages();
+                    if (!pollInterval) {
+                        pollInterval = setInterval(loadSupportMessages, 3000);
+                    }
                 }
             } else {
+                boxContainer.classList.add('hidden');
+                localStorage.setItem('customer_live_chat_open', '0');
                 if (pollInterval) {
                     clearInterval(pollInterval);
                     pollInterval = null;
@@ -2348,8 +2355,13 @@
             }
         }
 
-        if (triggerBtn) triggerBtn.addEventListener('click', toggleChat);
-        if (closeBtn) closeBtn.addEventListener('click', toggleChat);
+        if (triggerBtn) triggerBtn.addEventListener('click', () => toggleChat());
+        if (closeBtn) closeBtn.addEventListener('click', () => toggleChat(false));
+
+        // Restore open chat state if user previously opened it
+        if (localStorage.getItem('customer_live_chat_open') === '1') {
+            toggleChat(true);
+        }
 
         function scrollChatToBottom() {
             chatBody.scrollTop = chatBody.scrollHeight;

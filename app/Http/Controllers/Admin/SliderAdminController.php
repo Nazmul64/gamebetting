@@ -39,7 +39,9 @@ class SliderAdminController extends Controller
             'status' => 'nullable|in:active,inactive'
         ]);
 
-        $imagePath = $request->input('image_url', 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop');
+        $imagePath = $request->filled('image_url')
+            ? $request->image_url
+            : 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=1200&auto=format&fit=crop';
 
         if ($request->hasFile('image_file')) {
             $file = $request->file('image_file');

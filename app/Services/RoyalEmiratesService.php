@@ -45,12 +45,14 @@ class RoyalEmiratesService {
                 $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $betAmount);
+                $lockedUser->addTurnover($betAmount);
             }
 
             // এডমিন প্রফিট ডিসিশন
             $shouldWin = false;
             if (!$isDemo && $lockedUser) {
                 $rigAction = $rigService->determineSpinRigAction($lockedUser);
+            }
             $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৫x৩ গ্রিড ও হোল্ড অ্যান্ড স্পিন বোনাস ক্যালকুলেশন
