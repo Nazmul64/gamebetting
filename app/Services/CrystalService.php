@@ -41,8 +41,10 @@ class CrystalService {
             throw new Exception("Bet amount must be between {$settings->min_bet} and {$settings->max_bet}");
         }
 
+        $rigService = app(GameOutcomeRiggingService::class);
+
         if ($isDemo) {
-            $shouldWin = (rand(1, 100) <= 35);
+            $shouldWin = $rigService->shouldPlayerWin($user, true);
             $spinResult = $this->generateCascades($shouldWin, $betAmount);
             return [
                 'success' => true,
@@ -58,25 +60,14 @@ class CrystalService {
             throw new Exception('Please log in to play real mode.');
         }
 
-        return DB::transaction(function () use ($user, $settings, $betAmount) {
+        return DB::transaction(function () use ($user, $settings, $betAmount, $rigService) {
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
             if (!$lockedUser || $lockedUser->balance < $betAmount) {
                 throw new Exception('Insufficient wallet balance. Please deposit to continue.');
             }
 
-            $rigService = app(GameOutcomeRiggingService::class);
             $rigService->validatePlayerCanPlay($lockedUser, false);
-            $rigAction = $rigService->determineSpinRigAction($lockedUser);
-
-            $shouldWin = false;
-            if ($rigAction === 'win') {
-                $shouldWin = true;
-            } elseif ($rigAction === 'lose') {
-                $shouldWin = false;
-            } else {
-                $winChance = (int)($settings->win_chance_percentage ?? 30);
-                $shouldWin = (rand(1, 100) <= $winChance);
-            }
+            $shouldWin = $rigService->shouldPlayerWin($lockedUser, false);
 
             $balanceBefore = (float)$lockedUser->balance;
             $lockedUser->balance -= $betAmount;

@@ -39,6 +39,76 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #eab308; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(234,179,8,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #713f12 0%, #0f172a 100%); border-bottom:1px solid #eab308; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#fde047;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#fef08a;"></i>
+                Indian Poker™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(234,179,8,0.2); color:#fde047; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fde047; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-spade"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ৩-কার্ডের ক্লাসিক পোকার ভ্যারিয়েন্ট। প্লেয়ার ও ডিলার প্রত্যেকে ৩টি করে কার্ড পায়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>হ্যান্ড র‍্যাঙ্কিং:</strong> High Card < Pair (x1) < Flush (x5) < Straight (x10) < 3 of a Kind (x50) < Straight Flush (x75)।</li>
+                        <li>প্লেয়ারের ৩ কার্ড ডিলারের চেয়ে বড় হলে প্লেয়ার জিতে হ্যান্ড অনুযায়ী মাল্টিপ্লায়ার পায়।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ডিলারের জেতার সম্ভাবনা এবং হাউস প্রফিট সরাসরি এডমিন সেটিংস দ্বারা নিয়ন্ত্রিত:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট টার্গেট। অর্থাৎ বেশিরভাগ হ্যান্ডে ডিলার ভালো কার্ড পেয়ে জিতে ক্যাসিনো ফান্ড বাড়িয়ে রাখে।</li>
+                        <li><strong>Player Win Chance (%):</strong> আপনি যদি ২৫% দেন, তবে প্লেয়ার মাত্র ২৫% সুযোগ পাবে, বাকি ৭৫% হ্যান্ডে এডমিন লাভবান হবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        প্লেয়ার ডিলারকে হারালে তার হ্যান্ডের শক্তির ওপর নির্ভর করে প্রফিট পায়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>Pair এ ১ গুণ লাভ, Flush এ ৫ গুণ লাভ, Straight এ ১০ গুণ লাভ।</li>
+                        <li>৩ of a Kind বা Straight Flush এ ৫০ থেকে ৭৫ গুণ পর্যন্ত জ্যাকপট পেআউট ওয়ালেটে যোগ হয়।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#a855f7; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের দ্রুত নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিন প্রফিট বাড়াতে <strong>Player Win Chance (%)</strong> কম রাখুন (যেমন: ২৫% থেকে ৩৫%)।</li>
+                        <li>বড় বাজি থেকে হাউস ফান্ড নিরাপদ রাখতে <strong>Maximum Bet Limit</strong> সেট করুন।</li>
+                        <li>পরিবর্তন শেষে <strong>"Save Settings"</strong> বাটনে ক্লিক করলেই সেটিংস সাথে সাথে আপডেট হয়ে যাবে।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Form -->
     <div class="panel mb-4" style="background:#131d2e; border:1px solid #1e293b; border-radius:12px; overflow:hidden;">
         <div class="panel-header" style="padding:16px 20px; border-bottom:1px solid #1e293b; background:#0f172a;">

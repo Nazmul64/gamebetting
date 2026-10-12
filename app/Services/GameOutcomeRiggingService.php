@@ -68,12 +68,15 @@ class GameOutcomeRiggingService
         }
 
         if ($isDemo) {
-            // Demo mode: 70% win rate
-            return (rand(1, 100) <= 70);
+            // Demo mode: configurable from Admin panel (default 70% win rate for customer)
+            $demoWinRate = (int)Setting::getVal('demo_win_rate', 70);
+            return (rand(1, 100) <= $demoWinRate);
         }
 
-        // Real mode: Admin 70% profit, Player 30% win rate
-        return (rand(1, 100) <= 30);
+        // Real mode: Admin house profit rate (configurable from Admin panel, default 70% admin profit => 30% player win rate)
+        $houseProfitRate = (int)Setting::getVal('real_house_profit_rate', 70);
+        $playerWinRate = max(0, min(100, 100 - $houseProfitRate));
+        return (rand(1, 100) <= $playerWinRate);
     }
 
     /**
@@ -119,8 +122,9 @@ class GameOutcomeRiggingService
         }
 
         if ($isDemo) {
-            // 70% win chance in demo
-            $shouldWin = (rand(1, 100) <= 70);
+            // Demo mode: configurable demo win rate (default 70%)
+            $demoWinRate = (int)Setting::getVal('demo_win_rate', 70);
+            $shouldWin = (rand(1, 100) <= $demoWinRate);
             if ($shouldWin && !empty($userNumbers)) {
                 return $userNumbers[array_rand($userNumbers)];
             }
@@ -129,8 +133,10 @@ class GameOutcomeRiggingService
                 return $losingNumbers[array_rand($losingNumbers)];
             }
         } else {
-            // Real mode: 70% house profit, 30% player win
-            $shouldWin = (rand(1, 100) <= 30);
+            // Real mode: Admin house profit rate (default 70%), customer win rate (100 - house profit)
+            $houseProfitRate = (int)Setting::getVal('real_house_profit_rate', 70);
+            $playerWinRate = max(0, min(100, 100 - $houseProfitRate));
+            $shouldWin = (rand(1, 100) <= $playerWinRate);
             if ($shouldWin && !empty($userNumbers)) {
                 return $userNumbers[array_rand($userNumbers)];
             }

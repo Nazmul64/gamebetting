@@ -243,7 +243,7 @@
   @include('customer.header')
 
   <!-- Background Music Audio Element -->
-  <audio id="bgm-player" src="/assets/audio/games/slot_bg.mp3" loop preload="auto"></audio>
+  <audio id="bgm-player" src="/assets/audio/games/easter_slot_bg.mp3" loop preload="auto"></audio>
 
   <div class="game-page-container">
     <div class="top-nav-bar">

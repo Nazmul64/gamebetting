@@ -57,26 +57,7 @@ class LuckyJokerService {
 
             // এডমিন উইন ডিসিশন
             $shouldWin = false;
-            if (!$isDemo && isset($lockedUser)) {
-                $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $shouldWin = true;
-                } elseif ($rigAction === 'lose') {
-                    $shouldWin = false;
-                } else {
-                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                    } else {
-                        $shouldWin = (rand(1, 100) <= 40); // ন্যাচারাল আরটিপি
-                    }
-                }
-            } else {
-                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                } else {
-                    $shouldWin = (rand(1, 100) <= 40); // ন্যাচারাল আরটিপি
-                }
-            }
+            $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৫x৪ গ্রিড এবং এক্সপান্ডিং জোকার ওয়াইল্ড লজিক
             $spinResult = $this->generateGridAndCalculate($shouldWin, $betAmount);

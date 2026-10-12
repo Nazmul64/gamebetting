@@ -5605,6 +5605,9 @@
                     <td style="color:var(--text-muted);font-size:12px;">${formatDate(u.created_at)}</td>
                     <td style="text-align:right;">
                         <div style="display:flex;gap:5px;justify-content:flex-end;">
+                            <button class="action-btn" title="Login as User (View Dashboard)" onclick="impersonateUser(${u.id})" style="background:rgba(168,85,247,0.15); color:#c084fc; border-color:rgba(168,85,247,0.4);">
+                                <i class="fas fa-right-to-bracket"></i>
+                            </button>
                             <button class="action-btn" title="Add / Deduct Balance (Ledger)" onclick="openAdjustBalanceModal(${u.id}, '${escHtml(u.name)}', ${u.balance})" style="background:rgba(0,242,254,0.1); color:var(--accent-cyan); border-color:rgba(0,242,254,0.3);">
                                 <i class="fas fa-plus-minus"></i>
                             </button>
@@ -5618,6 +5621,28 @@
                     </td>
                 </tr>
             `}).join('');
+        }
+
+        // Impersonate User (Login to User Dashboard)
+        function impersonateUser(userId) {
+            if (!confirm('Login as this user and open their customer dashboard? You can return to Admin anytime via the top header bar.')) return;
+            fetch(`/admin/users/${userId}/impersonate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    showToast(data.message || 'Failed to login as user.', true);
+                }
+            })
+            .catch(() => showToast('Error connecting to server.', true));
         }
 
         // Filter users by search

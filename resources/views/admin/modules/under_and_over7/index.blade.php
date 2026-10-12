@@ -39,6 +39,81 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #10b981; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(16,185,129,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #064e3b 0%, #0f172a 100%); border-bottom:1px solid #059669; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#34d399;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#6ee7b7;"></i>
+                Under and Over 7 — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(52,211,153,0.2); color:#6ee7b7; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-dice"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        গেমটিতে ২টি ৬-পার্শ্বযুক্ত ভার্চুয়াল ছক্কা (Dice) রোল করা হয়। ছক্কা দুটির যোগফল ২ থেকে ১২ এর মধ্যে যেকোনো একটি সংখ্যা আসে:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong style="color:#38bdf8;">UNDER (২, ৩, ৪, ৫, ৬):</strong> মোট ১৫টি সম্ভাব্য কম্বিনেশন। ডিফল্ট পেআউট <strong>x2.3</strong> গুণ।</li>
+                        <li><strong style="color:#fbbf24;">EQUAL (ঠিক ৭):</strong> মোট ৬টি সম্ভাব্য কম্বিনেশন। উচ্চ পেআউট <strong>x5.8</strong> গুণ।</li>
+                        <li><strong style="color:#34d399;">OVER (৮, ৯, ১০, ১১, ১২):</strong> মোট ১৫টি সম্ভাব্য কম্বিনেশন। ডিফল্ট পেআউট <strong>x2.3</strong> গুণ।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        এডমিন নিচের সেটিংস থেকে সরাসরি গেমের উইন/লস নির্ধারণ করতে পারেন:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>Player Win Chance (%):</strong> আপনি যদি এখানে <span style="color:#fbbf24; font-weight:800;">35%</span> সেট করেন, তবে গড়ে ১০০টি বেটের মধ্যে ইউজার ৩৫ বার জিতবে এবং <strong style="color:#34d399;">বাকি ৬৫ বার এডমিন/হাউস লাভ করবে!</strong></li>
+                        <li><strong>House Profit Engine মোড:</strong> এই মোড চালু রাখলে সিস্টেম স্বয়ংক্রিয়ভাবে এডমিনের জন্য সর্বোচ্চ প্রফিট ধরে রেখে ব্যালেন্স পরিচালনা করে।</li>
+                        <li><strong>নির্দিষ্ট ইউজার কন্ট্রোল:</strong> ইউজার লিস্ট থেকে নির্দিষ্ট কোনো প্লেয়ারকে <em>Always Win</em> অথবা <em>Always Lose</em> করে দেওয়া যায়।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ইউজারের অ্যাকাউন্টে ব্যালেন্স থাকলে তারা বেট করতে পারে। জয়ের হিসাব:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>উইন পেআউট সূত্র:</strong> <code style="background:#0b1120; padding:2px 6px; border-radius:4px; color:#38bdf8;">উইন ব্যালেন্স = বেট অ্যামাউন্ট × মাল্টিপ্লায়ার</code></li>
+                        <li><strong>উদাহরণ:</strong> ১০০ টাকা বেট করে যদি Over বা Under (x2.3) এ জিতে, তবে প্লেয়ার পায় <strong>২৩০ টাকা</strong> (যার মধ্যে নিট প্রফিট ১৩০ টাকা)।</li>
+                        <li><strong>Equal 7 জয়:</strong> ১০০ টাকা বেটে (x5.8) এ জিতলে প্লেয়ার পায় <strong>৫৮০ টাকা</strong> (যার নিট প্রফিট ৪৮০ টাকা)।</li>
+                        <li>জয়ের সাথে সাথে টাকা ইউজারের ওয়ালেটে রিয়েল-টাইমে ক্রেডিট হয় এবং ট্রানজেকশন লেজারে সেভ থাকে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#a855f7; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের দ্রুত নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিন প্রফিট বাড়াতে <strong>Player Win Chance</strong> এর মান কম রাখুন (যেমন: ২৫% থেকে ৪০%)।</li>
+                        <li>খেলার গতি ও আকর্ষণ বাড়াতে মাল্টিপ্লায়ার x2.3 এবং x5.8 রাখা আদর্শ।</li>
+                        <li>বড় ঝুঁকি এড়াতে <strong>Maximum Bet</strong> সীমা আপনার ক্যাসিনো ক্যাপাসিটি অনুযায়ী সেট করুন (যেমন: ৫,০০০ বা ১০,০০০)।</li>
+                        <li>পরিবর্তন শেষে নিচে থাকা <strong>"Save Settings"</strong> বাটনে ক্লিক করলে তা সাথে সাথে কার্যকর হবে।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Form -->
     <div class="panel mb-4" style="background:#131d2e; border:1px solid #1e293b; border-radius:12px; overflow:hidden;">
         <div class="panel-header" style="padding:16px 20px; border-bottom:1px solid #1e293b; background:#0f172a;">

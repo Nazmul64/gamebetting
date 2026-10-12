@@ -365,14 +365,19 @@ class AdminController extends Controller
      */
     public function addOrDeductBalance(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'action' => 'required|in:add,deduct',
-            'amount' => 'required|numeric|min:0.01',
-            'note'   => 'nullable|string|max:255'
-        ]);
+        $rawAction = strtolower($request->input('action') ?: $request->input('type', ''));
+        if ($rawAction === 'credit') $rawAction = 'add';
+        if ($rawAction === 'debit') $rawAction = 'deduct';
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()->all()], 422);
+        $rawAmount = (float)$request->input('amount');
+        $rawNote = $request->input('note') ?: $request->input('reason', 'Admin adjustment');
+
+        if (!in_array($rawAction, ['add', 'deduct'])) {
+            return response()->json(['success' => false, 'errors' => ['Please specify action as Add or Deduct.']], 422);
+        }
+
+        if ($rawAmount <= 0) {
+            return response()->json(['success' => false, 'errors' => ['Please enter a valid amount greater than 0.']], 422);
         }
 
         $user = User::where('id', $id)->where('is_admin', false)->first();
@@ -380,9 +385,9 @@ class AdminController extends Controller
             return response()->json(['success' => false, 'errors' => ['User not found.']], 404);
         }
 
-        $action = $request->input('action');
-        $amount = (float)$request->input('amount');
-        $note = $request->input('note', 'Admin adjustment');
+        $action = $rawAction;
+        $amount = $rawAmount;
+        $note = $rawNote;
 
         if ($action === 'deduct' && $user->balance < $amount) {
             return response()->json(['success' => false, 'errors' => ['Cannot deduct more than user current balance (' . number_format($user->balance, 2) . ').']], 422);
@@ -559,6 +564,53 @@ class AdminController extends Controller
             'block_reason' => $user->block_reason,
             'message'      => 'User ' . $user->name . ' has been ' . $action . ' successfully.'
         ]);
+    }
+
+    /**
+     * ADMIN: Impersonate user to view their customer dashboard.
+     */
+    public function impersonateUser(Request $request, $id)
+    {
+        if (!Auth::check() || !Auth::user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
+        }
+
+        $user = User::where('id', $id)->where('is_admin', false)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        $adminId = Auth::id();
+        session(['admin_impersonator_id' => $adminId]);
+        Auth::login($user);
+
+        return response()->json([
+            'success'  => true,
+            'message'  => 'Logged in as ' . $user->name,
+            'redirect' => route('dashboard')
+        ]);
+    }
+
+    /**
+     * ADMIN: Exit impersonation and restore admin session.
+     */
+    public function exitImpersonation(Request $request)
+    {
+        $adminId = session('admin_impersonator_id');
+        if ($adminId) {
+            $admin = User::where('id', $adminId)->where('is_admin', true)->first();
+            if ($admin) {
+                session()->forget('admin_impersonator_id');
+                Auth::login($admin);
+                return redirect()->route('admin.dashboard')->with('success', 'Returned to admin panel.');
+            }
+        }
+
+        if (Auth::check() && Auth::user()->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('dashboard');
     }
 
     /**

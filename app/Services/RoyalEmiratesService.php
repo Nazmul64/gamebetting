@@ -51,24 +51,7 @@ class RoyalEmiratesService {
             $shouldWin = false;
             if (!$isDemo && $lockedUser) {
                 $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $shouldWin = true;
-                } elseif ($rigAction === 'lose') {
-                    $shouldWin = false;
-                } else {
-                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                        $shouldWin = (rand(1, 100) <= (int)$settings->win_chance_percentage);
-                    } else {
-                        $shouldWin = (rand(1, 100) <= 35);
-                    }
-                }
-            } else {
-                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                    $shouldWin = (rand(1, 100) <= (int)$settings->win_chance_percentage);
-                } else {
-                    $shouldWin = (rand(1, 100) <= 35);
-                }
-            }
+            $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৫x৩ গ্রিড ও হোল্ড অ্যান্ড স্পিন বোনাস ক্যালকুলেশন
             $spinResult = $this->generateGridAndBonus($shouldWin, $betAmount, $settings);

@@ -39,6 +39,71 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #f97316; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(249,115,22,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #7c2d12 0%, #0f172a 100%); border-bottom:1px solid #f97316; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#fdba74;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#ffedd5;"></i>
+                Burning Hot™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(249,115,22,0.2); color:#ffedd5; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fdba74; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-fire"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ক্লাসিক ৫টি পে-লাইনের বার্নিং হট ফ্রুট স্লট গেম:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>রেড সেভেন (Red 7s), বেল, ওয়াটারমেলন ও গ্রেপস মিলিয়ে বড় পেআউট তৈরি হয়।</li>
+                        <li><strong>Expanding Clover Wild:</strong> চার পাতার ক্লোভার রিল ২, ৩, ৪ এ পড়লে পুরো রিল জুড়ে ছড়িয়ে পেআউট দ্বিগুণ করে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        স্পিনের ফলাফল ব্যাকএন্ড অ্যালগরিদম দ্বারা সম্পূর্ণ সুরক্ষিত ও লাভজনক:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট মার্জিনে সেট করা থাকে।</li>
+                        <li><strong>Player Win Chance (%):</strong> আপনি যদি ৩০% দেন, তবে প্লেয়ার গড়ে প্রতি ১০ স্পিনের ৩টিতে উইন পাবে এবং বাকি ৭০% স্পিনে এডমিন ফান্ড লাভজনক থাকবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ৫টি পে-লাইনের যেকোনোটিতে সিম্বল মিললে পেআউট সরাসরি ইউজারের ওয়ালেটে যোগ হয়।
+                    </p>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিনের সর্বোচ্চ সেফটি ও আয়ের জন্য <strong>House Profit Engine</strong> ব্যবহার করুন।</li>
+                        <li>পরিবর্তন শেষে <strong>"Save Settings"</strong> বাটনে চাপ দিন।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Form -->
     <div class="panel mb-4" style="background:#131d2e; border:1px solid #1e293b; border-radius:12px; overflow:hidden;">
         <div class="panel-header" style="padding:16px 20px; border-bottom:1px solid #1e293b; background:#0f172a;">

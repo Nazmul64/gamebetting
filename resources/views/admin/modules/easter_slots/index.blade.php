@@ -64,6 +64,42 @@
             </div>
         </div>
 
+        <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+        <div class="card p-6 border-emerald-500/40 bg-gradient-to-r from-[#061a06] via-[#041204] to-[#061a06]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-emerald-500/20">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-book-open text-emerald-400"></i> Easter Slots™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+                </h2>
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">১০০% সার্ভার কন্ট্রোলড</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300 leading-relaxed">
+                <div class="p-3.5 rounded-xl bg-[#040c04] border border-emerald-500/20">
+                    <div class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-egg"></i> ১. গেম মেকানিক্স
+                    </div>
+                    <p>
+                        ৫x৩ রিলের ২০টি ফিক্সড পে-লাইনের স্লট গেম। রঙিন ইস্টার এগ ও সিম্বল মিললে পেআউট হয়। বানি ওয়াইল্ড যেকোনো সিম্বলের বিকল্প হিসেবে কাজ করে এবং বাস্কেট স্ক্যাটার সরাসরি ফ্রি স্পিন দেয়।
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-[#040c04] border border-emerald-500/20">
+                    <div class="font-bold text-emerald-300 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল
+                    </div>
+                    <p>
+                        <strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট সেট করা। এডমিন চাইলে উইন চান্স ৩০% এ রেখে ক্যাসিনোর ফান্ড সবসময় সুরক্ষিত ও লাভজনক রাখতে পারেন।
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-[#040c04] border border-emerald-500/20">
+                    <div class="font-bold text-yellow-400 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজার প্রফিট ও পেআউট
+                    </div>
+                    <p>
+                        ২০টি পে-লাইনের যেকোনোটিতে সিম্বল মিললে পে-টেবিল মাল্টিপ্লায়ার অনুযায়ী তাৎক্ষণিক পেআউট প্লেয়ারের ওয়ালেটে ক্রেডিট হয়ে যায়।
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Settings Form -->
         <div class="card p-6">
             <h2 class="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">

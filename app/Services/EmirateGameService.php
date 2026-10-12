@@ -67,24 +67,7 @@ class EmirateGameService {
             $shouldWin = false;
             if (!$isDemo && isset($lockedUser)) {
                 $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $shouldWin = true;
-                } elseif ($rigAction === 'lose') {
-                    $shouldWin = false;
-                } else {
-                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                    } else {
-                        $shouldWin = (rand(1, 100) <= 35);
-                    }
-                }
-            } else {
-                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                } else {
-                    $shouldWin = (rand(1, 100) <= 35);
-                }
-            }
+            $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৫টি পে-লাইন এবং স্ক্যাটার রেজাল্ট তৈরি
             $spinResult = $this->generateGridAndPayout($shouldWin, $betAmount);

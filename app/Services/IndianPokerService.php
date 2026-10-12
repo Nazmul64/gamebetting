@@ -42,22 +42,26 @@ class IndianPokerService {
             throw new Exception('Maximum bet is ' . number_format($settings->max_bet, 2));
         }
 
+        $rigService = app(GameOutcomeRiggingService::class);
+
         if ($isDemo) {
-            $shouldWin = (rand(1, 100) <= 35);
+            $shouldWin = $rigService->shouldPlayerWin($user, true);
             $outcome = $this->generateCardsOutcome($shouldWin, $settings);
             $cards = $outcome['cards'];
             $handType = $outcome['hand_type'];
             $multiplier = $outcome['multiplier'];
             $isWin = $outcome['is_win'];
-            $winAmount = $isWin ? round($amount * ($multiplier + 1), 2) : 0.00;
+            $winAmount = $isWin ? round($amount * $multiplier, 2) : 0.00;
 
             return [
                 'success' => true,
                 'cards' => $cards,
                 'hand_type' => $handType,
+                'hand_name' => $outcome['hand_name'] ?? ($isWin ? 'Win' : 'High Card'),
                 'multiplier' => $multiplier,
                 'is_win' => $isWin,
                 'win_amount' => $winAmount,
+                'payout' => $winAmount,
                 'is_demo' => true,
                 'message' => $isWin ? "{$outcome['hand_name']}! You won " . number_format($winAmount, 2) : 'Better luck next time!'
             ];
@@ -67,29 +71,14 @@ class IndianPokerService {
             throw new Exception('Please log in to place real bets.');
         }
 
-        return DB::transaction(function () use ($user, $settings, $amount) {
+        return DB::transaction(function () use ($user, $settings, $amount, $rigService) {
             $lockedUser = User::where('id', $user->id)->lockForUpdate()->first();
             if (!$lockedUser || $lockedUser->balance < $amount) {
                 throw new Exception('Insufficient wallet balance. Please deposit to continue.');
             }
 
-            $rigService = app(GameOutcomeRiggingService::class);
             $rigService->validatePlayerCanPlay($lockedUser, false);
-            $rigAction = $rigService->determineSpinRigAction($lockedUser);
-
-            $shouldWin = false;
-            if ($rigAction === 'win') {
-                $shouldWin = true;
-            } elseif ($rigAction === 'lose') {
-                $shouldWin = false;
-            } else {
-                $winChance = (int)($settings->win_chance_percentage ?? 30);
-                if ($settings->control_mode === 'random') {
-                    $shouldWin = (rand(1, 100) <= 25);
-                } else {
-                    $shouldWin = (rand(1, 100) <= $winChance);
-                }
-            }
+            $shouldWin = $rigService->shouldPlayerWin($lockedUser, false);
 
             $balanceBefore = (float)$lockedUser->balance;
             $lockedUser->balance -= $amount;
@@ -123,7 +112,7 @@ class IndianPokerService {
             $handType = $outcome['hand_type'];
             $multiplier = $outcome['multiplier'];
             $isWin = $outcome['is_win'];
-            $winAmount = $isWin ? round($amount * ($multiplier + 1), 2) : 0.00;
+            $winAmount = $isWin ? round($amount * $multiplier, 2) : 0.00;
             $adminProfit = round($amount - $winAmount, 2);
 
             if ($isWin && $winAmount > 0) {
@@ -160,7 +149,9 @@ class IndianPokerService {
                 'hand_name' => $outcome['hand_name'],
                 'multiplier' => $multiplier,
                 'win_amount' => $winAmount,
+                'payout' => $winAmount,
                 'is_win' => $isWin,
+                'current_balance' => (float)$lockedUser->balance,
                 'new_balance' => (float)$lockedUser->balance,
                 'is_demo' => false,
                 'message' => $isWin ? "{$outcome['hand_name']}! You win " . number_format($winAmount, 2) : 'Better luck next time!'
@@ -170,29 +161,34 @@ class IndianPokerService {
 
     private function generateCardsOutcome(bool $shouldWin, IndianPokerSetting $settings): array {
         if ($shouldWin) {
-            // Pick winning hand type based on probabilities
-            $roll = rand(1, 100);
-            if ($roll <= 65) {
+            // Layer 2: Weight-based Winning Selection out of 1000
+            $rand = mt_rand(1, 1000);
+            if ($rand <= 850) {
+                // Pair (x1): 85% chance (user gets exact bet back)
                 $handType = 'pair';
                 $cards = $this->createPairHand();
                 $multiplier = (float)$settings->pair_multiplier;
                 $handName = 'Pair';
-            } elseif ($roll <= 85) {
+            } elseif ($rand <= 950) {
+                // Flush (x5): 10% chance
                 $handType = 'flush';
                 $cards = $this->createFlushHand();
                 $multiplier = (float)$settings->flush_multiplier;
                 $handName = 'Flush';
-            } elseif ($roll <= 95) {
+            } elseif ($rand <= 990) {
+                // Straight (x10): 4% chance
                 $handType = 'straight';
                 $cards = $this->createStraightHand();
                 $multiplier = (float)$settings->straight_multiplier;
                 $handName = 'Straight';
-            } elseif ($roll <= 98) {
+            } elseif ($rand <= 999) {
+                // 3 of a Kind (x50): 0.9% chance
                 $handType = 'three';
                 $cards = $this->createThreeOfAKindHand();
                 $multiplier = (float)$settings->three_multiplier;
                 $handName = '3 of a Kind';
             } else {
+                // Straight Flush (x75): 0.1% chance
                 $handType = 'sf';
                 $cards = $this->createStraightFlushHand();
                 $multiplier = (float)$settings->sf_multiplier;

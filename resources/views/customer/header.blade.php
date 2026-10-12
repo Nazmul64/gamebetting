@@ -464,6 +464,18 @@
 }
 </style>
 
+@if(session()->has('admin_impersonator_id'))
+<div style="background: linear-gradient(90deg, #991b1b 0%, #dc2626 50%, #991b1b 100%); color: #ffffff; padding: 10px 20px; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; z-index: 100000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-family: 'Outfit', 'Inter', sans-serif; gap: 10px; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="background: #ffffff; color: #dc2626; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px;">ADMIN VIEW</span>
+        <span>Viewing dashboard as customer: <strong style="color: #fef08a;">{{ Auth::check() ? Auth::user()->name : 'User' }}</strong> (ID: {{ Auth::check() ? Auth::user()->id : '' }})</span>
+    </div>
+    <a href="{{ route('admin.exit-impersonation') }}" style="background: #ffffff; color: #991b1b; padding: 6px 16px; border-radius: 6px; text-decoration: none; font-weight: 900; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.2s;">
+        <i class="fas fa-arrow-left"></i> Return to Admin Panel
+    </a>
+</div>
+@endif
+
 <!-- Top Header Navigation -->
 <nav class="dashboard-header-nav">
     <div class="dashboard-nav-logo" style="display: flex; align-items: center;">
@@ -538,11 +550,7 @@
                 </div>
             </div>
         </li>
-        <li><a href="{{ route('home') }}" style="color: #8ca3c7; text-decoration: none;">TOP-EVENTS</a></li>
-        <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LEAGUE OF WINS</a></li>
-        <li><a href="#" style="color: #8ca3c7; text-decoration: none;">T20 BLAST</a></li>
-        <li><a href="#" style="color: #8ca3c7; text-decoration: none;">CRICKET</a></li>
-        <li><a href="#" style="color: #8ca3c7; text-decoration: none;">SPORTS</a></li>
+
         <li><a href="#" style="color: #8ca3c7; text-decoration: none;">LIVE</a></li>
         <li><a href="{{ route('play') }}" style="color: #ffbe1a; text-decoration: none;"><i class="fas fa-plane-departure" style="font-size:12px; margin-right:4px;"></i> 1XGAMES</a></li>
         
@@ -1180,47 +1188,7 @@
         <!-- Section 2: Top Navigation Sports & Events (From Top Header) -->
         <div class="drawer-section-title">Sports & Top Events</div>
         <ul class="drawer-nav-list">
-            <li class="drawer-nav-item">
-                <a href="{{ route('home') }}">
-                    <div class="drawer-item-left">
-                        <i class="fas fa-fire drawer-item-icon" style="color: #ff5722;"></i>
-                        <span>TOP-EVENTS</span>
-                    </div>
-                    <span class="drawer-item-badge" style="background: #ff3d00; color: #fff;">HOT</span>
-                </a>
-            </li>
-            <li class="drawer-nav-item">
-                <a href="#">
-                    <div class="drawer-item-left">
-                        <i class="fas fa-award drawer-item-icon" style="color: #ffc107;"></i>
-                        <span>League of Wins</span>
-                    </div>
-                </a>
-            </li>
-            <li class="drawer-nav-item">
-                <a href="#">
-                    <div class="drawer-item-left">
-                        <i class="fas fa-bolt drawer-item-icon" style="color: #00e676;"></i>
-                        <span>T20 Blast</span>
-                    </div>
-                </a>
-            </li>
-            <li class="drawer-nav-item">
-                <a href="#">
-                    <div class="drawer-item-left">
-                        <i class="fas fa-baseball-ball drawer-item-icon" style="color: #03a9f4;"></i>
-                        <span>Cricket Betting</span>
-                    </div>
-                </a>
-            </li>
-            <li class="drawer-nav-item">
-                <a href="#">
-                    <div class="drawer-item-left">
-                        <i class="fas fa-futbol drawer-item-icon" style="color: #8bc34a;"></i>
-                        <span>Sportsbook</span>
-                    </div>
-                </a>
-            </li>
+
             <li class="drawer-nav-item">
                 <a href="#">
                     <div class="drawer-item-left">

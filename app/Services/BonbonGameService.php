@@ -79,33 +79,7 @@ class BonbonGameService {
             }
 
             // ৫. এডমিন হাউজ প্রফিট ও আরটিপি ক্যালকুলেশন
-            $shouldWin = false;
-            if (!$isDemo && $lockedUser) {
-                $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $shouldWin = true;
-                } elseif ($rigAction === 'lose') {
-                    $shouldWin = false;
-                } else {
-                    if ($settings->control_mode === 'house_profit') {
-                        $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                        $shouldWin = (rand(1, 100) <= $chance);
-                    } elseif ($settings->control_mode === 'fixed_percentage') {
-                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                    } else {
-                        $shouldWin = (rand(1, 100) <= 38);
-                    }
-                }
-            } else {
-                if ($settings->control_mode === 'house_profit') {
-                    $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                    $shouldWin = (rand(1, 100) <= $chance);
-                } elseif ($settings->control_mode === 'fixed_percentage') {
-                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                } else {
-                    $shouldWin = (rand(1, 100) <= 38);
-                }
-            }
+            $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৬. ৬ কলাম x ৫ রো গ্রিড জেনারেশন ও পে-এনিহোয়ার ক্লাস্টার ক্যালকুলেশন
             $spinResult = $this->generateGridAndPayout($shouldWin, $baseBet, $scatterBoost);

@@ -35,17 +35,21 @@
     }
     #wrap {
       width: 100vw;
+      width: 100dvw;
       height: calc(100vh - 70px);
+      height: calc(100dvh - 70px);
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       background: radial-gradient(circle at center, #15091e 0%, #050208 100%);
+      touch-action: manipulation;
     }
     @media (max-width: 768px) {
       #wrap {
-        height: calc(100vh - 52px);
+        height: calc(100vh - 54px);
+        height: calc(100dvh - 54px);
       }
     }
   </style>
@@ -181,11 +185,11 @@
 
       <!-- Interactive Hotspots over Right Toolbar Icons -->
       <div id="right-toolbar" class="a">
-        <div id="tool-settings" class="tool-hitbox" title="Settings">⚙</div>
-        <div class="tool-hitbox" title="Bonus Gift" onclick="window.location.href='{{ route('dashboard') }}'">🎁</div>
-        <div class="tool-hitbox" title="Lucky 7">7</div>
-        <div class="tool-hitbox" title="Game Hub" onclick="window.location.href='{{ route('dashboard') }}'">🎲</div>
-        <div id="tool-sound" class="tool-hitbox" title="Toggle Sound">🔊</div>
+        <div id="tool-settings" class="tool-hitbox" title="Settings"></div>
+        <div class="tool-hitbox" title="Bonus Gift" onclick="window.location.href='{{ route('dashboard') }}'"></div>
+        <div class="tool-hitbox" title="Lucky 7"></div>
+        <div class="tool-hitbox" title="Game Hub" onclick="window.location.href='{{ route('dashboard') }}'"></div>
+        <div id="tool-sound" class="tool-hitbox" title="Toggle Sound"></div>
       </div>
       <div id="points-tab-hitbox" class="a" title="Loyalty Points"></div>
 
@@ -294,10 +298,34 @@
       updateUI();
     }
 
+  <!-- Dedicated Game Background Music -->
+  <audio id="indian-poker-bgm" src="/assets/audio/games/indian_poker_bg.mp3" loop preload="auto"></audio>
+
+  <script>
+    // Start background music seamlessly upon user interaction
+    (function() {
+      const bgm = document.getElementById('indian-poker-bgm');
+      if (bgm) {
+        bgm.volume = 0.35;
+        const startMusic = function() {
+          if (bgm.paused) {
+            bgm.play().catch(function() {});
+          }
+        };
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+      }
+    })();
+
     // Settings modal interactions
     document.getElementById('btn-toggle-sound')?.addEventListener('click', function() {
       State.soundOn = !State.soundOn;
       AudioFX.enabled = State.soundOn;
+      const bgm = document.getElementById('indian-poker-bgm');
+      if (bgm) {
+        if (!State.soundOn) bgm.pause();
+        else bgm.play().catch(function() {});
+      }
       this.textContent = State.soundOn ? 'Enabled' : 'Disabled';
       this.style.background = State.soundOn ? '#1a7ec4' : '#333';
     });
@@ -314,6 +342,30 @@
       document.getElementById('modal-settings').classList.remove('show');
       setMessage('Balance reset');
     });
+
+    // Immediate responsive scale trigger
+    function triggerResponsiveScale() {
+      if (typeof Engine !== 'undefined' && Engine.scale) {
+        Engine.scale();
+      } else {
+        const wrap = document.getElementById('wrap');
+        const stage = document.getElementById('stage');
+        if (!stage || !wrap) return;
+        const isMobile = window.innerWidth <= 768;
+        const availW = window.visualViewport ? window.visualViewport.width : (wrap.clientWidth || window.innerWidth);
+        const availH = wrap.clientHeight || (window.innerHeight - (isMobile ? 54 : 70));
+        const padX = isMobile ? 6 : 14;
+        const padY = isMobile ? 6 : 14;
+        const scale = Math.max(0.25, Math.min(1.25, Math.min((availW - padX) / 1024, (availH - padY) / 438)));
+        stage.style.transform = `scale(${scale})`;
+      }
+    }
+    triggerResponsiveScale();
+    window.addEventListener('resize', triggerResponsiveScale, { passive: true });
+    window.addEventListener('orientationchange', triggerResponsiveScale, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', triggerResponsiveScale, { passive: true });
+    }
   </script>
 </body>
 </html>

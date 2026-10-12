@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{{ auth()->check() && auth()->user()->theme === 'light' ? 'light-theme' : '' }}">
 <head>
   <meta charset="utf-8">
   <title>Under and Over 7 - 1XGAMES</title>
@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -29,78 +29,184 @@
     }
 
     body {
-      background: #060913;
+      background: #050811;
       color: #f1f5f9;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      overflow-y: auto;
     }
 
-    /* Main Container */
-    .game-wrapper {
+    /* Main Viewport Container */
+    .game-viewport {
       position: relative;
       width: 100%;
       flex: 1;
       min-height: calc(100vh - 70px);
-      background: #080d1a radial-gradient(circle at 50% 35%, #18233c 0%, #0d1527 50%, #050811 100%);
-      background-repeat: no-repeat;
-      background-size: cover;
+      background: radial-gradient(circle at 50% 38%, #162238 0%, #0d1629 45%, #050812 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px 24px;
+      padding: 14px 20px 24px;
       overflow: hidden;
     }
 
-    /* Watermark background dice */
-    .bg-dice-watermark {
+    /* Ambient Background Lights overlay */
+    .bg-lights-glow {
       position: absolute;
       inset: 0;
+      background-image: url('/under-and-over-7/lights@1x.9f21e7fb9d8b.png');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      opacity: 0.45;
+      mix-blend-mode: screen;
       pointer-events: none;
-      opacity: 0.08;
-      background-image: 
-        radial-gradient(circle at 15% 25%, rgba(255,255,255,0.4) 0, transparent 40%),
-        radial-gradient(circle at 85% 65%, rgba(255,255,255,0.3) 0, transparent 35%);
       z-index: 1;
     }
-    .bg-dice-watermark::before {
-      content: "⚅";
+
+    /* =========================================================
+       CONTINUOUSLY ROTATING CROSSES (Audio: সবগুলো ক্রস বাটন ঘুরে)
+       ========================================================= */
+    .bg-cross-top-left {
       position: absolute;
-      left: 6%;
-      top: 18%;
-      font-size: 140px;
-      color: #ffffff;
-      transform: rotate(-25deg);
-      filter: blur(4px);
+      top: -70px;
+      left: -70px;
+      width: clamp(280px, 32vw, 450px);
+      height: clamp(280px, 32vw, 450px);
+      object-fit: contain;
+      pointer-events: none;
+      opacity: 0.95;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
+      z-index: 1;
+      transform-origin: center center;
+      will-change: transform;
+      animation: spinCrossLeft 16s linear infinite;
     }
-    .bg-dice-watermark::after {
-      content: "⚄";
-      position: absolute;
-      right: 8%;
-      bottom: 25%;
-      font-size: 160px;
-      color: #ffffff;
-      transform: rotate(35deg);
-      filter: blur(5px);
+    @keyframes spinCrossLeft {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    .game-content {
+    .bg-cross-bottom-right {
+      position: absolute;
+      bottom: -100px;
+      right: -80px;
+      width: clamp(260px, 28vw, 410px);
+      height: clamp(260px, 28vw, 410px);
+      object-fit: contain;
+      pointer-events: none;
+      opacity: 0.92;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
+      z-index: 1;
+      transform-origin: center center;
+      will-change: transform;
+      animation: spinCrossRight 16s linear infinite;
+    }
+    @keyframes spinCrossRight {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    .bg-cross-center-dark {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      width: clamp(340px, 40vw, 530px);
+      height: clamp(340px, 40vw, 530px);
+      object-fit: contain;
+      pointer-events: none;
+      opacity: 0.88;
+      filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.95));
+      z-index: 1;
+      transform-origin: center center;
+      will-change: transform;
+      animation: spinCrossCenter 24s linear infinite;
+    }
+    @keyframes spinCrossCenter {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* =========================================================
+       ROTATING BACKGROUND DICE (Audio: পিছনের ছক্কা গুলা ব্যাকগ্রাউন্ডে ঘুরে)
+       ========================================================= */
+    .bg-decor-dice {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.38;
+      filter: drop-shadow(0 15px 25px rgba(0,0,0,0.85));
+      transform-origin: center center;
+    }
+    .bg-dice-1 {
+      top: 22%;
+      right: 17%;
+      width: 135px;
+      filter: blur(2px);
+      animation: spinBgDie1 22s linear infinite;
+    }
+    @keyframes spinBgDie1 {
+      0% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(180deg) translateY(-14px); }
+      100% { transform: rotate(360deg) translateY(0); }
+    }
+
+    .bg-dice-2 {
+      bottom: 20%;
+      left: 5%;
+      width: 155px;
+      filter: blur(2.5px);
+      animation: spinBgDie2 26s linear infinite;
+    }
+    @keyframes spinBgDie2 {
+      0% { transform: rotate(360deg) translateY(0); }
+      50% { transform: rotate(180deg) translateY(14px); }
+      100% { transform: rotate(0deg) translateY(0); }
+    }
+
+    .bg-dice-3 {
+      bottom: 28%;
+      right: 6%;
+      width: 115px;
+      filter: blur(3px);
+      animation: spinBgDie3 18s linear infinite;
+    }
+    @keyframes spinBgDie3 {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .bg-dice-4 {
+      top: 14%;
+      left: 13%;
+      width: 120px;
+      filter: blur(2.5px);
+      animation: spinBgDie4 28s linear infinite;
+    }
+    @keyframes spinBgDie4 {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Main Foreground Content */
+    .game-content-wrap {
       position: relative;
-      z-index: 5;
+      z-index: 10;
       width: 100%;
-      max-width: 1080px;
+      max-width: 1120px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
       flex: 1;
-      gap: 14px;
+      gap: 12px;
     }
 
-    /* Top Bar */
-    .top-bar {
+    /* Top Bar Header */
+    .top-header-bar {
       width: 100%;
       display: flex;
       align-items: flex-start;
@@ -108,48 +214,54 @@
       position: relative;
     }
 
-    .breadcrumb-trail {
+    .breadcrumb-title {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.6px;
-      color: #7dd3fc;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
       text-transform: uppercase;
+      padding-top: 4px;
     }
-    .breadcrumb-trail a {
+    .breadcrumb-title a {
       color: #7dd3fc;
-      text-decoration: none;
+      text-decoration: underline;
       transition: color 0.2s;
     }
-    .breadcrumb-trail a:hover {
+    .breadcrumb-title a:hover {
       color: #38bdf8;
-      text-decoration: underline;
     }
-    .breadcrumb-trail span.sep {
+    .breadcrumb-title .sep {
       color: #475569;
+      font-size: 13px;
     }
-    .breadcrumb-trail span.curr {
-      color: #cbd5e1;
+    .breadcrumb-title .game-name {
+      color: #e2e8f0;
+      font-weight: 900;
     }
 
-    /* Logo and Header Center */
-    .header-center {
+    /* Center Logo and How to play */
+    .logo-center-box {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 2px;
       margin-top: -6px;
     }
-    .game-logo-img {
-      height: 64px;
+    .main-logo-image {
+      height: 68px;
       width: auto;
       max-width: 220px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 15px rgba(0,0,0,0.8));
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.9));
+      transition: transform 0.2s;
     }
-    .how-to-play-link {
+    .main-logo-image:hover {
+      transform: scale(1.03);
+    }
+    .how-to-play-btn {
       font-size: 11px;
       font-weight: 800;
       color: #94a3b8;
@@ -157,286 +269,409 @@
       text-underline-offset: 3px;
       cursor: pointer;
       font-style: italic;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       transition: color 0.2s;
     }
-    .how-to-play-link:hover {
+    .how-to-play-btn:hover {
       color: #facc15;
     }
 
-    /* Top Right Jackpot Box */
-    .jackpot-badge {
-      background: linear-gradient(180deg, #1e2029 0%, #0e1017 100%);
-      border: 2px solid #eab308;
+    /* Jackpot Badge matching 1xBet Screenshot with lightbulbs glow */
+    .jackpot-pill-badge {
+      position: relative;
+      background: linear-gradient(180deg, #1b1812 0%, #0b0906 100%);
+      border: 2px solid #ca8a04;
       border-radius: 6px;
-      padding: 6px 18px;
+      padding: 7px 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 15px rgba(234, 179, 8, 0.4), inset 0 0 8px rgba(234, 179, 8, 0.2);
+      box-shadow: 0 0 16px rgba(202, 138, 4, 0.45), inset 0 0 10px rgba(250, 204, 21, 0.2);
+      cursor: pointer;
+      overflow: visible;
+      margin-top: 4px;
     }
-    .jackpot-badge span {
+    .jackpot-arch-lights {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 12px;
+      border-top: 2.5px dotted #facc15;
+      border-radius: 50% 50% 0 0;
+      filter: drop-shadow(0 0 5px #facc15);
+      pointer-events: none;
+      animation: archBulbsGlow 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes archBulbsGlow {
+      0% { opacity: 0.5; filter: drop-shadow(0 0 2px #facc15); }
+      100% { opacity: 1; filter: drop-shadow(0 0 8px #facc15); }
+    }
+    .jackpot-pill-badge span {
+      font-family: 'Cinzel', serif;
       font-size: 15px;
       font-weight: 900;
-      letter-spacing: 1.5px;
+      letter-spacing: 2.2px;
       background: linear-gradient(180deg, #fff7c2 0%, #facc15 50%, #ca8a04 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
     }
 
-    /* Center Stage: Two Golden Dice Frames */
-    .dice-stage-area {
+    /* =========================================
+       CENTER STAGE: 2 GOLDEN CIRCULAR FRAMES
+       ========================================= */
+    .dice-stage-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(16px, 4vw, 44px);
-      margin: 8px 0;
-      perspective: 1000px;
+      gap: clamp(18px, 4.5vw, 48px);
+      margin: 4px 0 2px;
+      perspective: 1200px;
+      position: relative;
     }
 
-    .die-outer-frame {
-      width: clamp(130px, 20vw, 190px);
-      height: clamp(130px, 20vw, 190px);
+    /* Gold Circular Rim Frame matching screenshot */
+    .golden-circle-frame {
+      width: clamp(140px, 19vw, 215px);
+      height: clamp(140px, 19vw, 215px);
+      border-radius: 50%;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(0 15px 30px rgba(0,0,0,0.9));
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: radial-gradient(circle, #24221b 56%, #cca645 82%, #856218 96%, #523b0a 100%);
+      box-shadow: 
+        0 0 0 5px #d4af37,
+        0 0 0 9px #7a5813,
+        0 18px 45px rgba(0, 0, 0, 0.9),
+        inset 0 4px 14px rgba(0, 0, 0, 0.9);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
     }
-    .die-outer-frame img {
+
+    .golden-circle-frame.shaking {
+      animation: diceStageShake 0.1s infinite alternate ease-in-out;
+      box-shadow: 
+        0 0 0 5px #fde047,
+        0 0 0 9px #ca8a04,
+        0 0 30px rgba(250, 204, 21, 0.6),
+        0 18px 45px rgba(0, 0, 0, 0.9),
+        inset 0 4px 14px rgba(0, 0, 0, 0.9);
+    }
+    @keyframes diceStageShake {
+      0% { transform: translateY(-5px) rotate(-3deg) scale(1.03); }
+      100% { transform: translateY(5px) rotate(3deg) scale(0.98); }
+    }
+
+    .inner-basin {
+      width: 82%;
+      height: 82%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1a1e27 40%, #0d121c 100%);
+      box-shadow: inset 0 6px 14px rgba(0,0,0,0.9), 0 1px 2px rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dice-canvas {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      border-radius: 50%;
+      object-fit: cover;
       display: block;
-      transition: filter 0.2s ease;
+      transform: scale(1.24);
     }
 
-    .die-outer-frame.rolling {
-      animation: diceShake 0.12s infinite alternate ease-in-out;
-    }
-    @keyframes diceShake {
-      0% { transform: translateY(-8px) rotate(-4deg) scale(1.04); }
-      100% { transform: translateY(8px) rotate(4deg) scale(0.98); }
-    }
-
-    /* Result Sum Banner */
-    .round-result-pill {
+    /* Status Pill / Round Result Banner */
+    .status-pill-banner {
       min-height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: #94a3b8;
       text-transform: uppercase;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
     }
-    .round-result-pill.win {
+    .status-pill-banner.win {
       color: #4ade80;
       font-size: 16px;
       font-weight: 900;
-      text-shadow: 0 0 12px rgba(74, 222, 128, 0.6);
+      letter-spacing: 1px;
+      text-shadow: 0 0 16px rgba(74, 222, 128, 0.7);
+      transform: scale(1.05);
     }
-    .round-result-pill.loss {
+    .status-pill-banner.loss {
       color: #f87171;
+      font-size: 14px;
+      font-weight: 900;
     }
 
-    /* 3 Betting Choice Boxes */
-    .bet-choices-row {
+    /* ============================================================
+       3 BETTING CHOICE CARDS (OVER, EQUAL, UNDER) matching 1xBet
+       ============================================================ */
+    .bet-choices-group {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
       width: 100%;
-      max-width: 660px;
-      background: rgba(14, 22, 39, 0.9);
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      border-radius: 12px;
-      padding: 6px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      max-width: 680px;
+      background: rgba(14, 22, 38, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      border-radius: 10px;
+      padding: 6px 8px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
     }
 
-    .choice-card {
+    .choice-card-item {
       flex: 1;
       min-width: 0;
-      background: #111a2e;
+      background: #111a2c;
       border: 2px solid transparent;
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 10px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       position: relative;
     }
-    .choice-card:hover {
-      background: #192744;
-      border-color: rgba(234, 179, 8, 0.4);
+    .choice-card-item:hover {
+      background: #182744;
+      border-color: rgba(132, 204, 22, 0.5);
       transform: translateY(-2px);
     }
-    .choice-card.active {
-      background: linear-gradient(180deg, #1a2846 0%, #0f192c 100%);
-      border-color: #eab308;
-      box-shadow: 0 0 20px rgba(234, 179, 8, 0.4), inset 0 0 12px rgba(234, 179, 8, 0.15);
+    /* Active selection gets the vibrant neon green outline from the screenshot! */
+    .choice-card-item.active {
+      background: linear-gradient(180deg, #18283a 0%, #0d1726 100%);
+      border: 2px solid #84cc16 !important;
+      box-shadow: 0 0 18px rgba(132, 204, 22, 0.45), inset 0 0 10px rgba(132, 204, 22, 0.15);
+      transform: translateY(-1px);
     }
 
-    .card-mult-header {
+    .choice-mult-header {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
-    .card-coin-icon {
-      width: 18px;
-      height: 18px;
+    .choice-coin-symbol {
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fde047 30%, #ca8a04 100%);
-      border: 1.5px solid #fef08a;
+      background: linear-gradient(135deg, #fef08a 0%, #ca8a04 50%, #854d0e 100%);
+      padding: 3px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 6px rgba(250, 204, 21, 0.6);
-      color: #451a03;
-      font-size: 10px;
-      font-weight: 900;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      transition: all 0.2s;
     }
-    .card-mult-text {
-      font-size: 16px;
+    .choice-coin-symbol .choice-coin-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0f172a;
+      transition: all 0.2s;
+    }
+    .choice-card-item.active .choice-coin-symbol {
+      box-shadow: 0 0 12px rgba(132, 204, 22, 0.85);
+      background: linear-gradient(135deg, #bef264 0%, #84cc16 50%, #4d7c0f 100%);
+    }
+    .choice-card-item.active .choice-coin-symbol .choice-coin-inner {
+      background: #84cc16;
+      box-shadow: 0 0 8px #84cc16, inset 0 0 3px #d9f99d;
+    }
+    .choice-mult-number {
+      font-size: 17px;
       font-weight: 900;
-      color: #f8fafc;
+      color: #ffffff;
       letter-spacing: 0.5px;
     }
-    .choice-card.active .card-mult-text {
-      color: #fde047;
-      text-shadow: 0 0 10px rgba(253, 224, 71, 0.5);
+    .choice-card-item.active .choice-mult-number {
+      color: #a3e635;
+      text-shadow: 0 0 10px rgba(163, 230, 53, 0.6);
     }
 
-    .card-subtext {
-      font-size: 11px;
+    .choice-sub-label {
+      font-size: 11.5px;
       font-weight: 800;
       color: #94a3b8;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       text-transform: uppercase;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .choice-card.active .card-subtext {
-      color: #cbd5e1;
+    .choice-sub-label .keyword {
+      color: #eab308;
+      font-weight: 900;
+    }
+    .choice-card-item.active .choice-sub-label .keyword {
+      color: #a3e635;
+    }
+    .choice-sub-label .arrow {
+      color: #eab308;
+      font-size: 12px;
+    }
+    .choice-card-item.active .choice-sub-label .arrow {
+      color: #a3e635;
+    }
+    .choice-sub-label .numbers {
+      color: #f1f5f9;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
 
-    /* Golden Rounded Chips Bar */
-    .chips-pill-bar {
+    /* =========================================
+       GOLDEN CHIPS BAR (1, 2, 3, 5, 10, 25 matching Screenshot!)
+       ========================================= */
+    .gold-chips-bar {
       width: 100%;
-      max-width: 480px;
-      background: linear-gradient(180deg, #261f14 0%, #15110a 100%);
-      border: 2px solid #ca8a04;
-      border-radius: 30px;
-      padding: 4px 8px;
+      max-width: 490px;
+      background: #111827;
+      border: 2.5px solid #ca8a04;
+      border-radius: 28px;
+      padding: 3px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 4px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.7), inset 0 1px 2px rgba(254, 240, 138, 0.3);
+      gap: 0px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.75), inset 0 1px 2px rgba(254, 240, 138, 0.4);
     }
 
     .chip-item-btn {
       flex: 1;
-      padding: 7px 0;
+      padding: 8px 0;
       background: transparent;
       border: none;
-      color: #fde047;
-      font-size: 13px;
+      color: #fef08a;
+      font-size: 14px;
       font-weight: 800;
       cursor: pointer;
       border-radius: 20px;
       transition: all 0.15s ease;
       text-align: center;
+      position: relative;
+    }
+    .chip-item-btn:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 18%;
+      height: 64%;
+      width: 1.5px;
+      background: rgba(202, 138, 4, 0.55);
     }
     .chip-item-btn:hover {
       background: rgba(250, 204, 21, 0.2);
-      color: #fff;
+      color: #ffffff;
     }
     .chip-item-btn.selected {
       background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
       color: #0b0702;
       font-weight: 900;
-      box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.7);
     }
 
-    /* Bet Input + Place Bet Row */
-    .action-controls-row {
+    /* =========================================
+       STAKE INPUT + GREEN PLACE BET BUTTON
+       ========================================= */
+    .controls-action-row {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 16px;
       width: 100%;
-      max-width: 480px;
+      max-width: 490px;
     }
 
-    .stake-input-box {
+    .stake-box-pill {
       flex: 1;
-      background: #171724;
-      border: 2px solid #334155;
-      border-radius: 24px;
-      padding: 6px 16px;
+      background: #111827;
+      border: 2.5px solid #ca8a04;
+      border-radius: 28px;
+      padding: 6px 14px 6px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
-      transition: border-color 0.2s;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.5);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .stake-input-box:focus-within {
+    .stake-box-pill:focus-within {
       border-color: #facc15;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.7), 0 0 15px rgba(250, 204, 21, 0.4);
     }
-    .stake-input-box input {
+    .stake-box-pill input {
       background: transparent;
       border: none;
       outline: none;
-      color: #f8fafc;
+      color: #ffffff;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       width: 100%;
+      letter-spacing: 0.5px;
     }
-    .stake-clear-btn {
-      color: #64748b;
+    .stake-clear-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 2px 4px;
-      transition: color 0.15s;
+      transition: all 0.15s;
     }
-    .stake-clear-btn:hover {
-      color: #f87171;
+    .stake-clear-circle:hover {
+      background: #dc2626;
+      border-color: #ef4444;
+      color: #ffffff;
+      transform: scale(1.08);
     }
 
+    /* Glossy Green PLACE A BET Button */
     .place-bet-green-btn {
-      flex: 1.2;
-      background: linear-gradient(180deg, #84cc16 0%, #4d7c0f 100%);
+      flex: 1.25;
+      background: linear-gradient(180deg, #78b82a 0%, #4e8213 100%);
       border: 1.5px solid #a3e635;
-      border-radius: 24px;
-      padding: 13px 20px;
+      border-radius: 26px;
+      padding: 13px 22px;
       color: #ffffff;
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 900;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(77, 124, 15, 0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+      box-shadow: 0 8px 24px rgba(78, 130, 19, 0.7), inset 0 2px 4px rgba(255,255,255,0.45);
       transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
     }
     .place-bet-green-btn:hover:not(:disabled) {
       filter: brightness(1.1);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 25px rgba(77, 124, 15, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(78, 130, 19, 0.85);
     }
     .place-bet-green-btn:active:not(:disabled) {
       transform: translateY(1px);
@@ -448,175 +683,267 @@
       cursor: not-allowed;
       box-shadow: none;
       text-shadow: none;
+      transform: none;
     }
 
-    /* Floating Mode Toggle (Bottom Right) */
-    .mode-toggle-chip {
+    /* =========================================
+       FLOATING DEMO MODE CHIP (BOTTOM RIGHT)
+       ========================================= */
+    .floating-mode-chip {
       position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 30;
-      background: rgba(15, 23, 42, 0.85);
+      right: 20px;
+      bottom: 20px;
+      z-index: 40;
+      background: rgba(14, 23, 42, 0.88);
       border: 1px solid #1e3a5f;
       border-radius: 6px;
-      padding: 5px 12px;
+      padding: 6px 14px;
       font-size: 11px;
       font-weight: 800;
       color: #7dd3fc;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       cursor: pointer;
       backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.65);
       transition: all 0.2s;
     }
-    .mode-toggle-chip:hover {
+    .floating-mode-chip:hover {
       background: #1e293b;
       border-color: #38bdf8;
-      color: #fff;
+      color: #ffffff;
+      transform: translateY(-1px);
     }
-    .mode-toggle-chip .dot-indicator {
+    .floating-mode-chip .dot-bulb {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: #38bdf8;
+      box-shadow: 0 0 6px #38bdf8;
     }
-    .mode-toggle-chip.real-active {
+    .floating-mode-chip.real-active {
       border-color: #eab308;
       color: #fde047;
     }
-    .mode-toggle-chip.real-active .dot-indicator {
+    .floating-mode-chip.real-active .dot-bulb {
       background: #eab308;
-      box-shadow: 0 0 6px #eab308;
+      box-shadow: 0 0 8px #eab308;
     }
 
-    /* Right Floating Side Strip */
-    .right-side-tools {
+    /* Right Floating Side Strip from 1xBet Screenshot */
+    .right-side-tools-panel {
       position: fixed;
-      right: 14px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      z-index: 25;
-    }
-    .tool-icon-btn {
-      width: 34px;
-      height: 34px;
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(148, 163, 184, 0.15);
+      gap: 8px;
+      z-index: 30;
+      background: rgba(8, 12, 22, 0.7);
+      padding: 6px 4px;
       border-radius: 8px;
-      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+    }
+    .side-tool-btn {
+      width: 32px;
+      height: 32px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 6px;
+      color: #cbd5e1;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 14px;
       cursor: pointer;
-      backdrop-filter: blur(6px);
       transition: all 0.2s;
     }
-    .tool-icon-btn:hover {
+    .side-tool-btn:hover {
       background: #1e293b;
       border-color: #facc15;
       color: #facc15;
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
 
-    /* Celebration Motion Graphics Modal */
+    /* Sound Control Button in bottom left */
+    .floating-sound-chip {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      z-index: 40;
+      background: rgba(14, 23, 42, 0.88);
+      border: 1px solid #1e3a5f;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.65);
+      transition: all 0.2s;
+    }
+    .floating-sound-chip:hover {
+      background: #1e293b;
+      color: #facc15;
+      border-color: #facc15;
+    }
+
+    /* Celebratory Win Overlay Modal */
     .win-overlay-modal {
       position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(6px);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      width: 100dvw;
+      height: 100vh;
+      height: 100dvh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 999999;
+      padding: 16px;
+      box-sizing: border-box;
+      margin: 0;
     }
     .win-overlay-modal.show {
-      display: flex;
-      animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      display: flex !important;
+      opacity: 1;
     }
-    @keyframes modalPop {
-      0% { opacity: 0; transform: scale(0.7); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .win-card-content {
-      background: radial-gradient(circle, #251e12 0%, #0c0803 100%);
+    .win-card-panel {
+      background: radial-gradient(circle, #2c2214 0%, #0d0a05 100%);
       border: 3px solid #eab308;
-      border-radius: 20px;
-      padding: 30px 40px;
+      border-radius: 24px;
+      padding: 28px 32px;
       text-align: center;
-      box-shadow: 0 0 50px rgba(234, 179, 8, 0.6), inset 0 0 20px rgba(234, 179, 8, 0.3);
+      box-shadow: 0 0 60px rgba(234, 179, 8, 0.7), inset 0 0 25px rgba(234, 179, 8, 0.35);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      max-width: 400px;
+      width: min(92vw, 400px);
+      box-sizing: border-box;
+      margin: auto;
+      transform-origin: center center;
     }
-    .win-title {
-      font-size: 26px;
+    .win-overlay-modal.show .win-card-panel {
+      animation: winCardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes winCardPop {
+      0% { opacity: 0; transform: scale(0.6); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .win-panel-title {
+      font-size: 28px;
       font-weight: 900;
       background: linear-gradient(180deg, #fff7c2 0%, #facc15 60%, #ca8a04 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: 2px;
       text-transform: uppercase;
+      line-height: 1.2;
     }
-    .win-amount-badge {
+    .win-panel-amount {
       font-size: 38px;
       font-weight: 900;
       color: #4ade80;
-      text-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+      text-shadow: 0 0 25px rgba(74, 222, 128, 0.85);
+      line-height: 1.2;
+      word-break: break-all;
     }
-    .win-close-btn {
-      margin-top: 10px;
-      background: #eab308;
+    .win-panel-close-btn {
+      margin-top: 6px;
+      background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
       border: none;
       color: #000;
-      font-weight: 800;
-      padding: 8px 24px;
-      border-radius: 20px;
+      font-weight: 900;
+      padding: 10px 32px;
+      border-radius: 24px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 14px;
+      letter-spacing: 0.8px;
+      box-shadow: 0 4px 15px rgba(250, 204, 21, 0.5);
+      transition: transform 0.15s;
+    }
+    .win-panel-close-btn:hover {
+      transform: scale(1.05);
     }
 
     /* Rules Modal */
     .rules-modal {
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(5px);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      width: 100dvw;
+      height: 100vh;
+      height: 100dvh;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 999999;
+      padding: 16px;
+      box-sizing: border-box;
     }
-    .rules-modal.show { display: flex; }
-    .rules-body {
+    .rules-modal.show { display: flex !important; }
+    .rules-dialog {
       background: #0f172a;
       border: 2px solid #38bdf8;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 24px;
-      max-width: 440px;
-      width: 90%;
+      max-width: 460px;
+      width: min(92vw, 460px);
       color: #cbd5e1;
-      font-size: 13px;
+      font-size: 13.5px;
       line-height: 1.6;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.3);
+      box-sizing: border-box;
+      margin: auto;
     }
 
     @media (max-width: 640px) {
-      .game-wrapper {
-        padding: 8px 10px 16px;
+      .game-viewport {
+        padding: 8px 10px 18px;
+        max-width: 100vw;
+        overflow-x: hidden;
       }
-      .bet-choices-row {
+      .bet-choices-group {
         gap: 6px;
         padding: 4px;
+        max-width: 100%;
       }
-      .card-mult-text { font-size: 13px; }
-      .card-subtext { font-size: 9px; }
-      .right-side-tools { display: none; }
+      .choice-mult-number { font-size: 14px; }
+      .choice-sub-label { font-size: 9.5px; }
+      .floating-sound-chip { display: none; }
+      .right-side-tools-panel { display: none; }
+      .gold-chips-bar { max-width: 100%; }
+      .controls-action-row { max-width: 100%; gap: 10px; }
+      .place-bet-green-btn { padding: 12px 14px; font-size: 13.5px; }
+      .win-card-panel {
+        padding: 22px 18px;
+        width: min(92vw, 340px);
+        gap: 8px;
+      }
+      .win-panel-title { font-size: 24px; }
+      .win-panel-amount { font-size: 32px; }
+      .win-panel-close-btn { padding: 8px 24px; font-size: 13px; }
     }
   </style>
 </head>
@@ -624,184 +951,484 @@
 
   @include('customer.header')
 
-  <!-- Audio elements -->
-  <audio id="dice-roll-sound" src="/assets/audio/games/under_and_over_7_bg.mp3" preload="auto"></audio>
+  <!-- Ambient Sound -->
+  <audio id="dice-ambient-sound" src="/assets/audio/games/under_and_over_7_bg.mp3" preload="auto" loop></audio>
 
-  <div class="game-wrapper">
-    <div class="bg-dice-watermark"></div>
+  <div class="game-viewport">
+    <!-- Ambient Lights overlay -->
+    <div class="bg-lights-glow"></div>
 
-    <div class="game-content">
-      <!-- Top Header Bar -->
-      <div class="top-bar">
-        <div class="breadcrumb-trail">
+    <!-- Authentic Giant Golden Crosses & Dark Cross from 1xBet Screenshot -->
+    <!-- Top-left & Bottom-right: GOLDEN crosses (dark-cross.webp) ROTATING continuously! -->
+    <img src="/under-and-over-7/dark-cross.24d1b55fa6a0.webp" class="bg-cross-top-left" alt="decor">
+    <img src="/under-and-over-7/dark-cross.24d1b55fa6a0.webp" class="bg-cross-bottom-right" alt="decor">
+    <!-- Center cross: DARK PURPLE cross (big-cross.webp) ROTATING continuously behind the dice! -->
+    <img src="/under-and-over-7/big-cross.034a6b6fc439.webp" class="bg-cross-center-dark" alt="decor">
+
+    <!-- Floating ROTATING dice in background (Audio: পিছনের ছক্কা গুলা ব্যাকগ্রাউন্ডে ঘুরে) -->
+    <img src="/under-and-over-7/dice1.541744f91072.webp" class="bg-decor-dice bg-dice-1" alt="decor">
+    <img src="/under-and-over-7/dice4.623aac03544f.webp" class="bg-decor-dice bg-dice-2" alt="decor">
+    <img src="/under-and-over-7/dice2.ce851e5a59ee.webp" class="bg-decor-dice bg-dice-3" alt="decor">
+    <img src="/under-and-over-7/dice3.af179fc55d1d.webp" class="bg-decor-dice bg-dice-4" alt="decor">
+
+    <div class="game-content-wrap">
+      <!-- Top Header Bar matching Screenshot -->
+      <div class="top-header-bar">
+        <div class="breadcrumb-title">
           <a href="{{ route('home') }}">1XGAMES</a>
           <span class="sep">/</span>
           <a href="{{ route('dashboard') }}">DICE</a>
           <span class="sep">/</span>
-          <span class="curr">UNDER AND OVER 7</span>
+          <span class="game-name">UNDER AND OVER 7</span>
         </div>
 
-        <div class="header-center">
-          <img src="/under-and-over-7/logo.png" alt="Under and Over 7" class="game-logo-img">
-          <span class="how-to-play-link" onclick="openRules()">HOW TO PLAY</span>
+        <div class="logo-center-box">
+          <img src="/under-and-over-7/logo.png" alt="Under and Over 7" class="main-logo-image">
+          <span class="how-to-play-btn" onclick="openRules()">HOW TO PLAY</span>
         </div>
 
-        <div class="jackpot-badge">
+        <div class="jackpot-pill-badge" onclick="openRules()">
+          <div class="jackpot-arch-lights"></div>
           <span>JACKPOT</span>
         </div>
       </div>
 
-      <!-- Center Stage: 2 Golden Dice -->
-      <div class="dice-stage-area">
-        <div class="die-outer-frame" id="die-frame-1">
-          <img id="die-img-1" src="/under-and-over-7/start_3@1x.2084f5d3edf3.png" alt="Die 1">
+      <!-- CENTER STAGE: 2 GOLDEN CIRCULAR FRAMES WITH CANVAS SPRITESHEET ANIMATION -->
+      <div class="dice-stage-container" id="stage-container">
+        <!-- DIE 1 (LEFT, SHOWING 6) -->
+        <div class="golden-circle-frame" id="frame-die-1">
+          <div class="inner-basin">
+            <canvas id="canvas-die-1" class="dice-canvas" width="300" height="300"></canvas>
+          </div>
         </div>
-        <div class="die-outer-frame" id="die-frame-2">
-          <img id="die-img-2" src="/under-and-over-7/start_4@1x.1b2b15b7d3f2.png" alt="Die 2">
+
+        <!-- DIE 2 (RIGHT, SHOWING 5) -->
+        <div class="golden-circle-frame" id="frame-die-2">
+          <div class="inner-basin">
+            <canvas id="canvas-die-2" class="dice-canvas" width="300" height="300"></canvas>
+          </div>
         </div>
       </div>
 
       <!-- Result Banner -->
-      <div class="round-result-pill" id="result-status">
+      <div class="status-pill-banner" id="status-banner">
         CHOOSE YOUR BET &amp; ROLL
       </div>
 
-      <!-- 3 Betting Choice Cards -->
-      <div class="bet-choices-row">
-        <!-- OVER -->
-        <div class="choice-card" id="choice-over" onclick="selectBet('over')">
-          <div class="card-mult-header">
-            <span class="card-coin-icon">৳</span>
-            <span class="card-mult-text">x 2.3</span>
+      <!-- 3 BETTING CHOICE CARDS (OVER, EQUAL, UNDER) matching Screenshot exactly -->
+      <div class="bet-choices-group">
+        <!-- OVER (8-12, x2.3, ACTIVE WITH GREEN BORDER IN SCREENSHOT) -->
+        <div class="choice-card-item active" id="choice-over" onclick="selectPrediction('over')">
+          <div class="choice-mult-header">
+            <span class="choice-coin-symbol"><span class="choice-coin-inner"></span></span>
+            <span class="choice-mult-number">x 2.3</span>
           </div>
-          <div class="card-subtext">OVER &rArr; 8 9 10 11 12</div>
+          <div class="choice-sub-label">
+            <span class="keyword">OVER</span>
+            <span class="arrow">&rArr;</span>
+            <span class="numbers">8 9 10 11 12</span>
+          </div>
         </div>
 
-        <!-- EQUAL -->
-        <div class="choice-card" id="choice-equal" onclick="selectBet('equal')">
-          <div class="card-mult-header">
-            <span class="card-coin-icon">৳</span>
-            <span class="card-mult-text">x 5.8</span>
+        <!-- EQUAL (7, x5.8) -->
+        <div class="choice-card-item" id="choice-equal" onclick="selectPrediction('equal')">
+          <div class="choice-mult-header">
+            <span class="choice-coin-symbol"><span class="choice-coin-inner"></span></span>
+            <span class="choice-mult-number">x 5.8</span>
           </div>
-          <div class="card-subtext">EQUAL &rArr; 7</div>
+          <div class="choice-sub-label">
+            <span class="keyword">EQUAL</span>
+            <span class="arrow">&rArr;</span>
+            <span class="numbers">7</span>
+          </div>
         </div>
 
-        <!-- UNDER (Default active) -->
-        <div class="choice-card active" id="choice-under" onclick="selectBet('under')">
-          <div class="card-mult-header">
-            <span class="card-coin-icon">৳</span>
-            <span class="card-mult-text">x 2.3</span>
+        <!-- UNDER (2-6, x2.3) -->
+        <div class="choice-card-item" id="choice-under" onclick="selectPrediction('under')">
+          <div class="choice-mult-header">
+            <span class="choice-coin-symbol"><span class="choice-coin-inner"></span></span>
+            <span class="choice-mult-number">x 2.3</span>
           </div>
-          <div class="card-subtext">UNDER &rArr; 2 3 4 5 6</div>
+          <div class="choice-sub-label">
+            <span class="keyword">UNDER</span>
+            <span class="arrow">&rArr;</span>
+            <span class="numbers">2 3 4 5 6</span>
+          </div>
         </div>
       </div>
 
-      <!-- Golden Chips Bar -->
-      <div class="chips-pill-bar">
-        <button class="chip-item-btn selected" onclick="setBetStake(20, this)">20</button>
-        <button class="chip-item-btn" onclick="setBetStake(100, this)">100</button>
-        <button class="chip-item-btn" onclick="setBetStake(300, this)">300</button>
-        <button class="chip-item-btn" onclick="setBetStake(800, this)">800</button>
-        <button class="chip-item-btn" onclick="setBetStake(3000, this)">3000</button>
-        <button class="chip-item-btn" onclick="setBetStake(10000, this)">10000</button>
+      <!-- GOLDEN CHIPS PRESET BAR (1, 2, 3, 5, 10, 25 matching Screenshot!) -->
+      <div class="gold-chips-bar">
+        <button class="chip-item-btn" onclick="pickChip(1, this)">1</button>
+        <button class="chip-item-btn" onclick="pickChip(2, this)">2</button>
+        <button class="chip-item-btn" onclick="pickChip(3, this)">3</button>
+        <button class="chip-item-btn" onclick="pickChip(5, this)">5</button>
+        <button class="chip-item-btn" onclick="pickChip(10, this)">10</button>
+        <button class="chip-item-btn" onclick="pickChip(25, this)">25</button>
       </div>
 
-      <!-- Action Row: Input + Green Place Bet -->
-      <div class="action-controls-row">
-        <div class="stake-input-box">
-          <input type="number" id="stake-input" value="20" min="1" max="50000">
-          <span class="stake-clear-btn" onclick="clearStake()">✕</span>
+      <!-- STAKE INPUT + PLACE A BET BUTTON (Default stake 4 matching Screenshot!) -->
+      <div class="controls-action-row">
+        <div class="stake-box-pill">
+          <input type="number" id="stake-input-field" value="4" min="1" max="50000" oninput="onStakeType()">
+          <div class="stake-clear-circle" onclick="resetStake()" title="Reset">✕</div>
         </div>
 
-        <button class="place-bet-green-btn" id="btn-place-bet" onclick="rollDiceAndBet()">
+        <button class="place-bet-green-btn" id="btn-submit-bet" onclick="executeRollAndBet()">
           PLACE A BET
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Right Floating Tool Bar -->
-  <div class="right-side-tools">
-    <div class="tool-icon-btn" title="Settings" onclick="openRules()"><i class="fa-solid fa-gear"></i></div>
-    <div class="tool-icon-btn" title="Bonus" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fa-solid fa-gift"></i></div>
-    <div class="tool-icon-btn" title="Lucky 7" style="font-weight:900; color:#facc15;">7</div>
-    <div class="tool-icon-btn" title="Sound" id="sound-btn" onclick="toggleSound()"><i class="fa-solid fa-volume-high" id="sound-icon"></i></div>
+  <!-- RIGHT SIDE TOOLBAR STRIP MATCHING SCREENSHOT EXACTLY -->
+  <div class="right-side-tools-panel">
+    <div class="side-tool-btn" title="Settings" onclick="openRules()"><i class="fa-solid fa-gear"></i></div>
+    <div class="side-tool-btn" title="Bonuses" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fa-solid fa-gift"></i></div>
+    <div class="side-tool-btn" title="Lucky 7" style="font-weight:900; color:#facc15;">7</div>
+    <div class="side-tool-btn" title="Games" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fa-solid fa-dharmachakra"></i></div>
+    <div class="side-tool-btn" title="Cashier" onclick="window.location.href='{{ route('dashboard') }}'"><i class="fa-solid fa-dollar-sign"></i></div>
   </div>
 
-  <!-- Bottom Right Mode Toggle -->
-  <div class="mode-toggle-chip" id="mode-chip" onclick="toggleDemoMode()">
-    <span class="dot-indicator"></span>
-    <span id="mode-text">DEMO MODE</span>
-    <span style="font-size:10px;">▲</span>
+  <!-- FLOATING BOTTOM CONTROLS: DEMO MODE & SOUND TOGGLE -->
+  <div class="floating-sound-chip" id="sound-chip" onclick="toggleAudioMute()">
+    <i class="fa-solid fa-volume-high" id="sound-speaker-icon"></i>
+    <span id="sound-speaker-text">SOUND ON</span>
   </div>
 
-  <!-- Celebratory Win Modal -->
-  <div class="win-overlay-modal" id="win-modal" onclick="closeWinModal()">
-    <div class="win-card-content" onclick="event.stopPropagation()">
-      <div class="win-title">✨ BIG WIN! ✨</div>
+  <div class="floating-mode-chip" id="mode-toggle-btn" onclick="togglePlayMode()">
+    <span class="dot-bulb"></span>
+    <span id="mode-label-text">DEMO MODE</span>
+    <span style="font-size:10px; opacity:0.8;">▲</span>
+  </div>
+
+  <!-- BIG WIN CELEBRATION MODAL -->
+  <div class="win-overlay-modal" id="win-celebrate-modal" onclick="dismissWinModal()">
+    <div class="win-card-panel" onclick="event.stopPropagation()">
+      <div style="font-size:38px;">🏆</div>
+      <div class="win-panel-title">BIG WIN!</div>
       <div style="font-size:14px; color:#cbd5e1; font-weight:700;">CONGRATULATIONS!</div>
-      <div class="win-amount-badge" id="win-amount-text">+৳ 46.00</div>
-      <button class="win-close-btn" onclick="closeWinModal()">CONTINUE</button>
+      <div class="win-panel-amount" id="win-amount-display">+৳ 46.00</div>
+      <button class="win-panel-close-btn" onclick="dismissWinModal()">CONTINUE</button>
     </div>
   </div>
 
-  <!-- How to Play Modal -->
-  <div class="rules-modal" id="rules-modal" onclick="closeRules()">
-    <div class="rules-body" onclick="event.stopPropagation()">
-      <h3 style="color:#facc15; font-size:18px; margin-bottom:12px;">Under and Over 7 Rules</h3>
-      <p style="margin-bottom:8px;">Predict the sum of two 6-sided dice:</p>
-      <ul style="padding-left:18px; margin-bottom:12px;">
-        <li><strong>UNDER 7 (2, 3, 4, 5, 6):</strong> Payout 2.30×</li>
-        <li><strong>EQUAL 7 (7):</strong> Payout 5.80×</li>
-        <li><strong>OVER 7 (8, 9, 10, 11, 12):</strong> Payout 2.30×</li>
+  <!-- RULES MODAL -->
+  <div class="rules-modal" id="rules-info-modal" onclick="dismissRules()">
+    <div class="rules-dialog" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="color:#facc15; font-size:19px; font-weight:900;">Under and Over 7 Rules</h3>
+        <span onclick="dismissRules()" style="color:#94a3b8; font-size:18px; cursor:pointer; font-weight:800;">✕</span>
+      </div>
+      <p style="margin-bottom:10px;">Predict the combined sum of two 6-sided dice:</p>
+      <ul style="padding-left:20px; margin-bottom:14px;">
+        <li style="margin-bottom:6px;"><strong style="color:#facc15;">UNDER 7 (2, 3, 4, 5, 6):</strong> Pays <strong>2.30×</strong></li>
+        <li style="margin-bottom:6px;"><strong style="color:#facc15;">EQUAL 7 (7):</strong> Pays <strong>5.80×</strong></li>
+        <li style="margin-bottom:6px;"><strong style="color:#facc15;">OVER 7 (8, 9, 10, 11, 12):</strong> Pays <strong>2.30×</strong></li>
       </ul>
-      <p style="margin-bottom:14px; font-size:12px; color:#94a3b8;">Choose your prediction, select your stake, and press <strong>PLACE A BET</strong> to roll.</p>
-      <button class="win-close-btn" style="width:100%;" onclick="closeRules()">CLOSE</button>
+      <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">
+        Select your prediction (Over, Equal, or Under), choose your stake using the chips or input, and press <strong>PLACE A BET</strong> to roll the dice.
+      </p>
+      <button class="win-panel-close-btn" style="width:100%; border-radius:12px;" onclick="dismissRules()">GOT IT</button>
     </div>
   </div>
 
   <script>
-    const DICE_IMAGES = {
-      1: "/under-and-over-7/start_1@1x.f678f21030d6.png",
-      2: "/under-and-over-7/start_2@1x.c6a5059cefe1.png",
-      3: "/under-and-over-7/start_3@1x.2084f5d3edf3.png",
-      4: "/under-and-over-7/start_4@1x.1b2b15b7d3f2.png",
-      5: "/under-and-over-7/start_5@1x.7dadbf95ed84.png",
-      6: "/under-and-over-7/start_6@1x.e53d249d28cc.png"
+    /* =======================================================================
+       1. WEB AUDIO API SYNTHESIZER & SOUND SYSTEM (Audio: আলাদা সাউন্ড হবে)
+       ======================================================================= */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Play crisp chip/button click
+    function playChipSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    // Play tumbling/rolling rattling noise loop
+    let rollingSoundTimer = null;
+    function startDiceRollSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        stopDiceRollSound();
+
+        rollingSoundTimer = setInterval(() => {
+          if (!soundEnabled || !isRolling) {
+            stopDiceRollSound();
+            return;
+          }
+          const bufferSize = ctx.sampleRate * 0.035;
+          const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+          }
+          const whiteNoise = ctx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 1800 + Math.random() * 800;
+          filter.Q.value = 3.0;
+
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+
+          whiteNoise.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          whiteNoise.start();
+        }, 55);
+      } catch (e) {}
+    }
+
+    function stopDiceRollSound() {
+      if (rollingSoundTimer) {
+        clearInterval(rollingSoundTimer);
+        rollingSoundTimer = null;
+      }
+    }
+
+    // Play solid dice landing / clatter impact sound
+    function playDiceLandSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        // Thump
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+
+        // Clatter click
+        setTimeout(() => {
+          try {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(950, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.06);
+            gain2.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start();
+            osc2.stop(ctx.currentTime + 0.06);
+          } catch(e) {}
+        }, 30);
+      } catch (e) {}
+    }
+
+    // Play Win Fanfare
+    function playWinFanfare() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            try {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, ctx.currentTime);
+              gain.gain.setValueAtTime(0.28, ctx.currentTime);
+              gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start();
+              osc.stop(ctx.currentTime + 0.35);
+            } catch (e) {}
+          }, idx * 90);
+        });
+      } catch (e) {}
+    }
+
+    // Play Lose Thud
+    function playLoseSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+      } catch (e) {}
+    }
+
+    function toggleAudioMute() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('sound-speaker-icon');
+      const text = document.getElementById('sound-speaker-text');
+      if (soundEnabled) {
+        icon.className = 'fa-solid fa-volume-high';
+        text.innerText = 'SOUND ON';
+        playChipSound();
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark';
+        text.innerText = 'SOUND OFF';
+        stopDiceRollSound();
+      }
+    }
+
+    /* =======================================================================
+       2. SPRITESHEET ENGINE FOR 60FPS 3D DICE ROTATION (Audio: এনিমেশন হয়ে ঘুরে)
+       ======================================================================= */
+    const FRAME_SIZE = 300;
+    const HOLD_FRAMES = 50;
+
+    const SPRITES = {
+      hold1: new Image(),
+      hold2: new Image(),
+      start: {}
     };
 
-    let selectedChoice = 'under';
+    SPRITES.hold1.src = '/under-and-over-7/hold_1@1x.3e7c7fdce7cf.png';
+    SPRITES.hold2.src = '/under-and-over-7/hold_2@1x.4bfd7e1924e1.png';
+
+    const START_PATHS = {
+      1: '/under-and-over-7/start_1@1x.f678f21030d6.png',
+      2: '/under-and-over-7/start_2@1x.c6a5059cefe1.png',
+      3: '/under-and-over-7/start_3@1x.2084f5d3edf3.png',
+      4: '/under-and-over-7/start_4@1x.1b2b15b7d3f2.png',
+      5: '/under-and-over-7/start_5@1x.7dadbf95ed84.png',
+      6: '/under-and-over-7/start_6@1x.e53d249d28cc.png'
+    };
+
+    for (let face = 1; face <= 6; face++) {
+      SPRITES.start[face] = new Image();
+      SPRITES.start[face].src = START_PATHS[face];
+    }
+
+    const cv1 = document.getElementById('canvas-die-1');
+    const ctx1 = cv1.getContext('2d');
+    const cv2 = document.getElementById('canvas-die-2');
+    const ctx2 = cv2.getContext('2d');
+
+    function drawFrame(ctx, img, frameIndex) {
+      ctx.clearRect(0, 0, FRAME_SIZE, FRAME_SIZE);
+      if (img && img.complete && img.naturalHeight > 0) {
+        ctx.drawImage(img, 0, frameIndex * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
+      }
+    }
+
+    // Default matching Screenshot exactly: Left die is 6, Right die is 5!
+    let currentDie1Face = 6;
+    let currentDie2Face = 5;
+
+    function renderInitialDiceFaces() {
+      if (SPRITES.start[currentDie1Face].complete) {
+        drawFrame(ctx1, SPRITES.start[currentDie1Face], 0);
+      } else {
+        SPRITES.start[currentDie1Face].onload = () => drawFrame(ctx1, SPRITES.start[currentDie1Face], 0);
+      }
+
+      if (SPRITES.start[currentDie2Face].complete) {
+        drawFrame(ctx2, SPRITES.start[currentDie2Face], 0);
+      } else {
+        SPRITES.start[currentDie2Face].onload = () => drawFrame(ctx2, SPRITES.start[currentDie2Face], 0);
+      }
+    }
+    window.addEventListener('load', renderInitialDiceFaces);
+    renderInitialDiceFaces();
+
+    /* =======================================================================
+       3. GAMEPLAY STATE & BETTING CONTROLS
+       ======================================================================= */
+    // Default active: OVER (matches green border in screenshot)
+    let selectedChoice = 'over';
     let isRolling = false;
     let isDemo = true;
-    let soundEnabled = true;
-    let rollInterval = null;
+    let rollLoopTimer1 = null;
+    let rollLoopTimer2 = null;
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    function selectBet(choice) {
+    function selectPrediction(choice) {
       if (isRolling) return;
+      playChipSound();
       selectedChoice = choice;
-      document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.choice-card-item').forEach(c => c.classList.remove('active'));
       const activeEl = document.getElementById('choice-' + choice);
       if (activeEl) activeEl.classList.add('active');
     }
 
-    function setBetStake(amt, btn) {
-      document.getElementById('stake-input').value = amt;
+    function pickChip(amount, btn) {
+      playChipSound();
+      document.getElementById('stake-input-field').value = amount;
       document.querySelectorAll('.chip-item-btn').forEach(b => b.classList.remove('selected'));
       if (btn) btn.classList.add('selected');
     }
 
-    function clearStake() {
-      document.getElementById('stake-input').value = '20';
-      document.querySelectorAll('.chip-item-btn').forEach(b => b.classList.remove('selected'));
-      document.querySelector('.chip-item-btn')?.classList.add('selected');
+    function onStakeType() {
+      const val = parseFloat(document.getElementById('stake-input-field').value);
+      document.querySelectorAll('.chip-item-btn').forEach(b => {
+        if (parseFloat(b.innerText) === val) {
+          b.classList.add('selected');
+        } else {
+          b.classList.remove('selected');
+        }
+      });
     }
 
-    function toggleDemoMode() {
+    function resetStake() {
+      playChipSound();
+      document.getElementById('stake-input-field').value = '1';
+      document.querySelectorAll('.chip-item-btn').forEach(b => b.classList.remove('selected'));
+    }
+
+    function togglePlayMode() {
+      playChipSound();
       isDemo = !isDemo;
-      const chip = document.getElementById('mode-chip');
-      const text = document.getElementById('mode-text');
+      const chip = document.getElementById('mode-toggle-btn');
+      const text = document.getElementById('mode-label-text');
       if (isDemo) {
         chip.classList.remove('real-active');
         text.innerText = 'DEMO MODE';
@@ -811,83 +1438,64 @@
       }
     }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      const icon = document.getElementById('sound-icon');
-      if (soundEnabled) {
-        icon.className = 'fa-solid fa-volume-high';
-      } else {
-        icon.className = 'fa-solid fa-volume-xmark';
-      }
-    }
-
     function openRules() {
-      document.getElementById('rules-modal').classList.add('show');
+      playChipSound();
+      document.getElementById('rules-info-modal').classList.add('show');
     }
-    function closeRules() {
-      document.getElementById('rules-modal').classList.remove('show');
+    function dismissRules() {
+      playChipSound();
+      document.getElementById('rules-info-modal').classList.remove('show');
     }
-
-    function closeWinModal() {
-      document.getElementById('win-modal').classList.remove('show');
-    }
-
-    function triggerWinMotionGraphics(winAmount) {
-      // Confetti burst
-      if (typeof confetti === 'function') {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#facc15', '#4ade80', '#38bdf8', '#ffffff']
-        });
-      }
-
-      // Trigger fire motion graphics celebration
-      if (typeof window.triggerWinCelebration === 'function') {
-        window.triggerWinCelebration({
-          amount: winAmount,
-          multiplier: 2.3,
-          title: 'DICE LUCKY WIN!'
-        });
-      }
-
-      // Show win modal
-      document.getElementById('win-amount-text').innerText = `+৳ ${parseFloat(winAmount).toFixed(2)}`;
-      document.getElementById('win-modal').classList.add('show');
+    function dismissWinModal() {
+      playChipSound();
+      document.getElementById('win-celebrate-modal').classList.remove('show');
     }
 
-    async function rollDiceAndBet() {
+    /* =======================================================================
+       4. MOTION GRAPHICS ROLL ANIMATION & BET SUBMISSION
+       ======================================================================= */
+    async function executeRollAndBet() {
       if (isRolling) return;
-      const amount = parseFloat(document.getElementById('stake-input').value);
+      getAudioContext();
+
+      const amount = parseFloat(document.getElementById('stake-input-field').value);
       if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid stake.");
+        alert("Please enter a valid stake amount.");
         return;
       }
 
       isRolling = true;
-      const btn = document.getElementById('btn-place-bet');
+      const btn = document.getElementById('btn-submit-bet');
       btn.disabled = true;
+      btn.innerText = "ROLLING...";
 
-      const frame1 = document.getElementById('die-frame-1');
-      const frame2 = document.getElementById('die-frame-2');
-      const img1 = document.getElementById('die-img-1');
-      const img2 = document.getElementById('die-img-2');
-      const status = document.getElementById('result-status');
+      const frame1 = document.getElementById('frame-die-1');
+      const frame2 = document.getElementById('frame-die-2');
+      const statusBanner = document.getElementById('status-banner');
 
-      frame1.classList.add('rolling');
-      frame2.classList.add('rolling');
-      status.className = 'round-result-pill';
-      status.innerText = 'ROLLING DICE...';
+      // Shaking motion graphics
+      frame1.classList.add('shaking');
+      frame2.classList.add('shaking');
+      statusBanner.className = 'status-pill-banner';
+      statusBanner.innerText = 'ROLLING DICE...';
 
-      // Rapidly cycle random faces while network request executes
-      rollInterval = setInterval(() => {
-        const r1 = Math.floor(Math.random() * 6) + 1;
-        const r2 = Math.floor(Math.random() * 6) + 1;
-        img1.src = DICE_IMAGES[r1];
-        img2.src = DICE_IMAGES[r2];
-      }, 70);
+      // Sound
+      startDiceRollSound();
 
+      // Fast spritesheet rotation using hold_1 and hold_2
+      let f1 = 0;
+      let f2 = 0;
+      rollLoopTimer1 = setInterval(() => {
+        f1 = (f1 + 1) % HOLD_FRAMES;
+        drawFrame(ctx1, SPRITES.hold1, f1);
+      }, 35);
+
+      rollLoopTimer2 = setInterval(() => {
+        f2 = (f2 + 1) % HOLD_FRAMES;
+        drawFrame(ctx2, SPRITES.hold2, f2);
+      }, 35);
+
+      let responseData = null;
       try {
         const res = await fetch("{{ route('underover.bet') }}", {
           method: "POST",
@@ -903,55 +1511,115 @@
           })
         });
 
-        const data = await res.json();
+        responseData = await res.json();
+      } catch (err) {
+        console.error("Bet request error:", err);
+      }
 
-        setTimeout(() => {
-          clearInterval(rollInterval);
-          frame1.classList.remove('rolling');
-          frame2.classList.remove('rolling');
+      setTimeout(() => {
+        clearInterval(rollLoopTimer1);
+        clearInterval(rollLoopTimer2);
+        stopDiceRollSound();
+        frame1.classList.remove('shaking');
+        frame2.classList.remove('shaking');
 
-          if (!data.success) {
-            alert(data.error || "Bet failed");
-            isRolling = false;
-            btn.disabled = false;
-            status.innerText = "CHOOSE YOUR BET & ROLL";
-            return;
-          }
+        if (!responseData || !responseData.success) {
+          const errMsg = responseData ? (responseData.error || "Bet failed") : "Connection failed";
+          alert(errMsg);
+          isRolling = false;
+          btn.disabled = false;
+          btn.innerText = "PLACE A BET";
+          statusBanner.innerText = "CHOOSE YOUR BET & ROLL";
+          renderInitialDiceFaces();
+          return;
+        }
 
-          img1.src = DICE_IMAGES[data.die1] || DICE_IMAGES[1];
-          img2.src = DICE_IMAGES[data.die2] || DICE_IMAGES[1];
+        const die1Result = responseData.die1 || 1;
+        const die2Result = responseData.die2 || 1;
+        currentDie1Face = die1Result;
+        currentDie2Face = die2Result;
 
-          const isWin = data.is_win;
-          const sum = data.sum;
+        playLandingAnimation(die1Result, die2Result, () => {
+          playDiceLandSound();
+
+          const isWin = responseData.is_win;
+          const sum = responseData.sum;
           const choiceOutcome = sum < 7 ? 'UNDER 7' : (sum > 7 ? 'OVER 7' : 'EQUAL 7');
 
           if (isWin) {
-            status.className = 'round-result-pill win';
-            status.innerText = `🎉 WON! DICE SUM: ${sum} (${choiceOutcome}) +৳${parseFloat(data.win_amount).toFixed(2)}`;
-            triggerWinMotionGraphics(data.win_amount);
+            statusBanner.className = 'status-pill-banner win';
+            statusBanner.innerText = `🎉 WON! DICE SUM: ${sum} (${choiceOutcome}) +৳${parseFloat(responseData.win_amount).toFixed(2)}`;
+            playWinFanfare();
+
+            if (typeof confetti === 'function') {
+              confetti({
+                particleCount: 100,
+                spread: 75,
+                origin: { y: 0.58 },
+                colors: ['#84cc16', '#facc15', '#38bdf8', '#ffffff']
+              });
+            }
+
+            document.getElementById('win-amount-display').innerText = `+৳ ${parseFloat(responseData.win_amount).toFixed(2)}`;
+            setTimeout(() => {
+              document.getElementById('win-celebrate-modal').classList.add('show');
+            }, 300);
+
           } else {
-            status.className = 'round-result-pill loss';
-            status.innerText = `LOSS! DICE SUM: ${sum} (${choiceOutcome})`;
+            statusBanner.className = 'status-pill-banner loss';
+            statusBanner.innerText = `LOSS! DICE SUM: ${sum} (${choiceOutcome})`;
+            playLoseSound();
           }
 
-          // Update header balance if real mode
-          if (!isDemo && typeof updateCustomerBalance === 'function' && data.balance !== undefined) {
-            updateCustomerBalance(data.balance);
+          if (!isDemo && typeof updateCustomerBalance === 'function' && responseData.balance !== undefined) {
+            updateCustomerBalance(responseData.balance);
           }
 
           isRolling = false;
           btn.disabled = false;
-        }, 800);
+          btn.innerText = "PLACE A BET";
+        });
 
-      } catch (err) {
-        clearInterval(rollInterval);
-        frame1.classList.remove('rolling');
-        frame2.classList.remove('rolling');
-        isRolling = false;
-        btn.disabled = false;
-        status.innerText = "CONNECTION ERROR";
-      }
+      }, 850);
     }
+
+    function playLandingAnimation(die1, die2, onComplete) {
+      const landingFramesSeq = [24, 22, 20, 18, 15, 12, 9, 6, 4, 2, 1, 0];
+      let step = 0;
+      const img1 = SPRITES.start[die1];
+      const img2 = SPRITES.start[die2];
+
+      const landTimer = setInterval(() => {
+        const frameIdx = landingFramesSeq[step];
+        drawFrame(ctx1, img1, frameIdx);
+        drawFrame(ctx2, img2, frameIdx);
+        step++;
+
+        if (step >= landingFramesSeq.length) {
+          clearInterval(landTimer);
+          drawFrame(ctx1, img1, 0);
+          drawFrame(ctx2, img2, 0);
+          if (typeof onComplete === 'function') {
+            onComplete();
+          }
+        }
+      }, 35);
+    }
+
+    // Play dedicated background ambient music
+    (function() {
+      const ambient = document.getElementById('dice-ambient-sound');
+      if (ambient) {
+        ambient.volume = 0.35;
+        const startAmbient = function() {
+          if (ambient.paused) {
+            ambient.play().catch(function() {});
+          }
+        };
+        document.addEventListener('click', startAmbient, { once: true });
+        document.addEventListener('touchstart', startAmbient, { once: true });
+      }
+    })();
   </script>
 </body>
 </html>

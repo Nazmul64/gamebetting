@@ -42,7 +42,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 30px 48px;
+            padding: 24px 24px;
+            max-width: min(92vw, 420px);
+            width: 92%;
+            box-sizing: border-box;
             background: radial-gradient(circle at center, rgba(30, 10, 4, 0.95) 0%, rgba(10, 5, 2, 0.98) 100%);
             border: 2.5px solid #ff9900;
             border-radius: 24px;

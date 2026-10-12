@@ -403,5 +403,23 @@
       }
     }
   </script>
+  <!-- Dedicated Game Background Music -->
+  <audio id="juice-slots-bgm" src="/assets/audio/games/juice_slots_bg.mp3" loop preload="auto"></audio>
+
+  <script>
+    (function() {
+      const bgm = document.getElementById('juice-slots-bgm');
+      if (bgm) {
+        bgm.volume = 0.35;
+        const startMusic = function() {
+          if (bgm.paused) {
+            bgm.play().catch(function() {});
+          }
+        };
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -1745,12 +1745,15 @@
             transactions.forEach(t => {
                 const typeClass = t.type.includes('Deposit') ? 'type-text-deposit' : (t.type.includes('Withdraw') ? 'type-text-withdraw' : 'type-text-transfer');
                 const statClass = t.status === 'Completed' ? 'status-completed' : (t.status === 'Pending' ? 'status-pending' : 'status-failed');
+                const detailBadge = (t.details && t.details !== '—') 
+                    ? `<div style="font-size: 11px; color: #a0aec0; margin-top: 3px; font-family: monospace; word-break: break-all;"><i class="fas fa-receipt" style="font-size: 10px; margin-right: 4px; color: #f59e0b;"></i>${t.details}</div>` 
+                    : '';
                 
                 allHtml += `
                     <tr>
                         <td>${t.datetime}</td>
                         <td class="${typeClass}">${t.type}</td>
-                        <td>${t.gateway}</td>
+                        <td><strong>${t.gateway}</strong>${detailBadge}</td>
                         <td class="text-gold">${USER_SYMBOL} ${parseFloat(t.amount).toFixed(2)}</td>
                         <td><span class="status-badge ${statClass}">${t.status}</span></td>
                     </tr>
@@ -1763,12 +1766,15 @@
             recentTrans.forEach(t => {
                 const typeClass = t.type.includes('Deposit') ? 'type-text-deposit' : (t.type.includes('Withdraw') ? 'type-text-withdraw' : 'type-text-transfer');
                 const statClass = t.status === 'Completed' ? 'status-completed' : (t.status === 'Pending' ? 'status-pending' : 'status-failed');
+                const detailBadge = (t.details && t.details !== '—') 
+                    ? `<div style="font-size: 11px; color: #a0aec0; margin-top: 3px; font-family: monospace; word-break: break-all;"><i class="fas fa-receipt" style="font-size: 10px; margin-right: 4px; color: #f59e0b;"></i>${t.details}</div>` 
+                    : '';
                 
                 recentHtml += `
                     <tr>
                         <td>${t.datetime}</td>
                         <td class="${typeClass}">${t.type}</td>
-                        <td>${t.gateway}</td>
+                        <td><strong>${t.gateway}</strong>${detailBadge}</td>
                         <td class="text-gold">${USER_SYMBOL} ${parseFloat(t.amount).toFixed(2)}</td>
                         <td><span class="status-badge ${statClass}">${t.status}</span></td>
                     </tr>

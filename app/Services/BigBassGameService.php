@@ -81,35 +81,10 @@ class BigBassGameService {
 
             // ৫. এডমিন হাউজ প্রফিট ও আরটিপি সিদ্ধান্ত
             $shouldWin = false;
-            if (!$isDemo && $lockedUser) {
-                $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $shouldWin = true;
-                } elseif ($rigAction === 'lose') {
-                    $shouldWin = false;
-                } else {
-                    if ($isBuyBonus) {
-                        $shouldWin = true;
-                    } elseif ($settings->control_mode === 'house_profit') {
-                        $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                        $shouldWin = (rand(1, 100) <= $chance);
-                    } elseif ($settings->control_mode === 'fixed_percentage') {
-                        $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                    } else {
-                        $shouldWin = (rand(1, 100) <= 35);
-                    }
-                }
+            if ($isBuyBonus) {
+                $shouldWin = true;
             } else {
-                if ($isBuyBonus) {
-                    $shouldWin = true;
-                } elseif ($settings->control_mode === 'house_profit') {
-                    $chance = max(10, min(80, (int)$settings->win_chance_percentage));
-                    $shouldWin = (rand(1, 100) <= $chance);
-                } elseif ($settings->control_mode === 'fixed_percentage') {
-                    $shouldWin = (rand(1, 100) <= $settings->win_chance_percentage);
-                } else {
-                    $shouldWin = (rand(1, 100) <= 35);
-                }
+                $shouldWin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
             }
 
             // ৬. ৫x৩ গ্রিড, ফিশ মানি এবং ফিশারম্যান হুক কালেক্ট জেনারেশন

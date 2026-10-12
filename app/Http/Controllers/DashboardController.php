@@ -383,13 +383,32 @@ class DashboardController extends Controller
         return response()->json([
             'success' => true,
             'transactions' => $transactions->map(function($t) {
+                $meta = is_array($t->metadata) ? $t->metadata : (json_decode($t->metadata, true) ?: []);
+                $details = '';
+                if ($t->type === 'Deposit') {
+                    $txid = $meta['transaction_id'] ?? $meta['txid'] ?? '';
+                    $sender = $meta['sender_number'] ?? '';
+                    $details = ($txid ? "TxID: {$txid}" : '') . ($sender ? ($txid ? " | " : "") . "Sender: {$sender}" : '');
+                } elseif ($t->type === 'Withdraw') {
+                    $acc = $meta['account_number'] ?? $meta['number'] ?? '';
+                    $note = $meta['note'] ?? '';
+                    $details = ($acc ? "Acc: {$acc}" : '') . ($note ? ($acc ? " | " : "") . $note : '');
+                } else {
+                    $details = $meta['reason'] ?? $meta['note'] ?? '';
+                }
+
                 return [
+                    'id' => $t->id,
                     'datetime' => $t->created_at->format('d M Y, h:i A'),
                     'type' => $t->type,
                     'gateway' => $t->gateway ?: 'System',
                     'amount' => number_format($t->amount, 2, '.', ''),
                     'fee' => number_format($t->fee, 2, '.', ''),
                     'status' => $t->status,
+                    'details' => $details ?: '—',
+                    'txid' => $meta['transaction_id'] ?? $meta['txid'] ?? '',
+                    'account_number' => $meta['account_number'] ?? '',
+                    'metadata' => $meta,
                 ];
             })
         ]);

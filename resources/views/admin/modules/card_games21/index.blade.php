@@ -39,6 +39,79 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #0284c7; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(2,132,199,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #075985 0%, #0f172a 100%); border-bottom:1px solid #0284c7; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#38bdf8;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#7dd3fc;"></i>
+                Card Games 21™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(56,189,248,0.2); color:#7dd3fc; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cards"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        এটি ১xGames এর জনপ্রিয় Blackjack ভ্যারিয়েন্ট: ডিলার বনাম প্লেয়ারের ২১ পয়েন্টের কার্ড গেম:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>প্লেয়ার ও ডিলারকে কার্ড ডিল করা হয়। লক্ষ্য হলো ২১ এর কাছাকাছি থাকা, কিন্তু ২১ পার না হওয়া।</li>
+                        <li><strong>Hit:</strong> নতুন কার্ড নেওয়া। <strong>Stand:</strong> বর্তমান পয়েন্ট নিয়ে খেলা শেষ করা।</li>
+                        <li><strong>২ Aces বা প্রথম দুই কার্ডে ২১:</strong> ইনস্ট্যান্ট ২ গুণ বা স্পেশাল গোল্ডেন পেআউট।</li>
+                        <li>২১ এর বেশি হলে প্লেয়ার Bust (হারবে)। ডিলারের চেয়ে বেশি পয়েন্ট হলে প্লেয়ার জিতবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ডিলারের ডিল করা কার্ড এবং প্লেয়ারের জেতার সুযোগ সরাসরি এডমিন সেটিংস দ্বারা নিয়ন্ত্রিত:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট টার্গেটে সেট করা। অর্থাৎ গড়ে ৭০% গেমে ডিলার জিতবে এবং এডমিনের ফান্ড লাভজনক থাকবে।</li>
+                        <li><strong>ডিলারের অটো ড্র হ্যান্ডেল:</strong> প্লেয়ার যখন ভালো কার্ড পায়, ডিলার ইঞ্জিন স্বয়ংক্রিয়ভাবে এমন কার্ড তোলে যা ২১ এর কাছাকাছি বা প্লেয়ারের চেয়ে বেশি হয়ে এডমিনকে বিজয়ী করে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ইউজাররা সঠিক সিদ্ধান্ত নিয়ে জিতলে তাদের লাভ পাওয়ার নিয়ম:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>সাধারণ জয়:</strong> ১x প্রফিট (যেমন: ১০০ টাকা বেট করলে ২০০ টাকা ফেরত, নিট লাভ ১০০ টাকা)।</li>
+                        <li><strong>Golden 21 / 2 Aces:</strong> ২x পেআউট সরাসরি ইউজারের ওয়ালেটে ক্রেডিট হয়।</li>
+                        <li>Tie (ড্র) হলে বেটের টাকা রিফান্ড হিসেবে স্বয়ংক্রিয়ভাবে ইউজারের ব্যালেন্সে ফেরত আসে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#a855f7; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের দ্রুত নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিন প্রফিট বাড়াতে <strong>Player Win Chance (%)</strong> কম রাখুন (যেমন: ২৫% থেকে ৩৫%)।</li>
+                        <li>বড় বাজি থেকে হাউস ফান্ড নিরাপদ রাখতে <strong>Maximum Bet Limit</strong> সেট করুন।</li>
+                        <li>ডেমো ব্যালেন্স দিয়ে নতুন প্লেয়ারদের আকৃষ্ট করার জন্য ডেমো উইন রেট একটু বাড়িয়ে রাখতে পারেন।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Form -->
     <div class="panel mb-4" style="background:#131d2e; border:1px solid #1e293b; border-radius:12px; overflow:hidden;">
         <div class="panel-header" style="padding:16px 20px; border-bottom:1px solid #1e293b; background:#0f172a;">

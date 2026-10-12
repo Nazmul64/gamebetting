@@ -55,27 +55,7 @@ class BoxingKingService {
             }
 
             // ৩. এডমিন কন্ট্রোল উইন/লস ডিসিশন
-            $isWinningSpin = false;
-            if (!$isDemo && $lockedUser) {
-                $rigAction = $rigService->determineSpinRigAction($lockedUser);
-                if ($rigAction === 'win') {
-                    $isWinningSpin = true;
-                } elseif ($rigAction === 'lose') {
-                    $isWinningSpin = false;
-                } else {
-                    if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                        $isWinningSpin = (rand(1, 100) <= $settings->win_chance_percentage);
-                    } else {
-                        $isWinningSpin = (rand(1, 100) <= 40);
-                    }
-                }
-            } else {
-                if ($settings->control_mode === 'house_profit' || $settings->control_mode === 'fixed_percentage') {
-                    $isWinningSpin = (rand(1, 100) <= $settings->win_chance_percentage);
-                } else {
-                    $isWinningSpin = (rand(1, 100) <= 40);
-                }
-            }
+            $isWinningSpin = $rigService->shouldPlayerWin($isDemo ? $user : $lockedUser, $isDemo);
 
             // ৪. ৫x৩ গ্রিড ও আগুনের উইনিং সেলস জেনারেট
             $spinResult = $this->generateGrid($isWinningSpin, $betAmount);

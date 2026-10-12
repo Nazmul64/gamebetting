@@ -58,6 +58,77 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #ef4444; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(239,68,68,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #7f1d1d 0%, #0f172a 100%); border-bottom:1px solid #ef4444; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#f87171;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#fca5a5;"></i>
+                Boxing King (Ring Champion) — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(239,68,68,0.2); color:#fca5a5; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#f87171; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-boxing-glove"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        বক্সিং রিং চ্যাম্পিয়ন স্লট গেম। প্লেয়ার স্পিন বাটনে চাপ দিলে রিল ঘরে:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>৩ বা ততোধিক মিল পাওয়া সিম্বলে কম্বিনেশন পেআউট তৈরি হয়।</li>
+                        <li><strong>Free Spin & Bell Scatter:</strong> ৩টি বেল পেলে ফ্রি স্পিন মোড চালু হয়।</li>
+                        <li><strong>Wild Champion:</strong> ওয়াইল্ড সিম্বল যেকোনো সাধারণ সিম্বলের বিকল্প হিসেবে বসে বড় পেআউট তৈরি করে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        স্পিনের ফলাফল ব্যাকএন্ড অ্যালগরিদম দ্বারা সম্পূর্ণ সুরক্ষিত ও লাভজনক:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Mode:</strong> স্লটের স্পিন ফলাফল স্বয়ংক্রিয়ভাবে এডমিনের জন্য সর্বোচ্চ রেভিনিউ নিশ্চিত করে।</li>
+                        <li><strong>Target Win %:</strong> আপনি যদি ৩০% উইন সেট করেন, তবে প্লেয়ার গড়ে প্রতি ১০ স্পিনের মধ্যে ৩টি স্পিনে ছোট উইন পাবে, বাকি ৭টি স্পিন এডমিনের ফান্ডে জমা হবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        সিম্বল মিললে পে-টেবিল অনুযায়ী পেআউট ইউজারের একাউন্টে রিয়েল-টাইমে যোগ হয়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>পেআউট সূত্র:</strong> বেট অ্যামাউন্ট × পেলাইন মাল্টিপ্লায়ার (যেমন: x2, x5, x10, x100)।</li>
+                        <li>প্লেয়ার বড় উইন পেলে সাথে সাথে বিগ উইন সেলিব্রেশন আসে এবং ওয়ালেট আপডেট হয়।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#a855f7; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের দ্রুত নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিন প্রফিট বাড়াতে <strong>Win Rate Percentage</strong> ২৫% থেকে ৩৫% এর মধ্যে রাখুন।</li>
+                        <li>বড় রিস্ক থেকে সেফ থাকতে <strong>Max Bet Limit</strong> সেট করুন।</li>
+                        <li>পরিবর্তন শেষে <strong>"Save Algorithm Settings"</strong> এ ক্লিক করলে সাথে সাথে লাইভ গেমে কার্যকর হবে।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:20px; margin-bottom:24px;">
         <!-- Game Settings Form -->
         <div class="panel">

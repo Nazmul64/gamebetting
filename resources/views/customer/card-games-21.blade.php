@@ -560,8 +560,26 @@
     </div>
   </div>
 
+  <!-- Dedicated Game Background Music -->
+  <audio id="card21-bgm" src="/assets/audio/games/card_games_21_bg.mp3" loop preload="auto"></audio>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="{{ asset('card-games-21/assets/js/engine.js') }}"></script>
   <script src="{{ asset('card-games-21/assets/js/game.js') }}"></script>
+  <script>
+    (function() {
+      const bgm = document.getElementById('card21-bgm');
+      if (bgm) {
+        bgm.volume = 0.35;
+        const startMusic = function() {
+          if (bgm.paused) {
+            bgm.play().catch(function() {});
+          }
+        };
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+      }
+    })();
+  </script>
 </body>
 </html>

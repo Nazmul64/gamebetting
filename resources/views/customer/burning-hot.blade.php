@@ -190,8 +190,26 @@
     </div>
   </div>
 
+  <!-- Dedicated Game Background Music -->
+  <audio id="burning-hot-bgm" src="/assets/audio/games/burning_hot_bg.mp3" loop preload="auto"></audio>
+
   <script src="{{ asset('burning-hot/js/audio.js') }}"></script>
   <script src="{{ asset('burning-hot/js/rules.js') }}"></script>
   <script src="{{ asset('burning-hot/js/game.js') }}"></script>
+  <script>
+    (function() {
+      const bgm = document.getElementById('burning-hot-bgm');
+      if (bgm) {
+        bgm.volume = 0.35;
+        const startMusic = function() {
+          if (bgm.paused) {
+            bgm.play().catch(function() {});
+          }
+        };
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+      }
+    })();
+  </script>
 </body>
 </html>

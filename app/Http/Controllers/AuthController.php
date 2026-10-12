@@ -11,6 +11,28 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     /**
+     * Show customer login and registration page.
+     * If user is already authenticated, redirect to customer dashboard.
+     */
+    public function showAuthPage(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        if ($request->has('ref')) {
+            session(['referred_by' => $request->query('ref')]);
+        }
+
+        $activeTab = ($request->is('register*') || $request->query('tab') === 'signup' || $request->query('mode') === 'register') ? 'signup' : 'login';
+
+        return view('auth.login', [
+            'activeTab' => $activeTab,
+            'referredBy' => $request->query('ref') ?: session('referred_by')
+        ]);
+    }
+
+    /**
      * Handle user registration.
      */
     public function register(Request $request)

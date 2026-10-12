@@ -39,6 +39,71 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #a855f7; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(168,85,247,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #581c87 0%, #0f172a 100%); border-bottom:1px solid #a855f7; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#c084fc;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#e9d5ff;"></i>
+                Crystal™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(168,85,247,0.2); color:#e9d5ff; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#c084fc; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-gem"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ৭x৭ গ্রিডের ক্রিস্টাল ক্লাস্টার স্লট গেম:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>৫ বা ততোধিক একই রঙের ক্রিস্টাল পাশাপাশি মিললে ক্লাস্টার পেআউট পাওয়া যায়।</li>
+                        <li><strong>Avalanche Cascade:</strong> বিজয়ী ক্রিস্টালগুলো ভেঙে নতুন ক্রিস্টাল ড্রপ করে, ফলে এক ক্লিকেই একাধিক জয় সম্ভব।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        এডমিন লাভ নিয়ন্ত্রণ ইঞ্জিন দিয়ে ক্লাস্টারের ড্রপ রেট সরাসরি সেট করা যায়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট মার্জিনে সেট করা থাকে।</li>
+                        <li><strong>Player Win Chance (%):</strong> আপনি যদি ৩০% দেন, তবে প্লেয়ার ৩০% স্পিনে পেআউট পাবে, বাকি ৭০% স্পিনে এডমিন ফান্ড লাভজনক থাকবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        বড় ক্লাস্টার (১০+ জেমস) মিললে বড় মাল্টিপ্লায়ার পেআউট সরাসরি ইউজারের ব্যালেন্সে যুক্ত হয়।
+                    </p>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিনের সর্বোচ্চ সেফটি ও আয়ের জন্য <strong>House Profit Engine</strong> ব্যবহার করুন।</li>
+                        <li>পরিবর্তন শেষে <strong>"Save Settings"</strong> বাটনে চাপ দিন।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Form -->
     <div class="panel mb-4" style="background:#131d2e; border:1px solid #1e293b; border-radius:12px; overflow:hidden;">
         <div class="panel-header" style="padding:16px 20px; border-bottom:1px solid #1e293b; background:#0f172a;">

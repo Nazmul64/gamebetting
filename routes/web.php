@@ -4,15 +4,11 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 
-Route::get('/', function () {
-    if (request()->has('ref')) {
-        session(['referred_by' => request()->query('ref')]);
-    }
-    return view('frontend.index');
-})->name('home');
-
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/', [AuthController::class, 'showAuthPage'])->name('home');
+Route::get('/login', [AuthController::class, 'showAuthPage'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/register', [AuthController::class, 'showAuthPage'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Blocked account page (accessible without full auth so blocked user sees the message)
@@ -311,6 +307,10 @@ Route::prefix('games/indian-poker')->group(function () {
     Route::get('/history', [App\Http\Controllers\IndianPoker\IndianPokerGameController::class, 'getHistory'])->name('indianpoker.history');
 });
 
+// API routes for Indian Poker (Section 3 of User Specification)
+Route::post('/api/indian-poker/bet', [App\Http\Controllers\Api\IndianPokerController::class, 'placeBet'])->middleware('auth');
+Route::post('/api/indian-poker/place-bet', [App\Http\Controllers\Api\IndianPokerController::class, 'placeBet'])->middleware('auth');
+
 Route::post('/dashboard/deposit', [DashboardController::class, 'deposit'])->middleware('auth')->name('dashboard.deposit');
 
 Route::post('/dashboard/withdraw', [DashboardController::class, 'withdraw'])->middleware('auth')->name('dashboard.withdraw');
@@ -367,6 +367,8 @@ use App\Http\Controllers\AdminController;
 Route::get('/admin/login', [AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->middleware(['auth', 'is_admin'])->name('admin.logout');
+Route::get('/admin/exit-impersonation', [AdminController::class, 'exitImpersonation'])->name('admin.exit-impersonation');
+Route::post('/admin/exit-impersonation', [AdminController::class, 'exitImpersonation'])->name('admin.exit-impersonation.post');
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -380,6 +382,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/chats/send', [AdminController::class, 'sendAdminMessage'])->name('chats.send');
     Route::post('/users/{id}/balance', [AdminController::class, 'updateUserBalance'])->name('users.balance');
     Route::post('/users/{id}/adjust-balance', [AdminController::class, 'addOrDeductBalance'])->name('users.adjust-balance');
+    Route::post('/users/{id}/impersonate', [AdminController::class, 'impersonateUser'])->name('users.impersonate');
     Route::post('/users/{id}/rig-mode', [AdminController::class, 'setRigMode'])->name('users.rig-mode');
     Route::post('/users/{id}/deposit-hold', [AdminController::class, 'toggleDepositHold'])->name('users.deposit-hold');
     Route::post('/users/{id}/block-reason', [AdminController::class, 'blockWithReason'])->name('users.block-reason');

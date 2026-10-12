@@ -64,6 +64,42 @@
             </div>
         </div>
 
+        <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+        <div class="card p-6 border-orange-500/40 bg-gradient-to-r from-[#1a0c02] via-[#100701] to-[#1a0c02]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-book-open text-orange-400"></i> Juice Slots™ — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+                </h2>
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-semibold border border-orange-500/30">১০০% সার্ভার কন্ট্রোলড</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300 leading-relaxed">
+                <div class="p-3.5 rounded-xl bg-[#0e0601] border border-orange-500/20">
+                    <div class="font-bold text-orange-400 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-lemon"></i> ১. গেম মেকানিক্স
+                    </div>
+                    <p>
+                        ৫x৩ রিলের ২০টি ফিক্সড পে-লাইনের ফ্রুট জুস স্লট গেম। অরেঞ্জ, লেমন, চেরি ও ওয়াটারমেলন সিম্বল মিলিয়ে রসালো পেআউট তৈরি হয়। জুসার ব্লেন্ডার ওয়াইল্ড বোনাস কম্বো প্রদান করে।
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-[#0e0601] border border-orange-500/20">
+                    <div class="font-bold text-emerald-400 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল
+                    </div>
+                    <p>
+                        <strong>House Profit Target (%):</strong> ডিফল্ট ৭০% এডমিন প্রফিট মার্জিনে কাজ করে। আপনি চাইলে উইন রেট ৩০% বা ৩৫% এ ফিক্সড করে রাখতে পারেন যাতে ক্যাসিনো ফান্ড সবসময় সর্বোচ্চ লাভে থাকে।
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-[#0e0601] border border-orange-500/20">
+                    <div class="font-bold text-yellow-400 text-sm mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজার প্রফিট ও পেআউট
+                    </div>
+                    <p>
+                        ২০টি পে-লাইনের যেকোনোটিতে ফল মিললে পে-টেবিল মাল্টিপ্লায়ার অনুযায়ী তাৎক্ষণিক পেআউট ইউজারের একাউন্টে যোগ হয়।
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Settings Form -->
         <div class="card p-6">
             <h2 class="text-lg font-bold text-orange-400 mb-4 flex items-center gap-2">

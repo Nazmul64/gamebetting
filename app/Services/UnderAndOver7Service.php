@@ -172,14 +172,36 @@ class UnderAndOver7Service {
 
     private function generateDiceOutcome(?User $user, string $choice, UnderAndOver7Setting $settings, bool $isDemo): array {
         $rigService = app(\App\Services\GameOutcomeRiggingService::class);
-        $shouldWin = $rigService->shouldPlayerWin($user, $isDemo);
+        $userRigMode = $rigService->getUserRigMode($user);
 
-        // Generate matching combination based on shouldWin
-        if ($shouldWin) {
+        // 1. Specific User override by Admin
+        if ($userRigMode === 'always_win') {
             return $this->getWinningDice($choice);
-        } else {
+        }
+        if ($userRigMode === 'always_lose') {
             return $this->getLosingDice($choice);
         }
+
+        // 2. Demo mode
+        if ($isDemo) {
+            $demoWinRate = (int)\App\Models\Setting::getVal('demo_win_rate', 70);
+            $shouldWin = (rand(1, 100) <= $demoWinRate);
+            return $shouldWin ? $this->getWinningDice($choice) : $this->getLosingDice($choice);
+        }
+
+        // 3. Real money game engine
+        if ($settings->control_mode === 'random') {
+            // 100% Fair Random RNG
+            $d1 = rand(1, 6);
+            $d2 = rand(1, 6);
+            return ['die1' => $d1, 'die2' => $d2];
+        }
+
+        // House Profit Engine / Fixed Percentage: Admin sets win_chance_percentage (e.g. 30% player win => 70% house profit)
+        $winChance = (int)($settings->win_chance_percentage ?? 40);
+        $shouldWin = (rand(1, 100) <= $winChance);
+
+        return $shouldWin ? $this->getWinningDice($choice) : $this->getLosingDice($choice);
     }
 
     private function getWinningDice(string $choice): array {

@@ -58,6 +58,76 @@
         </div>
     </div>
 
+    <!-- বাংলা গেম ও প্রফিট কন্ট্রোল নির্দেশিকা (Admin & House Profit Manual in Bengali) -->
+    <div class="panel mb-4" style="background:#0f172a; border:1px solid #f59e0b; border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(245,158,11,0.12);">
+        <div class="panel-header" style="padding:16px 20px; background:linear-gradient(90deg, #78350f 0%, #0f172a 100%); border-bottom:1px solid #f59e0b; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:16.5px; font-weight:800; color:#fbbf24;">
+                <i class="fas fa-book-open" style="margin-right:8px; color:#fde68a;"></i>
+                Western Vault — গেম অপারেশন ও এডমিনের লাভ (House Profit) নিয়ন্ত্রণ নির্দেশিকা
+            </h4>
+            <span style="background:rgba(251,191,36,0.2); color:#fde68a; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700;">
+                <i class="fas fa-shield-alt"></i> ১০০% সার্ভার কন্ট্রোলড
+            </span>
+        </div>
+        <div class="panel-body" style="padding:22px; color:#e2e8f0; font-size:13.8px; line-height:1.75;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <!-- বক্স ১: গেমটি কিভাবে কাজ করে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#fbbf24; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hat-cowboy"></i> ১. গেমটি কিভাবে কাজ করে (Game Mechanics)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        ওয়েস্টার্ন থিমযুক্ত ভল্ট খোলার রোমাঞ্চকর গেম। প্লেয়ারকে বিভিন্ন ভল্ট ডোর সিলেক্ট করতে হয়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>ভল্ট সঠিকভাবে খুললে ভেতরে গোল্ড বা ক্যাশ রিওয়ার্ড মাল্টিপ্লায়ার পাওয়া যায়।</li>
+                        <li>যদি ভল্টে ট্র্যাপ বা খালি ড্রপ হয়, তবে বাজি হেরে যায়।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ২: এডমিন কিভাবে লাভ করবে -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#34d399; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-sack-dollar"></i> ২. এডমিনের লাভ ও উইন কন্ট্রোল (House Profit Engine)
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        এডমিন প্রফিট মোড চালু থাকলে সিস্টেম পুল ব্যালেন্স চেক করে ফলাফল তৈরি করে:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>House Profit Mode:</strong> সবচেয়ে কম পেআউট সাইড বিজয়ী হবে। বড় অঙ্কের বাজির সময় সিস্টেম স্বয়ংক্রিয়ভাবে এডমিনের ফান্ড রক্ষা করে।</li>
+                        <li><strong>Custom Win Percentage:</strong> আপনি যদি ৩০% উইন চান, তবে প্লেয়ার গড়ে ৩০ বার জিতবে এবং বাকি ৭০ বার এডমিন লাভ করবে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৩: ইউজাররা কিভাবে প্রফিট পায় -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#38bdf8; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-hand-holding-dollar"></i> ৩. ইউজাররা কিভাবে প্রফিট ও পেআউট পায়
+                    </div>
+                    <p style="margin-bottom:8px; color:#cbd5e1;">
+                        সফল ভল্ট ক্র্যাক করার সাথে সাথে প্লেয়ার নির্ধারিত মাল্টিপ্লায়ার অনুযায়ী রিওয়ার্ড পায়:
+                    </p>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li><strong>উইন পেআউট:</strong> বেট অ্যামাউন্ট × ভল্ট মাল্টিপ্লায়ার।</li>
+                        <li>প্লেয়ার তৎক্ষণাৎ ক্যাশ আউট করে ওয়ালেটে টাকা ট্রান্সফার করতে পারে।</li>
+                    </ul>
+                </div>
+
+                <!-- বক্স ৪: এডমিন সেটিংস পরিবর্তন নির্দেশিকা -->
+                <div style="background:#131d2e; border:1px solid #1e293b; border-radius:10px; padding:16px;">
+                    <div style="color:#a855f7; font-weight:800; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                        <i class="fas fa-cogs"></i> ৪. সেটিংস পরিবর্তনের দ্রুত নির্দেশিকা
+                    </div>
+                    <ul style="padding-left:18px; margin:0; color:#cbd5e1;">
+                        <li>এডমিন ফান্ড সর্বোচ্চ রাখতে <strong>House Profit Mode</strong> সিলেক্ট করে রাখুন।</li>
+                        <li>বট অ্যাক্টিভ রাখলে লাইভ বেটিং পুল জীবন্ত থাকবে।</li>
+                        <li>পরিবর্তন শেষে নিচে <strong>"Save Algorithm Settings"</strong> বাটনে ক্লিক করুন।</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:20px; margin-bottom:24px;">
         <!-- Game Settings Form -->
         <div class="panel">
