@@ -41,7 +41,37 @@ class User extends Authenticatable
         'game_rig_mode',
         'referred_by',
         'theme',
+        'turnover_required',
+        'turnover_completed',
     ];
+
+    /**
+     * Get remaining turnover required before withdrawal is permitted.
+     */
+    public function getPendingTurnoverAttribute(): float
+    {
+        return max(0.00, round((float)($this->turnover_required ?? 0) - (float)($this->turnover_completed ?? 0), 2));
+    }
+
+    /**
+     * Get turnover completion percentage (0 - 100%).
+     */
+    public function getTurnoverProgressPercentageAttribute(): int
+    {
+        $req = (float)($this->turnover_required ?? 0);
+        if ($req <= 0) return 100;
+        $done = (float)($this->turnover_completed ?? 0);
+        return min(100, (int)round(($done / $req) * 100));
+    }
+
+    /**
+     * Increment completed turnover when placing real money bets.
+     */
+    public function addTurnover(float $betAmount): void
+    {
+        if ($betAmount <= 0) return;
+        $this->increment('turnover_completed', $betAmount);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

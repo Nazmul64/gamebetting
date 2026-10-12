@@ -2582,6 +2582,36 @@
             if (tab === 'cabinet') {
                 toggleCabinet(true);
             }
+
+            // ⚡ Instant Zero-Loading Game Prefetcher:
+            // Pre-caches game pages on hover/touch so clicking opens instantly with 0ms delay!
+            const prefetchedUrls = new Set();
+            function prefetchGameUrl(url) {
+                if (!url || prefetchedUrls.has(url) || url.startsWith('javascript') || url.includes('#')) return;
+                prefetchedUrls.add(url);
+                const link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = url;
+                link.as = 'document';
+                document.head.appendChild(link);
+            }
+
+            document.querySelectorAll('a.slot-card').forEach(card => {
+                const url = card.getAttribute('href');
+                if (url) {
+                    card.addEventListener('pointerenter', () => prefetchGameUrl(url), { once: true, passive: true });
+                    card.addEventListener('touchstart', () => prefetchGameUrl(url), { once: true, passive: true });
+                }
+            });
+
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(() => {
+                    const topCards = document.querySelectorAll('a.slot-card');
+                    for (let i = 0; i < Math.min(topCards.length, 6); i++) {
+                        prefetchGameUrl(topCards[i].getAttribute('href'));
+                    }
+                });
+            }
         });
     </script>
 </body>

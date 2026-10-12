@@ -77,6 +77,7 @@ class BigBassGameService {
                 $rigService->validatePlayerCanPlay($lockedUser, false);
                 $balanceBefore = (float)$lockedUser->balance;
                 $lockedUser->decrement('balance', $chargeAmount);
+                $lockedUser->addTurnover($chargeAmount);
             }
 
             // ৫. এডমিন হাউজ প্রফিট ও আরটিপি সিদ্ধান্ত

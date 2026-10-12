@@ -2256,6 +2256,7 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
                 </div>
 
                 <!-- ========== TAB: KYC VERIFICATIONS MANAGEMENT ========== -->

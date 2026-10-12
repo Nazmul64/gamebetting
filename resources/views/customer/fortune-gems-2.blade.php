@@ -1036,30 +1036,12 @@ body{background:#0c141d;font-family:'Poppins',sans-serif;min-height:100vh;overfl
 (function(){
 'use strict';
 
-/* -- PRELOADER PROGRESS -- */
+/* -- INSTANT ZERO-LOADING INITIALIZATION -- */
 window.addEventListener('DOMContentLoaded', () => {
-    let progress = 0;
-    const progressBar = document.getElementById('loader-progress');
-    const progressText = document.getElementById('loader-percent');
     const preloader = document.getElementById('game-preloader');
-
-    const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 12;
-        if (progress > 100) progress = 100;
-
-        if (progressBar) progressBar.style.width = progress + '%';
-        if (progressText) progressText.innerText = `LOADING... ${progress}%`;
-
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                if (preloader) {
-                    preloader.style.opacity = '0';
-                    setTimeout(() => preloader.style.display = 'none', 500);
-                }
-            }, 300);
-        }
-    }, 90);
+    if (preloader) {
+        preloader.style.display = 'none';
+    }
 });
 
 /* -- SYMBOLS & IMAGES -- */

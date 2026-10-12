@@ -243,11 +243,11 @@
         }
         .fisherman-arm-layer {
             position: absolute;
-            top: 43.8%;
-            left: 25.5%;
-            width: 57%;
-            transform-origin: 87% 26%;
-            animation: crankReelHandle 1.05s linear infinite;
+            top: 42.8%;
+            left: 27%;
+            width: 59%;
+            transform-origin: 96% 32%;
+            animation: crankReelHandle 0.95s ease-in-out infinite;
             z-index: 5;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
         }
@@ -258,7 +258,7 @@
                 transform: translateY(0) rotate(0deg);
             }
             18% {
-                transform: translateY(-8px) rotate(-1.6deg); /* ডান পা আলগি দিয়ে শরীর নাড়ে */
+                transform: translateY(-8px) rotate(-1.5deg); /* ডান পা আলগি দিয়ে শরীর নাড়ে */
             }
             36% {
                 transform: translateY(0) rotate(0deg); /* পা ফেলা */
@@ -271,13 +271,20 @@
             }
         }
 
-        /* Right Hand / Arm Cranking the Fishing Rod Reel Handle ("ডান হাতটা দিয়া ঐ যে বড়শির প্যাডেলটা ঘুরাইতাছে") */
+        /* Right Hand / Arm Cranking the Fishing Rod Reel Handle ("ডান হাতটা দিয়া ঐ যে বড়শির প্যাডেলটা ঘুরাইতাছে") - কাঁধ সংযুক্ত থাকবে */
         @keyframes crankReelHandle {
-            0% { transform: rotate(0deg) translate(-4px, 0) rotate(0deg); }
-            25% { transform: rotate(90deg) translate(-4px, 0) rotate(-90deg); }
-            50% { transform: rotate(180deg) translate(-4px, 0) rotate(-180deg); }
-            75% { transform: rotate(270deg) translate(-4px, 0) rotate(-270deg); }
-            100% { transform: rotate(360deg) translate(-4px, 0) rotate(-360deg); }
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(-5deg);
+            }
+            50% {
+                transform: rotate(-10deg);
+            }
+            75% {
+                transform: rotate(-4deg);
+            }
         }
 
         /* Center Splash Logo & Tagline */
@@ -1102,10 +1109,10 @@
 
             <!-- Real / Demo Mode Toggle -->
             <div class="mode-toggle-wrap">
-                <div class="switch-pill" id="mode-toggle-pill" onclick="togglePlayMode()">
+                <div class="switch-pill {{ auth()->check() ? 'active' : '' }}" id="mode-toggle-pill" onclick="togglePlayMode()">
                     <div class="switch-circle"></div>
                 </div>
-                <span class="mode-label" id="mode-status-text">PLAY FOR REAL MONEY</span>
+                <span class="mode-label" id="mode-status-text" style="{{ auth()->check() ? 'color:#10b981;' : '' }}">{{ auth()->check() ? 'PLAYING FOR REAL MONEY' : 'DEMO MODE' }}</span>
             </div>
         </div>
 
@@ -1293,11 +1300,11 @@
                 <div class="credit-bet-display">
                     <div class="credit-row">
                         <span class="credit-label">CREDIT</span>
-                        <span class="credit-val" id="credit-balance-label">$100,000.00</span>
+                        <span class="credit-val" id="credit-balance-label">{{ auth()->check() ? (auth()->user()->currency ?? '৳') . ' ' . number_format(auth()->user()->balance ?? 0.00, 2) : '৳ 0.00' }}</span>
                     </div>
                     <div class="bet-row">
                         <span class="bet-label">BET</span>
-                        <span class="bet-val" id="bet-display-label">$2.00</span>
+                        <span class="bet-val" id="bet-display-label">{{ auth()->user()->currency ?? '৳' }} 2.00</span>
                     </div>
                 </div>
             </div>
@@ -1347,8 +1354,8 @@
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const SPIN_URL = "{{ route('bigbass.spin') }}";
         
-        let isRealMoney = false; // Default demo mode matches screenshot ($100,000.00 credit)
-        let demoBalance = 100000.00;
+        let isRealMoney = {{ auth()->check() ? 'true' : 'false' }};
+        let demoBalance = 0.00;
         let realBalance = {{ (float)(auth()->user()->balance ?? 0.00) }};
         let userCurrency = "{{ auth()->user()->currency ?? '৳' }}";
         
@@ -1500,6 +1507,10 @@
 
         // Toggle Real / Demo Money
         function togglePlayMode() {
+            @if(!auth()->check())
+                alert('আসল টাকা দিয়ে খেলতে অনুগ্রহ করে প্রথমে লগইন করুন।');
+                return;
+            @endif
             isRealMoney = !isRealMoney;
             const pill = document.getElementById('mode-toggle-pill');
             const label = document.getElementById('mode-status-text');
@@ -1509,7 +1520,7 @@
                 label.style.color = '#10b981';
             } else {
                 pill.classList.remove('active');
-                label.innerText = 'PLAY FOR REAL MONEY';
+                label.innerText = 'DEMO MODE (PRACTICE)';
                 label.style.color = '#94a3b8';
             }
             updateBalanceAndBetUI();
@@ -1585,13 +1596,13 @@
 
         function updateBalanceAndBetUI() {
             const bet = BET_STEPS[currentBetIndex];
-            document.getElementById('bet-display-label').innerText = `$${bet.toFixed(2)}`;
-            document.getElementById('buy-spins-cost-label').innerText = `$${(bet * 100).toFixed(0)}`;
+            document.getElementById('bet-display-label').innerText = `${userCurrency} ${bet.toFixed(2)}`;
+            document.getElementById('buy-spins-cost-label').innerText = `${userCurrency} ${(bet * 100).toFixed(0)}`;
 
             if (isRealMoney) {
                 document.getElementById('credit-balance-label').innerText = `${userCurrency} ${realBalance.toFixed(2)}`;
             } else {
-                document.getElementById('credit-balance-label').innerText = `$${demoBalance.toFixed(2)}`;
+                document.getElementById('credit-balance-label').innerText = `DEMO PLAY`;
             }
         }
 
@@ -1723,7 +1734,9 @@
         function handleWinCelebration(winAmount, resultData) {
             if (winAmount > 0) {
                 AudioFX.playWin();
-                if (isRealMoney) {
+                if (resultData && resultData.new_balance !== null && resultData.new_balance !== undefined) {
+                    realBalance = parseFloat(resultData.new_balance);
+                } else if (isRealMoney) {
                     realBalance += winAmount;
                 } else {
                     demoBalance += winAmount;

@@ -141,13 +141,13 @@
         </div>
       </div>
 
-      <!-- Loader Screen -->
-      <div id="loading-overlay">
+      <!-- Loader Screen (Zero Loading) -->
+      <div id="loading-overlay" style="display:none !important;">
         <div class="loader-title">BURNING HOT</div>
         <div class="loader-bar-bg">
           <div class="loader-bar-fill" id="loader-fill"></div>
         </div>
-        <div class="loader-status" id="loader-text">Loading 1xBet Assets & Reels (0%)...</div>
+        <div class="loader-status" id="loader-text">Loading (100%)...</div>
       </div>
     </div>
   </div>

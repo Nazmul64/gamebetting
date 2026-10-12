@@ -137,6 +137,17 @@ class DashboardController extends Controller
                 'errors' => ['Withdrawal is temporarily on hold for your account: ' . ($user->hold_reason ?: 'Contact support.')]
             ], 403);
         }
+
+        // 100% Deposit Turnover / Wagering Requirement Check
+        $pendingTurnover = (float)$user->pending_turnover;
+        if ($pendingTurnover > 0) {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'উত্তোলনের পূর্বে আপনাকে ১০০% ডিপোজিট টার্নওভার (Turnover / Wagering) সম্পন্ন করতে হবে। আপনার অবশিষ্ট টার্নওভার: ৳' . number_format($pendingTurnover, 2) . '। গেম খেলে টার্নওভার সম্পন্ন করার পর উইথড্র করতে পারবেন।'
+                ]
+            ], 422);
+        }
         
         $validator = Validator::make($request->all(), [
             'gateway_id' => 'required|integer',

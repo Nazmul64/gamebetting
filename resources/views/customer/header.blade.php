@@ -33,6 +33,369 @@
 }
 .bd-dropdown-menu a:hover {
     background: #142847 !important;
+/* User Profile Dropdown Menu & Top Header Refresh */
+.header-balance-chip {
+    background: #112038;
+    border: 1.5px solid #1d3354;
+    border-radius: 8px;
+    padding: 0 12px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.header-balance-chip:hover {
+    border-color: #00f2fe;
+    background: #142847;
+}
+.header-balance-chip .chip-currency {
+    color: #8ca3c7;
+    font-size: 11px;
+}
+.header-balance-chip .chip-val {
+    color: #ffbe1a;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 14.5px;
+}
+.header-balance-chip .chip-refresh {
+    font-size: 10px;
+    color: #637b9f;
+    margin-left: 2px;
+    transition: transform 0.3s;
+}
+.header-balance-chip:hover .chip-refresh {
+    transform: rotate(180deg);
+    color: #00f2fe;
+}
+.header-deposit-btn {
+    background: linear-gradient(135deg, #2ebd59, #22a048);
+    color: #ffffff;
+    border: none;
+    padding: 0 16px;
+    height: 38px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 4px 14px rgba(46, 189, 89, 0.3);
+    transition: all 0.2s ease;
+}
+.header-deposit-btn:hover {
+    box-shadow: 0 6px 20px rgba(46, 189, 89, 0.5);
+    transform: translateY(-1px);
+}
+.user-profile-menu-container {
+    position: relative;
+    display: inline-block;
+}
+.user-profile-toggle-btn {
+    background: #112038;
+    border: 1.5px solid #1d3354;
+    border-radius: 8px;
+    height: 38px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #fff;
+}
+.user-profile-toggle-btn:hover, .user-profile-toggle-btn.active {
+    background: #142847;
+    border-color: #00c6ff;
+}
+.user-profile-avatar-pill {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    color: #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.user-profile-avatar-pill img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.user-profile-meta-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.user-profile-id-txt {
+    color: #00f2fe;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    font-weight: 800;
+}
+.profile-chevron-ico {
+    font-size: 10px;
+    color: #8ca3c7;
+    transition: transform 0.2s ease;
+}
+.user-profile-toggle-btn.active .profile-chevron-ico {
+    transform: rotate(180deg);
+}
+
+.user-profile-dropdown-card {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 320px;
+    background: #0b172a;
+    border: 1.5px solid #1e3a5f;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 198, 255, 0.1);
+    z-index: 100000;
+    padding: 16px;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    animation: profileMenuPop 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes profileMenuPop {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.user-profile-dropdown-card.show {
+    display: block !important;
+}
+.dropdown-user-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1d3354;
+}
+.dropdown-avatar-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.dropdown-avatar-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dropdown-user-details {
+    overflow: hidden;
+}
+.dropdown-user-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dropdown-user-phone {
+    font-size: 11px;
+    color: #8ca3c7;
+    margin-top: 2px;
+}
+.dropdown-id-kyc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+}
+.dropdown-id-badge {
+    background: #11223b;
+    border: 1px solid #1d3860;
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+.dropdown-id-badge:hover {
+    border-color: #00f2fe;
+    background: #152b4a;
+}
+.dropdown-id-badge .id-lbl {
+    font-size: 9.5px;
+    color: #8ca3c7;
+    font-weight: 700;
+}
+.dropdown-id-badge .id-val {
+    color: #00f2fe;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 800;
+}
+.dropdown-id-badge i {
+    font-size: 10px;
+    color: #8ca3c7;
+    margin-left: auto;
+}
+.dropdown-kyc-badge {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.dropdown-kyc-badge.verified {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid #10b981;
+}
+.dropdown-kyc-badge.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+    cursor: pointer;
+}
+.dropdown-kyc-btn.unverified {
+    background: rgba(0, 198, 255, 0.12);
+    color: #00f2fe;
+    border: 1px solid #0284c7;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* 100% Turnover Progress Widget */
+.dropdown-turnover-widget {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(17, 34, 59, 0.6);
+    border: 1px solid #1d3860;
+    border-radius: 8px;
+}
+.turnover-widget-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #cbd5e1;
+    margin-bottom: 6px;
+}
+.turnover-percent {
+    color: #00f2fe;
+    font-family: 'Roboto Mono', monospace;
+}
+.turnover-progressbar-track {
+    width: 100%;
+    height: 7px;
+    background: #091322;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #1d3354;
+}
+.turnover-progressbar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+.turnover-widget-amounts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #8ca3c7;
+    margin-top: 5px;
+}
+.turnover-warning-msg {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.3;
+}
+.turnover-success-msg {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Menu Nav Items */
+.dropdown-menu-nav {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dropdown-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.18s ease;
+}
+.dropdown-nav-item:hover {
+    background: #142847;
+    color: #fff;
+    transform: translateX(3px);
+}
+.dropdown-nav-item i {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+}
+.dropdown-footer-wrap {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #1d3354;
+}
+.dropdown-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dropdown-logout-btn:hover {
+    background: #ef4444;
+    color: #fff;
 }
 
 /* 1xBet Mega Menu Dropdown */
@@ -951,58 +1314,125 @@
     
     <!-- Header Actions (Deposit / Withdraw / Balance / Cabinet) -->
     <div class="dashboard-nav-actions" style="display: flex; align-items: center; gap: 10px;">
-        @auth
-            <!-- 10-Digit Customer User ID Badge -->
-            <div class="user-id-badge" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 10px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s;" onclick="copyUserIdToClipboard('{{ auth()->user()->user_code ?? auth()->user()->id }}')" title="Click to copy your 10-digit User ID">
-                <span style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">MY ID:</span>
-                <span style="color: #00f2fe; font-family: 'Roboto Mono', monospace; font-size: 13.5px; font-weight: 800; letter-spacing: 0.5px;" id="header-user-id-val">{{ auth()->user()->user_code ?? auth()->user()->id }}</span>
-                <i class="fas fa-copy" style="font-size: 11px; color: #8ca3c7;" id="header-copy-icon"></i>
+            <!-- 1. Sleek Balance Chip with Refresh Action -->
+            <div class="header-balance-chip" onclick="if(typeof fetchDashboardBalance === 'function') fetchDashboardBalance();" title="Click to refresh balance">
+                <span class="chip-currency">{{ auth()->user()->currency ?? '৳' }}</span>
+                <span class="chip-val header-balance-value">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
+                <i class="fas fa-rotate-right chip-refresh"></i>
             </div>
 
-            <!-- Header Balance Display -->
-            <div class="balance-container" style="background: #112038; border: 1.5px solid #1d3354; border-radius: 6px; padding: 0 14px; height: 38px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
-                <span class="balance-label" style="font-size: 10px; color: #8ca3c7; letter-spacing: 0.5px;">BALANCE:</span>
-                <span class="balance-value header-balance-value" style="color: #ffbe1a; font-family: 'Roboto Mono', monospace; font-size: 15px;">{{ number_format(auth()->user()->balance, 2, '.', '') }}</span>
-                <span class="balance-currency" style="color: #ffffff; font-size: 11px;">{{ auth()->user()->currency }}</span>
-            </div>
-
-            <!-- KYC Status Badge / Button -->
-            @php
-                $userKycStatus = auth()->user()->kyc_status ?? 'unverified';
-            @endphp
-            <button onclick="openKycModal()" class="nav-btn-kyc" style="background: {{ $userKycStatus === 'verified' ? 'rgba(16,185,129,0.15)' : ($userKycStatus === 'pending' ? 'rgba(245,158,11,0.15)' : 'rgba(0,198,255,0.12)') }}; color: {{ $userKycStatus === 'verified' ? '#10b981' : ($userKycStatus === 'pending' ? '#fbbf24' : '#00f2fe') }}; border: 1.5px solid {{ $userKycStatus === 'verified' ? '#10b981' : ($userKycStatus === 'pending' ? '#f59e0b' : '#0284c7') }}; padding: 0 12px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" title="KYC Verification Status">
-                @if($userKycStatus === 'verified')
-                    <i class="fas fa-shield-check" style="color: #10b981;"></i> <span>ভেরিফাইড</span>
-                @elseif($userKycStatus === 'pending')
-                    <i class="fas fa-clock" style="color: #fbbf24;"></i> <span>পেন্ডিং</span>
-                @else
-                    <i class="fas fa-id-card"></i> <span>KYC ভেরিফাই</span>
-                @endif
+            <!-- 2. Primary Deposit Button -->
+            <button onclick="handleHeaderAction('modal', 'deposit-modal')" class="header-deposit-btn" title="Quick Deposit">
+                <i class="fas fa-plus-circle"></i> <span>DEPOSIT</span>
             </button>
 
-            <!-- Sellers / Agents Quick Chat & Deposit Button -->
-            <button onclick="openSellerAgentsModal()" class="nav-btn-sellers" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                <i class="fas fa-user-tie"></i> <span>SELLERS / AGENTS</span>
-            </button>
-
-            <!-- Header Action Buttons -->
-            <button onclick="handleHeaderAction('modal', 'deposit-modal')" class="nav-btn-deposit" style="background: #2ebd59; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(46, 189, 89, 0.2);">
-                <i class="fas fa-plus-circle"></i> DEPOSIT
-            </button>
-            <button onclick="handleHeaderAction('modal', 'withdraw-modal')" class="nav-btn-withdraw" style="background: #007bff; color: #ffffff; border: none; padding: 0 16px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);">
-                <i class="fas fa-arrow-alt-circle-up"></i> WITHDRAW
-            </button>
-
-            <!-- Cabinet & Logout Actions -->
-            <div style="position: relative; display: inline-block;">
-                <button onclick="handleHeaderAction('cabinet')" class="nav-btn-cabinet" style="background: #15253e; color: #ffffff; border: 1.5px solid #1d3354; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                    <i class="fas fa-user-circle" style="font-size:14px; color:#8ca3c7;"></i> <span>CABINET</span>
+            <!-- 3. Consolidated User Profile Toggle & Dropdown Menu -->
+            <div class="user-profile-menu-container" id="user-profile-menu-container">
+                <button class="user-profile-toggle-btn" id="user-profile-toggle-btn" onclick="toggleUserProfileDropdown(event)" title="User Profile & Account Menu">
+                    <div class="user-profile-avatar-pill">
+                        @if(auth()->user()->profile_photo)
+                            <img src="{{ asset(auth()->user()->profile_photo) }}" alt="Avatar">
+                        @else
+                            <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                        @endif
+                    </div>
+                    <div class="user-profile-meta-pill">
+                        <span class="user-profile-id-txt">{{ auth()->user()->user_code ?? auth()->user()->id }}</span>
+                        @if(($authKyc = auth()->user()->kyc_status ?? 'unverified') === 'verified')
+                            <i class="fas fa-shield-check" style="color:#10b981; font-size:11px;" title="Verified Profile"></i>
+                        @endif
+                    </div>
+                    <i class="fas fa-chevron-down profile-chevron-ico"></i>
                 </button>
-            </div>
 
-            <a href="#" onclick="handleLogout(event)" class="nav-btn-logout" style="width: 38px; height: 38px; border-radius: 6px; background: rgba(235, 64, 52, 0.1); border: 1px solid rgba(235, 64, 52, 0.3); color: #ff5447; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; transition: all 0.2s;" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </a>
+                <!-- Glassmorphic Floating Profile Dropdown Card -->
+                <div class="user-profile-dropdown-card" id="user-profile-dropdown-card">
+                    <!-- User Identity Header -->
+                    <div class="dropdown-user-header">
+                        <div class="dropdown-avatar-wrap">
+                            @if(auth()->user()->profile_photo)
+                                <img src="{{ asset(auth()->user()->profile_photo) }}" alt="Avatar">
+                            @else
+                                <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                            @endif
+                        </div>
+                        <div class="dropdown-user-details">
+                            <div class="dropdown-user-name">{{ auth()->user()->name }}</div>
+                            <div class="dropdown-user-phone">{{ auth()->user()->phone ?? auth()->user()->email }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 10-Digit Copyable ID & KYC Row -->
+                    <div class="dropdown-id-kyc-row">
+                        <div class="dropdown-id-badge" onclick="copyUserIdToClipboard('{{ auth()->user()->user_code ?? auth()->user()->id }}')" title="Copy 10-digit ID">
+                            <span class="id-lbl">MY ID:</span>
+                            <span class="id-val" id="header-user-id-val">{{ auth()->user()->user_code ?? auth()->user()->id }}</span>
+                            <i class="fas fa-copy" id="header-copy-icon"></i>
+                        </div>
+
+                        @php $kycSt = auth()->user()->kyc_status ?? 'unverified'; @endphp
+                        @if($kycSt === 'verified')
+                            <div class="dropdown-kyc-badge verified"><i class="fas fa-shield-check"></i> ভেরিফাইড</div>
+                        @elseif($kycSt === 'pending')
+                            <div class="dropdown-kyc-badge pending" onclick="closeUserProfileDropdown(); openKycModal();"><i class="fas fa-clock"></i> পেন্ডিং</div>
+                        @else
+                            <button class="dropdown-kyc-btn unverified" onclick="closeUserProfileDropdown(); openKycModal();"><i class="fas fa-id-card"></i> KYC ভেরিফাই</button>
+                        @endif
+                    </div>
+
+                    <!-- 100% Deposit Turnover (Wagering) Requirement Progress Widget -->
+                    <div class="dropdown-turnover-widget">
+                        <div class="turnover-widget-head">
+                            <span class="turnover-title"><i class="fas fa-chart-pie" style="color:#00f2fe;"></i> ডিপোজিট টার্নওভার (Turnover)</span>
+                            <span class="turnover-percent">{{ auth()->user()->turnover_progress_percentage ?? 100 }}%</span>
+                        </div>
+                        <div class="turnover-progressbar-track">
+                            <div class="turnover-progressbar-fill" style="width: {{ min(100, auth()->user()->turnover_progress_percentage ?? 100) }}%;"></div>
+                        </div>
+                        <div class="turnover-widget-amounts">
+                            <span>সম্পন্ন: ৳{{ number_format(auth()->user()->turnover_completed ?? 0, 2) }}</span>
+                            <span>টার্গেট: ৳{{ number_format(auth()->user()->turnover_required ?? 0, 2) }}</span>
+                        </div>
+                        @if((auth()->user()->pending_turnover ?? 0) > 0)
+                            <div class="turnover-warning-msg">
+                                <i class="fas fa-circle-exclamation"></i> উইথড্র করতে আরো ৳{{ number_format(auth()->user()->pending_turnover, 2) }} খেলুন
+                            </div>
+                        @else
+                            <div class="turnover-success-msg">
+                                <i class="fas fa-circle-check"></i> উইথড্র করার জন্য টার্নওভার সম্পন্ন!
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Clean Action Items List -->
+                    <div class="dropdown-menu-nav">
+                        <a href="javascript:void(0)" onclick="closeUserProfileDropdown(); handleHeaderAction('modal', 'withdraw-modal');" class="dropdown-nav-item">
+                            <i class="fas fa-arrow-alt-circle-up" style="color:#00c6ff;"></i>
+                            <span>টাকা উত্তোলন (Withdraw)</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="closeUserProfileDropdown(); handleHeaderAction('cabinet');" class="dropdown-nav-item">
+                            <i class="fas fa-user-circle" style="color:#a855f7;"></i>
+                            <span>ব্যক্তিগত ক্যাবিনেট (Cabinet / Profile)</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="closeUserProfileDropdown(); openSellerAgentsModal();" class="dropdown-nav-item">
+                            <i class="fas fa-user-tie" style="color:#f59e0b;"></i>
+                            <span>অনলাইন এজেন্ট ও ক্যাশিয়ার (Sellers / Agents)</span>
+                        </a>
+                        <a href="javascript:void(0)" onclick="closeUserProfileDropdown(); openKycModal();" class="dropdown-nav-item">
+                            <i class="fas fa-shield-halved" style="color:#10b981;"></i>
+                            <span>নিরাপত্তা ও কেওয়াইসি (Security & KYC)</span>
+                        </a>
+                    </div>
+
+                    <!-- Dropdown Footer (Logout) -->
+                    <div class="dropdown-footer-wrap">
+                        <a href="#" onclick="handleLogout(event)" class="dropdown-logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>লগআউট (Logout)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         @else
             <!-- Sellers / Agents Button for Guests -->
             <button onclick="openSellerAgentsModal()" class="nav-btn-sellers" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; padding: 0 14px; height: 38px; border-radius: 6px; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
@@ -2217,6 +2647,38 @@ function submitKycForm(e) {
         alert('সার্ভার এরর অথবা নেটওয়ার্ক সমস্যা হয়েছে।');
     });
 }
+
+function toggleUserProfileDropdown(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const card = document.getElementById('user-profile-dropdown-card');
+    const btn = document.getElementById('user-profile-toggle-btn');
+    if (!card) return;
+    const isShown = card.classList.contains('show');
+    if (isShown) {
+        card.classList.remove('show');
+        if (btn) btn.classList.remove('active');
+    } else {
+        card.classList.add('show');
+        if (btn) btn.classList.add('active');
+    }
+}
+
+function closeUserProfileDropdown() {
+    const card = document.getElementById('user-profile-dropdown-card');
+    const btn = document.getElementById('user-profile-toggle-btn');
+    if (card) card.classList.remove('show');
+    if (btn) btn.classList.remove('active');
+}
+
+document.addEventListener('click', function(e) {
+    const container = document.getElementById('user-profile-menu-container');
+    if (container && !container.contains(e.target)) {
+        closeUserProfileDropdown();
+    }
+});
 </script>
 
 

@@ -396,6 +396,7 @@ class AdminController extends Controller
         $oldBal = (float)$user->balance;
         if ($action === 'add') {
             $user->balance += $amount;
+            $user->turnover_required = (float)($user->turnover_required ?? 0) + $amount;
             $txType = 'Admin Credit';
         } else {
             $user->balance -= $amount;
@@ -1638,8 +1639,9 @@ class AdminController extends Controller
         if ($request->action === 'approve') {
             DB::beginTransaction();
             try {
-                // Increase user balance
+                // Increase user balance and apply 100% turnover wagering requirement
                 $user->balance += $transaction->amount;
+                $user->turnover_required = (float)($user->turnover_required ?? 0) + (float)$transaction->amount;
                 $user->save();
 
                 // 3-Generation referral commission payouts (only when approved!)
