@@ -740,8 +740,12 @@
                             <!-- Profile Card -->
                             <div class="dashboard-panel-card profile-widget">
                                 <div class="profile-avatar-container">
-                                    <div class="profile-avatar">
-                                        <i class="fas fa-user-ninja"></i>
+                                    <div class="profile-avatar" style="overflow:hidden;">
+                                        @if(auth()->user()->profile_photo)
+                                            <img id="overview-avatar-img" src="{{ asset(auth()->user()->profile_photo) }}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                                        @else
+                                            <i id="overview-avatar-icon" class="fas fa-user-ninja"></i>
+                                        @endif
                                     </div>
                                     <span class="vip-badge">PILOT LEVEL 1</span>
                                 </div>
@@ -1097,7 +1101,22 @@
                 <!-- Profile Edit -->
                 <div class="dashboard-panel-card">
                     <h3 class="dashboard-panel-title"><i class="fas fa-id-card"></i> Edit Profile Information</h3>
-                    <form id="profile-edit-form" onsubmit="handleProfileEdit(event)">
+                    <form id="profile-edit-form" onsubmit="handleProfileEdit(event)" enctype="multipart/form-data">
+                        <!-- Profile Photo Upload -->
+                        <div class="dashboard-form-group" style="text-align: center; margin-bottom: 22px;">
+                            <div style="position: relative; width: 92px; height: 92px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #00f2fe; overflow: hidden; background: #0c1830; box-shadow: 0 0 18px rgba(0, 242, 254, 0.35);">
+                                <img id="user-profile-preview" src="{{ auth()->user()->profile_photo ? asset(auth()->user()->profile_photo) : asset('uploads/agent_profile_pictures/default_agent.png') }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='{{ asset('uploads/agent_profile_pictures/default_agent.png') }}'">
+                                <label for="profile-photo-input" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; cursor: pointer; color: #fff; font-size: 11px; font-weight: 700;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                                    <i class="fas fa-camera" style="font-size: 20px; margin-bottom: 2px; color:#00f2fe;"></i>
+                                    <span>CHANGE</span>
+                                </label>
+                            </div>
+                            <input type="file" id="profile-photo-input" accept="image/*" style="display: none;" onchange="previewUserPhoto(this)">
+                            <button type="button" class="btn-wallet" onclick="document.getElementById('profile-photo-input').click()" style="padding: 5px 14px; font-size: 11px; margin: 0 auto; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: rgba(0, 242, 254, 0.12); border: 1px solid rgba(0, 242, 254, 0.3); color: #00f2fe; border-radius: 6px;">
+                                <i class="fas fa-upload"></i> Upload Profile Photo
+                            </button>
+                        </div>
+
                         <div class="dashboard-form-group">
                             <label class="dashboard-form-label">Full Name</label>
                             <input type="text" id="profile-name" class="dashboard-form-input" value="{{ auth()->user()->name }}" required>
@@ -1141,17 +1160,26 @@
                     <form id="password-change-form" onsubmit="handlePasswordChange(event)">
                         <div class="dashboard-form-group">
                             <label class="dashboard-form-label">Current Password</label>
-                            <input type="password" id="pass-current" class="dashboard-form-input" placeholder="Enter current password" required>
+                            <div style="position: relative;">
+                                <input type="password" id="pass-current" class="dashboard-form-input" style="padding-right: 42px;" placeholder="Enter current password" required>
+                                <button type="button" class="btn-pwd-eye" onclick="toggleDashboardPassword('pass-current', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #64748b; font-size: 14px; cursor: pointer; padding: 6px;"><i class="far fa-eye"></i></button>
+                            </div>
                         </div>
                         
                         <div class="dashboard-form-group">
                             <label class="dashboard-form-label">New Password</label>
-                            <input type="password" id="pass-new" class="dashboard-form-input" placeholder="Enter new password (min 6 characters)" required>
+                            <div style="position: relative;">
+                                <input type="password" id="pass-new" class="dashboard-form-input" style="padding-right: 42px;" placeholder="Enter new password (min 6 characters)" minlength="6" required>
+                                <button type="button" class="btn-pwd-eye" onclick="toggleDashboardPassword('pass-new', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #64748b; font-size: 14px; cursor: pointer; padding: 6px;"><i class="far fa-eye"></i></button>
+                            </div>
                         </div>
                         
                         <div class="dashboard-form-group">
                             <label class="dashboard-form-label">Confirm New Password</label>
-                            <input type="password" id="pass-confirm" class="dashboard-form-input" placeholder="Repeat new password" required>
+                            <div style="position: relative;">
+                                <input type="password" id="pass-confirm" class="dashboard-form-input" style="padding-right: 42px;" placeholder="Repeat new password" minlength="6" required>
+                                <button type="button" class="btn-pwd-eye" onclick="toggleDashboardPassword('pass-confirm', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #64748b; font-size: 14px; cursor: pointer; padding: 6px;"><i class="far fa-eye"></i></button>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn-submit-purple" id="btn-password-submit">
@@ -2060,12 +2088,54 @@
             });
         }
 
+        // Toggle Password visibility helper
+        function toggleDashboardPassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        // Preview user profile photo before upload
+        function previewUserPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('user-profile-preview');
+                    if (preview) preview.src = e.target.result;
+                    const overviewImg = document.getElementById('overview-avatar-img');
+                    if (overviewImg) {
+                        overviewImg.src = e.target.result;
+                    } else {
+                        const overviewIcon = document.getElementById('overview-avatar-icon');
+                        if (overviewIcon && overviewIcon.parentElement) {
+                            overviewIcon.parentElement.innerHTML = `<img id="overview-avatar-img" src="${e.target.result}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                        }
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         // Form Profile edit submit
         function handleProfileEdit(e) {
             e.preventDefault();
             const name = document.getElementById('profile-name').value;
             const gender = document.getElementById('profile-gender').value;
             const country = document.getElementById('profile-country').value;
+            const photoInput = document.getElementById('profile-photo-input');
             const btn = document.getElementById('btn-profile-submit');
             const alertBox = document.getElementById('dashboard-global-alert');
             
@@ -2073,14 +2143,21 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('gender', gender);
+            formData.append('country', country);
+            if (photoInput && photoInput.files && photoInput.files[0]) {
+                formData.append('profile_photo', photoInput.files[0]);
+            }
+
             fetch('{{ route('dashboard.update-profile') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ name: name, gender: gender, country: country })
+                body: formData
             })
             .then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(res => {
@@ -2092,6 +2169,14 @@
                     
                     // Update frontend displays
                     document.getElementById('overview-profile-name').innerText = name;
+                    if (res.body.profile_photo) {
+                        const preview = document.getElementById('user-profile-preview');
+                        if (preview) preview.src = res.body.profile_photo;
+                        const overviewImg = document.getElementById('overview-avatar-img');
+                        if (overviewImg) overviewImg.src = res.body.profile_photo;
+                        const headerAvatars = document.querySelectorAll('.header-profile-avatar img, .profile-avatar img');
+                        headerAvatars.forEach(img => { img.src = res.body.profile_photo; });
+                    }
                     
                     // Display success banner
                     alertBox.className = 'dashboard-alert-banner alert-success';

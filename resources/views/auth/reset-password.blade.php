@@ -234,6 +234,25 @@
             color: var(--accent-cyan);
             text-decoration: underline;
         }
+        .toggle-pwd {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        .toggle-pwd:hover {
+            color: var(--accent-cyan);
+        }
     </style>
 </head>
 <body>
@@ -274,7 +293,10 @@
                     <label class="form-label">New Password</label>
                     <div class="input-wrap">
                         <i class="fas fa-key"></i>
-                        <input type="password" id="reset-password" class="form-input" placeholder="Min. 6 characters" minlength="6" required>
+                        <input type="password" id="reset-password" class="form-input" style="padding-right: 44px;" placeholder="Min. 6 characters" minlength="6" required>
+                        <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('reset-password', this)" title="Show/Hide Password">
+                            <i class="far fa-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -282,7 +304,10 @@
                     <label class="form-label">Confirm New Password</label>
                     <div class="input-wrap">
                         <i class="fas fa-shield-halved"></i>
-                        <input type="password" id="reset-password-confirmation" class="form-input" placeholder="Repeat new password" minlength="6" required>
+                        <input type="password" id="reset-password-confirmation" class="form-input" style="padding-right: 44px;" placeholder="Repeat new password" minlength="6" required>
+                        <button type="button" class="toggle-pwd" onclick="togglePasswordVisibility('reset-password-confirmation', this)" title="Show/Hide Password">
+                            <i class="far fa-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -297,6 +322,21 @@
 
     <script>
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        function togglePasswordVisibility(id, btn) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'far fa-eye-slash';
+                btn.style.color = 'var(--accent-cyan)';
+            } else {
+                input.type = 'password';
+                icon.className = 'far fa-eye';
+                btn.style.color = '#64748b';
+            }
+        }
 
         function showAlert(msg, isError = true) {
             const el = document.getElementById('alert-box');

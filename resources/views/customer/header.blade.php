@@ -1044,8 +1044,12 @@
             <!-- User Profile Card -->
             <div class="drawer-user-card">
                 <div class="drawer-user-info">
-                    <div class="drawer-user-avatar">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                    <div class="drawer-user-avatar" style="overflow:hidden;">
+                        @if(auth()->user()->profile_photo)
+                            <img src="{{ asset(auth()->user()->profile_photo) }}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                        @else
+                            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                        @endif
                     </div>
                     <div>
                         <div class="drawer-user-name">{{ auth()->user()->name }}</div>

@@ -1693,21 +1693,25 @@
             </nav>
 
             <!-- Admin info card -->
-            <div class="sidebar-admin-card">
-                <div class="admin-avatar">
-                    <i class="fas fa-user-shield"></i>
+            <div class="sidebar-admin-card" onclick="openAdminProfileModal()" style="cursor:pointer;" title="Click to edit Admin Profile & Credentials">
+                <div class="admin-avatar" style="overflow:hidden;" id="sidebar-admin-avatar-container">
+                    @if(auth()->user()->profile_photo)
+                        <img id="sidebar-admin-avatar-img" src="{{ asset(auth()->user()->profile_photo) }}" alt="Admin" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                    @else
+                        <i id="sidebar-admin-avatar-icon" class="fas fa-user-shield"></i>
+                    @endif
                 </div>
-                <div class="admin-info">
-                    <div class="admin-info-name">{{ auth()->user()->name }}</div>
-                    <div class="admin-info-role">Super Administrator</div>
+                <div class="admin-info" style="min-width:0;">
+                    <div class="admin-info-name" id="sidebar-admin-name">{{ auth()->user()->name }}</div>
+                    <div class="admin-info-role" id="sidebar-admin-email" style="font-size:11px; color:var(--text-muted); text-overflow:ellipsis; overflow:hidden; max-width:130px; white-space:nowrap;" title="{{ auth()->user()->email }}">{{ auth()->user()->email }}</div>
                 </div>
-                <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
+                <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;" onclick="event.stopPropagation();">
                     @csrf
                 </form>
-                <button class="sidebar-logout-btn" onclick="openAdminPasswordModal()" title="Change Admin Password" style="margin-right:6px; color:#00f2fe; background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.3);">
-                    <i class="fas fa-key"></i>
+                <button class="sidebar-logout-btn" onclick="event.stopPropagation(); openAdminProfileModal()" title="Edit Admin Profile & Credentials" style="margin-right:6px; color:#00f2fe; background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.3);">
+                    <i class="fas fa-user-gear"></i>
                 </button>
-                <button class="sidebar-logout-btn" onclick="document.getElementById('admin-logout-form').submit()" title="Logout Admin Session">
+                <button class="sidebar-logout-btn" onclick="event.stopPropagation(); document.getElementById('admin-logout-form').submit()" title="Logout Admin Session">
                     <i class="fas fa-power-off"></i>
                 </button>
             </div>
@@ -3210,19 +3214,34 @@
                 </div>
 
                     <div class="panel">
-                        <div class="panel-header">
+                        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
                             <div class="panel-title"><i class="fas fa-circle-info"></i> Admin Account Information</div>
+                            <button type="button" class="btn-primary" onclick="openAdminProfileModal()" style="width:auto; padding:6px 14px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fas fa-user-gear"></i> Edit Profile & Credentials
+                            </button>
                         </div>
                         <div class="panel-body">
                             <table class="admin-table" style="max-width:560px;">
                                 <tbody>
                                     <tr>
+                                        <td style="color:var(--text-muted);width:160px;">Admin Photo</td>
+                                        <td>
+                                            <div style="width:44px; height:44px; border-radius:50%; border:2px solid #00f2fe; overflow:hidden; background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;">
+                                                @if(auth()->user()->profile_photo)
+                                                    <img id="settings-admin-photo-img" src="{{ asset(auth()->user()->profile_photo) }}" alt="Admin" style="width:100%; height:100%; object-fit:cover;">
+                                                @else
+                                                    <i id="settings-admin-photo-icon" class="fas fa-user-shield" style="color:#00f2fe; font-size:18px;"></i>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td style="color:var(--text-muted);width:160px;">Admin Name</td>
-                                        <td><strong>{{ auth()->user()->name }}</strong></td>
+                                        <td><strong id="settings-admin-name">{{ auth()->user()->name }}</strong></td>
                                     </tr>
                                     <tr>
                                         <td style="color:var(--text-muted);">Admin Email</td>
-                                        <td>{{ auth()->user()->email }}</td>
+                                        <td id="settings-admin-email">{{ auth()->user()->email }}</td>
                                     </tr>
                                     <tr>
                                         <td style="color:var(--text-muted);">Role</td>
@@ -4216,30 +4235,80 @@
         </div>
     </div>
 
-    <!-- ==================== ADMIN CHANGE PASSWORD MODAL ==================== -->
+    <!-- ==================== ADMIN PROFILE & CREDENTIALS MODAL ==================== -->
     <div class="modal-overlay" id="admin-change-password-modal">
-        <div class="modal-box" style="max-width:440px;">
+        <div class="modal-box" style="max-width:480px;">
             <button class="modal-close" onclick="closeAdminPasswordModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-title"><i class="fas fa-key" style="color:var(--accent-cyan);"></i> Change Admin Password</div>
-            <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:16px;">Update your administrator account password. Minimum 6 characters required.</p>
+            <div class="modal-title"><i class="fas fa-user-gear" style="color:var(--accent-cyan);"></i> Admin Profile & Credentials</div>
+            <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:16px;">Update your administrator account name, email, profile picture, and login password.</p>
             
-            <form id="modal-admin-pass-form" onsubmit="submitAdminPasswordChange(event)">
-                <div class="form-group" style="margin-bottom:14px;">
+            <form id="modal-admin-profile-form" onsubmit="submitAdminProfile(event)" enctype="multipart/form-data">
+                <!-- Profile Picture -->
+                <div style="text-align:center; margin-bottom:18px;">
+                    <div style="position:relative; width:88px; height:88px; margin:0 auto 10px; border-radius:50%; border:3px solid #00f2fe; overflow:hidden; background:#0c1830; box-shadow:0 0 16px rgba(0,242,254,0.35);">
+                        <img id="admin-modal-photo-preview" src="{{ auth()->user()->profile_photo ? asset(auth()->user()->profile_photo) : asset('uploads/agent_profile_pictures/default_agent.png') }}" alt="Admin Profile" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='{{ asset('uploads/agent_profile_pictures/default_agent.png') }}'">
+                        <label for="admin-modal-photo-input" style="position:absolute; inset:0; background:rgba(0,0,0,0.55); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; cursor:pointer; color:#fff; font-size:11px; font-weight:700;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                            <i class="fas fa-camera" style="font-size:18px; margin-bottom:2px; color:#00f2fe;"></i>
+                            <span>CHANGE</span>
+                        </label>
+                    </div>
+                    <input type="file" id="admin-modal-photo-input" accept="image/*" style="display:none;" onchange="previewAdminPhoto(this)">
+                    <button type="button" onclick="document.getElementById('admin-modal-photo-input').click()" style="padding:4px 12px; font-size:11px; display:inline-flex; align-items:center; gap:6px; cursor:pointer; background:rgba(0,242,254,0.12); border:1px solid rgba(0,242,254,0.3); color:#00f2fe; border-radius:6px;">
+                        <i class="fas fa-upload"></i> Upload Admin Photo
+                    </button>
+                </div>
+
+                <!-- Admin Name -->
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label">Admin Full Name</label>
+                    <input type="text" class="form-input" id="admin-modal-name" value="{{ auth()->user()->name }}" required>
+                </div>
+
+                <!-- Admin Email -->
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label class="form-label">Admin Email Address</label>
+                    <input type="email" class="form-input" id="admin-modal-email" value="{{ auth()->user()->email }}" required>
+                </div>
+
+                <!-- Password divider -->
+                <div style="margin:16px 0 12px; padding-top:12px; border-top:1px dashed var(--border-subtle);">
+                    <div style="font-size:12px; font-weight:700; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+                        <i class="fas fa-key"></i> Change Admin Password
+                    </div>
+                    <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:12px;">Leave password fields blank if you do not wish to change your password.</p>
+                </div>
+
+                <!-- Current Password -->
+                <div class="form-group" style="margin-bottom:12px;">
                     <label class="form-label">Current Admin Password</label>
-                    <input type="password" class="form-input" id="admin-modal-pass-current" placeholder="Enter current password" required>
+                    <div style="position:relative;">
+                        <input type="password" class="form-input" id="admin-modal-pass-current" style="padding-right:42px;" placeholder="Enter current password if changing">
+                        <button type="button" onclick="toggleAdminPasswordVisibility('admin-modal-pass-current', this)" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--text-muted); font-size:14px; cursor:pointer; padding:6px;"><i class="far fa-eye"></i></button>
+                    </div>
                 </div>
-                <div class="form-group" style="margin-bottom:14px;">
+
+                <!-- New Password -->
+                <div class="form-group" style="margin-bottom:12px;">
                     <label class="form-label">New Password</label>
-                    <input type="password" class="form-input" id="admin-modal-pass-new" placeholder="Minimum 6 characters" minlength="6" required>
+                    <div style="position:relative;">
+                        <input type="password" class="form-input" id="admin-modal-pass-new" style="padding-right:42px;" placeholder="Minimum 6 characters" minlength="6">
+                        <button type="button" onclick="toggleAdminPasswordVisibility('admin-modal-pass-new', this)" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--text-muted); font-size:14px; cursor:pointer; padding:6px;"><i class="far fa-eye"></i></button>
+                    </div>
                 </div>
+
+                <!-- Confirm New Password -->
                 <div class="form-group" style="margin-bottom:18px;">
                     <label class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-input" id="admin-modal-pass-confirm" placeholder="Repeat new password" minlength="6" required>
+                    <div style="position:relative;">
+                        <input type="password" class="form-input" id="admin-modal-pass-confirm" style="padding-right:42px;" placeholder="Repeat new password" minlength="6">
+                        <button type="button" onclick="toggleAdminPasswordVisibility('admin-modal-pass-confirm', this)" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--text-muted); font-size:14px; cursor:pointer; padding:6px;"><i class="far fa-eye"></i></button>
+                    </div>
                 </div>
+
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" class="btn-secondary" onclick="closeAdminPasswordModal()">Cancel</button>
-                    <button type="submit" class="btn-primary" id="btn-save-admin-password">
-                        <i class="fas fa-lock"></i> Update Password
+                    <button type="submit" class="btn-primary" id="btn-save-admin-profile">
+                        <i class="fas fa-save"></i> Save Admin Changes
                     </button>
                 </div>
             </form>
@@ -5898,59 +5967,150 @@
             document.getElementById('edit-balance-modal').classList.remove('open');
         }
 
-        // Admin Change Password Modal
-        function openAdminPasswordModal() {
-            document.getElementById('admin-modal-pass-current').value = '';
-            document.getElementById('admin-modal-pass-new').value = '';
-            document.getElementById('admin-modal-pass-confirm').value = '';
+        // Toggle Admin Modal Password Visibility
+        function toggleAdminPasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        // Preview Admin Photo
+        function previewAdminPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('admin-modal-photo-preview');
+                    if (preview) preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Admin Profile & Credentials Modal
+        function openAdminProfileModal() {
+            const passCur = document.getElementById('admin-modal-pass-current');
+            const passNew = document.getElementById('admin-modal-pass-new');
+            const passConf = document.getElementById('admin-modal-pass-confirm');
+            if (passCur) passCur.value = '';
+            if (passNew) passNew.value = '';
+            if (passConf) passConf.value = '';
             document.getElementById('admin-change-password-modal').classList.add('open');
+        }
+        function openAdminPasswordModal() {
+            openAdminProfileModal();
         }
         function closeAdminPasswordModal() {
             document.getElementById('admin-change-password-modal').classList.remove('open');
         }
-        function submitAdminPasswordChange(e) {
-            e.preventDefault();
-            const current = document.getElementById('admin-modal-pass-current').value;
-            const newPass = document.getElementById('admin-modal-pass-new').value;
-            const confirm = document.getElementById('admin-modal-pass-confirm').value;
-            const btn = document.getElementById('btn-save-admin-password');
 
-            if (newPass !== confirm) {
-                showToast('New password confirmation does not match.', true);
-                return;
+        // Submit Admin Profile Update (Name, Email, Photo, Password)
+        function submitAdminProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('admin-modal-name').value;
+            const email = document.getElementById('admin-modal-email').value;
+            const currentPass = document.getElementById('admin-modal-pass-current').value;
+            const newPass = document.getElementById('admin-modal-pass-new').value;
+            const confirmPass = document.getElementById('admin-modal-pass-confirm').value;
+            const photoInput = document.getElementById('admin-modal-photo-input');
+            const btn = document.getElementById('btn-save-admin-profile');
+
+            if (newPass || confirmPass || currentPass) {
+                if (!currentPass) {
+                    showToast('Please enter your current admin password to verify password update.', true);
+                    return;
+                }
+                if (newPass.length < 6) {
+                    showToast('New password must be at least 6 characters.', true);
+                    return;
+                }
+                if (newPass !== confirmPass) {
+                    showToast('New password confirmation does not match.', true);
+                    return;
+                }
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-            fetch('{{ route('admin.change-password') }}', {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            if (newPass) {
+                formData.append('current_password', currentPass);
+                formData.append('password', newPass);
+                formData.append('password_confirmation', confirmPass);
+            }
+            if (photoInput && photoInput.files && photoInput.files[0]) {
+                formData.append('profile_photo', photoInput.files[0]);
+            }
+
+            fetch('{{ route('admin.profile.update') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': CSRF_TOKEN,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    current_password: current,
-                    password: newPass,
-                    password_confirmation: confirm
-                })
+                body: formData
             })
-            .then(r => r.json())
-            .then(data => {
+            .then(r => r.json().then(data => ({ ok: r.ok, data: data })))
+            .then(res => {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lock"></i> Update Password';
-                if (data.success) {
-                    showToast(data.message, false);
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Admin Changes';
+                if (res.ok && res.data.success) {
+                    showToast(res.data.message || 'Admin profile updated successfully!', false);
+                    
+                    // Update sidebar info
+                    const sidebarName = document.getElementById('sidebar-admin-name');
+                    if (sidebarName) sidebarName.innerText = res.data.admin.name;
+                    const sidebarEmail = document.getElementById('sidebar-admin-email');
+                    if (sidebarEmail) {
+                        sidebarEmail.innerText = res.data.admin.email;
+                        sidebarEmail.title = res.data.admin.email;
+                    }
+                    
+                    // Update settings table if present
+                    const settingsName = document.getElementById('settings-admin-name');
+                    if (settingsName) settingsName.innerText = res.data.admin.name;
+                    const settingsEmail = document.getElementById('settings-admin-email');
+                    if (settingsEmail) settingsEmail.innerText = res.data.admin.email;
+                    
+                    if (res.data.admin.profile_photo) {
+                        const sidebarAvatarImg = document.getElementById('sidebar-admin-avatar-img');
+                        if (sidebarAvatarImg) {
+                            sidebarAvatarImg.src = res.data.admin.profile_photo;
+                        } else {
+                            const avatarContainer = document.getElementById('sidebar-admin-avatar-container');
+                            if (avatarContainer) {
+                                avatarContainer.innerHTML = `<img id="sidebar-admin-avatar-img" src="${res.data.admin.profile_photo}" alt="Admin" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                            }
+                        }
+                        const settingsPhotoImg = document.getElementById('settings-admin-photo-img');
+                        if (settingsPhotoImg) settingsPhotoImg.src = res.data.admin.profile_photo;
+                    }
+
                     closeAdminPasswordModal();
                 } else {
-                    showToast((data.errors || [data.message || 'Error updating password']).join(' '), true);
+                    const errs = res.data.errors || [res.data.message || 'Error updating admin profile'];
+                    showToast(Array.isArray(errs) ? errs.join(' ') : errs, true);
                 }
             })
-            .catch(() => {
+            .catch(err => {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-lock"></i> Update Password';
-                showToast('Connection error updating admin password.', true);
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Admin Changes';
+                showToast('Connection error updating admin profile.', true);
             });
         }
 

@@ -381,6 +381,7 @@ Route::post('/admin/exit-impersonation', [AdminController::class, 'exitImpersona
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/change-password', [AdminController::class, 'changePassword'])->name('change-password');
+    Route::post('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
     Route::get('/users', [AdminController::class, 'getUsers'])->name('users');
     Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
     Route::get('/game-matrix', [AdminController::class, 'getGamePerformanceMatrixApi'])->name('game-matrix');

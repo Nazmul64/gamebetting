@@ -2386,6 +2386,84 @@ class AdminController extends Controller
             'message' => 'Admin password has been changed successfully!'
         ]);
     }
+
+    /**
+     * Update Admin Profile (Email, Name, Profile Picture, and optional Password).
+     */
+    public function updateProfile(Request $request)
+    {
+        $admin = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'name'                  => 'nullable|string|max:255',
+            'email'                 => 'nullable|email|max:255|unique:users,email,' . $admin->id,
+            'profile_photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'current_password'      => 'nullable|required_with:password|string',
+            'password'              => 'nullable|string|min:6|confirmed',
+        ], [
+            'email.unique'          => 'This email address is already taken by another account.',
+            'profile_photo.image'   => 'Profile photo must be an image file.',
+            'profile_photo.max'     => 'Profile photo size cannot exceed 5MB.',
+            'password.min'          => 'New password must be at least 6 characters.',
+            'password.confirmed'    => 'New password confirmation does not match.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()->all()
+            ], 422);
+        }
+
+        // Handle password update if provided
+        if ($request->filled('password')) {
+            if (!Hash::check($request->current_password, $admin->password)) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['Current admin password is incorrect.']
+                ], 422);
+            }
+            $admin->password = Hash::make($request->password);
+        }
+
+        // Handle profile photo upload (Store in public/uploads/profile)
+        if ($request->hasFile('profile_photo')) {
+            $dir = public_path('uploads/profile');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            // Remove old photo if exists
+            if ($admin->profile_photo && file_exists(public_path(ltrim($admin->profile_photo, '/')))) {
+                @unlink(public_path(ltrim($admin->profile_photo, '/')));
+            }
+
+            $file = $request->file('profile_photo');
+            $filename = 'admin_' . $admin->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $admin->profile_photo = '/uploads/profile/' . $filename;
+        }
+
+        if ($request->filled('name')) {
+            $admin->name = $request->name;
+        }
+
+        if ($request->filled('email')) {
+            $admin->email = strtolower(trim($request->email));
+        }
+
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Admin profile updated successfully!',
+            'admin' => [
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'profile_photo' => $admin->profile_photo ? asset($admin->profile_photo) : null
+            ]
+        ]);
+    }
 }
 
 

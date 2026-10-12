@@ -318,8 +318,12 @@ class DashboardController extends Controller
             'name' => 'required|string|max:255',
             'gender' => 'required|string|in:Male,Female,Other',
             'country' => 'required|string|max:255',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'old_password' => 'nullable|required_with:new_password|string',
             'new_password' => 'nullable|string|min:6|confirmed',
+        ], [
+            'profile_photo.image' => 'Profile photo must be an image file.',
+            'profile_photo.max' => 'Profile photo size cannot exceed 5MB.'
         ]);
 
         if ($validator->fails()) {
@@ -327,6 +331,24 @@ class DashboardController extends Controller
                 'success' => false,
                 'errors' => $validator->errors()->all()
             ], 422);
+        }
+
+        // Handle profile photo upload (Store in public/uploads/profile)
+        if ($request->hasFile('profile_photo')) {
+            $dir = public_path('uploads/profile');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            // Remove old photo if exists
+            if ($user->profile_photo && file_exists(public_path(ltrim($user->profile_photo, '/')))) {
+                @unlink(public_path(ltrim($user->profile_photo, '/')));
+            }
+
+            $file = $request->file('profile_photo');
+            $filename = 'user_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $user->profile_photo = '/uploads/profile/' . $filename;
         }
 
         // Handle password change if requested
@@ -347,7 +369,8 @@ class DashboardController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Profile updated successfully!'
+            'message' => 'Profile updated successfully!',
+            'profile_photo' => $user->profile_photo ? asset($user->profile_photo) : null
         ]);
     }
 

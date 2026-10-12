@@ -27,6 +27,7 @@ class User extends Authenticatable
         'mobile',
         'country',
         'currency',
+        'profile_photo',
         'balance',
         'is_admin',
         'is_seller',
