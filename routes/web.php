@@ -11,6 +11,14 @@ Route::get('/register', [AuthController::class, 'showAuthPage'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Password Reset & Change Routes
+use App\Http\Controllers\PasswordResetController;
+Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth')->name('password.change');
+
 // Blocked account page (accessible without full auth so blocked user sees the message)
 Route::get('/blocked', function () {
     return view('customer.blocked');
@@ -372,6 +380,7 @@ Route::post('/admin/exit-impersonation', [AdminController::class, 'exitImpersona
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/change-password', [AdminController::class, 'changePassword'])->name('change-password');
     Route::get('/users', [AdminController::class, 'getUsers'])->name('users');
     Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
     Route::get('/game-matrix', [AdminController::class, 'getGamePerformanceMatrixApi'])->name('game-matrix');

@@ -1704,6 +1704,9 @@
                 <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
                     @csrf
                 </form>
+                <button class="sidebar-logout-btn" onclick="openAdminPasswordModal()" title="Change Admin Password" style="margin-right:6px; color:#00f2fe; background:rgba(0,242,254,0.1); border:1px solid rgba(0,242,254,0.3);">
+                    <i class="fas fa-key"></i>
+                </button>
                 <button class="sidebar-logout-btn" onclick="document.getElementById('admin-logout-form').submit()" title="Logout Admin Session">
                     <i class="fas fa-power-off"></i>
                 </button>
@@ -4213,6 +4216,36 @@
         </div>
     </div>
 
+    <!-- ==================== ADMIN CHANGE PASSWORD MODAL ==================== -->
+    <div class="modal-overlay" id="admin-change-password-modal">
+        <div class="modal-box" style="max-width:440px;">
+            <button class="modal-close" onclick="closeAdminPasswordModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-title"><i class="fas fa-key" style="color:var(--accent-cyan);"></i> Change Admin Password</div>
+            <p style="font-size:12.5px; color:var(--text-secondary); margin-bottom:16px;">Update your administrator account password. Minimum 6 characters required.</p>
+            
+            <form id="modal-admin-pass-form" onsubmit="submitAdminPasswordChange(event)">
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">Current Admin Password</label>
+                    <input type="password" class="form-input" id="admin-modal-pass-current" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-input" id="admin-modal-pass-new" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+                <div class="form-group" style="margin-bottom:18px;">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-input" id="admin-modal-pass-confirm" placeholder="Repeat new password" minlength="6" required>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminPasswordModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" id="btn-save-admin-password">
+                        <i class="fas fa-lock"></i> Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ==================== ADD / DEDUCT BALANCE (LEDGER) MODAL ==================== -->
     <div class="modal-overlay" id="adjust-balance-modal">
         <div class="modal-box" style="max-width:480px;">
@@ -5863,6 +5896,62 @@
         }
         function closeBalanceModal() {
             document.getElementById('edit-balance-modal').classList.remove('open');
+        }
+
+        // Admin Change Password Modal
+        function openAdminPasswordModal() {
+            document.getElementById('admin-modal-pass-current').value = '';
+            document.getElementById('admin-modal-pass-new').value = '';
+            document.getElementById('admin-modal-pass-confirm').value = '';
+            document.getElementById('admin-change-password-modal').classList.add('open');
+        }
+        function closeAdminPasswordModal() {
+            document.getElementById('admin-change-password-modal').classList.remove('open');
+        }
+        function submitAdminPasswordChange(e) {
+            e.preventDefault();
+            const current = document.getElementById('admin-modal-pass-current').value;
+            const newPass = document.getElementById('admin-modal-pass-new').value;
+            const confirm = document.getElementById('admin-modal-pass-confirm').value;
+            const btn = document.getElementById('btn-save-admin-password');
+
+            if (newPass !== confirm) {
+                showToast('New password confirmation does not match.', true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            fetch('{{ route('admin.change-password') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    current_password: current,
+                    password: newPass,
+                    password_confirmation: confirm
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Update Password';
+                if (data.success) {
+                    showToast(data.message, false);
+                    closeAdminPasswordModal();
+                } else {
+                    showToast((data.errors || [data.message || 'Error updating password']).join(' '), true);
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Update Password';
+                showToast('Connection error updating admin password.', true);
+            });
         }
 
         function saveUserBalance() {

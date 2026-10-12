@@ -2152,7 +2152,7 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Securing password...';
 
-            fetch('{{ route('dashboard.update-profile') }}', {
+            fetch('{{ route('password.change') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -2160,12 +2160,9 @@
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ 
-                    name: name, 
-                    gender: gender, 
-                    country: country, 
-                    old_password: oldPass, 
-                    new_password: newPass, 
-                    new_password_confirmation: newPassConf 
+                    current_password: oldPass, 
+                    password: newPass, 
+                    password_confirmation: newPassConf 
                 })
             })
             .then(response => response.json().then(data => ({ status: response.status, body: data })))

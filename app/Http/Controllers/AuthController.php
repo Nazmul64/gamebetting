@@ -152,4 +152,44 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+
+    /**
+     * Change Password for authenticated user.
+     */
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'current_password.required' => 'Please enter your current password.',
+            'password.required' => 'Please enter your new password.',
+            'password.min' => 'New password must be at least 6 characters.',
+            'password.confirmed' => 'New password confirmation does not match.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()->all()
+            ], 422);
+        }
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Current password is incorrect.']
+            ], 422);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your password has been changed successfully!'
+        ]);
+    }
 }

@@ -541,7 +541,7 @@
                             <input type="checkbox" id="login-remember" checked>
                             <span>Remember Me</span>
                         </label>
-                        <a href="javascript:void(0)" onclick="alert('Please contact Support or an Agent to reset your password.')" class="forgot-link">Forgot Password?</a>
+                        <a href="javascript:void(0)" onclick="openForgotModal()" class="forgot-link">Forgot Password?</a>
                     </div>
 
                     <button type="submit" id="btn-login-submit" class="btn-submit">
@@ -905,6 +905,116 @@
                 grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:#f87171;">এজেন্টদের তালিকা লোড করতে ব্যর্থ হয়েছে।</div>';
             });
         }
+
+        function openForgotModal() {
+            const modal = document.getElementById('forgot-modal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            const alertBox = document.getElementById('forgot-alert');
+            if (alertBox) alertBox.style.display = 'none';
+            const input = document.getElementById('forgot-email');
+            if (input) {
+                // If login username is an email, prefill it
+                const loginUser = document.getElementById('login-username')?.value;
+                if (loginUser && loginUser.includes('@')) {
+                    input.value = loginUser;
+                }
+                setTimeout(() => input.focus(), 100);
+            }
+        }
+
+        function closeForgotModal() {
+            const modal = document.getElementById('forgot-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function handleForgotSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            const btn = document.getElementById('btn-forgot-submit');
+            const alertBox = document.getElementById('forgot-alert');
+            const originalBtnHtml = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Sending Email...</span>';
+            alertBox.style.display = 'none';
+
+            fetch('{{ route('password.email') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+
+                if (data.success) {
+                    alertBox.style.background = 'rgba(46, 189, 89, 0.15)';
+                    alertBox.style.border = '1px solid #2ebd59';
+                    alertBox.style.color = '#86efac';
+                    alertBox.innerHTML = '<i class="fas fa-circle-check"></i> ' + data.message;
+                    alertBox.style.display = 'block';
+                    document.getElementById('forgot-email').value = '';
+                } else {
+                    alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+                    alertBox.style.border = '1px solid #ef4444';
+                    alertBox.style.color = '#fca5a5';
+                    alertBox.innerHTML = '<i class="fas fa-circle-exclamation"></i> ' + (data.errors ? data.errors.join(' ') : (data.message || 'Error occurred.'));
+                    alertBox.style.display = 'block';
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+                alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+                alertBox.style.border = '1px solid #ef4444';
+                alertBox.style.color = '#fca5a5';
+                alertBox.innerHTML = '<i class="fas fa-circle-exclamation"></i> Network error occurred. Please try again.';
+                alertBox.style.display = 'block';
+            });
+        }
     </script>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgot-modal" style="display:none; position:fixed; inset:0; background:rgba(4, 9, 20, 0.85); backdrop-filter:blur(10px); z-index:99999; align-items:center; justify-content:center; padding:16px;">
+        <div class="auth-card" style="max-width:440px; width:100%; border:1px solid rgba(0, 242, 254, 0.4); position:relative; box-shadow:0 15px 50px rgba(0,0,0,0.8), 0 0 35px rgba(0,242,254,0.25); background:var(--bg-card); border-radius:18px; padding:32px 28px;">
+            <button type="button" onclick="closeForgotModal()" style="position:absolute; top:18px; right:18px; background:none; border:none; color:#8ca3c7; font-size:22px; cursor:pointer; line-height:1;"><i class="fas fa-times"></i></button>
+            
+            <div style="text-align:center; margin-bottom:22px;">
+                <div style="width:56px; height:56px; margin:0 auto 14px; border-radius:50%; background:linear-gradient(135deg, rgba(0,242,254,0.18), rgba(0,123,255,0.25)); border:1.5px solid var(--accent-cyan); display:flex; align-items:center; justify-content:center; color:var(--accent-cyan); font-size:24px; box-shadow:0 0 15px rgba(0,242,254,0.3);">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h3 style="font-size:22px; font-weight:800; color:#fff; margin-bottom:6px; letter-spacing:-0.3px;">Forgot Password?</h3>
+                <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Enter your registered account email address. We'll send you a secure link to reset your password.</p>
+            </div>
+
+            <div id="forgot-alert" style="display:none; padding:12px 14px; border-radius:8px; font-size:13px; margin-bottom:18px; line-height:1.4;"></div>
+
+            <form id="forgot-form" onsubmit="handleForgotSubmit(event)">
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label class="form-label" for="forgot-email" style="font-size:11.5px; font-weight:700; color:#cbd5e1; text-transform:uppercase; margin-bottom:6px; display:block;">Account Email</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="forgot-email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-forgot-submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> <span>SEND RESET LINK</span>
+                </button>
+            </form>
+
+            <div style="text-align:center; margin-top:20px;">
+                <a href="javascript:void(0)" onclick="closeForgotModal()" style="color:var(--text-secondary); font-size:13px; font-weight:600; text-decoration:none;">
+                    &larr; Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

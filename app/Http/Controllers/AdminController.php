@@ -2346,6 +2346,46 @@ class AdminController extends Controller
             'message' => "Seller role removed for '{$seller->name}'."
         ]);
     }
+
+    /**
+     * Change Password for logged-in Admin.
+     */
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ], [
+            'current_password.required' => 'Please enter your current admin password.',
+            'password.required' => 'Please enter a new password.',
+            'password.min' => 'New password must be at least 6 characters.',
+            'password.confirmed' => 'New password confirmation does not match.'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()->all()
+            ], 422);
+        }
+
+        $admin = Auth::user();
+
+        if (!Hash::check($request->current_password, $admin->password)) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['Current password is incorrect.']
+            ], 422);
+        }
+
+        $admin->password = Hash::make($request->password);
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Admin password has been changed successfully!'
+        ]);
+    }
 }
 
 
